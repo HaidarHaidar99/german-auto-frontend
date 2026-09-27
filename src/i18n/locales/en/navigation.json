@@ -1,0 +1,12 @@
+{
+  "home": "Home",
+  "inventory": "Inventory",
+  "about": "About Us",
+  "contact": "Contact",
+  "sellYourCar": "Sell Your Car",
+  "login": "Login",
+  "signup": "Register",
+  "logout": "Logout",
+  "account": "My Account",
+  "admin": "Admin"
+}

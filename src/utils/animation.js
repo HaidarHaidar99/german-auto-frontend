@@ -1,0 +1,72 @@
+/**
+ * German Auto — Animation Infrastructure & Utilities
+ * Integrates GSAP + ScrollTrigger and Lenis smooth scrolling with accessibility safeguards.
+ */
+
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+
+// Register GSAP plugins safely in browser environments
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+/**
+ * Checks whether user prefers reduced motion
+ */
+export function isReducedMotion() {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+/**
+ * Checks whether current viewport is a mobile device (< 768px)
+ */
+export function isMobileViewport() {
+  if (typeof window === "undefined") return false;
+  return window.innerWidth < 768;
+}
+
+/**
+ * Initializes accessible Lenis smooth scrolling
+ */
+export function initSmoothScroll(options = {}) {
+  if (typeof window === "undefined" || isReducedMotion()) {
+    return null;
+  }
+
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: "vertical",
+    gestureOrientation: "vertical",
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    touchMultiplier: 1.5,
+    infinite: false,
+    ...options,
+  });
+
+  // Synchronize Lenis with GSAP ScrollTrigger
+  const updateScrollTrigger = () => ScrollTrigger.update();
+  lenis.on("scroll", updateScrollTrigger);
+
+  const tickerCallback = (time) => {
+    lenis.raf(time * 1000);
+  };
+  gsap.ticker.add(tickerCallback);
+  gsap.ticker.lagSmoothing(0);
+
+  // Return wrapped object with full cleanup
+  return {
+    instance: lenis,
+    destroy: () => {
+      lenis.off("scroll", updateScrollTrigger);
+      gsap.ticker.remove(tickerCallback);
+      lenis.destroy();
+    },
+  };
+}
+
+export { gsap, ScrollTrigger, Lenis };

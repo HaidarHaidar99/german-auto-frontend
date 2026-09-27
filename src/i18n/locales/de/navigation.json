@@ -1,0 +1,12 @@
+{
+  "home": "Startseite",
+  "inventory": "Fahrzeuge",
+  "about": "Über uns",
+  "contact": "Kontakt",
+  "sellYourCar": "Auto verkaufen",
+  "login": "Anmelden",
+  "signup": "Registrieren",
+  "logout": "Abmelden",
+  "account": "Mein Konto",
+  "admin": "Administration"
+}

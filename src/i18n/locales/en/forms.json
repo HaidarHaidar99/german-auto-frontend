@@ -1,0 +1,12 @@
+{
+  "contactTitle": "Contact Form",
+  "sellCarTitle": "Vehicle Valuation & Purchase",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone Number",
+  "regarding": "Regarding",
+  "message": "Message",
+  "privacyConsent": "I accept the privacy policy.",
+  "submit": "Submit",
+  "successMessage": "Thank you! Your inquiry has been submitted successfully."
+}

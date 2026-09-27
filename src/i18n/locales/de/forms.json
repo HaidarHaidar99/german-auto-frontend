@@ -1,0 +1,12 @@
+{
+  "contactTitle": "Kontaktformular",
+  "sellCarTitle": "Fahrzeugbewertung & Ankauf",
+  "name": "Name",
+  "email": "E-Mail",
+  "phone": "Telefonnummer",
+  "regarding": "Betreff",
+  "message": "Nachricht",
+  "privacyConsent": "Ich akzeptiere die Datenschutzbestimmungen.",
+  "submit": "Absenden",
+  "successMessage": "Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt."
+}

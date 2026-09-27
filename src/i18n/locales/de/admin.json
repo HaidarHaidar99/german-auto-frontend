@@ -1,0 +1,12 @@
+{
+  "dashboard": "Dashboard",
+  "inventory": "Fahrzeugverwaltung",
+  "forms": "Formulareingänge",
+  "reviews": "Bewertungsmoderation",
+  "settings": "CMS & Einstellungen",
+  "notifications": "Benachrichtigungen",
+  "stats": "Statistiken",
+  "status": "Status",
+  "actions": "Aktionen",
+  "adminArea": "Verwaltungsbereich"
+}
