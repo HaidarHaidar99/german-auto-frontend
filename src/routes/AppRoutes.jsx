@@ -4,6 +4,7 @@ import PublicLayout from "../layouts/PublicLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import AdminRoute from "./AdminRoute";
 import PublicOnlyRoute from "./PublicOnlyRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import LoadingState from "../components/ui/LoadingState";
 
 // Lazy-loaded pages for optimal bundle splitting
@@ -21,8 +22,17 @@ const VerifyEmailPage    = lazy(() => import("../pages/auth/VerifyEmailPage"));
 const ForgotPasswordPage = lazy(() => import("../pages/auth/ForgotPasswordPage"));
 const ResetPasswordPage  = lazy(() => import("../pages/auth/ResetPasswordPage"));
 
-const AdminDashboardPage = lazy(() => import("../pages/admin/AdminDashboardPage"));
-const DesignSystemPage   = lazy(() => import("../pages/dev/DesignSystemPage"));
+const AccountPage        = lazy(() => import("../pages/account/AccountPage"));
+const FavoritesPage      = lazy(() => import("../pages/account/FavoritesPage"));
+const SecurityPage       = lazy(() => import("../pages/account/SecurityPage"));
+
+const AdminDashboardPage     = lazy(() => import("../pages/admin/AdminDashboardPage"));
+const AdminSettingsPage      = lazy(() => import("../pages/admin/AdminSettingsPage"));
+const AdminCarsPage          = lazy(() => import("../pages/admin/AdminCarsPage"));
+const AdminFormsPage         = lazy(() => import("../pages/admin/AdminFormsPage"));
+const AdminReviewsPage       = lazy(() => import("../pages/admin/AdminReviewsPage"));
+const AdminNotificationsPage = lazy(() => import("../pages/admin/AdminNotificationsPage"));
+const DesignSystemPage       = lazy(() => import("../pages/dev/DesignSystemPage"));
 
 export function AppRoutes() {
   return (
@@ -37,6 +47,32 @@ export function AppRoutes() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/sell-your-car" element={<SellYourCarPage />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
+
+          {/* Customer Account Routes (Protected for authenticated users only) */}
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <AccountPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/favorites"
+            element={
+              <ProtectedRoute>
+                <FavoritesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/account/security"
+            element={
+              <ProtectedRoute>
+                <SecurityPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Authentication Routes (Restricted for already authenticated users) */}
           <Route
@@ -73,6 +109,11 @@ export function AppRoutes() {
           }
         >
           <Route index element={<AdminDashboardPage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="cars" element={<AdminCarsPage />} />
+          <Route path="forms" element={<AdminFormsPage />} />
+          <Route path="reviews" element={<AdminReviewsPage />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
         </Route>
       </Routes>
     </Suspense>

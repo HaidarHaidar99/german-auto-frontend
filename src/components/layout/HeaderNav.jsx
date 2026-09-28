@@ -125,6 +125,9 @@ export function HeaderNav({
             <div className="hide-mobile">
               {isAuthenticated ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
+                  <Button as={Link} to="/account" variant="outline" size="sm">
+                    {t("navOverview", { ns: "account" }) || "Konto"}
+                  </Button>
                   {isAdmin && (
                     <Button as={Link} to="/admincoresecure" variant="outline" size="sm">
                       {t("admin")}
@@ -199,6 +202,16 @@ export function HeaderNav({
           <div>
             {isAuthenticated ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
+                <Button
+                  as={Link}
+                  to="/account"
+                  variant="outline"
+                  size="md"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{ width: "100%" }}
+                >
+                  {t("navOverview", { ns: "account" }) || "Konto"}
+                </Button>
                 {isAdmin && (
                   <Button
                     as={Link}

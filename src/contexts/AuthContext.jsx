@@ -21,7 +21,9 @@ export function AuthProvider({ children }) {
         // Load user favorites
         try {
           const favRes = await carsService.getFavorites();
-          const favIds = (favRes?.data?.favorites || favRes?.data?.cars || []).map((c) => c.id || c.car_id || c);
+          const favIds = (favRes?.data?.favorite_car_ids || favRes?.data?.cars || []).map((c) =>
+            typeof c === "string" ? c : c.id || c.car_id
+          );
           setFavorites(favIds);
         } catch {
           setFavorites([]);
@@ -54,14 +56,31 @@ export function AuthProvider({ children }) {
     return res;
   };
 
-  const register = async (payload) => {
+  const signup = async (payload) => {
     setError(null);
-    return await authService.register(payload);
+    return await authService.signup(payload);
   };
+
+  const register = signup;
 
   const logout = async () => {
     try {
       await authService.logout();
+    } finally {
+      setUser(null);
+      setStatus("unauthenticated");
+      setFavorites([]);
+    }
+  };
+
+  const changePassword = async (currentPassword, newPassword, confirmNewPassword) => {
+    return await authService.changePassword(currentPassword, newPassword, confirmNewPassword);
+  };
+
+  const deleteAccount = async () => {
+    try {
+      const res = await authService.deleteAccount();
+      return res;
     } finally {
       setUser(null);
       setStatus("unauthenticated");
@@ -107,10 +126,14 @@ export function AuthProvider({ children }) {
     isSuperAdmin,
     error,
     login,
+    signup,
     register,
     logout,
+    changePassword,
+    deleteAccount,
     refreshUser,
     favorites,
+    setFavorites,
     isCarFavorite,
     toggleFavorite,
   };

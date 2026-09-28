@@ -53,6 +53,15 @@
   --glass-blur: blur(16px);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
+  /* Admin CMS Tokens */
+  --color-admin-bg: #090a0c;
+  --color-admin-sidebar: #0e1014;
+  --color-admin-card: #15181f;
+  --color-admin-border: #232732;
+  --color-admin-text: #f4f5f7;
+  --color-admin-muted: #8e95a5;
+  --admin-sidebar-width: 270px;
+
   /* ==========================================================================
      2. TYPOGRAPHY TOKENS
      ========================================================================== */

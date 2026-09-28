@@ -1,20 +1,23 @@
-import React, { useRef, useState, useId } from "react";
+import React, { useRef, useState, useEffect, useId } from "react";
 import Icon from "../common/Icon";
 import Button from "../ui/Button";
 
 /**
- * German Auto — File Upload Component
- * Drag-and-drop support, accessible file selection, preview, and error display.
+ * German Auto — Premium Automotive File Upload Component
+ * Drag-and-drop support, accessible file selection, image thumbnails preview,
+ * object URL memory cleanup, and validation feedback.
  */
-
 export function FileUpload({
   label,
-  accept = "image/jpeg,image/png,image/webp",
+  accept = "image/jpeg,image/png,image/webp,image/avif",
   multiple = false,
   maxFiles = 5,
-  maxSizeBytes = 10 * 1024 * 1024, // 10MB
+  maxSizeBytes = 10 * 1024 * 1024, // 10MB default
+  files: controlledFiles,
   onFilesSelected,
+  dropText = "Dateien hier ablegen oder durchsuchen",
   helperText,
+  removeText = "Entfernen",
   error,
   disabled = false,
   className = "",
@@ -23,29 +26,63 @@ export function FileUpload({
   const inputRef = useRef(null);
   const generatedId = useId();
   const [isDragOver, setIsDragOver] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [internalFiles, setInternalFiles] = useState([]);
   const [localError, setLocalError] = useState(null);
 
+  const selectedFiles = controlledFiles !== undefined ? controlledFiles : internalFiles;
   const displayError = error || localError;
+
+  // Manage object URLs for memory safety
+  const [previewUrls, setPreviewUrls] = useState({});
+
+  useEffect(() => {
+    const urls = {};
+    selectedFiles.forEach((file, idx) => {
+      if (file && file.type && file.type.startsWith("image/")) {
+        urls[idx] = URL.createObjectURL(file);
+      }
+    });
+    setPreviewUrls(urls);
+
+    return () => {
+      Object.values(urls).forEach((url) => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch {
+          // ignore
+        }
+      });
+    };
+  }, [selectedFiles]);
 
   const handleFiles = (filesList) => {
     setLocalError(null);
-    const files = Array.from(filesList);
+    const newFiles = Array.from(filesList);
 
-    if (files.length > maxFiles) {
+    if (newFiles.length > maxFiles) {
       setLocalError(`Maximal ${maxFiles} Dateien erlaubt.`);
       return;
     }
 
-    const invalidSize = files.find((f) => f.size > maxSizeBytes);
-    if (invalidSize) {
-      setLocalError(`Eine oder mehrere Dateien überschreiten das Limit von ${Math.round(maxSizeBytes / 1024 / 1024)}MB.`);
+    const invalidType = newFiles.find((f) => {
+      const allowed = accept.split(",").map((t) => t.trim());
+      return !allowed.some((a) => f.type === a || (a.endsWith("/*") && f.type.startsWith(a.replace("/*", ""))));
+    });
+
+    if (invalidType) {
+      setLocalError(`Ungültiger Dateityp (${invalidType.type || invalidType.name}).`);
       return;
     }
 
-    setSelectedFiles(files);
+    const invalidSize = newFiles.find((f) => f.size > maxSizeBytes);
+    if (invalidSize) {
+      setLocalError(`Eine oder mehrere Dateien überschreiten das Limit von ${Math.round(maxSizeBytes / 1024 / 1024)} MB.`);
+      return;
+    }
+
+    setInternalFiles(newFiles);
     if (onFilesSelected) {
-      onFilesSelected(files);
+      onFilesSelected(newFiles);
     }
   };
 
@@ -69,8 +106,15 @@ export function FileUpload({
 
   const removeFile = (index) => {
     const updated = selectedFiles.filter((_, i) => i !== index);
-    setSelectedFiles(updated);
+    setInternalFiles(updated);
     if (onFilesSelected) onFilesSelected(updated);
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  const formatFileSize = (bytes) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   return (
@@ -134,57 +178,117 @@ export function FileUpload({
           </div>
 
           <p style={{ margin: 0, fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)" }}>
-            Dateien hier ablegen oder durchsuchen
+            {dropText}
           </p>
 
           <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)" }}>
-            {helperText || `Formate: ${accept.replace(/image\//g, "")} (max. ${Math.round(maxSizeBytes / 1024 / 1024)}MB)`}
+            {helperText || `Formate: ${accept.replace(/image\//g, "")} (max. ${Math.round(maxSizeBytes / 1024 / 1024)} MB)`}
           </span>
         </div>
       </div>
 
       {displayError && (
-        <span className="form-helper is-error">{displayError}</span>
+        <span className="form-helper is-error" style={{ display: "block", marginTop: "var(--space-2xs)" }}>
+          {displayError}
+        </span>
       )}
 
       {selectedFiles.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xs)", marginTop: "var(--space-xs)" }}>
-          {selectedFiles.map((file, idx) => (
-            <div
-              key={`${file.name}-${idx}`}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                padding: "var(--space-xs) var(--space-md)",
-                backgroundColor: "var(--color-surface)",
-                border: "1px solid var(--color-border-subtle)",
-                borderRadius: "var(--radius-sm)",
-                fontSize: "var(--font-size-xs)",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", overflow: "hidden" }}>
-                <Icon name="image" size={16} style={{ color: "var(--color-secondary)" }} />
-                <span style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
-                  {file.name}
-                </span>
-                <span style={{ color: "var(--color-text-subtle)" }}>
-                  ({Math.round(file.size / 1024)} KB)
-                </span>
-              </div>
-              <Button
-                variant="text"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeFile(idx);
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+            gap: "var(--space-sm)",
+            marginTop: "var(--space-sm)",
+          }}
+        >
+          {selectedFiles.map((file, idx) => {
+            const previewUrl = previewUrls[idx];
+            return (
+              <div
+                key={`${file.name}-${idx}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "var(--space-sm)",
+                  padding: "var(--space-sm)",
+                  backgroundColor: "var(--color-surface)",
+                  border: "1px solid var(--color-border-subtle)",
+                  borderRadius: "var(--radius-md)",
+                  fontSize: "var(--font-size-xs)",
+                  overflow: "hidden",
                 }}
-                style={{ color: "var(--color-error)", padding: 0 }}
               >
-                Entfernen
-              </Button>
-            </div>
-          ))}
+                {previewUrl ? (
+                  <img
+                    src={previewUrl}
+                    alt={file.name}
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "var(--radius-sm)",
+                      objectFit: "cover",
+                      backgroundColor: "var(--color-card)",
+                      flexShrink: 0,
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      borderRadius: "var(--radius-sm)",
+                      backgroundColor: "var(--color-card)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "var(--color-secondary)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <Icon name="image" size={20} />
+                  </div>
+                )}
+
+                <div style={{ flex: 1, minWidth: 0, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      fontWeight: "var(--font-weight-medium)",
+                      color: "var(--color-text)",
+                    }}
+                    title={file.name}
+                  >
+                    {file.name}
+                  </div>
+                  <div style={{ color: "var(--color-text-subtle)", fontSize: "var(--font-size-2xs)", marginTop: "2px" }}>
+                    {formatFileSize(file.size)}
+                  </div>
+                </div>
+
+                <Button
+                  variant="text"
+                  size="sm"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile(idx);
+                  }}
+                  aria-label={`${removeText} ${file.name}`}
+                  style={{
+                    color: "var(--color-error)",
+                    padding: "var(--space-2xs)",
+                    minWidth: "auto",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Icon name="trash-2" size={16} />
+                </Button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

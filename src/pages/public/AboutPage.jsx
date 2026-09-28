@@ -1,27 +1,139 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useSettings } from "../../contexts/SettingsContext";
+import AboutHero from "../../components/about/AboutHero";
+import AboutStory from "../../components/about/AboutStory";
+import AboutVisualSection from "../../components/about/AboutVisualSection";
+import AboutLocations from "../../components/about/AboutLocations";
+import AboutContactCta from "../../components/about/AboutContactCta";
+import { useGsapContext } from "../../hooks/useAnimation";
+import { gsap, isReducedMotion } from "../../utils/animation";
 
+/**
+ * German Auto — Production About Page
+ * Route: /about
+ * Built strictly with verified CMS data (/api/settings) via SettingsContext.
+ * Zero invented business claims, fake history, or placeholder images.
+ */
 export function AboutPage() {
-  const { t } = useTranslation(["navigation", "common"]);
+  const { t, i18n } = useTranslation(["about", "common"]);
+  const { settings } = useSettings();
+  const pageContainerRef = useRef(null);
+
+  const siteConfig = settings?.site || {};
+  const footerConfig = settings?.footer || {};
+  const contactConfig = settings?.contact || {};
+  const hoursConfig = settings?.hours || {};
+  const locationsConfig = settings?.locations || [];
+  const heroConfig = settings?.hero || {};
+  const sellCarConfig = settings?.sell_car || {};
+
+  const currentLang = i18n.language || "de";
+
+  // Real CMS description
+  const storyDescription =
+    currentLang === "de"
+      ? footerConfig.description_de || siteConfig.description
+      : footerConfig.description_en || siteConfig.description;
+
+  // Real configured CMS media assets
+  const heroItems = Array.isArray(heroConfig.items) ? heroConfig.items : [];
+  const sellCarMedia = sellCarConfig.media_url ? [{ media_url: sellCarConfig.media_url }] : [];
+  const allMedia = [...heroItems, ...sellCarMedia].filter(
+    (item) => item && (item.media_url || item.url || (typeof item === "string" && item.trim().length > 0))
+  );
+
+  // If multiple CMS media items exist, use first for hero background and remaining for visual storytelling.
+  // If only 1 exists, keep Hero typography-led and render visual section with that asset.
+  const heroBgMedia =
+    allMedia.length > 1
+      ? allMedia[0]?.media_url || allMedia[0]?.url || (typeof allMedia[0] === "string" ? allMedia[0] : null)
+      : null;
+
+  const visualMediaItems = allMedia.length > 1 ? allMedia.slice(1) : allMedia;
+
+  // Dynamic SEO metadata
+  const siteName = siteConfig.name || "German Auto";
+  const pageTitle = t("heroTitle");
+  const metaDescription = storyDescription || t("heroSubtitle");
+
+  useEffect(() => {
+    document.title = `${pageTitle} | ${siteName}`;
+
+    let metaTag = document.querySelector('meta[name="description"]');
+    if (!metaTag) {
+      metaTag = document.createElement("meta");
+      metaTag.name = "description";
+      document.head.appendChild(metaTag);
+    }
+    metaTag.content = metaDescription;
+  }, [pageTitle, siteName, metaDescription]);
+
+  // Entrance animations using GSAP Context
+  useGsapContext(pageContainerRef, () => {
+    if (isReducedMotion()) return;
+
+    gsap.from(".about-hero", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: "power2.out",
+    });
+
+    const animatedSections = [
+      ".about-story-section",
+      ".about-visual-section",
+      ".about-locations-section",
+      ".about-contact-cta",
+    ];
+
+    gsap.from(animatedSections, {
+      opacity: 0,
+      y: 25,
+      duration: 0.65,
+      stagger: 0.12,
+      ease: "power2.out",
+      delay: 0.1,
+    });
+  });
 
   return (
-    <div className="container" style={{ padding: "var(--space-2xl) var(--space-md)" }}>
-      <h1 style={{ marginBottom: "var(--space-md)" }}>{t("about")}</h1>
-      <div
-        style={{
-          padding: "var(--space-xl)",
-          backgroundColor: "var(--color-card)",
-          borderRadius: "var(--radius-lg)",
-          border: "1px solid var(--color-border)",
-          color: "var(--color-text-secondary)",
-          maxWidth: "700px",
-        }}
-      >
-        <p style={{ margin: 0 }}>
-          Unternehmensprofil und Geschichte werden in der Designphase über die CMS-Einstellungen bereitgestellt.
-        </p>
-      </div>
-    </div>
+    <main
+      ref={pageContainerRef}
+      className="about-page"
+      style={{
+        maxWidth: "1320px",
+        margin: "0 auto",
+        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+      }}
+    >
+      {/* 1. Cinematic Hero */}
+      <AboutHero
+        mediaUrl={heroBgMedia}
+        title={t("heroTitle")}
+        subtitle={t("heroSubtitle")}
+      />
+
+      {/* 2. Story / Introduction (omits cleanly if no CMS description) */}
+      <AboutStory
+        description={storyDescription}
+        siteName={siteConfig.name}
+      />
+
+      {/* 3. Visual Storytelling (omits cleanly if no CMS media) */}
+      <AboutVisualSection mediaItems={visualMediaItems} />
+
+      {/* 4. Values / Principles (omitted because no values/principles exist in CMS) */}
+
+      {/* 5. Configured Dealership Locations (omits cleanly if no locations in CMS) */}
+      <AboutLocations locations={locationsConfig} />
+
+      {/* 6. Contact CTA (uses real contact channels & opening hours) */}
+      <AboutContactCta
+        contact={contactConfig}
+        hours={hoursConfig}
+      />
+    </main>
   );
 }
 

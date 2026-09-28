@@ -85,7 +85,6 @@ export function CarsFilterBar({
     { value: "", label: t("filterAllConditions", "Alle Zustände") },
     { value: "NEW", label: t("cond_NEW", "Neufahrzeug") },
     { value: "USED", label: t("cond_USED", "Gebrauchtfahrzeug") },
-    { value: "CERTIFIED", label: t("cond_CERTIFIED", "Zertifiziert") },
   ];
 
   const categoryOptions = [

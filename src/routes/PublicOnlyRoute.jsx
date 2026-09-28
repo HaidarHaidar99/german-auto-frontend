@@ -11,7 +11,7 @@ export function PublicOnlyRoute({ children }) {
   }
 
   if (isAuthenticated) {
-    return <Navigate to={isAdmin ? "/admincoresecure" : "/"} replace />;
+    return <Navigate to={isAdmin ? "/admincoresecure" : "/account"} replace />;
   }
 
   return children;

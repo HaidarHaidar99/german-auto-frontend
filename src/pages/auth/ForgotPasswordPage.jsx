@@ -1,53 +1,217 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import authService from "../../services/auth/auth.service";
+import Input from "../../components/forms/Input";
+import Button from "../../components/ui/Button";
+import Badge from "../../components/ui/Badge";
+import Icon from "../../components/common/Icon";
+import { useGsapContext } from "../../hooks/useAnimation";
+import { gsap, isReducedMotion } from "../../utils/animation";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ForgotPasswordPage() {
   const { t } = useTranslation(["auth", "common"]);
+  const pageContainerRef = useRef(null);
+
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    document.title = `${t("forgotPassword")} | German Auto`;
+  }, [t]);
+
+  useGsapContext(pageContainerRef, () => {
+    if (isReducedMotion()) return;
+    gsap.from(".auth-card", {
+      opacity: 0,
+      y: 20,
+      duration: 0.6,
+      ease: "power2.out",
+    });
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setServerError("");
+
+    if (!email || !EMAIL_REGEX.test(email.trim())) {
+      setError(t("validationEmailValid"));
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await authService.forgotPassword(email.trim().toLowerCase());
+      setIsSuccess(true);
+    } catch (err) {
+      if (err?.statusCode === 429) {
+        setServerError(err?.message || "Zu viele Anfragen. Bitte warten Sie einen Moment.");
+      } else {
+        // Generic safe response to prevent email enumeration
+        setIsSuccess(true);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="container" style={{ padding: "var(--space-3xl) var(--space-md)", maxWidth: "450px" }}>
+    <div
+      ref={pageContainerRef}
+      className="auth-page-container"
+      style={{
+        padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "75vh",
+      }}
+    >
       <div
+        className="auth-card surface-card"
         style={{
-          padding: "var(--space-2xl)",
+          width: "100%",
+          maxWidth: "460px",
           backgroundColor: "var(--color-card)",
-          borderRadius: "var(--radius-xl)",
+          borderRadius: "var(--radius-2xl)",
           border: "1px solid var(--color-border)",
+          padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
+          boxShadow: "var(--shadow-elevation-2)",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        <h1 style={{ fontSize: "1.75rem", marginBottom: "var(--space-md)", textAlign: "center" }}>
-          {t("forgotPassword")}
-        </h1>
-        <p style={{ color: "var(--color-text-secondary)", fontSize: "0.875rem", marginBottom: "var(--space-lg)", textAlign: "center" }}>
-          Geben Sie Ihre E-Mail-Adresse ein, um einen Link zum Zurücksetzen Ihres Passworts zu erhalten.
-        </p>
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "200px",
+            height: "2px",
+            background: "linear-gradient(90deg, transparent, var(--color-secondary), transparent)",
+          }}
+        />
 
-        <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-          <div>
-            <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem" }}>
-              {t("email")}
-            </label>
-            <input type="email" placeholder="ihre.email@example.de" disabled />
+        <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
+          <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
+            <Badge variant="outline" size="sm">
+              German Auto
+            </Badge>
           </div>
-
-          <button
-            type="submit"
+          <h1
             style={{
-              padding: "12px",
-              backgroundColor: "var(--color-secondary)",
-              color: "var(--color-primary)",
-              borderRadius: "var(--radius-md)",
-              fontWeight: 700,
-              marginTop: "var(--space-sm)",
+              fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
+              fontWeight: "var(--font-weight-bold)",
+              letterSpacing: "var(--tracking-tight)",
+              margin: "var(--space-2xs) 0 0 0",
+              color: "var(--color-text)",
             }}
           >
-            {t("sendResetLink")}
-          </button>
-        </form>
-
-        <div style={{ marginTop: "var(--space-lg)", textAlign: "center", fontSize: "0.875rem" }}>
-          <Link to="/login">← Zurück zum Login</Link>
+            {t("forgotPassword")}
+          </h1>
         </div>
+
+        {serverError && (
+          <div
+            role="alert"
+            style={{
+              padding: "var(--space-sm) var(--space-md)",
+              backgroundColor: "rgba(220, 38, 38, 0.1)",
+              border: "1px solid rgba(220, 38, 38, 0.3)",
+              borderRadius: "var(--radius-md)",
+              color: "var(--color-error)",
+              fontSize: "var(--font-size-sm)",
+              marginBottom: "var(--space-md)",
+              display: "flex",
+              alignItems: "flex-start",
+              gap: "var(--space-xs)",
+            }}
+          >
+            <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px" }} />
+            <span>{serverError}</span>
+          </div>
+        )}
+
+        {isSuccess ? (
+          <div style={{ textAlign: "center", padding: "var(--space-md) 0" }}>
+            <div
+              style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(16, 185, 129, 0.15)",
+                color: "var(--color-success)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto var(--space-md)",
+              }}
+            >
+              <Icon name="check" size={28} />
+            </div>
+            <p
+              style={{
+                color: "var(--color-text-secondary)",
+                fontSize: "var(--font-size-sm)",
+                lineHeight: 1.6,
+                margin: "0 0 var(--space-xl) 0",
+              }}
+            >
+              {t("forgotSuccess")}
+            </p>
+            <Button as={Link} to="/login" variant="primary" size="md" fullWidth>
+              {t("backToLogin")}
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
+            <Input
+              id="forgot-email"
+              name="email"
+              type="email"
+              label={t("email")}
+              placeholder={t("emailPlaceholder")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={error}
+              autoComplete="email"
+              required
+              disabled={loading}
+            />
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              fullWidth
+              style={{ marginTop: "var(--space-xs)" }}
+            >
+              {t("sendResetLink")}
+            </Button>
+
+            <div style={{ textAlign: "center", marginTop: "var(--space-md)" }}>
+              <Link
+                to="/login"
+                style={{
+                  fontSize: "var(--font-size-sm)",
+                  color: "var(--color-text-secondary)",
+                  textDecoration: "none",
+                }}
+              >
+                ← {t("backToLogin")}
+              </Link>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

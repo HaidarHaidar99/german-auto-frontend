@@ -9,6 +9,8 @@ import deAuth from "./locales/de/auth.json";
 import deCars from "./locales/de/cars.json";
 import deForms from "./locales/de/forms.json";
 import deAdmin from "./locales/de/admin.json";
+import deAbout from "./locales/de/about.json";
+import deAccount from "./locales/de/account.json";
 
 // English namespaces
 import enCommon from "./locales/en/common.json";
@@ -17,6 +19,8 @@ import enAuth from "./locales/en/auth.json";
 import enCars from "./locales/en/cars.json";
 import enForms from "./locales/en/forms.json";
 import enAdmin from "./locales/en/admin.json";
+import enAbout from "./locales/en/about.json";
+import enAccount from "./locales/en/account.json";
 
 const resources = {
   de: {
@@ -26,6 +30,8 @@ const resources = {
     cars: deCars,
     forms: deForms,
     admin: deAdmin,
+    about: deAbout,
+    account: deAccount,
   },
   en: {
     common: enCommon,
@@ -34,6 +40,8 @@ const resources = {
     cars: enCars,
     forms: enForms,
     admin: enAdmin,
+    about: enAbout,
+    account: enAccount,
   },
 };
 
@@ -45,7 +53,7 @@ i18n
     fallbackLng: "de",
     lng: "de", // German is explicitly the default language
     defaultNS: "common",
-    ns: ["common", "navigation", "auth", "cars", "forms", "admin"],
+    ns: ["common", "navigation", "auth", "cars", "forms", "admin", "about", "account"],
     interpolation: {
       escapeValue: false, // React already escapes values
     },
