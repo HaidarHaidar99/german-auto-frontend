@@ -272,7 +272,11 @@ export function SignupPage() {
                 type="button"
                 id="btn-google-auth-signup"
                 onClick={() => {
-                  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+                  const apiBaseUrl =
+                    import.meta.env.VITE_API_BASE_URL ||
+                    (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")
+                      ? "https://german-auto-backend.vercel.app/api"
+                      : "http://localhost:5000/api");
                   window.location.href = `${apiBaseUrl}/auth/google`;
                 }}
                 style={{

@@ -3,7 +3,17 @@
  * Uses native fetch with credentials: "include" for HttpOnly cookie authentication.
  */
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")) {
+    return "https://german-auto-backend.vercel.app/api";
+  }
+  return "/api";
+};
+
+const BASE_URL = getBaseUrl();
 
 export class ApiError extends Error {
   constructor(message, statusCode, errors = null, rawData = null) {
