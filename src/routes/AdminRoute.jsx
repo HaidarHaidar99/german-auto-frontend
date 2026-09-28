@@ -1,11 +1,13 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import LoadingState from "../components/ui/LoadingState";
 import UnauthorizedState from "../components/ui/UnauthorizedState";
 
-export function AdminRoute({ children }) {
-  const { status, isAuthenticated, isAdmin } = useAuth();
+export function AdminRoute({ children, requireSuperAdmin = false }) {
+  const { t } = useTranslation(["admin", "auth", "common"]);
+  const { status, isAuthenticated, isAdmin, isSuperAdmin } = useAuth();
   const location = useLocation();
 
   if (status === "loading") {
@@ -17,7 +19,23 @@ export function AdminRoute({ children }) {
   }
 
   if (!isAdmin) {
-    return <UnauthorizedState message="Zugriff verweigert. Dieser Bereich ist nur für Administratoren zugänglich." />;
+    return (
+      <UnauthorizedState
+        message={t("adminOnlyNotice", {
+          defaultValue: "Zugriff verweigert. Dieser Bereich ist nur für Administratoren zugänglich.",
+        })}
+      />
+    );
+  }
+
+  if (requireSuperAdmin && !isSuperAdmin) {
+    return (
+      <UnauthorizedState
+        message={t("superAdminOnlyNotice", {
+          defaultValue: "Zugriff verweigert. Dieser Bereich erfordert Super-Administrator-Rechte.",
+        })}
+      />
+    );
   }
 
   return children;

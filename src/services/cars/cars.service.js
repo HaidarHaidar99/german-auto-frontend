@@ -3,7 +3,7 @@ import apiClient from "../api/client";
 function buildQuery(params = {}) {
   const query = new URLSearchParams();
   for (const [key, val] of Object.entries(params)) {
-    if (val !== undefined && val !== null && val !== "") {
+    if (val !== undefined && val !== null && val !== "" && val !== "ALL") {
       query.append(key, String(val));
     }
   }

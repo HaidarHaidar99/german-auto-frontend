@@ -279,7 +279,7 @@ export function AdminNotificationsPage() {
             </Badge>
           ) : (
             <Badge variant="outline" size="sm">
-              Aktuell
+              {t("current", { defaultValue: "Aktuell" })}
             </Badge>
           )
         }

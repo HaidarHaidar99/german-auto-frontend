@@ -1,10 +1,15 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import Badge from "../../ui/Badge";
+import Button from "../../ui/Button";
 import IconButton from "../../ui/IconButton";
 import Icon from "../../common/Icon";
 
 export function CarTable({
   cars = [],
+  pagination = { page: 1, limit: 15, total: 0, pages: 1 },
+  onPageChange,
+  loading = false,
   onPreview,
   onEdit,
   onDelete,
@@ -14,6 +19,7 @@ export function CarTable({
   className = "",
   style = {},
 }) {
+  const { t } = useTranslation(["admin", "cars", "common"]);
 
   const formatPrice = (price) => {
     if (price == null) return "—";
@@ -399,6 +405,69 @@ export function CarTable({
           );
         })}
       </div>
+
+      {/* ─── SERVER-SIDE PAGINATION CONTROLS ─────────────────────────────────── */}
+      {pagination && pagination.pages > 1 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "var(--space-md)",
+            marginTop: "var(--space-md)",
+            padding: "var(--space-md) var(--space-lg)",
+            backgroundColor: "var(--color-admin-card, #121418)",
+            borderRadius: "var(--radius-md, 8px)",
+            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+            fontSize: "var(--font-size-sm)",
+            color: "var(--color-admin-muted)",
+          }}
+        >
+          <div>
+            {t("paginationInfoVehicles", {
+              page: pagination.page,
+              pages: pagination.pages,
+              total: pagination.total,
+              defaultValue: `Seite ${pagination.page} von ${pagination.pages} (${pagination.total} Fahrzeuge gesamt)`,
+            })}
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pagination.page <= 1 || loading}
+              onClick={() => onPageChange?.(pagination.page - 1)}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              <Icon name="chevron-left" size={14} />
+              <span>{t("previous", { defaultValue: "Zurück" })}</span>
+            </Button>
+
+            <span
+              style={{
+                padding: "0 10px",
+                fontWeight: 600,
+                color: "var(--color-admin-text, #ffffff)",
+              }}
+            >
+              {pagination.page} / {pagination.pages}
+            </span>
+
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pagination.page >= pagination.pages || loading}
+              onClick={() => onPageChange?.(pagination.page + 1)}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              <span>{t("next", { defaultValue: "Weiter" })}</span>
+              <Icon name="chevron-right" size={14} />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @media (max-width: 1024px) {

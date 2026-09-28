@@ -270,7 +270,7 @@ export function AdminSettingsPage() {
       case "google_reviews":
         return <GoogleReviewsSettingsEditor {...commonProps} />;
       default:
-        return <div>Wählen Sie einen Bereich zur Bearbeitung aus.</div>;
+        return <div>{t("selectSectionToEdit", "Wählen Sie einen Bereich zur Bearbeitung aus.")}</div>;
     }
   };
 
@@ -278,7 +278,7 @@ export function AdminSettingsPage() {
     <div ref={pageContainerRef} className="admin-settings-page">
       <AdminPageHeader
         title={t("settings")}
-        subtitle="Zentrales Content-Management-System & Konfiguration aller 16 Website-Bereiche"
+        subtitle={t("settingsSubtitle", "Zentrales Content-Management-System & Konfiguration aller 16 Website-Bereiche")}
         badge={
           <Badge variant="secondary" size="sm">
             CMS Core

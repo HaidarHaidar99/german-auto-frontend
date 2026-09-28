@@ -13,6 +13,7 @@ export function AdminBreadcrumbs({ className = "", style = {} }) {
     forms: t("forms"),
     reviews: t("reviews"),
     notifications: t("notifications"),
+    users: t("userManagement", { defaultValue: "Benutzerverwaltung" }),
   };
 
   const segments = location.pathname

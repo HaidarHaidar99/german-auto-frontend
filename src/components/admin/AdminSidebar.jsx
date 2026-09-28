@@ -9,7 +9,7 @@ import Icon from "../common/Icon";
 
 export function AdminSidebar({ className = "", style = {} }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { logout } = useAuth();
+  const { logout, isSuperAdmin } = useAuth();
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -52,6 +52,16 @@ export function AdminSidebar({ className = "", style = {} }) {
       icon: "bell",
       badgeCount: unreadCount,
     },
+    ...(isSuperAdmin
+      ? [
+          {
+            to: "/admincoresecure/users",
+            end: false,
+            label: t("userManagement", { defaultValue: "Benutzerverwaltung" }),
+            icon: "users",
+          },
+        ]
+      : []),
   ];
 
   return (

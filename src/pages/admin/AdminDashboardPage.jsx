@@ -1,15 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
-import carsService from "../../services/cars/cars.service";
-import formsService from "../../services/forms/forms.service";
-import reviewsService from "../../services/reviews/reviews.service";
-import notificationsService from "../../services/notifications/notifications.service";
+import adminDashboardService from "../../services/adminDashboard/adminDashboard.service";
 import AdminPageHeader from "../../components/admin/AdminPageHeader";
-import AdminStatCard from "../../components/admin/AdminStatCard";
-import AdminSectionCard from "../../components/admin/AdminSectionCard";
-import AdminEmptyState from "../../components/admin/AdminEmptyState";
+import DashboardSummaryCards from "../../components/admin/dashboard/DashboardSummaryCards";
+import InventoryOverview from "../../components/admin/dashboard/InventoryOverview";
+import AttentionRequired from "../../components/admin/dashboard/AttentionRequired";
+import QuickActions from "../../components/admin/dashboard/QuickActions";
+import RecentCars from "../../components/admin/dashboard/RecentCars";
+import RecentUsers from "../../components/admin/dashboard/RecentUsers";
+import RecentActivity from "../../components/admin/dashboard/RecentActivity";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Icon from "../../components/common/Icon";
@@ -17,510 +17,230 @@ import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
 
 export function AdminDashboardPage() {
-  const { t, i18n } = useTranslation(["admin", "common"]);
+  const { t } = useTranslation(["admin", "common"]);
   const { user } = useAuth();
   const pageContainerRef = useRef(null);
 
+  const isSuperAdmin = user?.role === "SUPER_ADMIN";
+
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    totalCars: 0,
-    visibleCars: 0,
-    unreadForms: 0,
-    pendingReviews: 0,
-    unreadNotifications: 0,
+  const [refreshing, setRefreshing] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
+
+  const [dashboardData, setDashboardData] = useState({
+    inventory: {
+      total: 0,
+      available: 0,
+      sold: 0,
+      reserved: 0,
+      hidden: 0,
+      featured: 0,
+      recent: [],
+    },
+    forms: {
+      pending: 0,
+      total: 0,
+      recent: [],
+    },
+    reviews: {
+      pending: 0,
+      total: 0,
+      recent: [],
+    },
+    notifications: {
+      unreadCount: 0,
+      recent: [],
+    },
+    users: null,
   });
 
-  const [recentCars, setRecentCars] = useState([]);
-  const [recentForms, setRecentForms] = useState([]);
-  const [recentReviews, setRecentReviews] = useState([]);
-  const [recentNotifications, setRecentNotifications] = useState([]);
-
-  const currentLang = i18n.language || "de";
-
   useEffect(() => {
-    document.title = `${t("dashboard")} | ADMINCORE`;
+    document.title = `${t("dashboard", { defaultValue: "Dashboard" })} | ADMINCORE`;
   }, [t]);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadDashboardData = async () => {
+  // ── Fetch Dashboard Data ─────────────────────────────────────────────────────
+  const loadData = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setRefreshing(true);
+    } else {
       setLoading(true);
-      try {
-        // Fetch all 4 data sources in parallel from real endpoints
-        const [carsRes, formsRes, reviewsRes, notifsRes] = await Promise.allSettled([
-          carsService.adminGetCars({ limit: 5 }),
-          formsService.adminGetForms({ limit: 5 }),
-          reviewsService.adminGetReviews({ limit: 5 }),
-          notificationsService.getNotifications({ limit: 5 }),
-        ]);
+    }
+    setFetchError(null);
 
-        if (!isMounted) return;
+    try {
+      const data = await adminDashboardService.getDashboardData({ isSuperAdmin });
+      setDashboardData(data);
+    } catch (err) {
+      setFetchError(err.message || t("errorLoading", { defaultValue: "Fehler beim Laden der Verwaltungsdaten." }));
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [isSuperAdmin, t]);
 
-        // 1. Cars
-        let carsList = [];
-        let totalCars = 0;
-        let visibleCars = 0;
-        if (carsRes.status === "fulfilled" && carsRes.value?.data) {
-          carsList = carsRes.value.data.cars || [];
-          totalCars = carsRes.value.meta?.total ?? carsList.length;
-          visibleCars = carsList.filter((c) => c.is_visible).length;
-        }
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-        // 2. Forms
-        let formsList = [];
-        let unreadForms = 0;
-        if (formsRes.status === "fulfilled" && formsRes.value?.data) {
-          formsList = formsRes.value.data.forms || [];
-          unreadForms = formsList.filter((f) => f.status === "PENDING" || f.status === "NEW").length;
-        }
-
-        // 3. Reviews
-        let reviewsList = [];
-        let pendingReviews = 0;
-        if (reviewsRes.status === "fulfilled" && reviewsRes.value?.data) {
-          reviewsList = reviewsRes.value.data.reviews || [];
-          pendingReviews = reviewsList.filter((r) => r.status === "PENDING").length;
-        }
-
-        // 4. Notifications
-        let notifsList = [];
-        let unreadNotifications = 0;
-        if (notifsRes.status === "fulfilled" && notifsRes.value?.data) {
-          notifsList = notifsRes.value.data.notifications || [];
-          unreadNotifications = notifsRes.value.data.unread_count ?? notifsList.filter((n) => !n.is_read).length;
-        }
-
-        setStats({
-          totalCars,
-          visibleCars,
-          unreadForms,
-          pendingReviews,
-          unreadNotifications,
-        });
-
-        setRecentCars(carsList);
-        setRecentForms(formsList);
-        setRecentReviews(reviewsList);
-        setRecentNotifications(notifsList);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    loadDashboardData();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  // ── GSAP Staggered Entrance ─────────────────────────────────────────────────
   useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion()) return;
+    if (isReducedMotion() || loading) return;
+
     gsap.from(".admin-stat-card", {
       opacity: 0,
-      y: 15,
-      duration: 0.5,
-      stagger: 0.08,
+      y: 12,
+      duration: 0.4,
+      stagger: 0.06,
       ease: "power2.out",
     });
 
     gsap.from(".admin-dashboard-section", {
       opacity: 0,
-      y: 20,
-      duration: 0.6,
-      stagger: 0.1,
+      y: 16,
+      duration: 0.5,
+      stagger: 0.08,
       ease: "power2.out",
-      delay: 0.1,
+      delay: 0.08,
     });
   });
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "—";
-    return new Date(dateStr).toLocaleDateString(currentLang === "de" ? "de-DE" : "en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const quickActions = [
-    { label: t("manageWebsite"), to: "/admincoresecure/settings", icon: "settings" },
-    { label: t("manageVehicles"), to: "/admincoresecure/cars", icon: "car" },
-    { label: t("viewForms"), to: "/admincoresecure/forms", icon: "mail" },
-    { label: t("manageReviews"), to: "/admincoresecure/reviews", icon: "star" },
-    { label: t("viewNotifications"), to: "/admincoresecure/notifications", icon: "bell" },
-  ];
-
   return (
-    <div ref={pageContainerRef} className="admin-dashboard-page">
+    <div ref={pageContainerRef} className="admin-dashboard-page" style={{ width: "100%", maxWidth: "1600px" }}>
+      {/* ── Page Header ─────────────────────────────────────────────────────── */}
       <AdminPageHeader
-        title={t("dashboard")}
-        subtitle={`Willkommen im geschützten Kontrollzentrum, ${user?.full_name || user?.email}`}
+        title={t("dashboard", { defaultValue: "Dashboard" })}
+        subtitle={`${t("welcomeAdmin", { defaultValue: "Willkommen im Kontrollzentrum" })}, ${user?.full_name || user?.email || "Administrator"}`}
         badge={
-          <Badge variant="secondary" size="sm">
-            {user?.role || "ADMIN"}
+          <Badge variant={isSuperAdmin ? "secondary" : "primary"} size="sm">
+            {isSuperAdmin
+              ? t("superAdmin", { defaultValue: "SUPER_ADMIN" })
+              : t("admin", { defaultValue: "ADMIN" })}
           </Badge>
+        }
+        actions={
+          <Button
+            onClick={() => loadData(true)}
+            variant="outline"
+            size="sm"
+            disabled={loading || refreshing}
+          >
+            <span
+              style={{
+                display: "inline-flex",
+                transform: refreshing ? "rotate(360deg)" : "none",
+                transition: refreshing ? "transform 0.8s linear infinite" : "none",
+              }}
+            >
+              <Icon name="refresh-cw" size={14} />
+            </span>
+            <span>
+              {refreshing
+                ? t("refreshing", { defaultValue: "Wird aktualisiert..." })
+                : t("refreshDashboard", { defaultValue: "Aktualisieren" })}
+            </span>
+          </Button>
         }
       />
 
-      {/* ── 1. Stat Cards Grid ──────────────────────────────────────────────── */}
+      {/* ── Error Banner (if complete fetch failure) ─────────────────────────── */}
+      {fetchError && (
+        <div
+          style={{
+            padding: "var(--space-md) var(--space-lg)",
+            backgroundColor: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
+            borderRadius: "var(--radius-lg)",
+            marginBottom: "var(--space-xl)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "var(--space-md)",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
+            <Icon name="alert-circle" size={18} style={{ color: "var(--color-danger, #ef4444)" }} />
+            <span style={{ fontSize: "var(--font-size-sm)", color: "var(--color-admin-text)" }}>
+              {fetchError}
+            </span>
+          </div>
+          <Button onClick={() => loadData(false)} variant="outline" size="sm">
+            {t("retry", { defaultValue: "Erneut versuchen" })}
+          </Button>
+        </div>
+      )}
+
+      {/* ── Quick Actions ───────────────────────────────────────────────────── */}
+      <QuickActions isSuperAdmin={isSuperAdmin} />
+
+      {/* ── Top Summary Cards ───────────────────────────────────────────────── */}
+      <DashboardSummaryCards
+        inventory={dashboardData.inventory}
+        forms={dashboardData.forms}
+        reviews={dashboardData.reviews}
+        users={dashboardData.users}
+        notifications={dashboardData.notifications}
+        isSuperAdmin={isSuperAdmin}
+        loading={loading}
+      />
+
+      {/* ── Inventory Overview ──────────────────────────────────────────────── */}
+      <div className="admin-dashboard-section" style={{ marginBottom: "var(--space-xl)" }}>
+        <InventoryOverview inventory={dashboardData.inventory} loading={loading} />
+      </div>
+
+      {/* ── Main Dual-Column Operational Grid ───────────────────────────────── */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "var(--space-md)",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
+          gap: "var(--space-xl)",
           marginBottom: "var(--space-xl)",
         }}
       >
-        <AdminStatCard
-          label={t("statTotalVehicles")}
-          value={stats.totalCars}
-          subtitle={`${stats.visibleCars} ${t("statVisibleVehicles")}`}
-          icon="car"
-          to="/admincoresecure/cars"
-          loading={loading}
-        />
-        <AdminStatCard
-          label={t("statUnreadForms")}
-          value={stats.unreadForms}
-          icon="inbox"
-          to="/admincoresecure/forms"
-          loading={loading}
-        />
-        <AdminStatCard
-          label={t("statPendingReviews")}
-          value={stats.pendingReviews}
-          icon="star"
-          to="/admincoresecure/reviews"
-          loading={loading}
-        />
-        <AdminStatCard
-          label={t("statUnreadNotifications")}
-          value={stats.unreadNotifications}
-          icon="bell"
-          to="/admincoresecure/notifications"
-          loading={loading}
-        />
-      </div>
+        {/* Urgent Attention / Action Required */}
+        <div className="admin-dashboard-section">
+          <AttentionRequired
+            forms={dashboardData.forms}
+            reviews={dashboardData.reviews}
+            users={dashboardData.users}
+            inventory={dashboardData.inventory}
+            notifications={dashboardData.notifications}
+            isSuperAdmin={isSuperAdmin}
+            loading={loading}
+          />
+        </div>
 
-      {/* ── 2. Quick Actions Bar ────────────────────────────────────────────── */}
-      <div
-        className="admin-dashboard-section"
-        style={{
-          marginBottom: "var(--space-xl)",
-          padding: "var(--space-md) var(--space-lg)",
-          backgroundColor: "var(--color-admin-card)",
-          borderRadius: "var(--radius-xl)",
-          border: "1px solid var(--color-admin-border)",
-          display: "flex",
-          alignItems: "center",
-          gap: "var(--space-md)",
-          flexWrap: "wrap",
-        }}
-      >
-        <span style={{ fontSize: "var(--font-size-xs)", fontWeight: 700, color: "var(--color-secondary)", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-          {t("quickActions")}:
-        </span>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", flexWrap: "wrap" }}>
-          {quickActions.map((qa) => (
-            <Button
-              key={qa.to}
-              as={Link}
-              to={qa.to}
-              variant="outline"
-              size="sm"
-            >
-              <Icon name={qa.icon} size={14} />
-              <span>{qa.label}</span>
-            </Button>
-          ))}
+        {/* Recent Real Vehicles */}
+        <div className="admin-dashboard-section">
+          <RecentCars cars={dashboardData.inventory?.recent || []} loading={loading} />
         </div>
       </div>
 
-      {/* ── 3. Dual-Column Content Grid: Vehicles & Forms ───────────────────── */}
+      {/* ── Secondary Dual-Column Grid: Users & Activity ─────────────────────── */}
       <div
-        className="admin-dashboard-section"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))",
-          gap: "var(--space-xl)",
-          marginBottom: "var(--space-xl)",
-        }}
-      >
-        {/* Recent Real Vehicles */}
-        <AdminSectionCard
-          title={t("recentVehicles")}
-          actions={
-            <Button as={Link} to="/admincoresecure/cars" variant="ghost" size="sm" iconRight="arrow-right">
-              {t("viewAll")}
-            </Button>
-          }
-        >
-          {recentCars.length === 0 ? (
-            <AdminEmptyState
-              icon="car"
-              title={t("noRecentVehicles")}
-              actionLabel={t("manageVehicles")}
-              actionTo="/admincoresecure/cars"
-            />
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-              {recentCars.map((car) => {
-                const img = car.media?.thumbnail || car.images?.[0] || car.image_url;
-                return (
-                  <div
-                    key={car.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "8px 12px",
-                      borderRadius: "var(--radius-md)",
-                      backgroundColor: "rgba(255, 255, 255, 0.02)",
-                      border: "1px solid var(--color-admin-border)",
-                      gap: "var(--space-sm)",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-                      {img ? (
-                        <img
-                          src={img}
-                          alt={car.model || car.title}
-                          style={{ width: "42px", height: "32px", objectFit: "cover", borderRadius: "var(--radius-sm)" }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            width: "42px",
-                            height: "32px",
-                            borderRadius: "var(--radius-sm)",
-                            backgroundColor: "var(--color-surface)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: "var(--color-admin-muted)",
-                          }}
-                        >
-                          <Icon name="car" size={16} />
-                        </div>
-                      )}
-                      <div>
-                        <div style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text)" }}>
-                          {car.brand} {car.model || car.title}
-                        </div>
-                        <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)" }}>
-                          {car.price ? `${car.price.toLocaleString("de-DE")} €` : "—"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <Badge variant={car.status === "AVAILABLE" ? "success" : "neutral"} size="sm">
-                      {car.status}
-                    </Badge>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </AdminSectionCard>
-
-        {/* Recent Real Form Inquiries */}
-        <AdminSectionCard
-          title={t("recentForms")}
-          actions={
-            <Button as={Link} to="/admincoresecure/forms" variant="ghost" size="sm" iconRight="arrow-right">
-              {t("viewAll")}
-            </Button>
-          }
-        >
-          {recentForms.length === 0 ? (
-            <AdminEmptyState
-              icon="mail"
-              title={t("noRecentForms")}
-              actionLabel={t("viewForms")}
-              actionTo="/admincoresecure/forms"
-            />
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-              {recentForms.map((form) => (
-                <div
-                  key={form.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "8px 12px",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--color-admin-border)",
-                    gap: "var(--space-sm)",
-                  }}
-                >
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <Badge variant="outline" size="sm">
-                        {form.type || "CONTACT"}
-                      </Badge>
-                      <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600 }}>
-                        {form.name || form.email || "Anfrage"}
-                      </span>
-                    </div>
-                    <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                      {formatDate(form.created_at)}
-                    </div>
-                  </div>
-
-                  <Badge variant={form.status === "PENDING" ? "warning" : "neutral"} size="sm">
-                    {form.status}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </AdminSectionCard>
-      </div>
-
-      {/* ── 4. Dual-Column Content Grid: Reviews & Notifications ────────────── */}
-      <div
-        className="admin-dashboard-section"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
           gap: "var(--space-xl)",
         }}
       >
-        {/* Recent Real Reviews */}
-        <AdminSectionCard
-          title={t("recentReviews")}
-          actions={
-            <Button as={Link} to="/admincoresecure/reviews" variant="ghost" size="sm" iconRight="arrow-right">
-              {t("viewAll")}
-            </Button>
-          }
-        >
-          {recentReviews.length === 0 ? (
-            <AdminEmptyState
-              icon="star"
-              title={t("noRecentReviews")}
-              actionLabel={t("manageReviews")}
-              actionTo="/admincoresecure/reviews"
-            />
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-              {recentReviews.map((rev) => (
-                <div
-                  key={rev.id}
-                  style={{
-                    padding: "10px 12px",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: "rgba(255, 255, 255, 0.02)",
-                    border: "1px solid var(--color-admin-border)",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "4px",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                      <span style={{ fontWeight: 600, fontSize: "var(--font-size-sm)" }}>
-                        {rev.author_name || "Kunde"}
-                      </span>
-                      <span style={{ color: "var(--color-secondary)", fontSize: "var(--font-size-xs)" }}>
-                        {"★".repeat(rev.rating || 5)}
-                      </span>
-                    </div>
+        {/* Recent Users (SUPER_ADMIN full / ADMIN permission banner) */}
+        <div className="admin-dashboard-section">
+          <RecentUsers
+            users={dashboardData.users?.recent || []}
+            isSuperAdmin={isSuperAdmin}
+            loading={loading}
+          />
+        </div>
 
-                    <Badge variant={rev.status === "APPROVED" ? "success" : rev.status === "PENDING" ? "warning" : "neutral"} size="sm">
-                      {rev.status}
-                    </Badge>
-                  </div>
-
-                  {rev.comment && (
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: "var(--font-size-xs)",
-                        color: "var(--color-admin-muted)",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {rev.comment}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </AdminSectionCard>
-
-        {/* Recent Real System Notifications */}
-        <AdminSectionCard
-          title={t("recentNotifications")}
-          actions={
-            <Button as={Link} to="/admincoresecure/notifications" variant="ghost" size="sm" iconRight="arrow-right">
-              {t("viewAll")}
-            </Button>
-          }
-        >
-          {recentNotifications.length === 0 ? (
-            <AdminEmptyState
-              icon="bell"
-              title={t("noRecentNotifications")}
-              actionLabel={t("viewNotifications")}
-              actionTo="/admincoresecure/notifications"
-            />
-          ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-              {recentNotifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  style={{
-                    padding: "10px 12px",
-                    borderRadius: "var(--radius-md)",
-                    backgroundColor: notif.is_read ? "rgba(255, 255, 255, 0.01)" : "rgba(197, 160, 89, 0.06)",
-                    border: `1px solid ${notif.is_read ? "var(--color-admin-border)" : "rgba(197, 160, 89, 0.3)"}`,
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    gap: "var(--space-sm)",
-                  }}
-                >
-                  <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                    <div style={{ fontSize: "var(--font-size-sm)", fontWeight: notif.is_read ? 500 : 700, color: "var(--color-admin-text)" }}>
-                      {notif.title}
-                    </div>
-                    {notif.message && (
-                      <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-                        {notif.message}
-                      </div>
-                    )}
-                    <div style={{ fontSize: "10px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                      {formatDate(notif.created_at)}
-                    </div>
-                  </div>
-
-                  {!notif.is_read && (
-                    <span
-                      style={{
-                        width: "8px",
-                        height: "8px",
-                        borderRadius: "50%",
-                        backgroundColor: "var(--color-secondary)",
-                        marginTop: "6px",
-                        flexShrink: 0,
-                      }}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </AdminSectionCard>
+        {/* Real Live System Activity Feed */}
+        <div className="admin-dashboard-section">
+          <RecentActivity
+            notifications={dashboardData.notifications?.recent || []}
+            loading={loading}
+          />
+        </div>
       </div>
     </div>
   );

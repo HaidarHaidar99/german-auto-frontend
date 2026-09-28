@@ -7,6 +7,7 @@ import Icon from "../../common/Icon";
  */
 export function CarInventorySummary({
   cars = [],
+  summaryCounts = null,
   activeStatusFilter = "ALL",
   onSelectStatusFilter,
   className = "",
@@ -14,12 +15,22 @@ export function CarInventorySummary({
 }) {
   const { t } = useTranslation(["admin", "cars", "common"]);
 
-  const total = cars.length;
-  const available = cars.filter((c) => c.status === "AVAILABLE" && c.is_visible !== false).length;
-  const reserved = cars.filter((c) => c.status === "RESERVED").length;
-  const sold = cars.filter((c) => c.status === "SOLD").length;
-  const featured = cars.filter((c) => c.is_featured === true).length;
-  const hidden = cars.filter((c) => c.is_visible === false || c.status === "HIDDEN").length;
+  const total = summaryCounts?.total != null ? summaryCounts.total : cars.length;
+  const available = summaryCounts?.available != null
+    ? summaryCounts.available
+    : cars.filter((c) => c.status === "AVAILABLE" && c.is_visible !== false).length;
+  const reserved = summaryCounts?.reserved != null
+    ? summaryCounts.reserved
+    : cars.filter((c) => c.status === "RESERVED").length;
+  const sold = summaryCounts?.sold != null
+    ? summaryCounts.sold
+    : cars.filter((c) => c.status === "SOLD").length;
+  const featured = summaryCounts?.featured != null
+    ? summaryCounts.featured
+    : cars.filter((c) => c.is_featured === true).length;
+  const hidden = summaryCounts?.hidden != null
+    ? summaryCounts.hidden
+    : cars.filter((c) => c.is_visible === false || c.status === "HIDDEN").length;
 
   const stats = [
     {

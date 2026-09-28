@@ -385,6 +385,35 @@ export function CarEditorModal({
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Check if any media contains local temporary blob: URLs
+    const hasBlobThumbnail = form.media?.thumbnail?.startsWith("blob:");
+    const hasBlobGallery = Array.isArray(form.media?.gallery) && form.media.gallery.some((u) => u?.startsWith("blob:"));
+    const hasBlob360 = Array.isArray(form.media?.images_360) && form.media.images_360.some((u) => u?.startsWith("blob:"));
+
+    if (hasBlobThumbnail || hasBlobGallery || hasBlob360) {
+      setActiveTab("media");
+      setMediaValidationError(
+        t("blobMediaNotPersisted", {
+          defaultValue:
+            "Lokale Dateiauswahl dient nur der temporären Vorschau. Bitte hinterlegen Sie permanente Medien-URLs (z. B. https://... aus dem CDN oder Storage-Bucket) für die dauerhafte Speicherung.",
+        })
+      );
+      return;
+    }
+
+    // Clean payload for submission
+    const cleanMedia = {
+      thumbnail: form.media?.thumbnail?.trim() || null,
+      gallery: Array.isArray(form.media?.gallery)
+        ? form.media.gallery.filter((u) => u && !u.startsWith("blob:")).map((u) => u.trim())
+        : [],
+      video: form.media?.video?.trim() || null,
+      images_360: Array.isArray(form.media?.images_360)
+        ? form.media.images_360.filter((u) => u && !u.startsWith("blob:")).map((u) => u.trim())
+        : [],
+      model_3d: form.media?.model_3d?.trim() || null,
+    };
+
     // Prepare payload matching car schema
     const payload = {
       brand: form.brand.trim(),
@@ -412,7 +441,7 @@ export function CarEditorModal({
       interior_color: form.interior_color || null,
       equipment: form.equipment,
       custom_fields: form.custom_fields,
-      media: form.media,
+      media: cleanMedia,
       is_featured: Boolean(form.is_featured),
       is_visible: Boolean(form.is_visible),
     };
@@ -869,7 +898,7 @@ export function CarEditorModal({
               <Icon name="info" size={16} style={{ color: "var(--color-primary, #C5A059)", marginTop: "2px", flexShrink: 0 }} />
               <div>
                 <strong style={{ color: "var(--color-primary, #C5A059)" }}>Fahrzeugmedien-Architektur:</strong>{" "}
-                Fahrzeugmedien werden über permanente URLs (z.&nbsp;B. im Supabase Storage Bucket <code>german-auto-media</code> oder CDN) im Datensatz gespeichert. Sie können URLs direkt einfügen oder lokale Dateien für die Validierung und Vorschau auswählen.
+                Fahrzeugmedien werden über permanente URLs (z.&nbsp;B. im Supabase Storage Bucket <code>german-auto-media</code> oder CDN) im Datensatz gespeichert. Lokale Dateiauswahl dient ausschließlich der temporären Browser-Vorschau und Validierung. Für die dauerhafte Speicherung in der Datenbank ist eine permanente HTTPS-URL erforderlich.
               </div>
             </div>
 
@@ -901,7 +930,7 @@ export function CarEditorModal({
 
             {/* 1. Thumbnail */}
             <div>
-              <SettingsField label="Haupt-Vorschaubild (Thumbnail URL)" helper="Wird in Listenansichten und als Startbild auf der Detailseite genutzt.">
+              <SettingsField label="Haupt-Vorschaubild (Thumbnail URL)" helper="Wird in Listenansichten und als Startbild auf der Detailseite genutzt. Permanente URL erforderlich.">
                 <div style={{ display: "flex", gap: "var(--space-xs)" }}>
                   <Input
                     value={form.media.thumbnail || ""}
@@ -923,7 +952,7 @@ export function CarEditorModal({
                     }}
                   >
                     <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                    Datei wählen
+                    Lokale Datei (Vorschau)
                     <input
                       type="file"
                       accept="image/jpeg,image/png,image/webp,image/avif"
@@ -942,13 +971,13 @@ export function CarEditorModal({
               {form.media.thumbnail && (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)", marginTop: "6px" }}>
                   <div style={{ width: "120px", height: "80px", borderRadius: "6px", overflow: "hidden", backgroundColor: "#000", border: "1px solid rgba(255, 255, 255, 0.15)" }}>
-                    <img src={form.media.thumbnail} alt="Thumbnail Vorschau" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img src={form.media.thumbnail} alt={t("thumbnailPreview")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
-                  <div style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
+                  <div style={{ fontSize: "11px" }}>
                     {form.media.thumbnail.startsWith("blob:") ? (
-                      <span style={{ color: "var(--color-primary, #C5A059)" }}>Lokale Vorschau (temporär generiert)</span>
+                      <span style={{ color: "#eab308", fontWeight: 600 }}>{t("localPreviewWarning")}</span>
                     ) : (
-                      <span>Permanente URL</span>
+                      <span style={{ color: "#22c55e", fontWeight: 500 }}>{t("permanentUrlSaved")}</span>
                     )}
                   </div>
                 </div>
@@ -997,7 +1026,7 @@ export function CarEditorModal({
                   }}
                 >
                   <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                  Lokale Bilder wählen
+                  Lokale Bilder (Vorschau)
                   <input
                     type="file"
                     multiple
@@ -1027,7 +1056,9 @@ export function CarEditorModal({
                         position: "relative",
                         borderRadius: "6px",
                         overflow: "hidden",
-                        border: "1px solid rgba(255, 255, 255, 0.12)",
+                        border: imgUrl.startsWith("blob:")
+                          ? "1px solid #eab308"
+                          : "1px solid rgba(255, 255, 255, 0.12)",
                         backgroundColor: "#000",
                       }}
                     >
@@ -1066,7 +1097,9 @@ export function CarEditorModal({
                           </button>
                         </div>
 
-                        <span style={{ color: "var(--color-admin-muted)", fontSize: "10px" }}>#{idx + 1}</span>
+                        <span style={{ color: imgUrl.startsWith("blob:") ? "#eab308" : "var(--color-admin-muted)", fontSize: "10px" }}>
+                          {imgUrl.startsWith("blob:") ? "⚠️ Vorschau" : `#${idx + 1}`}
+                        </span>
 
                         <button
                           type="button"

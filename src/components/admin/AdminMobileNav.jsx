@@ -9,7 +9,7 @@ import Icon from "../common/Icon";
 
 export function AdminMobileNav({ isOpen, onClose }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { logout } = useAuth();
+  const { logout, isSuperAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -25,6 +25,16 @@ export function AdminMobileNav({ isOpen, onClose }) {
     { to: "/admincoresecure/forms", end: false, label: t("forms"), icon: "mail" },
     { to: "/admincoresecure/reviews", end: false, label: t("reviews"), icon: "star" },
     { to: "/admincoresecure/notifications", end: false, label: t("notifications"), icon: "bell" },
+    ...(isSuperAdmin
+      ? [
+          {
+            to: "/admincoresecure/users",
+            end: false,
+            label: t("userManagement", { defaultValue: "Benutzerverwaltung" }),
+            icon: "users",
+          },
+        ]
+      : []),
   ];
 
   return (

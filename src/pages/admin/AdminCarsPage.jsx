@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import carsService from "../../services/cars/cars.service";
 import AdminPageHeader from "../../components/admin/AdminPageHeader";
@@ -17,6 +17,7 @@ import CarTable from "../../components/admin/cars/CarTable";
 import CarEditorModal from "../../components/admin/cars/CarEditorModal";
 import CarDeleteModal from "../../components/admin/cars/CarDeleteModal";
 import CarDetailDrawer from "../../components/admin/cars/CarDetailDrawer";
+import CarStatusModal from "../../components/admin/cars/CarStatusModal";
 
 const DEFAULT_FILTERS = {
   search: "",
@@ -38,15 +39,36 @@ export function AdminCarsPage() {
   const { t } = useTranslation(["admin", "cars", "common"]);
   const pageContainerRef = useRef(null);
 
+  // Cars list & Pagination State
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(15);
+  const [pagination, setPagination] = useState({ page: 1, limit: 15, total: 0, pages: 1 });
+
+  // Filters State
   const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const searchTimeoutRef = useRef(null);
+
+  // Available brands cache for filter dropdown
+  const [availableBrands, setAvailableBrands] = useState([]);
+
+  // Summary counts across database
+  const [summaryCounts, setSummaryCounts] = useState({
+    total: 0,
+    available: 0,
+    reserved: 0,
+    sold: 0,
+    featured: 0,
+    hidden: 0,
+  });
 
   // Modals & Drawers state
   const [editorOpen, setEditorOpen] = useState(false);
-  const [editingCar, setEditingCar] = useState(null); // null = create, object = edit
+  const [editingCar, setEditingCar] = useState(null);
   const [editorSaving, setEditorSaving] = useState(false);
   const [editorErrors, setEditorErrors] = useState({});
 
@@ -57,17 +79,70 @@ export function AdminCarsPage() {
   const [previewDrawerOpen, setPreviewDrawerOpen] = useState(false);
   const [carToPreview, setCarToPreview] = useState(null);
 
-  const [feedbackMessage, setFeedbackMessage] = useState(null);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [carForStatusModal, setCarForStatusModal] = useState(null);
+  const [statusModalLoading, setStatusModalLoading] = useState(false);
+
+  // Toast feedback state
+  const [toastNotification, setToastNotification] = useState(null);
+  const toastTimeoutRef = useRef(null);
+
+  const showToast = useCallback((type, text) => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToastNotification({ type, text });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastNotification(null);
+    }, 4500);
+  }, []);
 
   useEffect(() => {
     document.title = `${t("inventory")} | ADMINCORE`;
+    return () => {
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    };
   }, [t]);
 
-  const showFeedback = (msg) => {
-    setFeedbackMessage(msg);
-    setTimeout(() => setFeedbackMessage(null), 4000);
-  };
+  // Debounce search input (350ms)
+  useEffect(() => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => {
+      setDebouncedSearch(filters.search.trim());
+      setPage(1); // Reset to page 1 on new search term
+    }, 350);
 
+    return () => {
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    };
+  }, [filters.search]);
+
+  // Fetch summary counts across entire inventory
+  const fetchSummaryCounts = useCallback(async () => {
+    try {
+      // Parallel lightweight queries for accurate counts
+      const [allRes, availRes, resRes, soldRes, featRes, hiddenRes] = await Promise.all([
+        carsService.adminGetCars({ limit: 1 }),
+        carsService.adminGetCars({ status: "AVAILABLE", limit: 1 }),
+        carsService.adminGetCars({ status: "RESERVED", limit: 1 }),
+        carsService.adminGetCars({ status: "SOLD", limit: 1 }),
+        carsService.adminGetCars({ is_featured: "true", limit: 1 }),
+        carsService.adminGetCars({ is_visible: "false", limit: 1 }),
+      ]);
+
+      setSummaryCounts({
+        total: allRes?.data?.meta?.total ?? 0,
+        available: availRes?.data?.meta?.total ?? 0,
+        reserved: resRes?.data?.meta?.total ?? 0,
+        sold: soldRes?.data?.meta?.total ?? 0,
+        featured: featRes?.data?.meta?.total ?? 0,
+        hidden: hiddenRes?.data?.meta?.total ?? 0,
+      });
+    } catch {
+      // Non-blocking fallback
+    }
+  }, []);
+
+  // Fetch paginated cars from backend using server-side query parameters
   const fetchCars = useCallback(async (isRefresh = false) => {
     try {
       if (isRefresh) {
@@ -76,21 +151,65 @@ export function AdminCarsPage() {
         setLoading(true);
       }
       setError(null);
-      // Fetch admin inventory with large limit to allow client-side fast searching/sorting
-      const res = await carsService.adminGetCars({ limit: 100 });
-      setCars(res?.data?.cars || []);
+
+      const params = {
+        page,
+        limit,
+        search: debouncedSearch || undefined,
+        brand: filters.brand || undefined,
+        status: filters.status !== "ALL" ? filters.status : undefined,
+        fuel_type: filters.fuel_type || undefined,
+        transmission: filters.transmission || undefined,
+        condition: filters.condition || undefined,
+        category: filters.category || undefined,
+        is_featured: filters.is_featured || undefined,
+        is_visible: filters.is_visible || undefined,
+        min_price: filters.min_price ? Number(filters.min_price) : undefined,
+        max_price: filters.max_price ? Number(filters.max_price) : undefined,
+        max_mileage: filters.max_mileage ? Number(filters.max_mileage) : undefined,
+        sort: filters.sort || "newest",
+      };
+
+      const res = await carsService.adminGetCars(params);
+      const fetchedCars = res?.data?.cars || [];
+      const meta = res?.data?.meta || {
+        page,
+        limit,
+        total: fetchedCars.length,
+        pages: Math.max(1, Math.ceil(fetchedCars.length / limit)),
+      };
+
+      setCars(fetchedCars);
+      setPagination(meta);
+
+      // Extract brands from returned cars if not yet populated
+      if (fetchedCars.length > 0) {
+        setAvailableBrands((prev) => {
+          const brandSet = new Set(prev);
+          fetchedCars.forEach((c) => {
+            if (c.brand) brandSet.add(c.brand.trim());
+          });
+          return Array.from(brandSet).sort();
+        });
+      }
     } catch (err) {
-      setError(err?.message || "Fehler beim Laden des Fahrzeugbestands.");
+      setError(err?.message || t("fetchCarsError", { defaultValue: "Fehler beim Laden des Fahrzeugbestands." }));
       setCars([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [page, limit, debouncedSearch, filters, t]);
 
+  // Trigger query on page or filter changes
   useEffect(() => {
     fetchCars();
   }, [fetchCars]);
+
+  // Trigger counts fetch on initial mount
+  useEffect(() => {
+    fetchSummaryCounts();
+  }, [fetchSummaryCounts]);
 
   useGsapContext(pageContainerRef, () => {
     if (isReducedMotion()) return;
@@ -102,118 +221,33 @@ export function AdminCarsPage() {
     });
   });
 
-  // Extract unique brands for filter dropdown
-  const availableBrands = useMemo(() => {
-    const set = new Set();
-    cars.forEach((c) => {
-      if (c.brand) set.add(c.brand.trim());
-    });
-    return Array.from(set).sort();
-  }, [cars]);
+  // Filter change handler — resets to page 1
+  const handleFiltersChange = (newFilters) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
 
-  // Client-side filtering and sorting
-  const filteredCars = useMemo(() => {
-    let result = [...cars];
+  const handleResetFilters = () => {
+    setFilters(DEFAULT_FILTERS);
+    setPage(1);
+  };
 
-    // Search query
-    if (filters.search) {
-      const q = filters.search.toLowerCase().trim();
-      result = result.filter((c) => {
-        const titleMatch = (c.title || "").toLowerCase().includes(q);
-        const brandMatch = (c.brand || "").toLowerCase().includes(q);
-        const modelMatch = (c.model || "").toLowerCase().includes(q);
-        const slugMatch = (c.slug || "").toLowerCase().includes(q);
-        return titleMatch || brandMatch || modelMatch || slugMatch;
-      });
+  const handleSelectStatusPill = (statusKey) => {
+    setFilters((prev) => ({
+      ...prev,
+      status: statusKey,
+    }));
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.pages) {
+      setPage(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
 
-    // Brand
-    if (filters.brand) {
-      result = result.filter((c) => (c.brand || "").toLowerCase() === filters.brand.toLowerCase());
-    }
-
-    // Status
-    if (filters.status && filters.status !== "ALL") {
-      result = result.filter((c) => c.status === filters.status);
-    }
-
-    // Fuel Type
-    if (filters.fuel_type) {
-      result = result.filter((c) => c.fuel_type === filters.fuel_type);
-    }
-
-    // Transmission
-    if (filters.transmission) {
-      result = result.filter((c) => c.transmission === filters.transmission);
-    }
-
-    // Condition
-    if (filters.condition) {
-      result = result.filter((c) => c.condition === filters.condition);
-    }
-
-    // Category
-    if (filters.category) {
-      result = result.filter((c) => c.category === filters.category);
-    }
-
-    // Featured
-    if (filters.is_featured === "true") {
-      result = result.filter((c) => c.is_featured === true);
-    } else if (filters.is_featured === "false") {
-      result = result.filter((c) => !c.is_featured);
-    }
-
-    // Visibility
-    if (filters.is_visible === "true") {
-      result = result.filter((c) => c.is_visible !== false);
-    } else if (filters.is_visible === "false") {
-      result = result.filter((c) => c.is_visible === false);
-    }
-
-    // Price bounds
-    if (filters.min_price) {
-      const minP = Number(filters.min_price);
-      result = result.filter((c) => c.price != null && c.price >= minP);
-    }
-    if (filters.max_price) {
-      const maxP = Number(filters.max_price);
-      result = result.filter((c) => c.price != null && c.price <= maxP);
-    }
-
-    // Mileage max
-    if (filters.max_mileage) {
-      const maxM = Number(filters.max_mileage);
-      result = result.filter((c) => c.mileage_km != null && c.mileage_km <= maxM);
-    }
-
-    // Sorting
-    result.sort((a, b) => {
-      switch (filters.sort) {
-        case "oldest":
-          return new Date(a.created_at || 0) - new Date(b.created_at || 0);
-        case "price_asc":
-          return (a.price || 0) - (b.price || 0);
-        case "price_desc":
-          return (b.price || 0) - (a.price || 0);
-        case "mileage_asc":
-          return (a.mileage_km || 0) - (b.mileage_km || 0);
-        case "mileage_desc":
-          return (b.mileage_km || 0) - (a.mileage_km || 0);
-        case "title_asc":
-          return (a.title || "").localeCompare(b.title || "");
-        case "title_desc":
-          return (b.title || "").localeCompare(a.title || "");
-        case "newest":
-        default:
-          return new Date(b.created_at || 0) - new Date(a.created_at || 0);
-      }
-    });
-
-    return result;
-  }, [cars, filters]);
-
-  // Actions
+  // Actions: Create & Edit
   const handleOpenCreate = () => {
     setEditingCar(null);
     setEditorErrors({});
@@ -222,7 +256,6 @@ export function AdminCarsPage() {
 
   const handleOpenEdit = async (car) => {
     try {
-      // Fetch full detail for editing to ensure all JSON fields are fresh
       const res = await carsService.adminGetCar(car.id);
       setEditingCar(res?.data?.car || car);
     } catch {
@@ -232,11 +265,7 @@ export function AdminCarsPage() {
     setEditorOpen(true);
   };
 
-  const handleOpenDelete = (car) => {
-    setCarToDelete(car);
-    setDeleteModalOpen(true);
-  };
-
+  // Actions: Details
   const handleOpenPreview = async (car) => {
     try {
       const res = await carsService.adminGetCar(car.id);
@@ -247,7 +276,36 @@ export function AdminCarsPage() {
     setPreviewDrawerOpen(true);
   };
 
-  // Save handler (Create / Update)
+  // Actions: Status Modal
+  const handleOpenStatusModal = (carId, currentOrNextStatus) => {
+    const targetCar = cars.find((c) => c.id === carId);
+    if (targetCar) {
+      setCarForStatusModal({ ...targetCar, targetStatus: currentOrNextStatus });
+      setStatusModalOpen(true);
+    }
+  };
+
+  const handleConfirmStatusChange = async (carId, nextStatus) => {
+    try {
+      setStatusModalLoading(true);
+      await carsService.adminSetStatus(carId, nextStatus);
+      showToast("success", t("statusUpdatedSuccess", { defaultValue: `Fahrzeugstatus auf ${nextStatus} geändert.` }));
+      setStatusModalOpen(false);
+      setCarForStatusModal(null);
+
+      // Local update & background sync
+      setCars((prev) =>
+        prev.map((c) => (c.id === carId ? { ...c, status: nextStatus } : c))
+      );
+      fetchSummaryCounts();
+    } catch (err) {
+      showToast("error", err?.message || t("statusUpdateError", { defaultValue: "Fehler beim Ändern des Fahrzeugstatus." }));
+    } finally {
+      setStatusModalLoading(false);
+    }
+  };
+
+  // Actions: Save Vehicle (Create / Update)
   const handleSaveVehicle = async (payload) => {
     try {
       setEditorSaving(true);
@@ -255,83 +313,147 @@ export function AdminCarsPage() {
 
       if (editingCar) {
         await carsService.adminUpdateCar(editingCar.id, payload);
-        showFeedback(t("vehicleUpdated", { defaultValue: "Fahrzeug erfolgreich aktualisiert." }));
+        showToast("success", t("vehicleUpdatedSuccess", { defaultValue: "Fahrzeug erfolgreich aktualisiert." }));
       } else {
         await carsService.adminCreateCar(payload);
-        showFeedback(t("vehicleCreated", { defaultValue: "Fahrzeug erfolgreich erstellt." }));
+        showToast("success", t("vehicleCreatedSuccess", { defaultValue: "Fahrzeug erfolgreich angelegt." }));
       }
 
       setEditorOpen(false);
+      setEditingCar(null);
       fetchCars(true);
+      fetchSummaryCounts();
     } catch (err) {
       if (err?.errors && typeof err.errors === "object") {
         setEditorErrors(err.errors);
       }
-      alert(err?.message || "Fehler beim Speichern des Fahrzeugs.");
+      showToast("error", err?.message || t("vehicleSaveError", { defaultValue: "Fehler beim Speichern des Fahrzeugs." }));
     } finally {
       setEditorSaving(false);
     }
   };
 
-  // Delete handler
+  // Actions: Delete
+  const handleOpenDelete = (car) => {
+    setCarToDelete(car);
+    setDeleteModalOpen(true);
+  };
+
   const handleConfirmDelete = async () => {
     if (!carToDelete) return;
     try {
       setDeleteLoading(true);
       await carsService.adminDeleteCar(carToDelete.id);
-      showFeedback(t("vehicleDeleted", { defaultValue: "Fahrzeug erfolgreich gelöscht." }));
+      showToast("success", t("vehicleDeletedSuccess", { defaultValue: "Fahrzeug erfolgreich gelöscht." }));
       setDeleteModalOpen(false);
       setCarToDelete(null);
-      fetchCars(true);
+
+      // Handle empty final page boundary
+      if (cars.length === 1 && page > 1) {
+        setPage((prev) => prev - 1);
+      } else {
+        fetchCars(true);
+      }
+      fetchSummaryCounts();
     } catch (err) {
-      alert(err?.message || "Fehler beim Löschen des Fahrzeugs.");
+      showToast("error", err?.message || t("vehicleDeleteError", { defaultValue: "Fehler beim Löschen des Fahrzeugs." }));
     } finally {
       setDeleteLoading(false);
     }
   };
 
-  // Quick toggles
+  // Quick toggles: Featured & Visibility
   const handleToggleFeatured = async (carId, nextFeatured) => {
     try {
       await carsService.adminToggleFeatured(carId, nextFeatured);
+      showToast(
+        "success",
+        nextFeatured
+          ? t("featuredActivated", { defaultValue: "Fahrzeug wird nun auf der Startseite hervorgehoben." })
+          : t("featuredDeactivated", { defaultValue: "Hervorhebung für Fahrzeug aufgehoben." })
+      );
       setCars((prev) =>
         prev.map((c) => (c.id === carId ? { ...c, is_featured: nextFeatured } : c))
       );
+      fetchSummaryCounts();
     } catch (err) {
-      alert(err?.message || "Fehler beim Aktualisieren des Featured-Status.");
+      showToast("error", err?.message || t("featuredUpdateError", { defaultValue: "Fehler beim Aktualisieren der Hervorhebung." }));
     }
   };
 
   const handleToggleVisibility = async (carId, nextVisible) => {
     try {
       await carsService.adminSetVisibility(carId, nextVisible);
+      showToast(
+        "success",
+        nextVisible
+          ? t("visibilityVisible", { defaultValue: "Fahrzeug ist nun öffentlich sichtbar." })
+          : t("visibilityHidden", { defaultValue: "Fahrzeug wurde für Besucher ausgeblendet." })
+      );
       setCars((prev) =>
         prev.map((c) => (c.id === carId ? { ...c, is_visible: nextVisible } : c))
       );
+      fetchSummaryCounts();
     } catch (err) {
-      alert(err?.message || "Fehler beim Aktualisieren der Sichtbarkeit.");
+      showToast("error", err?.message || t("visibilityUpdateError", { defaultValue: "Fehler beim Aktualisieren der Sichtbarkeit." }));
     }
   };
 
-  const handleChangeStatus = async (carId, nextStatus) => {
-    try {
-      await carsService.adminSetStatus(carId, nextStatus);
-      setCars((prev) =>
-        prev.map((c) => (c.id === carId ? { ...c, status: nextStatus } : c))
-      );
-    } catch (err) {
-      alert(err?.message || "Fehler beim Ändern des Status.");
-    }
-  };
+  const hasActiveFilters = Boolean(
+    filters.search ||
+    filters.brand ||
+    filters.fuel_type ||
+    filters.transmission ||
+    filters.condition ||
+    filters.category ||
+    (filters.status && filters.status !== "ALL") ||
+    filters.is_featured ||
+    filters.is_visible ||
+    filters.min_price ||
+    filters.max_price ||
+    filters.max_mileage
+  );
 
   return (
-    <div ref={pageContainerRef} className="admin-cars-page">
+    <div ref={pageContainerRef} className="admin-cars-page" style={{ position: "relative" }}>
+      {/* Toast Notification */}
+      {toastNotification && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            bottom: "var(--space-xl)",
+            right: "var(--space-xl)",
+            zIndex: 1000,
+            padding: "14px 20px",
+            borderRadius: "var(--radius-lg, 12px)",
+            backgroundColor:
+              toastNotification.type === "error"
+                ? "rgba(220, 38, 38, 0.95)"
+                : "rgba(22, 101, 52, 0.95)",
+            color: "#ffffff",
+            boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            fontSize: "var(--font-size-sm)",
+            fontWeight: 500,
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <Icon name={toastNotification.type === "error" ? "alert-circle" : "check"} size={18} />
+          <span>{toastNotification.text}</span>
+        </div>
+      )}
+
+      {/* Page Header */}
       <AdminPageHeader
         title={t("inventory")}
-        subtitle="Verwaltung aller aktiven, reservierten und verkauften Fahrzeuge im System"
+        subtitle={t("inventorySubtitle", { defaultValue: "Verwaltung aller aktiven, reservierten und verkauften Fahrzeuge im System" })}
         badge={
           <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-            {cars.length} {t("statTotalVehicles", { defaultValue: "Fahrzeuge" })}
+            {pagination.total} {t("statTotalVehicles", { defaultValue: "Fahrzeuge" })}
           </span>
         }
         actions={
@@ -340,11 +462,14 @@ export function AdminCarsPage() {
               variant="outline"
               size="sm"
               loading={refreshing}
-              onClick={() => fetchCars(true)}
+              onClick={() => {
+                fetchCars(true);
+                fetchSummaryCounts();
+              }}
               style={{ fontSize: "var(--font-size-xs)" }}
             >
               <Icon name="refresh-cw" size={14} style={{ marginRight: "6px" }} />
-              Aktualisieren
+              {t("refresh", { defaultValue: "Aktualisieren" })}
             </Button>
 
             <Button
@@ -360,26 +485,8 @@ export function AdminCarsPage() {
         }
       />
 
-      {feedbackMessage && (
-        <div
-          role="status"
-          style={{
-            padding: "var(--space-sm) var(--space-md)",
-            backgroundColor: "rgba(34, 197, 94, 0.12)",
-            border: "1px solid rgba(34, 197, 94, 0.3)",
-            borderRadius: "var(--radius-sm, 6px)",
-            color: "#22c55e",
-            fontSize: "var(--font-size-xs)",
-            fontWeight: 500,
-            marginBottom: "var(--space-md)",
-          }}
-        >
-          {feedbackMessage}
-        </div>
-      )}
-
       {loading ? (
-        <AdminLoadingState message="Lade Fahrzeugbestand aus der Datenbank..." />
+        <AdminLoadingState message={t("loadingCarsDatabase", { defaultValue: "Lade Fahrzeugbestand aus der Datenbank..." })} />
       ) : error ? (
         <ErrorState message={error} onRetry={() => fetchCars()} />
       ) : (
@@ -387,28 +494,31 @@ export function AdminCarsPage() {
           {/* Inventory Summary Pills */}
           <CarInventorySummary
             cars={cars}
+            summaryCounts={summaryCounts}
             activeStatusFilter={filters.status}
-            onSelectStatusFilter={(st) => setFilters((prev) => ({ ...prev, status: st }))}
+            onSelectStatusFilter={handleSelectStatusPill}
           />
 
           {/* Search, Filter & Sort Controls */}
           <CarFiltersBar
             filters={filters}
-            onChange={setFilters}
-            onReset={() => setFilters(DEFAULT_FILTERS)}
+            onChange={handleFiltersChange}
+            onReset={handleResetFilters}
             availableBrands={availableBrands}
           />
 
           {/* Cars Listing */}
-          {cars.length === 0 ? (
+          {cars.length === 0 && !hasActiveFilters ? (
             <AdminEmptyState
               icon="car"
-              title="Keine Fahrzeuge im Bestand"
-              description="Es sind derzeit keine Fahrzeuge in der Datenbank angelegt. Erstellen Sie das erste Fahrzeug mit dem Button oben."
-              actionLabel="Jetzt Fahrzeug anlegen"
+              title={t("emptyInventoryTitle", { defaultValue: "Keine Fahrzeuge im Bestand" })}
+              description={t("emptyInventoryDescription", {
+                defaultValue: "Es sind derzeit keine Fahrzeuge in der Datenbank angelegt. Erstellen Sie das erste Fahrzeug mit dem Button oben.",
+              })}
+              actionLabel={t("addFirstVehicle", { defaultValue: "Jetzt Fahrzeug anlegen" })}
               onAction={handleOpenCreate}
             />
-          ) : filteredCars.length === 0 ? (
+          ) : cars.length === 0 && hasActiveFilters ? (
             <div
               style={{
                 padding: "var(--space-2xl) var(--space-md)",
@@ -420,24 +530,27 @@ export function AdminCarsPage() {
             >
               <Icon name="search" size={32} style={{ color: "var(--color-admin-muted)", marginBottom: "var(--space-sm)" }} />
               <h3 style={{ margin: "0 0 6px", fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #ffffff)" }}>
-                Keine passenden Fahrzeuge gefunden
+                {t("noCarsMatchFiltersTitle", { defaultValue: "Keine passenden Fahrzeuge gefunden" })}
               </h3>
               <p style={{ margin: "0 0 var(--space-md)", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-                Kein Fahrzeug entspricht den ausgewählten Filterkriterien.
+                {t("noCarsMatchFiltersDesc", { defaultValue: "Kein Fahrzeug entspricht den ausgewählten Filterkriterien." })}
               </p>
-              <Button variant="outline" size="sm" onClick={() => setFilters(DEFAULT_FILTERS)}>
-                Filter zurücksetzen
+              <Button variant="outline" size="sm" onClick={handleResetFilters}>
+                {t("resetFilters", { defaultValue: "Filter zurücksetzen" })}
               </Button>
             </div>
           ) : (
             <CarTable
-              cars={filteredCars}
+              cars={cars}
+              loading={loading || refreshing}
+              pagination={pagination}
+              onPageChange={handlePageChange}
               onPreview={handleOpenPreview}
               onEdit={handleOpenEdit}
               onDelete={handleOpenDelete}
               onToggleFeatured={handleToggleFeatured}
               onToggleVisibility={handleToggleVisibility}
-              onChangeStatus={handleChangeStatus}
+              onChangeStatus={handleOpenStatusModal}
             />
           )}
         </div>
@@ -450,7 +563,22 @@ export function AdminCarsPage() {
         saving={editorSaving}
         errors={editorErrors}
         onSave={handleSaveVehicle}
-        onClose={() => setEditorOpen(false)}
+        onClose={() => {
+          setEditorOpen(false);
+          setEditingCar(null);
+        }}
+      />
+
+      {/* Status Transition Workflow Modal */}
+      <CarStatusModal
+        isOpen={statusModalOpen}
+        car={carForStatusModal}
+        loading={statusModalLoading}
+        onConfirm={handleConfirmStatusChange}
+        onClose={() => {
+          setStatusModalOpen(false);
+          setCarForStatusModal(null);
+        }}
       />
 
       {/* Delete Confirmation Modal */}

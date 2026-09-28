@@ -15,6 +15,34 @@ export class ApiError extends Error {
   }
 }
 
+// ─── 401 Unauthorized Interceptor System ─────────────────────────────────────
+
+const unauthorizedListeners = new Set();
+
+/**
+ * Register a subscriber for 401 Unauthorized responses.
+ * @param {Function} callback - ({ endpoint, url, message, data, status }) => void
+ * @returns {Function} unsubscribe function
+ */
+export function onUnauthorized(callback) {
+  unauthorizedListeners.add(callback);
+  return () => {
+    unauthorizedListeners.delete(callback);
+  };
+}
+
+function notifyUnauthorized(payload) {
+  unauthorizedListeners.forEach((listener) => {
+    try {
+      listener(payload);
+    } catch {
+      // Do not let listener exceptions crash API calls
+    }
+  });
+}
+
+// ─── Request Dispatcher ───────────────────────────────────────────────────────
+
 async function request(endpoint, options = {}) {
   const url = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
@@ -50,6 +78,12 @@ async function request(endpoint, options = {}) {
     if (!res.ok) {
       const message = data?.message || `HTTP Error ${res.status}: ${res.statusText}`;
       const errors = data?.errors || null;
+
+      // Broadcast 401 Unauthorized event to listeners for session handling
+      if (res.status === 401) {
+        notifyUnauthorized({ endpoint, url, message, data, status: res.status });
+      }
+
       throw new ApiError(message, res.status, errors, data);
     }
 

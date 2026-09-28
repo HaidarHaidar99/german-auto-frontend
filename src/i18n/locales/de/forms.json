@@ -54,6 +54,7 @@
   "emailLabel": "E-Mail-Adresse",
   "emailPlaceholder": "ihre.adresse@beispiel.de",
   "phoneLabel": "Telefonnummer",
+  "phone": "Telefonnummer (optional)",
   "phonePlaceholder": "z.B. +49 170 1234567",
   "preferredContactLabel": "Bevorzugte Kontaktaufnahme",
   "preferredContactSelect": "Bitte Kanal wählen...",

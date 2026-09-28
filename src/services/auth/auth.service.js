@@ -5,6 +5,7 @@ export const authService = {
   login: (email, password) => apiClient.post("/auth/login", { email, password }),
   signup: (payload) => apiClient.post("/auth/signup", payload),
   register: (payload) => apiClient.post("/auth/signup", payload),
+  googleLogin: (payload) => apiClient.post("/auth/google", payload),
   logout: () => apiClient.post("/auth/logout"),
   verifyEmail: (token) => apiClient.post("/auth/verify-email", { token }),
   resendVerification: (email) => apiClient.post("/auth/resend-verification", { email }),
