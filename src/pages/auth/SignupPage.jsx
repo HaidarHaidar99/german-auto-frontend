@@ -8,6 +8,7 @@ import Badge from "../../components/ui/Badge";
 import Icon from "../../components/common/Icon";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
+import { getBaseUrl } from "../../services/api/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -272,11 +273,7 @@ export function SignupPage() {
                 type="button"
                 id="btn-google-auth-signup"
                 onClick={() => {
-                  const apiBaseUrl =
-                    import.meta.env.VITE_API_BASE_URL ||
-                    (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")
-                      ? "https://german-auto-backend.vercel.app/api"
-                      : "http://localhost:5000/api");
+                  const apiBaseUrl = getBaseUrl();
                   window.location.href = `${apiBaseUrl}/auth/google`;
                 }}
                 style={{

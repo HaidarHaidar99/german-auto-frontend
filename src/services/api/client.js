@@ -3,17 +3,21 @@
  * Uses native fetch with credentials: "include" for HttpOnly cookie authentication.
  */
 
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
+  // If running in browser and NOT localhost/127.0.0.1, ALWAYS use real production backend
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+      return "https://german-auto-backend.vercel.app/api";
+    }
+  }
+
+  // Local development: explicit env var if set, otherwise localhost
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  if (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")) {
-    return "https://german-auto-backend.vercel.app/api";
-  }
-  return "/api";
+  return "http://localhost:5000/api";
 };
-
-const BASE_URL = getBaseUrl();
 
 export class ApiError extends Error {
   constructor(message, statusCode, errors = null, rawData = null) {
@@ -54,7 +58,8 @@ function notifyUnauthorized(payload) {
 // ─── Request Dispatcher ───────────────────────────────────────────────────────
 
 async function request(endpoint, options = {}) {
-  const url = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+  const baseUrl = getBaseUrl();
+  const url = endpoint.startsWith("http") ? endpoint : `${baseUrl}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
 
   const headers = {
     ...(options.headers || {}),

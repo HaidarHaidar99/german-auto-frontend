@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import PublicLayout from "../layouts/PublicLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import AdminRoute from "./AdminRoute";
@@ -84,6 +84,15 @@ export function AppRoutes() {
               </PublicOnlyRoute>
             }
           />
+          <Route
+            path="/admin/login"
+            element={
+              <PublicOnlyRoute>
+                <LoginPage />
+              </PublicOnlyRoute>
+            }
+          />
+          <Route path="/admin" element={<Navigate to="/admincoresecure" replace />} />
           <Route
             path="/signup"
             element={

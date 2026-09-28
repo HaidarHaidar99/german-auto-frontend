@@ -9,6 +9,7 @@ import Badge from "../../components/ui/Badge";
 import Icon from "../../components/common/Icon";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
+import { getBaseUrl } from "../../services/api/client";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -31,6 +32,9 @@ export function LoginPage() {
 
   // Check if destination is the admin portal
   const isAdminTarget = Boolean(
+    location.pathname === "/admin/login" ||
+    location.pathname === "/admin" ||
+    location.pathname.startsWith("/admin/") ||
     location.state?.from?.pathname?.startsWith("/admincoresecure") ||
     (typeof location.state?.from === "string" && location.state.from.startsWith("/admincoresecure")) ||
     new URLSearchParams(location.search).get("target") === "admin"
@@ -55,11 +59,7 @@ export function LoginPage() {
   }, [location.search, t]);
 
   const handleGoogleSignIn = () => {
-    const apiBaseUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      (typeof window !== "undefined" && window.location.hostname.includes("vercel.app")
-        ? "https://german-auto-backend.vercel.app/api"
-        : "http://localhost:5000/api");
+    const apiBaseUrl = getBaseUrl();
     window.location.href = `${apiBaseUrl}/auth/google`;
   };
 
@@ -441,7 +441,7 @@ export function LoginPage() {
 
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Link
-              to="/forgot-password"
+              to={isAdminTarget ? "/forgot-password?target=admin" : "/forgot-password"}
               style={{
                 fontSize: "var(--font-size-xs)",
                 color: "var(--color-text-secondary)",

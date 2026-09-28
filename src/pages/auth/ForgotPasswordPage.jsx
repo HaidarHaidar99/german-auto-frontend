@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import authService from "../../services/auth/auth.service";
 import Input from "../../components/forms/Input";
@@ -13,7 +13,15 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function ForgotPasswordPage() {
   const { t } = useTranslation(["auth", "common"]);
+  const location = useLocation();
   const pageContainerRef = useRef(null);
+
+  const isAdminTarget = Boolean(
+    new URLSearchParams(location.search).get("target") === "admin" ||
+    location.state?.target === "admin" ||
+    location.state?.isAdmin ||
+    (typeof location.state?.from === "string" && location.state.from.includes("admin"))
+  );
 
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -22,8 +30,10 @@ export function ForgotPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    document.title = `${t("forgotPassword")} | German Auto`;
-  }, [t]);
+    document.title = isAdminTarget
+      ? `Admin Core | ${t("forgotPassword")} | German Auto`
+      : `${t("forgotPassword")} | German Auto`;
+  }, [t, isAdminTarget]);
 
   useGsapContext(pageContainerRef, () => {
     if (isReducedMotion()) return;
@@ -102,8 +112,8 @@ export function ForgotPasswordPage() {
 
         <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
           <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
-            <Badge variant="outline" size="sm">
-              German Auto
+            <Badge variant={isAdminTarget ? "primary" : "outline"} size="sm">
+              {isAdminTarget ? "ADMIN CORE" : "German Auto"}
             </Badge>
           </div>
           <h1
@@ -167,7 +177,7 @@ export function ForgotPasswordPage() {
             >
               {t("forgotSuccess")}
             </p>
-            <Button as={Link} to="/login" variant="primary" size="md" fullWidth>
+            <Button as={Link} to={isAdminTarget ? "/admin/login" : "/login"} variant="primary" size="md" fullWidth>
               {t("backToLogin")}
             </Button>
           </div>
@@ -200,7 +210,7 @@ export function ForgotPasswordPage() {
 
             <div style={{ textAlign: "center", marginTop: "var(--space-md)" }}>
               <Link
-                to="/login"
+                to={isAdminTarget ? "/admin/login" : "/login"}
                 style={{
                   fontSize: "var(--font-size-sm)",
                   color: "var(--color-text-secondary)",

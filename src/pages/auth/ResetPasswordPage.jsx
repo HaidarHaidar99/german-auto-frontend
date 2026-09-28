@@ -13,6 +13,7 @@ export function ResetPasswordPage() {
   const { t } = useTranslation(["auth", "common"]);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const isAdminTarget = Boolean(searchParams.get("target") === "admin");
   const pageContainerRef = useRef(null);
 
   const [password, setPassword] = useState("");
@@ -116,8 +117,8 @@ export function ResetPasswordPage() {
 
         <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
           <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
-            <Badge variant="outline" size="sm">
-              German Auto
+            <Badge variant={isAdminTarget ? "primary" : "outline"} size="sm">
+              {isAdminTarget ? "ADMIN CORE" : "German Auto"}
             </Badge>
           </div>
           <h1
@@ -184,7 +185,7 @@ export function ResetPasswordPage() {
             >
               {t("resetSuccessMessage")}
             </p>
-            <Button as={Link} to="/login" variant="primary" size="md" fullWidth>
+            <Button as={Link} to={isAdminTarget ? "/admin/login" : "/login"} variant="primary" size="md" fullWidth>
               {t("goToLogin")}
             </Button>
           </div>
@@ -262,7 +263,7 @@ export function ResetPasswordPage() {
 
             <div style={{ textAlign: "center", marginTop: "var(--space-md)" }}>
               <Link
-                to="/login"
+                to={isAdminTarget ? "/admin/login" : "/login"}
                 style={{
                   fontSize: "var(--font-size-sm)",
                   color: "var(--color-text-secondary)",
