@@ -50,6 +50,12 @@ async function request(endpoint, options = {}) {
     ...(options.headers || {}),
   };
 
+  // Attach user's active language preference if not explicitly provided
+  if (!headers["Accept-Language"] && typeof window !== "undefined") {
+    const activeLang = window.localStorage.getItem("german_auto_lang") || "de";
+    headers["Accept-Language"] = activeLang;
+  }
+
   // Automatically attach application/json header unless payload is FormData
   const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
   if (!isFormData && options.body && typeof options.body === "object") {
