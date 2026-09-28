@@ -4,11 +4,12 @@
  */
 
 export const getBaseUrl = () => {
-  // If running in browser and NOT localhost/127.0.0.1, ALWAYS use real production backend
+  // If running in browser and NOT localhost/127.0.0.1, use "/api" to route through
+  // Vercel's edge proxy rewrite. This makes cookies 1st-party and eliminates cross-site cookie issues.
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname !== "localhost" && hostname !== "127.0.0.1") {
-      return "https://german-auto-backend.vercel.app/api";
+      return "/api";
     }
   }
 
