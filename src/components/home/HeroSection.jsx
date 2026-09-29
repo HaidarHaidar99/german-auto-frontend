@@ -103,7 +103,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
       <section
         style={{
           position: "relative",
-          minHeight: "clamp(480px, 75vh, 800px)",
+          minHeight: "clamp(480px, 85vh, 900px)",
           width: "100%",
           display: "flex",
           alignItems: "center",
@@ -115,8 +115,23 @@ export function HeroSection({ heroConfig, siteConfig }) {
           style={{
             position: "absolute",
             inset: 0,
-            background: "radial-gradient(ellipse at 50% 60%, rgba(197, 160, 89, 0.08) 0%, rgba(9, 10, 12, 0.95) 75%)",
+            zIndex: 0,
+          }}
+        >
+          {/* Default Premium Fallback Image */}
+          <img 
+            src="https://images.unsplash.com/photo-1617469767053-d3b523a0b982?q=80&w=2574&auto=format&fit=crop" 
+            alt="German Auto Showcase"
+            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
+          />
+        </div>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 60%, rgba(0, 0, 0, 1) 100%)",
             pointerEvents: "none",
+            zIndex: 1
           }}
         />
         <Container size="default" style={{ position: "relative", zIndex: 2 }}>
@@ -221,13 +236,13 @@ export function HeroSection({ heroConfig, siteConfig }) {
                   }}
                 />
               ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    background: "radial-gradient(ellipse at 50% 60%, rgba(197, 160, 89, 0.08) 0%, rgba(9, 10, 12, 0.95) 75%)",
-                  }}
-                />
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      background: "radial-gradient(ellipse at 50% 60%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.95) 75%)",
+                    }}
+                  />
               )}
             </div>
           );

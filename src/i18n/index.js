@@ -51,7 +51,6 @@ i18n
   .init({
     resources,
     fallbackLng: "de",
-    lng: "de", // German is explicitly the default language
     defaultNS: "common",
     ns: ["common", "navigation", "auth", "cars", "forms", "admin", "about", "account"],
     interpolation: {
