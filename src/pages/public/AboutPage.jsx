@@ -37,20 +37,12 @@ export function AboutPage() {
       : footerConfig.description_en || siteConfig.description;
 
   // Real configured CMS media assets
-  const heroItems = Array.isArray(heroConfig.items) ? heroConfig.items : [];
   const sellCarMedia = sellCarConfig.media_url ? [{ media_url: sellCarConfig.media_url }] : [];
-  const allMedia = [...heroItems, ...sellCarMedia].filter(
+  const allMedia = [...sellCarMedia].filter(
     (item) => item && (item.media_url || item.url || (typeof item === "string" && item.trim().length > 0))
   );
 
-  // If multiple CMS media items exist, use first for hero background and remaining for visual storytelling.
-  // If only 1 exists, keep Hero typography-led and render visual section with that asset.
-  const heroBgMedia =
-    allMedia.length > 1
-      ? allMedia[0]?.media_url || allMedia[0]?.url || (typeof allMedia[0] === "string" ? allMedia[0] : null)
-      : null;
-
-  const visualMediaItems = allMedia.length > 1 ? allMedia.slice(1) : allMedia;
+  const visualMediaItems = allMedia;
 
   // Dynamic SEO metadata
   const siteName = siteConfig.name || "German Auto";

@@ -11,6 +11,7 @@ import LocationsSection from "../../components/home/LocationsSection";
 import ContactCtaSection from "../../components/home/ContactCtaSection";
 import { Container, Section } from "../../components/ui/Layout";
 import { Eyebrow, Heading, Text } from "../../components/ui/Typography";
+import LoadingState from "../../components/ui/LoadingState";
 import carsService from "../../services/cars/cars.service";
 
 /**
@@ -21,7 +22,7 @@ import carsService from "../../services/cars/cars.service";
 
 export function HomePage() {
   const { t, i18n } = useTranslation(["common", "navigation"]);
-  const { settings } = useSettings();
+  const { settings, loading } = useSettings();
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const [topCar, setTopCar] = useState(null);
@@ -174,8 +175,12 @@ export function HomePage() {
     }
   };
 
+  if (loading) {
+    return <LoadingState minHeight="100vh" />;
+  }
+
   return (
-    <div className="homepage-root" style={{ width: "100%", overflowX: "hidden" }}>
+    <div className="homepage-root" style={{ width: "100%", overflowX: "hidden", backgroundColor: "var(--color-background)" }}>
       {/* Top Animated Offer Bar (Controlled by settings.offers) */}
       <TopOfferBar offersConfig={settings?.offers} />
 

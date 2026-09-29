@@ -100,42 +100,62 @@ export function SignupPage() {
   return (
     <div
       ref={pageContainerRef}
-      className="auth-page-container"
+      className="auth-page-split"
       style={{
-        padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "75vh",
+        minHeight: "100vh",
+        backgroundColor: "var(--color-background)",
       }}
     >
+      {/* Left side: Cinematic Imagery */}
       <div
-        className="auth-card surface-card"
+        className="hide-mobile"
         style={{
-          width: "100%",
-          maxWidth: "480px",
-          backgroundColor: "var(--color-card)",
-          borderRadius: "var(--radius-2xl)",
-          border: "1px solid var(--color-border)",
-          padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
-          boxShadow: "var(--shadow-elevation-2)",
+          flex: 1,
           position: "relative",
-          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          padding: "var(--space-2xl)",
+          color: "#fff",
+          background: "url('https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&q=80') center/cover no-repeat",
         }}
       >
         <div
-          aria-hidden="true"
           style={{
             position: "absolute",
-            top: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "200px",
-            height: "2px",
-            background: "linear-gradient(90deg, transparent, var(--color-secondary), transparent)",
+            inset: 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%)",
           }}
         />
+        <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
+          <h2 style={{ fontFamily: "var(--font-family-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, marginBottom: "var(--space-sm)" }}>
+            {t("heroTitle", { ns: "common", defaultValue: "Join the Elite." })}
+          </h2>
+          <p style={{ fontSize: "var(--font-size-lg)", color: "rgba(255,255,255,0.7)" }}>
+            {t("heroSubtitle", { ns: "common", defaultValue: "Create your profile for exclusive automotive access." })}
+          </p>
+        </div>
+      </div>
 
+      {/* Right side: Auth Form */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
+          position: "relative",
+        }}
+      >
+        <div
+          className="auth-card"
+          style={{
+            width: "100%",
+            maxWidth: "420px",
+          }}
+        >
         {isSuccess ? (
           /* Polished Verification-Required State */
           <div style={{ textAlign: "center", padding: "var(--space-md) 0" }}>
@@ -227,23 +247,27 @@ export function SignupPage() {
         ) : (
           /* Signup Form */
           <>
-            <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
-              <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
-                <Badge variant="outline" size="sm">
-                  German Auto
-                </Badge>
-              </div>
+            <div style={{ marginBottom: "var(--space-2xl)" }}>
               <h1
                 style={{
-                  fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
-                  fontWeight: "var(--font-weight-bold)",
-                  letterSpacing: "var(--tracking-tight)",
-                  margin: "var(--space-2xs) 0 0 0",
+                  fontFamily: "var(--font-family-display)",
+                  fontSize: "clamp(2rem, 3vw, 2.5rem)",
+                  lineHeight: 1.1,
+                  margin: "0 0 var(--space-xs) 0",
                   color: "var(--color-text)",
                 }}
               >
                 {t("signupTitle")}
               </h1>
+              <p
+                style={{
+                  fontSize: "var(--font-size-base)",
+                  color: "var(--color-text-secondary)",
+                  margin: 0,
+                }}
+              >
+                {t("signupSubtitle", { defaultValue: "Enter your details to create an account." })}
+              </p>
             </div>
 
             {serverError && (
@@ -453,6 +477,7 @@ export function SignupPage() {
             </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );
