@@ -70,9 +70,9 @@ export function NotificationDetailDrawer({
         return {
           label: t("filterSystem", { defaultValue: "Systemmeldung" }),
           icon: "bell",
-          color: "var(--color-primary, #C5A059)",
-          bg: "rgba(197, 160, 89, 0.12)",
-          border: "rgba(197, 160, 89, 0.3)",
+          color: "var(--color-primary, var(--color-text))",
+          bg: "rgba(255, 255, 255, 0.12)",
+          border: "rgba(255, 255, 255, 0.3)",
           targetRoute: null,
           targetLabel: null,
         };
@@ -280,7 +280,7 @@ export function NotificationDetailDrawer({
           {notification.source_record_id && (
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", flexWrap: "wrap", gap: "8px" }}>
               <span style={{ color: "var(--color-admin-muted, #94a3b8)" }}>{t("sourceRecord", { defaultValue: "Datensatz-ID" })}:</span>
-              <code style={{ fontSize: "11px", fontFamily: "monospace", color: "var(--color-primary, #C5A059)" }}>
+              <code style={{ fontSize: "11px", fontFamily: "monospace", color: "var(--color-primary, var(--color-text))" }}>
                 {notification.source_record_id}
               </code>
             </div>
@@ -296,10 +296,10 @@ export function NotificationDetailDrawer({
                   alignItems: "center",
                   gap: "6px",
                   padding: "8px 14px",
-                  backgroundColor: "rgba(197, 160, 89, 0.12)",
-                  border: "1px solid var(--color-primary, #C5A059)",
+                  backgroundColor: "rgba(255, 255, 255, 0.12)",
+                  border: "1px solid var(--color-primary, var(--color-text))",
                   borderRadius: "var(--radius-sm, 6px)",
-                  color: "var(--color-primary, #C5A059)",
+                  color: "var(--color-primary, var(--color-text))",
                   fontSize: "12px",
                   fontWeight: 600,
                   textDecoration: "none",

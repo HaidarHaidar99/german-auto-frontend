@@ -289,7 +289,7 @@ export function FormDetailDrawer({
               border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
             }}
           >
-            <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, #C5A059)" }}>
+            <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
               {t("customerInformation", { defaultValue: "Kundendaten" })}
             </h4>
 
@@ -323,7 +323,7 @@ export function FormDetailDrawer({
 
               <div>
                 <span style={{ color: "var(--color-admin-muted)", display: "block" }}>Kundenkonto</span>
-                <span style={{ color: form.user_id ? "var(--color-primary, #C5A059)" : "var(--color-admin-muted)" }}>
+                <span style={{ color: form.user_id ? "var(--color-primary, var(--color-text))" : "var(--color-admin-muted)" }}>
                   {form.user_id ? `Registrierter Benutzer (${form.user_id.substring(0, 8)}...)` : t("guestSubmission", { defaultValue: "Gast-Einsendung" })}
                 </span>
               </div>
@@ -340,14 +340,14 @@ export function FormDetailDrawer({
                 border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
               }}
             >
-              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, #C5A059)" }}>
+              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
                 {t("regarding", { defaultValue: "Betreff / Anliegen" })}
               </h4>
               <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "#ffffff", marginBottom: "var(--space-md)" }}>
                 {data.regarding || "Allgemeine Anfrage"}
               </div>
 
-              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, #C5A059)" }}>
+              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
                 {t("message", { defaultValue: "Nachricht" })}
               </h4>
               <div
@@ -359,7 +359,7 @@ export function FormDetailDrawer({
                   color: "#ffffff",
                   lineHeight: 1.6,
                   whiteSpace: "pre-line",
-                  borderLeft: "3px solid var(--color-primary, #C5A059)",
+                  borderLeft: "3px solid var(--color-primary, var(--color-text))",
                 }}
               >
                 {data.message || "Kein Nachrichtentext hinterlegt."}
@@ -379,7 +379,7 @@ export function FormDetailDrawer({
                   border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
                 }}
               >
-                <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, #C5A059)" }}>
+                <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
                   {t("vehicleDetails", { defaultValue: "Fahrzeugdaten" })}
                 </h4>
 
@@ -398,7 +398,7 @@ export function FormDetailDrawer({
 
                   <div>
                     <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("vin", { defaultValue: "Fahrgestellnummer (FIN)" })}</span>
-                    <code style={{ color: "var(--color-primary, #C5A059)", fontSize: "12px", fontFamily: "monospace" }}>
+                    <code style={{ color: "var(--color-primary, var(--color-text))", fontSize: "12px", fontFamily: "monospace" }}>
                       {data.vin || "—"}
                     </code>
                   </div>
@@ -417,7 +417,7 @@ export function FormDetailDrawer({
 
                   <div>
                     <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("minPrice", { defaultValue: "Mindestpreisvorstellung" })}</span>
-                    <strong style={{ color: "var(--color-primary, #C5A059)", fontSize: "var(--font-size-sm)" }}>
+                    <strong style={{ color: "var(--color-primary, var(--color-text))", fontSize: "var(--font-size-sm)" }}>
                       {data.min_price != null ? `${new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(data.min_price)}` : "Keine Angabe"}
                     </strong>
                   </div>
@@ -459,7 +459,7 @@ export function FormDetailDrawer({
                   border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
                 }}
               >
-                <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, #C5A059)" }}>
+                <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
                   {t("submittedImages", { defaultValue: "Eingereichte Bilder" })} ({Array.isArray(data.images) ? data.images.length : 0})
                 </h4>
 
@@ -535,7 +535,7 @@ export function FormDetailDrawer({
             }}
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
-              <h4 style={{ margin: 0, fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, #C5A059)" }}>
+              <h4 style={{ margin: 0, fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
                 {t("adminNotes", { defaultValue: "Admin-Notizen" })}
               </h4>
               <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>

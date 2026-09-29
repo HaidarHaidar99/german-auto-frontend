@@ -144,7 +144,7 @@ export function SignupPage() {
                 width: "56px",
                 height: "56px",
                 borderRadius: "50%",
-                backgroundColor: "rgba(197, 160, 89, 0.15)",
+                backgroundColor: "rgba(255, 255, 255, 0.15)",
                 color: "var(--color-secondary)",
                 display: "flex",
                 alignItems: "center",

@@ -116,7 +116,7 @@ export function OffersSettingsEditor({
                 )}
               </div>
               {item.link && (
-                <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-primary, #C5A059)", fontFamily: "monospace" }}>
+                <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-primary, var(--color-text))", fontFamily: "monospace" }}>
                   Link: {item.link}
                 </span>
               )}

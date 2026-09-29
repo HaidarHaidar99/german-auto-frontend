@@ -170,6 +170,9 @@ export function HeaderNav({
               transition: "opacity 0.3s ease"
             }}
           >
+            <Link to="/" style={{ fontWeight: 500, fontSize: "var(--font-size-sm)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase" }}>
+              {t("home", { defaultValue: "Home" })}
+            </Link>
             <Link to="/cars" style={{ fontWeight: 500, fontSize: "var(--font-size-sm)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase" }}>
               {t("inventory")}
             </Link>
@@ -287,6 +290,7 @@ export function HeaderNav({
           maxWidth: "600px"
         }}>
           {[
+            { to: "/", label: t("home", { defaultValue: "Home" }) },
             { to: "/cars", label: t("inventory") },
             { to: "/sell-your-car", label: t("sellYourCar") },
             { to: "/about", label: t("about") },

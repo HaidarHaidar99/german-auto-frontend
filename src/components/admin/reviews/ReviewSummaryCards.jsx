@@ -52,7 +52,7 @@ export function ReviewSummaryCards({
       label: t("statTotalReviews", { defaultValue: "Gesamte Rezensionen" }),
       count: stats.total,
       icon: "message-square",
-      color: "var(--color-primary, #C5A059)",
+      color: "var(--color-primary, var(--color-text))",
       isActive: activeStatusFilter === "ALL",
       onClick: () => onSelectStatusFilter?.("ALL"),
     },
@@ -128,11 +128,11 @@ export function ReviewSummaryCards({
             alignItems: "flex-start",
             padding: "12px 14px",
             backgroundColor: card.isActive
-              ? "rgba(197, 160, 89, 0.12)"
+              ? "rgba(255, 255, 255, 0.12)"
               : "var(--color-admin-card, #121418)",
             borderRadius: "var(--radius-md, 8px)",
             border: card.isActive
-              ? "1px solid var(--color-primary, #C5A059)"
+              ? "1px solid var(--color-primary, var(--color-text))"
               : "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
             cursor: "pointer",
             textAlign: "left",
@@ -155,7 +155,7 @@ export function ReviewSummaryCards({
                 fontSize: "11px",
                 fontWeight: 600,
                 color: card.isActive
-                  ? "var(--color-primary, #C5A059)"
+                  ? "var(--color-primary, var(--color-text))"
                   : "var(--color-admin-muted, #94a3b8)",
                 textTransform: "uppercase",
                 letterSpacing: "0.04em",
@@ -170,7 +170,7 @@ export function ReviewSummaryCards({
             style={{
               fontSize: "var(--font-size-xl, 22px)",
               fontWeight: 700,
-              color: card.isActive ? "var(--color-primary, #C5A059)" : "#ffffff",
+              color: card.isActive ? "var(--color-primary, var(--color-text))" : "#ffffff",
               lineHeight: 1,
             }}
           >

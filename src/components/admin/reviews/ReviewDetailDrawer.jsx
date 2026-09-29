@@ -99,7 +99,7 @@ export function ReviewDetailDrawer({
         <span
           key={i}
           style={{
-            color: i <= r ? "var(--color-primary, #C5A059)" : "rgba(255, 255, 255, 0.15)",
+            color: i <= r ? "var(--color-primary, var(--color-text))" : "rgba(255, 255, 255, 0.15)",
             fontSize: "18px",
           }}
         >
@@ -338,8 +338,8 @@ export function ReviewDetailDrawer({
                         fontSize: "10px",
                         padding: "2px 6px",
                         borderRadius: "4px",
-                        backgroundColor: "rgba(197, 160, 89, 0.15)",
-                        color: "var(--color-primary, #C5A059)",
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        color: "var(--color-primary, var(--color-text))",
                         fontWeight: 600,
                       }}
                     >
@@ -364,7 +364,7 @@ export function ReviewDetailDrawer({
                 </span>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
                   <div>{renderStars(review.rating)}</div>
-                  <span style={{ fontWeight: 700, fontSize: "14px", color: "var(--color-primary, #C5A059)" }}>
+                  <span style={{ fontWeight: 700, fontSize: "14px", color: "var(--color-primary, var(--color-text))" }}>
                     ({review.rating}/5)
                   </span>
                 </div>
@@ -467,7 +467,7 @@ export function ReviewDetailDrawer({
                   rel="noopener noreferrer"
                   style={{
                     fontSize: "11px",
-                    color: "var(--color-primary, #C5A059)",
+                    color: "var(--color-primary, var(--color-text))",
                     textDecoration: "none",
                     display: "inline-flex",
                     alignItems: "center",

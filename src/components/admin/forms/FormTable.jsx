@@ -193,8 +193,8 @@ export function FormTable({
                             fontSize: "10px",
                             padding: "1px 4px",
                             borderRadius: "3px",
-                            backgroundColor: "rgba(197, 160, 89, 0.15)",
-                            color: "var(--color-primary, #C5A059)",
+                            backgroundColor: "rgba(255, 255, 255, 0.15)",
+                            color: "var(--color-primary, var(--color-text))",
                           }}
                         >
                           User
@@ -239,7 +239,7 @@ export function FormTable({
                             style={{
                               fontSize: "11px",
                               fontWeight: 600,
-                              color: "var(--color-primary, #C5A059)",
+                              color: "var(--color-primary, var(--color-text))",
                               marginBottom: "3px",
                             }}
                           >
@@ -282,8 +282,8 @@ export function FormTable({
                               style={{
                                 fontSize: "10px",
                                 padding: "1px 5px",
-                                borderColor: "rgba(197, 160, 89, 0.4)",
-                                color: "var(--color-primary, #C5A059)",
+                                borderColor: "rgba(255, 255, 255, 0.4)",
+                                color: "var(--color-primary, var(--color-text))",
                               }}
                             >
                               📸 {data.images.length}
@@ -309,7 +309,7 @@ export function FormTable({
                             <span>EZ: {data.first_registration}</span>
                           )}
                           {data.min_price != null && (
-                            <span style={{ color: "var(--color-primary, #C5A059)", fontWeight: 600 }}>
+                            <span style={{ color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
                               {formatPrice(data.min_price)}
                             </span>
                           )}
@@ -575,8 +575,8 @@ export function FormTable({
                         fontSize: "10px",
                         padding: "1px 4px",
                         borderRadius: "3px",
-                        backgroundColor: "rgba(197, 160, 89, 0.15)",
-                        color: "var(--color-primary, #C5A059)",
+                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                        color: "var(--color-primary, var(--color-text))",
                       }}
                     >
                       User
@@ -591,7 +591,7 @@ export function FormTable({
                         style={{
                           fontSize: "11px",
                           fontWeight: 600,
-                          color: "var(--color-primary, #C5A059)",
+                          color: "var(--color-primary, var(--color-text))",
                           marginBottom: "2px",
                         }}
                       >
@@ -623,7 +623,7 @@ export function FormTable({
                     >
                       <span>{`${data.brand || ""} ${data.model || ""}`.trim() || "—"}</span>
                       {Array.isArray(data.images) && data.images.length > 0 && (
-                        <span style={{ fontSize: "11px", color: "var(--color-primary, #C5A059)" }}>
+                        <span style={{ fontSize: "11px", color: "var(--color-primary, var(--color-text))" }}>
                           ({data.images.length} Fotos)
                         </span>
                       )}
@@ -641,7 +641,7 @@ export function FormTable({
                       {data.mileage_km != null && <span>{formatMileage(data.mileage_km)}</span>}
                       {data.first_registration && <span>EZ: {data.first_registration}</span>}
                       {data.min_price != null && (
-                        <span style={{ color: "var(--color-primary, #C5A059)", fontWeight: 600 }}>
+                        <span style={{ color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
                           {formatPrice(data.min_price)}
                         </span>
                       )}

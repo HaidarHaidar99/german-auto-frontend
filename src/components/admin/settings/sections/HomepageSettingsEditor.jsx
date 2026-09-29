@@ -92,7 +92,7 @@ export function HomepageSettingsEditor({
                     display: "block",
                     fontSize: "11px",
                     fontFamily: "monospace",
-                    color: "var(--color-primary, #C5A059)",
+                    color: "var(--color-primary, var(--color-text))",
                   }}
                 >
                   Modul: {secKey}

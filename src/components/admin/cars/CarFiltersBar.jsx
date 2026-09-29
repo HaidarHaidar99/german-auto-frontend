@@ -179,7 +179,7 @@ export function CarFiltersBar({
                 width: "6px",
                 height: "6px",
                 borderRadius: "50%",
-                backgroundColor: "var(--color-primary, #C5A059)",
+                backgroundColor: "var(--color-primary, var(--color-text))",
               }}
             />
           )}

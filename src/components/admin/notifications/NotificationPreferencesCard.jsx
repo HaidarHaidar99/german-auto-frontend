@@ -276,7 +276,7 @@ export function NotificationPreferencesCard({
                 height: "24px",
                 borderRadius: "12px",
                 border: "none",
-                backgroundColor: item.value ? "var(--color-primary, #C5A059)" : "rgba(255, 255, 255, 0.15)",
+                backgroundColor: item.value ? "var(--color-primary, var(--color-text))" : "rgba(255, 255, 255, 0.15)",
                 cursor: isSaving ? "not-allowed" : "pointer",
                 position: "relative",
                 transition: "background-color 0.2s ease",

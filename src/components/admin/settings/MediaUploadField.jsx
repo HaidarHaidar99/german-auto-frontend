@@ -232,7 +232,7 @@ export function MediaUploadField({
             <Icon
               name="upload"
               size={22}
-              style={{ color: "var(--color-primary, #C5A059)" }}
+              style={{ color: "var(--color-primary, var(--color-text))" }}
             />
             <span
               style={{

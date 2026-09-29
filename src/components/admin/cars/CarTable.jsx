@@ -168,7 +168,7 @@ export function CarTable({
 
                   {/* Price */}
                   <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
-                    <span style={{ fontWeight: 600, color: "var(--color-primary, #C5A059)" }}>
+                    <span style={{ fontWeight: 600, color: "var(--color-primary, var(--color-text))" }}>
                       {formatPrice(car.price)}
                     </span>
                     {car.old_price && (
@@ -233,7 +233,7 @@ export function CarTable({
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        color: car.is_featured ? "var(--color-primary, #C5A059)" : "rgba(255, 255, 255, 0.2)",
+                        color: car.is_featured ? "var(--color-primary, var(--color-text))" : "rgba(255, 255, 255, 0.2)",
                         transition: "color 0.2s",
                       }}
                     >
@@ -371,7 +371,7 @@ export function CarTable({
                 }}
               >
                 <div>
-                  <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-primary, #C5A059)" }}>
+                  <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-primary, var(--color-text))" }}>
                     {formatPrice(car.price)}
                   </span>
                   <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginLeft: "8px" }}>

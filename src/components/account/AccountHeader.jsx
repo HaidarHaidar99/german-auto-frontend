@@ -48,7 +48,7 @@ export function AccountHeader({ user, className = "", style = {} }) {
           right: 0,
           width: "300px",
           height: "300px",
-          background: "radial-gradient(circle, rgba(197, 160, 89, 0.08) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -72,8 +72,8 @@ export function AccountHeader({ user, className = "", style = {} }) {
               width: "56px",
               height: "56px",
               borderRadius: "50%",
-              backgroundColor: "rgba(197, 160, 89, 0.15)",
-              border: "1px solid rgba(197, 160, 89, 0.4)",
+              backgroundColor: "rgba(255, 255, 255, 0.15)",
+              border: "1px solid rgba(255, 255, 255, 0.4)",
               color: "var(--color-secondary)",
               display: "flex",
               alignItems: "center",

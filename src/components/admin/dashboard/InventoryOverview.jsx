@@ -41,8 +41,8 @@ export function InventoryOverview({ inventory, loading = false }) {
       label: t("statusReserved", { defaultValue: "Reserviert" }),
       count: reserved,
       percentage: pct(reserved),
-      color: "var(--color-secondary, #c5a059)",
-      bg: "rgba(197, 160, 89, 0.15)",
+      color: "var(--color-secondary, var(--color-text))",
+      bg: "rgba(255, 255, 255, 0.15)",
       badgeVariant: "secondary",
       query: "status=RESERVED",
     },
@@ -189,8 +189,8 @@ export function InventoryOverview({ inventory, loading = false }) {
             justifyContent: "space-between",
             padding: "var(--space-sm) var(--space-md)",
             borderRadius: "var(--radius-md)",
-            backgroundColor: "rgba(197, 160, 89, 0.06)",
-            border: "1px solid rgba(197, 160, 89, 0.2)",
+            backgroundColor: "rgba(255, 255, 255, 0.06)",
+            border: "1px solid rgba(255, 255, 255, 0.2)",
             fontSize: "var(--font-size-xs)",
           }}
         >

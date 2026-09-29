@@ -80,7 +80,7 @@ export function ReviewTable({
           <span
             key={i}
             style={{
-              color: i <= r ? "var(--color-primary, #C5A059)" : "rgba(255, 255, 255, 0.15)",
+              color: i <= r ? "var(--color-primary, var(--color-text))" : "rgba(255, 255, 255, 0.15)",
               fontSize: "13px",
             }}
           >
@@ -182,8 +182,8 @@ export function ReviewTable({
                             fontSize: "10px",
                             padding: "1px 4px",
                             borderRadius: "3px",
-                            backgroundColor: "rgba(197, 160, 89, 0.15)",
-                            color: "var(--color-primary, #C5A059)",
+                            backgroundColor: "rgba(255, 255, 255, 0.15)",
+                            color: "var(--color-primary, var(--color-text))",
                           }}
                         >
                           User
@@ -245,7 +245,7 @@ export function ReviewTable({
                             height: "36px",
                             borderRadius: "var(--radius-xs, 4px)",
                             overflow: "hidden",
-                            border: "1px solid rgba(197, 160, 89, 0.4)",
+                            border: "1px solid rgba(255, 255, 255, 0.4)",
                             backgroundColor: "#000",
                           }}
                         >
@@ -481,7 +481,7 @@ export function ReviewTable({
                     alt=""
                     style={{ width: "28px", height: "28px", objectFit: "cover", borderRadius: "3px" }}
                   />
-                  <span style={{ fontSize: "11px", color: "var(--color-primary, #C5A059)", fontWeight: 600 }}>
+                  <span style={{ fontSize: "11px", color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
                     {t("attachedPhoto", { defaultValue: "Foto ansehen" })}
                   </span>
                 </div>

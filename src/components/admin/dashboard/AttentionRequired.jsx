@@ -194,7 +194,7 @@ export function AttentionRequired({
                     width: "32px",
                     height: "32px",
                     borderRadius: "var(--radius-sm)",
-                    backgroundColor: "rgba(197, 160, 89, 0.1)",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
                     color: "var(--color-secondary)",
                     display: "flex",
                     alignItems: "center",

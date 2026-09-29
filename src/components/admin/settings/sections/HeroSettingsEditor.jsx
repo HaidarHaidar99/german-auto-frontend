@@ -175,7 +175,7 @@ export function HeroSettingsEditor({
                       padding: "1px 6px",
                       borderRadius: "3px",
                       backgroundColor: "rgba(255, 255, 255, 0.08)",
-                      color: "var(--color-primary, #C5A059)",
+                      color: "var(--color-primary, var(--color-text))",
                     }}
                   >
                     {item.type || "IMAGE"}

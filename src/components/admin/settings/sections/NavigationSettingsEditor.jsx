@@ -120,7 +120,7 @@ export function NavigationSettingsEditor({
                   </span>
                 )}
               </div>
-              <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-primary, #C5A059)", fontFamily: "monospace" }}>
+              <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-primary, var(--color-text))", fontFamily: "monospace" }}>
                 {item.route}
               </span>
             </div>

@@ -66,7 +66,7 @@ export function CarInventorySummary({
       label: t("statFeatured", { defaultValue: "Hervorgehoben" }),
       count: featured,
       icon: "star",
-      color: "var(--color-primary, #C5A059)",
+      color: "var(--color-primary, var(--color-text))",
     },
     {
       key: "HIDDEN",
@@ -101,11 +101,11 @@ export function CarInventorySummary({
               gap: "var(--space-sm)",
               padding: "var(--space-sm) var(--space-md)",
               backgroundColor: isSelected
-                ? "rgba(197, 160, 89, 0.12)"
+                ? "rgba(255, 255, 255, 0.12)"
                 : "var(--color-admin-card, #121418)",
               border: `1px solid ${
                 isSelected
-                  ? "var(--color-primary, #C5A059)"
+                  ? "var(--color-primary, var(--color-text))"
                   : "var(--color-admin-border, rgba(255, 255, 255, 0.08))"
               }`,
               borderRadius: "var(--radius-md, 8px)",

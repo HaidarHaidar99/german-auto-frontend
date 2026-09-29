@@ -111,7 +111,7 @@ export function CarDetailDrawer({
         >
           <div>
             <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Preis</span>
-            <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-primary, #C5A059)" }}>{formattedPrice}</strong>
+            <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-primary, var(--color-text))" }}>{formattedPrice}</strong>
           </div>
           {formattedMileage && (
             <div>

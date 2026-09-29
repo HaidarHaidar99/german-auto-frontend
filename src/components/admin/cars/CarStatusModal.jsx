@@ -18,7 +18,7 @@ const STATUS_CONFIG = {
     labelKey: "statusReserved",
     defaultLabel: "Reserviert",
     badgeVariant: "secondary",
-    color: "#c5a059",
+    color: "var(--color-text)",
     descriptionKey: "statusReservedDesc",
     defaultDesc: "Das Fahrzeug ist für einen Interessenten reserviert. Kaufanfragen werden als Warteliste vermerkt.",
   },
@@ -123,7 +123,7 @@ export function CarStatusModal({
                   padding: "10px 14px",
                   borderRadius: "var(--radius-md)",
                   border: `1px solid ${isSelected ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-                  backgroundColor: isSelected ? "rgba(197, 160, 89, 0.08)" : "rgba(255, 255, 255, 0.015)",
+                  backgroundColor: isSelected ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.015)",
                   cursor: "pointer",
                   transition: "all var(--transition-fast)",
                 }}

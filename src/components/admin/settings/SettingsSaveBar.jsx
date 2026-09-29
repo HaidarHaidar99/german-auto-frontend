@@ -56,12 +56,12 @@ export function SettingsSaveBar({
               height: "8px",
               borderRadius: "50%",
               backgroundColor: hasChanges
-                ? "var(--color-primary, #C5A059)"
+                ? "var(--color-primary, var(--color-text))"
                 : saveSuccess
                 ? "#22c55e"
                 : "rgba(255, 255, 255, 0.25)",
               boxShadow: hasChanges
-                ? "0 0 8px rgba(197, 160, 89, 0.6)"
+                ? "0 0 8px rgba(255, 255, 255, 0.6)"
                 : saveSuccess
                 ? "0 0 8px rgba(34, 197, 94, 0.6)"
                 : "none",

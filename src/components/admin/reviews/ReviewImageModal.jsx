@@ -30,7 +30,7 @@ export function ReviewImageModal({
               display: "inline-flex",
               alignItems: "center",
               gap: "6px",
-              color: "var(--color-primary, #C5A059)",
+              color: "var(--color-primary, var(--color-text))",
               fontSize: "var(--font-size-xs, 12px)",
               textDecoration: "none",
             }}

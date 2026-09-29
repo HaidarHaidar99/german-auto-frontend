@@ -325,7 +325,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             justifyContent: "space-between",
             padding: "var(--space-xs) var(--space-md)",
             borderRadius: "var(--radius-md)",
-            backgroundColor: "rgba(197, 160, 89, 0.12)",
+            backgroundColor: "rgba(255, 255, 255, 0.12)",
             border: "1px solid var(--color-secondary)",
             color: "var(--color-secondary)",
             fontSize: "var(--font-size-xs)",

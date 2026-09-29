@@ -110,7 +110,7 @@
   background-color: var(--color-accent);
   border-color: var(--color-accent);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(197, 160, 89, 0.25);
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -406,7 +406,7 @@
 .badge-secondary {
   background-color: var(--color-accent-subtle);
   color: var(--color-secondary);
-  border-color: rgba(197, 160, 89, 0.3);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .badge-success {

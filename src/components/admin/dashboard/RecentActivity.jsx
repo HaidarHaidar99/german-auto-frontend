@@ -68,8 +68,8 @@ export function RecentActivity({ notifications = [], loading = false }) {
                 justifyContent: "space-between",
                 padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
-                backgroundColor: notif.is_read ? "rgba(255, 255, 255, 0.02)" : "rgba(197, 160, 89, 0.06)",
-                border: `1px solid ${notif.is_read ? "var(--color-admin-border)" : "rgba(197, 160, 89, 0.3)"}`,
+                backgroundColor: notif.is_read ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.06)",
+                border: `1px solid ${notif.is_read ? "var(--color-admin-border)" : "rgba(255, 255, 255, 0.3)"}`,
                 gap: "var(--space-sm)",
                 textDecoration: "none",
                 color: "inherit",
@@ -81,7 +81,7 @@ export function RecentActivity({ notifications = [], loading = false }) {
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = notif.is_read
                   ? "var(--color-admin-border)"
-                  : "rgba(197, 160, 89, 0.3)";
+                  : "rgba(255, 255, 255, 0.3)";
               }}
             >
               <div style={{ display: "flex", alignItems: "flex-start", gap: "var(--space-sm)", minWidth: 0 }}>
@@ -90,7 +90,7 @@ export function RecentActivity({ notifications = [], loading = false }) {
                     width: "28px",
                     height: "28px",
                     borderRadius: "var(--radius-sm)",
-                    backgroundColor: "rgba(197, 160, 89, 0.12)",
+                    backgroundColor: "rgba(255, 255, 255, 0.12)",
                     color: "var(--color-secondary)",
                     display: "flex",
                     alignItems: "center",

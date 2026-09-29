@@ -392,13 +392,13 @@ export function AdminSettingsPage() {
                       padding: "8px 12px",
                       borderRadius: "var(--radius-sm, 6px)",
                       backgroundColor: isActive
-                        ? "rgba(197, 160, 89, 0.12)"
+                        ? "rgba(255, 255, 255, 0.12)"
                         : "transparent",
                       border: isActive
-                        ? "1px solid rgba(197, 160, 89, 0.3)"
+                        ? "1px solid rgba(255, 255, 255, 0.3)"
                         : "1px solid transparent",
                       color: isActive
-                        ? "var(--color-primary, #C5A059)"
+                        ? "var(--color-primary, var(--color-text))"
                         : "var(--color-admin-text, #ffffff)",
                       fontSize: "var(--font-size-xs)",
                       fontWeight: isActive ? 600 : 400,
@@ -414,7 +414,7 @@ export function AdminSettingsPage() {
                         size={15}
                         style={{
                           color: isActive
-                            ? "var(--color-primary, #C5A059)"
+                            ? "var(--color-primary, var(--color-text))"
                             : "var(--color-admin-muted)",
                         }}
                       />
@@ -428,7 +428,7 @@ export function AdminSettingsPage() {
                           width: "6px",
                           height: "6px",
                           borderRadius: "50%",
-                          backgroundColor: "var(--color-primary, #C5A059)",
+                          backgroundColor: "var(--color-primary, var(--color-text))",
                           flexShrink: 0,
                         }}
                       />

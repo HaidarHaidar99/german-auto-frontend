@@ -22,11 +22,11 @@ export function ThemeSettingsEditor({
   };
 
   const primary = data.primary_color || "#000000";
-  const secondary = data.secondary_color || "#C5A059";
+  const secondary = data.secondary_color || "var(--color-text)";
   const bg = data.background_color || "#090A0C";
   const text = data.text_color || "#FFFFFF";
   const card = data.card_color || "#121418";
-  const accent = data.accent_color || "#D4AF37";
+  const accent = data.accent_color || "var(--color-text)";
 
   return (
     <SettingsSection

@@ -31,7 +31,7 @@ export function AdminNavItem({
         fontWeight: isActive ? 600 : 500,
         textDecoration: "none",
         color: isActive ? "#ffffff" : "var(--color-admin-muted)",
-        backgroundColor: isActive ? "rgba(197, 160, 89, 0.12)" : "transparent",
+        backgroundColor: isActive ? "rgba(255, 255, 255, 0.12)" : "transparent",
         borderLeft: isActive ? "3px solid var(--color-secondary)" : "3px solid transparent",
         transition: "all var(--transition-fast)",
         ...style,

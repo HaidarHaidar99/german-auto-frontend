@@ -489,8 +489,8 @@ export function CarEditorModal({
                 fontWeight: 600,
                 borderRadius: "var(--radius-sm, 6px)",
                 border: "none",
-                backgroundColor: activeTab === t.key ? "rgba(197, 160, 89, 0.15)" : "transparent",
-                color: activeTab === t.key ? "var(--color-primary, #C5A059)" : "var(--color-admin-muted)",
+                backgroundColor: activeTab === t.key ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                color: activeTab === t.key ? "var(--color-primary, var(--color-text))" : "var(--color-admin-muted)",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
                 transition: "all 0.15s ease",
@@ -860,7 +860,7 @@ export function CarEditorModal({
                     }}
                   >
                     <div>
-                      <strong style={{ color: "var(--color-primary, #C5A059)" }}>{k}:</strong>{" "}
+                      <strong style={{ color: "var(--color-primary, var(--color-text))" }}>{k}:</strong>{" "}
                       <span style={{ color: "var(--color-admin-text, #fff)" }}>{String(v)}</span>
                     </div>
                     <IconButton
@@ -887,17 +887,17 @@ export function CarEditorModal({
                 alignItems: "flex-start",
                 gap: "var(--space-sm)",
                 padding: "var(--space-sm) var(--space-md)",
-                backgroundColor: "rgba(197, 160, 89, 0.08)",
-                border: "1px solid rgba(197, 160, 89, 0.2)",
+                backgroundColor: "rgba(255, 255, 255, 0.08)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
                 borderRadius: "var(--radius-sm, 6px)",
                 fontSize: "var(--font-size-xs)",
                 color: "var(--color-admin-text, #ffffff)",
                 lineHeight: 1.5,
               }}
             >
-              <Icon name="info" size={16} style={{ color: "var(--color-primary, #C5A059)", marginTop: "2px", flexShrink: 0 }} />
+              <Icon name="info" size={16} style={{ color: "var(--color-primary, var(--color-text))", marginTop: "2px", flexShrink: 0 }} />
               <div>
-                <strong style={{ color: "var(--color-primary, #C5A059)" }}>Fahrzeugmedien-Architektur:</strong>{" "}
+                <strong style={{ color: "var(--color-primary, var(--color-text))" }}>Fahrzeugmedien-Architektur:</strong>{" "}
                 Fahrzeugmedien werden über permanente URLs (z.&nbsp;B. im Supabase Storage Bucket <code>german-auto-media</code> oder CDN) im Datensatz gespeichert. Lokale Dateiauswahl dient ausschließlich der temporären Browser-Vorschau und Validierung. Für die dauerhafte Speicherung in der Datenbank ist eine permanente HTTPS-URL erforderlich.
               </div>
             </div>

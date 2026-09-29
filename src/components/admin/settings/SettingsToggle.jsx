@@ -88,7 +88,7 @@ export function SettingsToggle({
           height: "24px",
           borderRadius: "9999px",
           backgroundColor: checked
-            ? "var(--color-primary, #C5A059)"
+            ? "var(--color-primary, var(--color-text))"
             : "rgba(255, 255, 255, 0.12)",
           border: "1px solid rgba(255, 255, 255, 0.15)",
           cursor: disabled ? "not-allowed" : "pointer",

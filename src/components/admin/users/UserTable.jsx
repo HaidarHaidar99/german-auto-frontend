@@ -35,9 +35,9 @@ function RoleBadge({ role }) {
           fontWeight: 700,
           letterSpacing: "0.5px",
           textTransform: "uppercase",
-          backgroundColor: "rgba(197, 160, 89, 0.16)",
+          backgroundColor: "rgba(255, 255, 255, 0.16)",
           color: "var(--color-secondary)",
-          border: "1px solid rgba(197, 160, 89, 0.4)",
+          border: "1px solid rgba(255, 255, 255, 0.4)",
         }}
       >
         <Icon name="award" size={12} />

@@ -125,7 +125,7 @@ export function ChangeRoleModal({
               padding: "12px",
               borderRadius: "var(--radius-md)",
               border: `1px solid ${selectedRole === "CUSTOMER" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-              backgroundColor: selectedRole === "CUSTOMER" ? "rgba(197, 160, 89, 0.08)" : "rgba(255, 255, 255, 0.02)",
+              backgroundColor: selectedRole === "CUSTOMER" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
               cursor: "pointer",
             }}
           >
@@ -156,7 +156,7 @@ export function ChangeRoleModal({
               padding: "12px",
               borderRadius: "var(--radius-md)",
               border: `1px solid ${selectedRole === "ADMIN" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-              backgroundColor: selectedRole === "ADMIN" ? "rgba(197, 160, 89, 0.08)" : "rgba(255, 255, 255, 0.02)",
+              backgroundColor: selectedRole === "ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
               cursor: "pointer",
             }}
           >
@@ -187,7 +187,7 @@ export function ChangeRoleModal({
               padding: "12px",
               borderRadius: "var(--radius-md)",
               border: `1px solid ${selectedRole === "SUPER_ADMIN" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-              backgroundColor: selectedRole === "SUPER_ADMIN" ? "rgba(197, 160, 89, 0.08)" : "rgba(255, 255, 255, 0.02)",
+              backgroundColor: selectedRole === "SUPER_ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
               cursor: "pointer",
             }}
           >

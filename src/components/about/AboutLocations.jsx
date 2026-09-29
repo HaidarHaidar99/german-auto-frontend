@@ -87,7 +87,7 @@ export function AboutLocations({ locations = [], className = "", style = {} }) {
                     width: "36px",
                     height: "36px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(197, 160, 89, 0.12)",
+                    backgroundColor: "rgba(255, 255, 255, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

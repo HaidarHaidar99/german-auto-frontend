@@ -65,7 +65,7 @@ export function AccountNav({ className = "", style = {} }) {
               color: isActive ? "var(--color-text)" : "var(--color-text-secondary)",
               backgroundColor: isActive ? "var(--color-surface-hover)" : "var(--color-card)",
               border: isActive ? "1px solid var(--color-secondary)" : "1px solid var(--color-border)",
-              boxShadow: isActive ? "0 0 12px rgba(197, 160, 89, 0.15)" : "none",
+              boxShadow: isActive ? "0 0 12px rgba(255, 255, 255, 0.15)" : "none",
               transition: "all var(--transition-fast)",
               whiteSpace: "nowrap",
             })}

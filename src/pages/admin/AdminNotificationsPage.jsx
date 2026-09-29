@@ -381,7 +381,7 @@ export function AdminNotificationsPage() {
                 {notifications.length} von {meta.total} Mitteilungen angezeigt
               </span>
               {unreadCount > 0 && (
-                <span style={{ color: "var(--color-primary, #C5A059)", fontWeight: 600 }}>
+                <span style={{ color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
                   {unreadCount} ungelese(n)
                 </span>
               )}

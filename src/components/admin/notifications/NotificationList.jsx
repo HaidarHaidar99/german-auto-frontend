@@ -63,8 +63,8 @@ export function NotificationList({
         return {
           label: t("filterSystem", { defaultValue: "Systemmeldung" }),
           icon: "bell",
-          color: "var(--color-primary, #C5A059)",
-          bg: "rgba(197, 160, 89, 0.12)",
+          color: "var(--color-primary, var(--color-text))",
+          bg: "rgba(255, 255, 255, 0.12)",
           targetRoute: null,
           targetLabel: null,
         };
@@ -99,13 +99,13 @@ export function NotificationList({
               borderRadius: "var(--radius-md, 8px)",
               backgroundColor: notif.is_read
                 ? "var(--color-admin-card, #121418)"
-                : "rgba(197, 160, 89, 0.06)",
+                : "rgba(255, 255, 255, 0.06)",
               border: notif.is_read
                 ? "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))"
-                : "1px solid rgba(197, 160, 89, 0.35)",
+                : "1px solid rgba(255, 255, 255, 0.35)",
               borderLeft: notif.is_read
                 ? "3px solid transparent"
-                : "3px solid var(--color-primary, #C5A059)",
+                : "3px solid var(--color-primary, var(--color-text))",
               display: "flex",
               alignItems: "flex-start",
               justifyContent: "space-between",
@@ -152,7 +152,7 @@ export function NotificationList({
                     style={{
                       fontSize: "var(--font-size-sm, 14px)",
                       fontWeight: notif.is_read ? 600 : 700,
-                      color: notif.is_read ? "var(--color-admin-text, #ffffff)" : "var(--color-primary, #C5A059)",
+                      color: notif.is_read ? "var(--color-admin-text, #ffffff)" : "var(--color-primary, var(--color-text))",
                       cursor: "pointer",
                     }}
                   >
@@ -210,7 +210,7 @@ export function NotificationList({
                         display: "inline-flex",
                         alignItems: "center",
                         gap: "4px",
-                        color: "var(--color-primary, #C5A059)",
+                        color: "var(--color-primary, var(--color-text))",
                         textDecoration: "none",
                         fontWeight: 600,
                       }}
@@ -245,7 +245,7 @@ export function NotificationList({
                   fontSize: "11px",
                   padding: "4px 8px",
                   height: "28px",
-                  color: notif.is_read ? "var(--color-admin-muted, #94a3b8)" : "var(--color-primary, #C5A059)",
+                  color: notif.is_read ? "var(--color-admin-muted, #94a3b8)" : "var(--color-primary, var(--color-text))",
                 }}
               >
                 <Icon name={notif.is_read ? "clock" : "check"} size={12} />

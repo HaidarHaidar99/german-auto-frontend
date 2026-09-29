@@ -107,7 +107,7 @@ export function AccountSecurityCard({ className = "", style = {} }) {
               width: "36px",
               height: "36px",
               borderRadius: "50%",
-              backgroundColor: "rgba(197, 160, 89, 0.12)",
+              backgroundColor: "rgba(255, 255, 255, 0.12)",
               color: "var(--color-secondary)",
               display: "flex",
               alignItems: "center",

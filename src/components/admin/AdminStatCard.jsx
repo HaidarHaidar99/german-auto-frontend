@@ -61,7 +61,7 @@ export function AdminStatCard({
             width: "36px",
             height: "36px",
             borderRadius: "var(--radius-md)",
-            backgroundColor: "rgba(197, 160, 89, 0.12)",
+            backgroundColor: "rgba(255, 255, 255, 0.12)",
             color: "var(--color-secondary)",
             display: "flex",
             alignItems: "center",

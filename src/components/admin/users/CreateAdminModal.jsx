@@ -315,7 +315,7 @@ export function CreateAdminModal({
                 padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
                 border: `1px solid ${role === "ADMIN" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-                backgroundColor: role === "ADMIN" ? "rgba(197, 160, 89, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                backgroundColor: role === "ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
                 cursor: "pointer",
                 transition: "all var(--transition-fast)",
               }}
@@ -346,7 +346,7 @@ export function CreateAdminModal({
                 padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
                 border: `1px solid ${role === "SUPER_ADMIN" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-                backgroundColor: role === "SUPER_ADMIN" ? "rgba(197, 160, 89, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                backgroundColor: role === "SUPER_ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
                 cursor: "pointer",
                 transition: "all var(--transition-fast)",
               }}
