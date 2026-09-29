@@ -473,7 +473,7 @@ export function SellYourCarPage() {
               }}>
                 <Icon name={s.icon} size={20} />
               </div>
-              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: step >= s.id ? "var(--color-text)" : "var(--color-text-muted)", textAlign: "center" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: step >= s.id ? "var(--color-secondary)" : "var(--color-text-muted)", textAlign: "center" }}>
                 {s.label}
               </span>
             </div>

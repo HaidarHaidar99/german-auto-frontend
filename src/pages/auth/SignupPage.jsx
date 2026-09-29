@@ -307,22 +307,25 @@ export function SignupPage() {
                   justifyContent: "center",
                   gap: "12px",
                   padding: "12px 16px",
-                  backgroundColor: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid var(--color-border)",
-                  borderRadius: "var(--radius-lg)",
-                  color: "var(--color-text)",
-                  fontSize: "var(--font-size-sm)",
-                  fontWeight: "var(--font-weight-semibold)",
+                  backgroundColor: "#000000",
+                  border: "1px solid #ffffff",
+                  borderRadius: "0px",
+                  color: "#ffffff",
+                  fontSize: "11px",
+                  fontFamily: "var(--font-family-sans)",
+                  fontWeight: "700",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
                   cursor: "pointer",
-                  transition: "all var(--transition-fast)",
+                  transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.borderColor = "var(--color-secondary)";
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                  e.currentTarget.style.color = "#000000";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-                  e.currentTarget.style.borderColor = "var(--color-border)";
+                  e.currentTarget.style.backgroundColor = "#000000";
+                  e.currentTarget.style.color = "#ffffff";
                 }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>

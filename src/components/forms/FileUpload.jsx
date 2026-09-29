@@ -142,7 +142,7 @@ export function FileUpload({
             ? "var(--color-accent-subtle)"
             : "var(--color-surface)",
           borderRadius: "var(--radius-lg)",
-          padding: "var(--space-xl) var(--space-md)",
+          padding: "var(--space-md)",
           textAlign: "center",
           cursor: disabled ? "not-allowed" : "pointer",
           transition: "all var(--duration-fast) var(--ease-smooth)",

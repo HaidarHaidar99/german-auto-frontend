@@ -114,8 +114,8 @@ export function AuthProvider({ children }) {
         currentPath.startsWith("/admincoresecure") ||
         currentPath.startsWith("/account");
 
-      if (isProtected && currentPath !== "/login") {
-        navigate("/login", { replace: true });
+      if (isProtected && currentPath !== "/") {
+        navigate("/", { replace: true });
       }
     }
   };
@@ -134,7 +134,7 @@ export function AuthProvider({ children }) {
       setFavorites([]);
       setError(null);
       broadcastAuthEvent("logout");
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     }
   };
 
@@ -184,8 +184,8 @@ export function AuthProvider({ children }) {
         currentPath.startsWith("/admincoresecure") ||
         currentPath.startsWith("/account");
 
-      if (isProtected && currentPath !== "/login") {
-        navigate("/login", {
+      if (isProtected && currentPath !== "/") {
+        navigate("/", {
           replace: true,
           state: {
             from: { pathname: currentPath, search: currentLoc.search },
@@ -217,8 +217,8 @@ export function AuthProvider({ children }) {
               currentPath.startsWith("/admincoresecure") ||
               currentPath.startsWith("/account");
 
-            if (isProtected && currentPath !== "/login") {
-              navigate("/login", {
+            if (isProtected && currentPath !== "/") {
+              navigate("/", {
                 replace: true,
                 state: {
                   from: { pathname: currentPath, search: locationRef.current.search },

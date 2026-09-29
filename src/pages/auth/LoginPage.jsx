@@ -469,10 +469,10 @@ export function LoginPage() {
                   justifyContent: "center",
                   gap: "12px",
                   padding: "12px 16px",
-                  backgroundColor: "transparent",
-                  border: "1px solid var(--color-border)",
+                  backgroundColor: "#000000",
+                  border: "1px solid #ffffff",
                   borderRadius: "0px",
-                  color: "var(--color-text)",
+                  color: "#ffffff",
                   fontSize: "11px",
                   fontFamily: "var(--font-family-sans)",
                   fontWeight: "700",
@@ -482,12 +482,12 @@ export function LoginPage() {
                   transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--color-text)";
-                  e.currentTarget.style.color = "var(--color-background)";
+                  e.currentTarget.style.backgroundColor = "#ffffff";
+                  e.currentTarget.style.color = "#000000";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "var(--color-text)";
+                  e.currentTarget.style.backgroundColor = "#000000";
+                  e.currentTarget.style.color = "#ffffff";
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>

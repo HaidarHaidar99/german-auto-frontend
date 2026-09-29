@@ -135,7 +135,7 @@ export function HeaderNav({
               display: "flex",
               alignItems: "center",
               gap: "var(--space-sm)",
-              color: menuOpen ? "#fff" : "var(--color-text)", // Force white when menu is open
+              color: "#ffffff", // Force white per user request
               textDecoration: "none",
               zIndex: 10000,
               transition: "color 0.3s ease"
@@ -170,16 +170,16 @@ export function HeaderNav({
               transition: "opacity 0.3s ease"
             }}
           >
-            <Link to="/" style={{ fontWeight: 500, fontSize: "var(--font-size-sm)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase" }}>
+            <Link to="/" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
               {t("home", { defaultValue: "Home" })}
             </Link>
-            <Link to="/cars" style={{ fontWeight: 500, fontSize: "var(--font-size-sm)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase" }}>
-              {t("inventory")}
+            <Link to="/cars" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+              {t("cars", { defaultValue: "Cars" })}
             </Link>
-            <Link to="/sell-your-car" style={{ fontWeight: 500, fontSize: "var(--font-size-sm)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase" }}>
+            <Link to="/sell-your-car" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
               {t("sellYourCar")}
             </Link>
-            <Link to="/about" style={{ fontWeight: 500, fontSize: "var(--font-size-sm)", letterSpacing: "var(--tracking-wide)", textTransform: "uppercase" }}>
+            <Link to="/about" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
               {t("about")}
             </Link>
           </nav>
@@ -191,10 +191,33 @@ export function HeaderNav({
               <LanguageSwitcher />
               {isAuthenticated ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-                  <Button as={Link} to="/account" variant="outline" size="sm">
-                    {t("profile", { ns: "account", defaultValue: "Profile" })}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={logout}>
+                  <Link
+                    to="/account"
+                    title={t("profile", { ns: "account", defaultValue: "Profile" })}
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      borderRadius: "50%",
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#ffffff",
+                      transition: "all 0.3s ease",
+                      border: "1px solid rgba(255, 255, 255, 0.2)"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "#ffffff";
+                      e.currentTarget.style.color = "#000000";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.color = "#ffffff";
+                    }}
+                  >
+                    <Icon name="user" size={18} />
+                  </Link>
+                  <Button variant="ghost" size="sm" onClick={() => logout()}>
                     {t("logout")}
                   </Button>
                 </div>

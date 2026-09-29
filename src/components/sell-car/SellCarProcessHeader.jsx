@@ -75,42 +75,6 @@ export function SellCarProcessHeader({ title, subtitle, mediaUrl, className = ""
           {subtitle}
         </p>
 
-        {/* 4-Step Visual Process Bar */}
-        <div
-          className="sell-car-step-bar"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "var(--space-xs)",
-            padding: "var(--space-sm)",
-            backgroundColor: "var(--color-card)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--color-border)",
-            boxShadow: "var(--shadow-elevation-1)",
-          }}
-        >
-          {steps.map((step, idx) => (
-            <div
-              key={idx}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "var(--space-xs)",
-                padding: "var(--space-xs) var(--space-sm)",
-                borderRadius: "var(--radius-md)",
-                backgroundColor: "var(--color-surface)",
-                border: "1px solid var(--color-border-subtle)",
-                fontSize: "var(--font-size-xs)",
-                fontWeight: "var(--font-weight-medium)",
-                color: "var(--color-text)",
-              }}
-            >
-              <Icon name={step.icon} size={15} color="var(--color-secondary)" />
-              <span>{step.label}</span>
-            </div>
-          ))}
-        </div>
       </div>
     </header>
   );
