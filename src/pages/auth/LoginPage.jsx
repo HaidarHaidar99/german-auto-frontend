@@ -154,35 +154,37 @@ export function LoginPage() {
       }}
     >
       {/* Left side: Cinematic Imagery */}
-      <div
-        className="hide-mobile"
-        style={{
-          flex: 1,
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          padding: "var(--space-2xl)",
-          color: "#fff",
-          background: "url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80') center/cover no-repeat",
-        }}
-      >
+      {!isAdminTarget && (
         <div
+          className="hide-mobile"
           style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%)",
+            flex: 1,
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            padding: "var(--space-2xl)",
+            color: "#fff",
+            background: "url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80') center/cover no-repeat",
           }}
-        />
-        <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
-          <h2 style={{ fontFamily: "var(--font-family-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, marginBottom: "var(--space-sm)" }}>
-            {t("heroTitle", { ns: "common", defaultValue: "Uncompromising Performance." })}
-          </h2>
-          <p style={{ fontSize: "var(--font-size-lg)", color: "rgba(255,255,255,0.7)" }}>
-            {t("heroSubtitle", { ns: "common", defaultValue: "Enter the world of premium automotive excellence." })}
-          </p>
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%)",
+            }}
+          />
+          <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
+            <h2 style={{ fontFamily: "var(--font-family-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, marginBottom: "var(--space-sm)" }}>
+              {t("heroTitle", { ns: "common", defaultValue: "Uncompromising Performance." })}
+            </h2>
+            <p style={{ fontSize: "var(--font-size-lg)", color: "rgba(255,255,255,0.7)" }}>
+              {t("heroSubtitle", { ns: "common", defaultValue: "Enter the world of premium automotive excellence." })}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Right side: Auth Form */}
       <div
@@ -480,14 +482,6 @@ export function LoginPage() {
                   textTransform: "uppercase",
                   cursor: "pointer",
                   transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#ffffff";
-                  e.currentTarget.style.color = "#000000";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "#000000";
-                  e.currentTarget.style.color = "#ffffff";
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>

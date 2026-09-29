@@ -71,7 +71,7 @@ export function ChangeRoleModal({
         <div
           style={{
             padding: "12px 16px",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            backgroundColor: "var(--color-admin-border-subtle)",
             borderRadius: "var(--radius-md)",
             border: "1px solid var(--color-admin-border)",
             display: "flex",
@@ -124,8 +124,8 @@ export function ChangeRoleModal({
               gap: "12px",
               padding: "12px",
               borderRadius: "var(--radius-md)",
-              border: `1px solid ${selectedRole === "CUSTOMER" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-              backgroundColor: selectedRole === "CUSTOMER" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
+              border: `1px solid ${selectedRole === "CUSTOMER" ? "var(--color-admin-accent)" : "var(--color-admin-border)"}`,
+              backgroundColor: selectedRole === "CUSTOMER" ? "var(--color-admin-accent-subtle)" : "var(--color-admin-card)",
               cursor: "pointer",
             }}
           >
@@ -155,8 +155,8 @@ export function ChangeRoleModal({
               gap: "12px",
               padding: "12px",
               borderRadius: "var(--radius-md)",
-              border: `1px solid ${selectedRole === "ADMIN" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-              backgroundColor: selectedRole === "ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
+              border: `1px solid ${selectedRole === "ADMIN" ? "var(--color-admin-accent)" : "var(--color-admin-border)"}`,
+              backgroundColor: selectedRole === "ADMIN" ? "var(--color-admin-accent-subtle)" : "var(--color-admin-card)",
               cursor: "pointer",
             }}
           >
@@ -169,7 +169,7 @@ export function ChangeRoleModal({
               style={{ marginTop: "3px" }}
             />
             <div>
-              <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "#60a5fa" }}>
+              <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "#0284c7" }}>
                 ADMIN (Administrator)
               </div>
               <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
@@ -186,8 +186,8 @@ export function ChangeRoleModal({
               gap: "12px",
               padding: "12px",
               borderRadius: "var(--radius-md)",
-              border: `1px solid ${selectedRole === "SUPER_ADMIN" ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
-              backgroundColor: selectedRole === "SUPER_ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
+              border: `1px solid ${selectedRole === "SUPER_ADMIN" ? "#f59e0b" : "var(--color-admin-border)"}`,
+              backgroundColor: selectedRole === "SUPER_ADMIN" ? "rgba(245, 158, 11, 0.08)" : "var(--color-admin-card)",
               cursor: "pointer",
             }}
           >
@@ -200,7 +200,7 @@ export function ChangeRoleModal({
               style={{ marginTop: "3px" }}
             />
             <div>
-              <div style={{ fontWeight: 700, fontSize: "var(--font-size-sm)", color: "var(--color-secondary)" }}>
+              <div style={{ fontWeight: 700, fontSize: "var(--font-size-sm)", color: "#d97706" }}>
                 SUPER_ADMIN (Hauptadministrator)
               </div>
               <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
@@ -218,14 +218,14 @@ export function ChangeRoleModal({
             border: "1px solid rgba(245, 158, 11, 0.25)",
             borderRadius: "var(--radius-md)",
             fontSize: "12px",
-            color: "#fbbf24",
+            color: "#b45309",
             display: "flex",
             alignItems: "flex-start",
             gap: "8px",
             lineHeight: 1.45,
           }}
         >
-          <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px" }} />
+          <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px", color: "#d97706" }} />
           <div>
             <strong>Sitzungsinvalidierung:</strong> Durch die Rollenänderung wird die Versionsnummer der Tokens (token_version) im Backend erhöht. Alle aktiven Sitzungen dieses Benutzers werden sofort ungültig.
           </div>

@@ -70,9 +70,9 @@ export function NotificationDetailDrawer({
         return {
           label: t("filterSystem", { defaultValue: "Systemmeldung" }),
           icon: "bell",
-          color: "var(--color-primary, var(--color-text))",
-          bg: "rgba(255, 255, 255, 0.12)",
-          border: "rgba(255, 255, 255, 0.3)",
+          color: "var(--color-admin-accent, #2563eb)",
+          bg: "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.12))",
+          border: "rgba(37, 99, 235, 0.3)",
           targetRoute: null,
           targetLabel: null,
         };
@@ -279,8 +279,8 @@ export function NotificationDetailDrawer({
 
           {notification.source_record_id && (
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", flexWrap: "wrap", gap: "8px" }}>
-              <span style={{ color: "var(--color-admin-muted, #94a3b8)" }}>{t("sourceRecord", { defaultValue: "Datensatz-ID" })}:</span>
-              <code style={{ fontSize: "11px", fontFamily: "monospace", color: "var(--color-primary, var(--color-text))" }}>
+              <span style={{ color: "var(--color-admin-muted, #64748b)" }}>{t("sourceRecord", { defaultValue: "Datensatz-ID" })}:</span>
+              <code style={{ fontSize: "11px", fontFamily: "monospace", color: "var(--color-admin-accent, #2563eb)", backgroundColor: "var(--color-admin-border-subtle)", padding: "2px 6px", borderRadius: "4px" }}>
                 {notification.source_record_id}
               </code>
             </div>
@@ -288,7 +288,7 @@ export function NotificationDetailDrawer({
 
           {/* Direct Navigation Button */}
           {typeCfg.targetRoute && (
-            <div style={{ paddingTop: "8px", borderTop: "1px solid rgba(255, 255, 255, 0.05)", marginTop: "4px" }}>
+            <div style={{ paddingTop: "8px", borderTop: "1px solid var(--color-admin-border)", marginTop: "4px" }}>
               <Link
                 to={typeCfg.targetRoute}
                 style={{
@@ -296,10 +296,10 @@ export function NotificationDetailDrawer({
                   alignItems: "center",
                   gap: "6px",
                   padding: "8px 14px",
-                  backgroundColor: "rgba(255, 255, 255, 0.12)",
-                  border: "1px solid var(--color-primary, var(--color-text))",
+                  backgroundColor: "var(--color-admin-accent-subtle, #eff6ff)",
+                  border: "1px solid var(--color-admin-accent, #2563eb)",
                   borderRadius: "var(--radius-sm, 6px)",
-                  color: "var(--color-primary, var(--color-text))",
+                  color: "var(--color-admin-accent, #2563eb)",
                   fontSize: "12px",
                   fontWeight: 600,
                   textDecoration: "none",

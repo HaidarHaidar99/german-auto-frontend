@@ -4,12 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import adminDashboardService from "../../services/adminDashboard/adminDashboard.service";
 import AdminPageHeader from "../../components/admin/AdminPageHeader";
 import DashboardSummaryCards from "../../components/admin/dashboard/DashboardSummaryCards";
-import InventoryOverview from "../../components/admin/dashboard/InventoryOverview";
-import AttentionRequired from "../../components/admin/dashboard/AttentionRequired";
 import QuickActions from "../../components/admin/dashboard/QuickActions";
-import RecentCars from "../../components/admin/dashboard/RecentCars";
-import RecentUsers from "../../components/admin/dashboard/RecentUsers";
-import RecentActivity from "../../components/admin/dashboard/RecentActivity";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Icon from "../../components/common/Icon";
@@ -71,7 +66,7 @@ export function AdminDashboardPage() {
       const data = await adminDashboardService.getDashboardData({ isSuperAdmin });
       setDashboardData(data);
     } catch (err) {
-      setFetchError(err.message || t("errorLoading", { defaultValue: "Fehler beim Laden der Verwaltungsdaten." }));
+      setFetchError(err.message || t("errorLoading", { defaultValue: "Error loading dashboard data." }));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -109,36 +104,22 @@ export function AdminDashboardPage() {
       {/* ── Page Header ─────────────────────────────────────────────────────── */}
       <AdminPageHeader
         title={t("dashboard", { defaultValue: "Dashboard" })}
-        subtitle={`${t("welcomeAdmin", { defaultValue: "Willkommen im Kontrollzentrum" })}, ${user?.full_name || user?.email || "Administrator"}`}
+        subtitle={`${t("welcomeAdmin", { defaultValue: "Welcome to the Control Center" })}, ${user?.full_name || user?.email || "Administrator"}`}
         badge={
-          <Badge variant={isSuperAdmin ? "secondary" : "primary"} size="sm">
-            {isSuperAdmin
-              ? t("superAdmin", { defaultValue: "SUPER_ADMIN" })
-              : t("admin", { defaultValue: "ADMIN" })}
-          </Badge>
-        }
-        actions={
-          <Button
-            onClick={() => loadData(true)}
-            variant="outline"
-            size="sm"
-            disabled={loading || refreshing}
+          <span
+            style={{
+              display: "inline-block",
+              padding: "3px 10px",
+              borderRadius: "6px",
+              backgroundColor: isSuperAdmin ? "#dcfce7" : "#e0f2fe",
+              color: isSuperAdmin ? "#16a34a" : "#0284c7",
+              fontWeight: 700,
+              fontSize: "11px",
+              letterSpacing: "0.5px",
+            }}
           >
-            <span
-              style={{
-                display: "inline-flex",
-                transform: refreshing ? "rotate(360deg)" : "none",
-                transition: refreshing ? "transform 0.8s linear infinite" : "none",
-              }}
-            >
-              <Icon name="refresh-cw" size={14} />
-            </span>
-            <span>
-              {refreshing
-                ? t("refreshing", { defaultValue: "Wird aktualisiert..." })
-                : t("refreshDashboard", { defaultValue: "Aktualisieren" })}
-            </span>
-          </Button>
+            {isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}
+          </span>
         }
       />
 
@@ -183,65 +164,6 @@ export function AdminDashboardPage() {
         isSuperAdmin={isSuperAdmin}
         loading={loading}
       />
-
-      {/* ── Inventory Overview ──────────────────────────────────────────────── */}
-      <div className="admin-dashboard-section" style={{ marginBottom: "var(--space-xl)" }}>
-        <InventoryOverview inventory={dashboardData.inventory} loading={loading} />
-      </div>
-
-      {/* ── Main Dual-Column Operational Grid ───────────────────────────────── */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-          gap: "var(--space-xl)",
-          marginBottom: "var(--space-xl)",
-        }}
-      >
-        {/* Urgent Attention / Action Required */}
-        <div className="admin-dashboard-section">
-          <AttentionRequired
-            forms={dashboardData.forms}
-            reviews={dashboardData.reviews}
-            users={dashboardData.users}
-            inventory={dashboardData.inventory}
-            notifications={dashboardData.notifications}
-            isSuperAdmin={isSuperAdmin}
-            loading={loading}
-          />
-        </div>
-
-        {/* Recent Real Vehicles */}
-        <div className="admin-dashboard-section">
-          <RecentCars cars={dashboardData.inventory?.recent || []} loading={loading} />
-        </div>
-      </div>
-
-      {/* ── Secondary Dual-Column Grid: Users & Activity ─────────────────────── */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
-          gap: "var(--space-xl)",
-        }}
-      >
-        {/* Recent Users (SUPER_ADMIN full / ADMIN permission banner) */}
-        <div className="admin-dashboard-section">
-          <RecentUsers
-            users={dashboardData.users?.recent || []}
-            isSuperAdmin={isSuperAdmin}
-            loading={loading}
-          />
-        </div>
-
-        {/* Real Live System Activity Feed */}
-        <div className="admin-dashboard-section">
-          <RecentActivity
-            notifications={dashboardData.notifications?.recent || []}
-            loading={loading}
-          />
-        </div>
-      </div>
     </div>
   );
 }

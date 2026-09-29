@@ -9,7 +9,8 @@ import Icon from "../common/Icon";
 
 export function AdminSidebar({ className = "", style = {} }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { logout, isSuperAdmin } = useAuth();
+  const { user, role, logout } = useAuth();
+  const isSuperAdmin = role === "SUPER_ADMIN";
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -28,9 +29,20 @@ export function AdminSidebar({ className = "", style = {} }) {
 
     fetchUnread();
     const interval = setInterval(fetchUnread, 60000);
+
+    const handleUpdate = (e) => {
+      if (e?.detail?.unreadCount !== undefined) {
+        setUnreadCount(e.detail.unreadCount);
+      } else {
+        fetchUnread();
+      }
+    };
+    window.addEventListener("notificationsUpdated", handleUpdate);
+
     return () => {
       isMounted = false;
       clearInterval(interval);
+      window.removeEventListener("notificationsUpdated", handleUpdate);
     };
   }, []);
 
@@ -40,15 +52,14 @@ export function AdminSidebar({ className = "", style = {} }) {
   };
 
   const navItems = [
-    { to: "/admincoresecure", end: true, label: t("dashboard"), icon: "layout" },
-    { to: "/admincoresecure/settings", end: false, label: t("settings"), icon: "settings" },
-    { to: "/admincoresecure/cars", end: false, label: t("inventory"), icon: "car" },
-    { to: "/admincoresecure/forms", end: false, label: t("forms"), icon: "mail" },
-    { to: "/admincoresecure/reviews", end: false, label: t("reviews"), icon: "star" },
+    { to: "/admincoresecure", end: true, label: "Dashboard", icon: "layout" },
+    { to: "/admincoresecure/cars", end: false, label: "Inventory", icon: "car" },
+    { to: "/admincoresecure/forms", end: false, label: "Forms", icon: "mail" },
+    { to: "/admincoresecure/reviews", end: false, label: "Reviews", icon: "star" },
     {
       to: "/admincoresecure/notifications",
       end: false,
-      label: t("notifications"),
+      label: "Notifications",
       icon: "bell",
       badgeCount: unreadCount,
     },
@@ -57,181 +68,151 @@ export function AdminSidebar({ className = "", style = {} }) {
           {
             to: "/admincoresecure/users",
             end: false,
-            label: t("userManagement", { defaultValue: "Benutzerverwaltung" }),
+            label: "User Management",
             icon: "users",
           },
         ]
       : []),
+    { to: "/admincoresecure/profile", end: false, label: "Profile", icon: "user" },
+    { to: "/admincoresecure/settings", end: false, label: "Settings", icon: "settings" },
   ];
 
   return (
-    <aside
-      className={`admin-sidebar hide-mobile ${className}`.trim()}
-      style={{
-        width: "var(--admin-sidebar-width)",
-        backgroundColor: "var(--color-admin-sidebar)",
-        borderRight: "1px solid var(--color-admin-border)",
-        display: "flex",
-        flexDirection: "column",
-        flexShrink: 0,
-        height: "100vh",
-        position: "sticky",
-        top: 0,
-        zIndex: 60,
-        ...style,
-      }}
-    >
-      {/* Brand Header */}
-      <div
+    <>
+      <aside
+        className={`admin-sidebar hide-mobile ${className}`.trim()}
         style={{
-          padding: "var(--space-lg) var(--space-md)",
-          borderBottom: "1px solid var(--color-admin-border)",
+          width: "var(--admin-sidebar-width)",
+          backgroundColor: "var(--color-admin-sidebar)",
+          borderRight: "1px solid var(--color-admin-border)",
+          display: "flex",
+          flexDirection: "column",
+          flexShrink: 0,
+          height: "100vh",
+          position: "sticky",
+          top: 0,
+          zIndex: 60,
+          transition: "background-color 0.25s ease, border-color 0.25s ease",
+          ...style,
         }}
       >
-        <Link
-          to="/admincoresecure"
+        {/* Brand Header */}
+        <div
           style={{
+            padding: "24px 20px 20px 20px",
             display: "flex",
-            alignItems: "center",
-            gap: "var(--space-xs)",
-            textDecoration: "none",
+            flexDirection: "column",
+            gap: "8px",
+            borderBottom: "1px solid var(--color-admin-border)",
           }}
         >
           <span
             style={{
-              fontFamily: "var(--font-family-display)",
-              fontSize: "1.125rem",
+              fontSize: "1.25rem",
               fontWeight: 800,
-              letterSpacing: "0.5px",
-              color: "#ffffff",
+              letterSpacing: "-0.3px",
+              color: "var(--color-admin-text)",
+              lineHeight: 1.2,
             }}
           >
-            ADMINCORE
+            Admin Panel
           </span>
-          <Badge variant="secondary" size="sm">
-            CMS
-          </Badge>
-        </Link>
-        <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "4px" }}>
-          German Auto Control Center
+          <div>
+            <span
+              style={{
+                display: "inline-block",
+                padding: "2px 8px",
+                borderRadius: "4px",
+                border: "1px solid #3b82f6",
+                backgroundColor: "var(--color-admin-accent-subtle)",
+                color: "var(--color-admin-accent)",
+                fontSize: "10px",
+                fontWeight: 800,
+                letterSpacing: "0.8px",
+                textTransform: "uppercase",
+              }}
+            >
+              {isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}
+            </span>
+          </div>
         </div>
-      </div>
 
-      {/* Navigation Sections */}
-      <nav
-        style={{
-          flex: 1,
-          padding: "var(--space-md) var(--space-sm)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          overflowY: "auto",
-        }}
-      >
-        {navItems.map((item) => (
-          <AdminNavItem
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            label={item.label}
-            icon={item.icon}
-            badgeCount={item.badgeCount}
-          />
-        ))}
-      </nav>
-
-      {/* Footer Navigation (Website / Customer Portal / Logout) */}
-      <div
-        style={{
-          padding: "var(--space-md)",
-          borderTop: "1px solid var(--color-admin-border)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-        }}
-      >
-        <Link
-          to="/"
+        {/* Navigation Sections */}
+        <nav
           style={{
+            flex: 1,
+            padding: "16px 12px 16px 0",
             display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            fontSize: "var(--font-size-xs)",
-            color: "var(--color-admin-muted)",
-            textDecoration: "none",
-            padding: "8px 10px",
-            borderRadius: "var(--radius-sm)",
-            transition: "all var(--transition-fast)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "#ffffff";
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--color-admin-muted)";
-            e.currentTarget.style.backgroundColor = "transparent";
+            flexDirection: "column",
+            overflowY: "auto",
           }}
         >
-          <Icon name="external-link" size={14} />
-          <span>{t("backToWebsite")}</span>
-        </Link>
+          {navItems.map((item) => (
+            <AdminNavItem
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              label={item.label}
+              icon={item.icon}
+              badgeCount={item.badgeCount}
+            />
+          ))}
+        </nav>
 
-        <Link
-          to="/account"
+        {/* Footer Navigation (Website Link & Logout) */}
+        <div
           style={{
+            padding: "16px 20px",
+            borderTop: "1px solid var(--color-admin-border)",
             display: "flex",
-            alignItems: "center",
+            flexDirection: "column",
             gap: "8px",
-            fontSize: "var(--font-size-xs)",
-            color: "var(--color-admin-muted)",
-            textDecoration: "none",
-            padding: "8px 10px",
-            borderRadius: "var(--radius-sm)",
-            transition: "all var(--transition-fast)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "#ffffff";
-            e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--color-admin-muted)";
-            e.currentTarget.style.backgroundColor = "transparent";
           }}
         >
-          <Icon name="user" size={14} />
-          <span>{t("customerArea")}</span>
-        </Link>
+          <Link
+            to="/"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              fontSize: "12px",
+              color: "var(--color-admin-muted)",
+              textDecoration: "none",
+              padding: "6px 8px",
+              borderRadius: "6px",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <Icon name="external-link" size={14} />
+            <span>{t("backToWebsite", { defaultValue: "Back to Website" })}</span>
+          </Link>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            fontSize: "var(--font-size-xs)",
-            color: "var(--color-error)",
-            background: "none",
-            border: "none",
-            padding: "8px 10px",
-            borderRadius: "var(--radius-sm)",
-            cursor: "pointer",
-            textAlign: "left",
-            width: "100%",
-            transition: "all var(--transition-fast)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-          }}
-        >
-          <Icon name="log-out" size={14} />
-          <span>{t("logout")}</span>
-        </button>
-      </div>
-    </aside>
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              fontSize: "14px",
+              fontWeight: 600,
+              color: "var(--color-admin-logout-text)",
+              backgroundColor: "var(--color-admin-logout-bg)",
+              border: "1px solid rgba(239, 68, 68, 0.15)",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              cursor: "pointer",
+              textAlign: "left",
+              width: "100%",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <Icon name="log-out" size={16} />
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }
 

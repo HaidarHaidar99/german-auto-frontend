@@ -49,59 +49,59 @@ export function ReviewSummaryCards({
   const cards = [
     {
       id: "total",
-      label: t("statTotalReviews", { defaultValue: "Gesamte Rezensionen" }),
+      label: t("statTotalReviews", { defaultValue: "Total Reviews" }),
       count: stats.total,
       icon: "message-square",
-      color: "var(--color-primary, var(--color-text))",
+      iconBg: "#2563eb",
       isActive: activeStatusFilter === "ALL",
       onClick: () => onSelectStatusFilter?.("ALL"),
     },
     {
       id: "pending",
-      label: t("statusPending", { defaultValue: "Ausstehend" }),
+      label: t("statusPending", { defaultValue: "Pending" }),
       count: stats.pending,
       icon: "clock",
-      color: "#eab308",
+      iconBg: "#f59e0b",
       isActive: activeStatusFilter === "PENDING",
       onClick: () =>
         onSelectStatusFilter?.(activeStatusFilter === "PENDING" ? "ALL" : "PENDING"),
     },
     {
       id: "published",
-      label: t("statusPublished", { defaultValue: "Veröffentlicht" }),
+      label: t("statusPublished", { defaultValue: "Published" }),
       count: stats.published,
       icon: "check-circle",
-      color: "#22c55e",
+      iconBg: "#10b981",
       isActive: activeStatusFilter === "PUBLISHED",
       onClick: () =>
         onSelectStatusFilter?.(activeStatusFilter === "PUBLISHED" ? "ALL" : "PUBLISHED"),
     },
     {
       id: "hidden",
-      label: t("statusHidden", { defaultValue: "Ausgeblendet" }),
+      label: t("statusHidden", { defaultValue: "Hidden" }),
       count: stats.hidden,
       icon: "eye-off",
-      color: "#06b6d4",
+      iconBg: "#06b6d4",
       isActive: activeStatusFilter === "HIDDEN",
       onClick: () =>
         onSelectStatusFilter?.(activeStatusFilter === "HIDDEN" ? "ALL" : "HIDDEN"),
     },
     {
       id: "deleted",
-      label: t("statusDeleted", { defaultValue: "Gelöscht" }),
+      label: t("statusDeleted", { defaultValue: "Deleted" }),
       count: stats.deleted,
       icon: "trash",
-      color: "var(--color-admin-muted, #94a3b8)",
+      iconBg: "#ef4444",
       isActive: activeStatusFilter === "DELETED",
       onClick: () =>
         onSelectStatusFilter?.(activeStatusFilter === "DELETED" ? "ALL" : "DELETED"),
     },
     {
       id: "avgRating",
-      label: t("statAverageRating", { defaultValue: "Ø Bewertung" }),
+      label: t("statAverageRating", { defaultValue: "Average Rating" }),
       count: stats.avgRating !== "—" ? `${stats.avgRating} ★` : "—",
       icon: "star",
-      color: "#f59e0b",
+      iconBg: "#8b5cf6",
       isActive: false,
       onClick: () => onSelectStatusFilter?.("PUBLISHED"),
     },
@@ -112,8 +112,9 @@ export function ReviewSummaryCards({
       className={`review-summary-grid ${className}`.trim()}
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-        gap: "var(--space-sm, 12px)",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "16px",
+        marginBottom: "20px",
         ...style,
       }}
     >
@@ -124,57 +125,86 @@ export function ReviewSummaryCards({
           onClick={card.onClick}
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            padding: "12px 14px",
+            alignItems: "center",
+            gap: "16px",
+            padding: "18px 20px",
             backgroundColor: card.isActive
-              ? "rgba(255, 255, 255, 0.12)"
-              : "var(--color-admin-card, #121418)",
-            borderRadius: "var(--radius-md, 8px)",
+              ? "var(--color-admin-accent-subtle)"
+              : "var(--color-admin-card)",
+            borderRadius: "16px",
             border: card.isActive
-              ? "1px solid var(--color-primary, var(--color-text))"
-              : "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              ? "2px solid var(--color-admin-accent)"
+              : "1px solid var(--color-admin-border)",
+            boxShadow: card.isActive
+              ? "0 4px 12px rgba(37, 99, 235, 0.12)"
+              : "0 1px 3px rgba(0, 0, 0, 0.04)",
             cursor: "pointer",
             textAlign: "left",
-            transition: "all 0.2s ease",
+            transition: "transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease",
+            outline: "none",
             position: "relative",
-            overflow: "hidden",
+          }}
+          onMouseEnter={(e) => {
+            if (!card.isActive) {
+              e.currentTarget.style.borderColor = "var(--color-admin-accent)";
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.06)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!card.isActive) {
+              e.currentTarget.style.borderColor = "var(--color-admin-border)";
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.04)";
+            }
           }}
         >
+          {/* Left Squircle Icon Container */}
           <div
             style={{
+              width: "48px",
+              height: "48px",
+              borderRadius: "14px",
+              backgroundColor: card.iconBg,
+              color: "#ffffff",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              marginBottom: "8px",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.12)",
             }}
           >
+            <Icon name={card.icon} size={22} strokeWidth={2} />
+          </div>
+
+          {/* Right Content */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: 0, flex: 1 }}>
             <span
               style={{
                 fontSize: "11px",
-                fontWeight: 600,
-                color: card.isActive
-                  ? "var(--color-primary, var(--color-text))"
-                  : "var(--color-admin-muted, #94a3b8)",
+                fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: "0.04em",
+                letterSpacing: "0.6px",
+                color: card.isActive ? "var(--color-admin-accent)" : "var(--color-admin-muted)",
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {card.label}
             </span>
-            <Icon name={card.icon} size={15} style={{ color: card.color, opacity: 0.9 }} />
-          </div>
-
-          <div
-            style={{
-              fontSize: "var(--font-size-xl, 22px)",
-              fontWeight: 700,
-              color: card.isActive ? "var(--color-primary, var(--color-text))" : "#ffffff",
-              lineHeight: 1,
-            }}
-          >
-            {card.count}
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                letterSpacing: "-0.5px",
+                color: "var(--color-admin-text)",
+                lineHeight: 1.1,
+              }}
+            >
+              {card.count}
+            </span>
           </div>
         </button>
       ))}

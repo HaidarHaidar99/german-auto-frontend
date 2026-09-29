@@ -96,62 +96,9 @@ export function HeroSection({ heroConfig, siteConfig }) {
     return null;
   }
 
-  // Fallback state if no hero items are configured in CMS
+  // No fallback state - if no hero items are configured, render nothing
   if (itemCount === 0) {
-    const siteName = siteConfig?.name || "German Auto";
-    return (
-      <section
-        style={{
-          position: "relative",
-          minHeight: "clamp(480px, 85vh, 900px)",
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          backgroundColor: "var(--color-background)",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            zIndex: 0,
-          }}
-        >
-          {/* Default Premium Fallback Image */}
-          <img 
-            src="https://images.unsplash.com/photo-1617469767053-d3b523a0b982?q=80&w=2574&auto=format&fit=crop" 
-            alt="German Auto Showcase"
-            style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.6 }}
-          />
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.8) 60%, rgba(0, 0, 0, 1) 100%)",
-            pointerEvents: "none",
-            zIndex: 1
-          }}
-        />
-        <Container size="default" style={{ position: "relative", zIndex: 2 }}>
-          <div style={{ maxWidth: "680px", display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            <Eyebrow>{siteName}</Eyebrow>
-            <Display size="2xl" style={{ margin: 0 }}>
-              {siteConfig?.seo_title || siteName}
-            </Display>
-            <Text variant="lead" style={{ margin: 0, maxWidth: "560px" }}>
-              {siteConfig?.description || t("experienceSubtitle")}
-            </Text>
-            <div style={{ marginTop: "var(--space-md)" }}>
-              <Button as={Link} to="/cars" variant="primary" size="lg" iconRight="arrow-right">
-                {t("navigation:inventory", "Fahrzeugbestand")}
-              </Button>
-            </div>
-          </div>
-        </Container>
-      </section>
-    );
+    return null;
   }
 
   const currentItem = activeItems[currentIndex] || activeItems[0];
@@ -192,7 +139,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
       <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
         {activeItems.map((item, idx) => {
           const isActive = idx === currentIndex;
-          const isItemVideo = item.media_type === "video";
+          const isItemVideo = item.type === "VIDEO" || item.media_type === "video" || item.media_url?.match(/\.(mp4|webm)$/i);
 
           return (
             <div
@@ -211,7 +158,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
                 <video
                   src={item.media_url}
                   poster={item.poster_url}
-                  autoPlay={isActive}
+                  autoPlay={true}
                   loop
                   muted
                   playsInline

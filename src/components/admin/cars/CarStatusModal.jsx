@@ -122,7 +122,7 @@ export function CarStatusModal({
                   gap: "var(--space-sm)",
                   padding: "10px 14px",
                   borderRadius: "var(--radius-md)",
-                  border: `1px solid ${isSelected ? "var(--color-secondary)" : "var(--color-admin-border)"}`,
+                  border: `1px solid ${isSelected ? "var(--color-admin-accent)" : "var(--color-admin-border)"}`,
                   backgroundColor: isSelected ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.015)",
                   cursor: "pointer",
                   transition: "all var(--transition-fast)",
@@ -134,7 +134,7 @@ export function CarStatusModal({
                   value={statusKey}
                   checked={isSelected}
                   onChange={() => setSelectedStatus(statusKey)}
-                  style={{ marginTop: "3px", accentColor: "var(--color-secondary)" }}
+                  style={{ marginTop: "3px", accentColor: "var(--color-admin-accent)" }}
                 />
 
                 <div style={{ flex: 1 }}>

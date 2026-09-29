@@ -52,12 +52,12 @@ export function Drawer({
         role="dialog"
         aria-modal="true"
         aria-label={title || "Panel"}
-        className={`drawer-panel ${className}`.trim()}
+        className={`drawer-panel ${isLeft ? "drawer-panel-left" : ""} ${className}`.trim()}
         style={{
           left: isLeft ? 0 : "auto",
           right: isLeft ? "auto" : 0,
-          borderLeft: isLeft ? "none" : "1px solid var(--color-border)",
-          borderRight: isLeft ? "1px solid var(--color-border)" : "none",
+          borderLeft: isLeft ? "none" : "1px solid var(--color-admin-border, var(--color-border))",
+          borderRight: isLeft ? "1px solid var(--color-admin-border, var(--color-border))" : "none",
         }}
       >
         {/* Header */}
@@ -67,7 +67,7 @@ export function Drawer({
             alignItems: "center",
             justifyContent: "space-between",
             padding: "var(--space-md) var(--space-lg)",
-            borderBottom: "1px solid var(--color-border-subtle)",
+            borderBottom: "1px solid var(--color-admin-border, var(--color-border-subtle))",
             minHeight: "var(--header-height)",
           }}
         >
@@ -78,6 +78,7 @@ export function Drawer({
                 fontSize: "var(--font-size-base)",
                 fontWeight: "var(--font-weight-semibold)",
                 letterSpacing: "var(--tracking-wide)",
+                color: "var(--color-admin-text, inherit)",
               }}
             >
               {title}

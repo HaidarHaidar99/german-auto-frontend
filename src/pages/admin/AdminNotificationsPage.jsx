@@ -159,6 +159,7 @@ export function AdminNotificationsPage() {
         if (selectedNotif && selectedNotif.id === id) {
           setSelectedNotif((prev) => ({ ...prev, is_read: true }));
         }
+        window.dispatchEvent(new CustomEvent("notificationsUpdated", { detail: { unreadCount: Math.max(0, unreadCount - 1) } }));
         showToast("success", t("notificationMarkedRead", { defaultValue: "Als gelesen markiert." }));
       }
     } catch (err) {
@@ -167,6 +168,33 @@ export function AdminNotificationsPage() {
       setUpdatingId(null);
     }
   };
+
+  // Mark all notifications as read
+  const handleMarkAllAsRead = async () => {
+    try {
+      await notificationsService.markAllAsRead();
+    } catch {
+      // ignore
+    } finally {
+      setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+      setUnreadCount(0);
+      window.dispatchEvent(new CustomEvent("notificationsUpdated", { detail: { unreadCount: 0 } }));
+      showToast("success", t("allMarkedAsRead", { defaultValue: "Alle Benachrichtigungen wurden als gelesen markiert." }));
+    }
+  };
+
+  useEffect(() => {
+    const handleUpdate = (e) => {
+      if (e?.detail?.unreadCount !== undefined) {
+        setUnreadCount(e.detail.unreadCount);
+        if (e.detail.unreadCount === 0) {
+          setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
+        }
+      }
+    };
+    window.addEventListener("notificationsUpdated", handleUpdate);
+    return () => window.removeEventListener("notificationsUpdated", handleUpdate);
+  }, []);
 
   // Dismiss notification from feed
   const handleDismiss = async (id) => {
@@ -284,22 +312,17 @@ export function AdminNotificationsPage() {
           )
         }
         actions={
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => fetchNotifications(true, currentPage)}
-            disabled={loading || refreshing}
-            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-          >
-            <Icon
-              name="refresh-cw"
-              size={14}
-              style={{
-                animation: refreshing ? "btn-spin 0.8s linear infinite" : "none",
-              }}
-            />
-            <span>{t("refresh", { defaultValue: "Aktualisieren" })}</span>
-          </Button>
+          unreadCount > 0 ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleMarkAllAsRead}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+            >
+              <Icon name="check-circle" size={14} />
+              <span>{t("markAllAsRead", { defaultValue: "Alle als gelesen markieren" })}</span>
+            </Button>
+          ) : null
         }
       />
 
@@ -325,6 +348,7 @@ export function AdminNotificationsPage() {
             setTypeFilter(tVal);
             setCurrentPage(1);
           }}
+          onMarkAllAsRead={handleMarkAllAsRead}
         />
 
         {/* Filter and Sort Bar */}
@@ -362,8 +386,8 @@ export function AdminNotificationsPage() {
             icon="bell"
             title={hasActiveFilters ? t("noFilteredNotificationsTitle", { defaultValue: "Keine passenden Benachrichtigungen" }) : t("noRecentNotifications", { defaultValue: "Keine Benachrichtigungen" })}
             message={hasActiveFilters ? t("noFilteredNotificationsDesc", { defaultValue: "Zu den gewählten Filterkriterien liegen keine Mitteilungen vor." }) : t("noNotificationsDesc", { defaultValue: "Es liegen derzeit keine aktiven Mitteilungen in Ihrem Feed vor." })}
-            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Filter zurücksetzen" }) : t("refresh", { defaultValue: "Aktualisieren" })}
-            onAction={hasActiveFilters ? handleResetFilters : () => fetchNotifications(true, 1)}
+            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Filter zurücksetzen" }) : undefined}
+            onAction={hasActiveFilters ? handleResetFilters : undefined}
           />
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md, 16px)" }}>
@@ -381,7 +405,7 @@ export function AdminNotificationsPage() {
                 {notifications.length} von {meta.total} Mitteilungen angezeigt
               </span>
               {unreadCount > 0 && (
-                <span style={{ color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
+                <span style={{ color: "var(--color-admin-accent, #2563eb)", fontWeight: 700 }}>
                   {unreadCount} ungelese(n)
                 </span>
               )}

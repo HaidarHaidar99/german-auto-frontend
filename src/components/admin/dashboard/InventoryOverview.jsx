@@ -41,7 +41,7 @@ export function InventoryOverview({ inventory, loading = false }) {
       label: t("statusReserved", { defaultValue: "Reserviert" }),
       count: reserved,
       percentage: pct(reserved),
-      color: "var(--color-secondary, var(--color-text))",
+      color: "var(--color-admin-accent, var(--color-admin-text))",
       bg: "rgba(255, 255, 255, 0.15)",
       badgeVariant: "secondary",
       query: "status=RESERVED",
@@ -148,7 +148,7 @@ export function InventoryOverview({ inventory, loading = false }) {
                 transition: "all var(--transition-fast)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
+                e.currentTarget.style.borderColor = "var(--color-admin-accent)";
                 e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
               }}
               onMouseLeave={(e) => {
@@ -195,7 +195,7 @@ export function InventoryOverview({ inventory, loading = false }) {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
-            <Icon name="star" size={14} style={{ color: "var(--color-secondary)" }} />
+            <Icon name="star" size={14} style={{ color: "var(--color-admin-accent)" }} />
             <span style={{ color: "var(--color-admin-text)", fontWeight: 500 }}>
               {t("featuredShowcaseNotice", {
                 defaultValue: "{{count}} Fahrzeuge sind aktuell als Highlight-Fahrzeuge markiert.",
@@ -207,7 +207,7 @@ export function InventoryOverview({ inventory, loading = false }) {
           <Link
             to="/admincoresecure/cars?featured=true"
             style={{
-              color: "var(--color-secondary)",
+              color: "var(--color-admin-accent)",
               fontWeight: 600,
               textDecoration: "none",
               fontSize: "var(--font-size-xs)",

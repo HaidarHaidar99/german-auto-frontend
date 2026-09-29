@@ -24,7 +24,7 @@ export function AdminLoadingState({ message, minHeight = "300px", className = ""
           height: "36px",
           borderRadius: "50%",
           border: "2px solid var(--color-admin-border)",
-          borderTopColor: "var(--color-secondary)",
+          borderTopColor: "var(--color-admin-accent)",
           animation: "btn-spin 0.7s linear infinite",
         }}
       />

@@ -71,7 +71,7 @@ export function Modal({
             alignItems: "center",
             justifyContent: "space-between",
             padding: "var(--space-md) var(--space-lg)",
-            borderBottom: "1px solid var(--color-border-subtle)",
+            borderBottom: "1px solid var(--color-admin-border, var(--color-border-subtle))",
           }}
         >
           {title && (
@@ -80,6 +80,7 @@ export function Modal({
                 margin: 0,
                 fontSize: "var(--font-size-lg)",
                 fontWeight: "var(--font-weight-semibold)",
+                color: "var(--color-admin-text, inherit)",
               }}
             >
               {title}

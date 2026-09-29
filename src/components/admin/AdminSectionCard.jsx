@@ -13,12 +13,13 @@ export function AdminSectionCard({
       className={`admin-section-card surface-card ${className}`.trim()}
       style={{
         backgroundColor: "var(--color-admin-card)",
-        borderRadius: "var(--radius-xl)",
+        borderRadius: "16px",
         border: "1px solid var(--color-admin-border)",
-        boxShadow: "var(--shadow-elevation-1)",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        transition: "background-color 0.25s ease, border-color 0.25s ease",
         ...style,
       }}
     >

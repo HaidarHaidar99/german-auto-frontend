@@ -12,10 +12,10 @@
      ========================================================================== */
   --color-primary: #000000;            /* Pure black */
   --color-secondary: #d4af37;          /* Gold accent for subtitles */
-  --color-background: #090a0c;         /* Atmospheric carbon black */
-  --color-surface: #14161b;            /* Subtle elevated dark slate */
-  --color-card: #181b22;               /* Card/module surface */
-  --color-card-elevated: #20242e;      /* Elevated card on hover/active */
+  --color-background: #000000;         /* Pure black */
+  --color-surface: #000000;            /* Pure black */
+  --color-card: #000000;               /* Pure black */
+  --color-card-elevated: #111111;      /* Elevated card on hover/active */
   
   --color-text: #ffffff;               /* Pure white text */
   --color-text-muted: #a1a1aa;         /* Elegant cool slate for secondary copy */
@@ -53,14 +53,29 @@
   --glass-blur: blur(16px);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
-  /* Admin CMS Tokens */
-  --color-admin-bg: #000000;
-  --color-admin-sidebar: #090a0c;
-  --color-admin-card: #14161b;
-  --color-admin-border: #27272a;
-  --color-admin-text: #ffffff;
-  --color-admin-muted: #a1a1aa;
-  --admin-sidebar-width: 270px;
+  /* ==========================================================================
+     ADMIN CMS DESIGN SYSTEM (Replicating Screenshot Layout & Palette)
+     ========================================================================== */
+  --color-admin-bg: #f0f4f8;           /* Clean soft light-grey background as in screenshots */
+  --color-admin-sidebar: #ffffff;      /* Pure white sidebar */
+  --color-admin-card: #ffffff;         /* Pure white card surface */
+  --color-admin-border: #e2e8f0;       /* Hairline grey border */
+  --color-admin-border-subtle: #f8fafc;/* Table header and inner background */
+  --color-admin-text: #0f172a;         /* High-contrast dark slate / black text */
+  --color-admin-text-secondary: #334155;
+  --color-admin-muted: #64748b;        /* Cool slate grey for labels & subtitles */
+  --color-admin-accent: #0284c7;       /* Vibrant cyan/blue button accent as in screenshot */
+  --color-admin-accent-hover: #0369a1;
+  --color-admin-accent-subtle: #eff6ff;/* Soft blue tint for active nav items & badges */
+  --color-admin-nav-active-border: #2563eb; /* 3px left indicator bar */
+  --color-admin-pill-bg: #f1f5f9;      /* Right top header pill background */
+  --color-admin-logout-bg: #fef2f2;    /* Soft red background for logout */
+  --color-admin-logout-text: #ef4444;  /* Red logout text */
+  --color-admin-stat-icon-bg-1: #2563eb; /* Blue squircle */
+  --color-admin-stat-icon-bg-2: #10b981; /* Green squircle */
+  --color-admin-stat-icon-bg-3: #0284c7; /* Ocean blue squircle */
+  --color-admin-stat-icon-bg-4: #059669; /* Teal/emerald squircle */
+  --admin-sidebar-width: 260px;
 
   /* ==========================================================================
      2. TYPOGRAPHY TOKENS
@@ -178,42 +193,7 @@
   --duration-slow: 700ms;
 }
 
-/* Light Theme Support */
-[data-theme="light"] {
-  --color-primary: #ffffff;
-  --color-secondary: #000000;
-  --color-background: #ffffff;
-  --color-surface: #f4f4f5;
-  --color-card: #ffffff;
-  --color-card-elevated: #ffffff;
-  
-  --color-text: #000000;
-  --color-text-muted: #52525b;
-  --color-text-subtle: #a1a1aa;
-  --color-text-inverse: #ffffff;
-  
-  --color-border: #e4e4e7;
-  --color-border-subtle: #f4f4f5;
-  --color-border-hover: #a1a1aa;
-  --color-border-active: #000000;
 
-  --color-accent: #000000;
-  --color-accent-subtle: rgba(0, 0, 0, 0.1);
-
-  --color-overlay: rgba(255, 255, 255, 0.8);
-  --color-overlay-heavy: rgba(255, 255, 255, 0.95);
-  --color-overlay-light: rgba(255, 255, 255, 0.4);
-  --gradient-cinematic-mask: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.9) 75%, rgba(255, 255, 255, 1) 100%);
-  --gradient-car-stage: radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
-
-  --glass-background: rgba(255, 255, 255, 0.82);
-  --glass-border: rgba(0, 0, 0, 0.06);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(0, 0, 0, 0.02);
-  --shadow-card-hover: 0 12px 36px -4px rgba(0, 0, 0, 0.12), 0 0 16px -2px rgba(0, 0, 0, 0.08);
-  --shadow-modal: 0 24px 60px -8px rgba(0, 0, 0, 0.2);
-}
 
 /* ==========================================================================
    6. GLOBAL INPUT AUTOFILL FIX (Theme-Aware)
@@ -229,14 +209,96 @@ input:-webkit-autofill:active {
   caret-color: #ffffff !important;
 }
 
-/* Light Theme Autofill */
-[data-theme="light"] input:-webkit-autofill,
-[data-theme="light"] input:-webkit-autofill:hover,
-[data-theme="light"] input:-webkit-autofill:focus,
-[data-theme="light"] input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #000000 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  transition: background-color 5000s ease-in-out 0s;
-  caret-color: #ffffff !important;
+/* ==========================================================================
+   ADMIN PANEL DARK MODE (Full Black/Blue/White Theme)
+   ========================================================================== */
+.admin-layout[data-admin-theme="dark"],
+[data-admin-theme="dark"] .admin-layout,
+[data-theme="dark"] .admin-layout {
+  --color-admin-bg: #090d16;
+  --color-admin-sidebar: #111827;
+  --color-admin-card: #111827;
+  --color-admin-border: #1f2937;
+  --color-admin-border-subtle: #1e293b;
+  --color-admin-text: #f8fafc;
+  --color-admin-text-secondary: #cbd5e1;
+  --color-admin-muted: #94a3b8;
+  --color-admin-accent: #38bdf8;
+  --color-admin-accent-hover: #0ea5e9;
+  --color-admin-accent-subtle: rgba(56, 189, 248, 0.12);
+  --color-admin-nav-active-border: #38bdf8;
+  --color-admin-pill-bg: #1f2937;
+  --color-admin-logout-bg: rgba(239, 68, 68, 0.12);
+  --color-admin-logout-text: #f87171;
+  --color-admin-stat-icon-bg-1: #2563eb;
+  --color-admin-stat-icon-bg-2: #059669;
+  --color-admin-stat-icon-bg-3: #0284c7;
+  --color-admin-stat-icon-bg-4: #10b981;
 }
+
+/* Admin Button Specific Overrides */
+.admin-layout .btn-primary {
+  background-color: var(--color-admin-accent) !important;
+  color: #ffffff !important;
+  border-color: var(--color-admin-accent) !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+.admin-layout .btn-primary:hover:not(:disabled) {
+  background-color: var(--color-admin-accent-hover) !important;
+  border-color: var(--color-admin-accent-hover) !important;
+  color: #ffffff !important;
+}
+
+.admin-layout .btn-outline {
+  background-color: transparent !important;
+  color: var(--color-admin-text) !important;
+  border-color: var(--color-admin-border) !important;
+  border-radius: 8px !important;
+}
+
+.admin-layout .btn-outline:hover:not(:disabled) {
+  background-color: var(--color-admin-border-subtle) !important;
+  border-color: var(--color-admin-border) !important;
+}
+
+.admin-layout .btn-secondary {
+  background-color: var(--color-admin-card) !important;
+  color: var(--color-admin-text) !important;
+  border-color: var(--color-admin-border) !important;
+  border-radius: 8px !important;
+}
+
+.admin-layout .btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-admin-border-subtle) !important;
+  color: var(--color-admin-accent) !important;
+  border-color: var(--color-admin-accent) !important;
+}
+
+.admin-layout .badge-secondary {
+  background-color: var(--color-admin-accent-subtle) !important;
+  color: var(--color-admin-accent) !important;
+  border-color: var(--color-admin-accent) !important;
+}
+
+/* Admin Input and Form Field Styling */
+.admin-layout input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.admin-layout select,
+.admin-layout textarea {
+  background-color: var(--color-admin-card) !important;
+  color: var(--color-admin-text) !important;
+  border: 1px solid var(--color-admin-border) !important;
+  border-radius: 8px !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-layout input:focus,
+.admin-layout select:focus,
+.admin-layout textarea:focus {
+  border-color: var(--color-admin-accent) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px var(--color-admin-accent-subtle) !important;
+}
+
 

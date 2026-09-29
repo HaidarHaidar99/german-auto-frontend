@@ -49,10 +49,10 @@ export function FormSummaryCards({
   const cards = [
     {
       id: "total",
-      label: t("statTotalForms", { defaultValue: "Gesamte Eingänge" }),
+      label: t("statTotalForms", { defaultValue: "Total Submissions" }),
       count: counts.total,
       icon: "inbox",
-      color: "var(--color-primary, var(--color-text))",
+      iconBg: "#2563eb",
       isActive: activeStatusFilter === "ALL" && !activeTypeFilter,
       onClick: () => {
         onSelectStatusFilter?.("ALL");
@@ -61,11 +61,10 @@ export function FormSummaryCards({
     },
     {
       id: "new",
-      label: t("statusNew", { defaultValue: "Neu" }),
+      label: t("statusNew", { defaultValue: "New" }),
       count: counts.new,
       icon: "mail",
-      color: "#3b82f6",
-      badgeBg: "rgba(59, 130, 246, 0.12)",
+      iconBg: "#3b82f6",
       isActive: activeStatusFilter === "NEW",
       onClick: () => {
         onSelectStatusFilter?.(activeStatusFilter === "NEW" ? "ALL" : "NEW");
@@ -73,11 +72,10 @@ export function FormSummaryCards({
     },
     {
       id: "read",
-      label: t("statusRead", { defaultValue: "Gelesen" }),
+      label: t("statusRead", { defaultValue: "Read" }),
       count: counts.read,
-      icon: "book-open",
-      color: "#06b6d4",
-      badgeBg: "rgba(6, 182, 212, 0.12)",
+      icon: "check",
+      iconBg: "#06b6d4",
       isActive: activeStatusFilter === "READ",
       onClick: () => {
         onSelectStatusFilter?.(activeStatusFilter === "READ" ? "ALL" : "READ");
@@ -85,11 +83,10 @@ export function FormSummaryCards({
     },
     {
       id: "in_progress",
-      label: t("statusInProgress", { defaultValue: "In Bearbeitung" }),
+      label: t("statusInProgress", { defaultValue: "In Progress" }),
       count: counts.in_progress,
       icon: "clock",
-      color: "#eab308",
-      badgeBg: "rgba(234, 179, 8, 0.12)",
+      iconBg: "#eab308",
       isActive: activeStatusFilter === "IN_PROGRESS",
       onClick: () => {
         onSelectStatusFilter?.(activeStatusFilter === "IN_PROGRESS" ? "ALL" : "IN_PROGRESS");
@@ -97,11 +94,10 @@ export function FormSummaryCards({
     },
     {
       id: "completed",
-      label: t("statusCompleted", { defaultValue: "Abgeschlossen" }),
+      label: t("statusCompleted", { defaultValue: "Completed" }),
       count: counts.completed,
       icon: "check-circle",
-      color: "#22c55e",
-      badgeBg: "rgba(34, 197, 94, 0.12)",
+      iconBg: "#10b981",
       isActive: activeStatusFilter === "COMPLETED",
       onClick: () => {
         onSelectStatusFilter?.(activeStatusFilter === "COMPLETED" ? "ALL" : "COMPLETED");
@@ -109,11 +105,10 @@ export function FormSummaryCards({
     },
     {
       id: "archived",
-      label: t("statusArchived", { defaultValue: "Archiviert" }),
+      label: t("statusArchived", { defaultValue: "Archived" }),
       count: counts.archived,
       icon: "archive",
-      color: "var(--color-admin-muted, #94a3b8)",
-      badgeBg: "rgba(148, 163, 184, 0.12)",
+      iconBg: "#64748b",
       isActive: activeStatusFilter === "ARCHIVED",
       onClick: () => {
         onSelectStatusFilter?.(activeStatusFilter === "ARCHIVED" ? "ALL" : "ARCHIVED");
@@ -121,11 +116,10 @@ export function FormSummaryCards({
     },
     {
       id: "contact",
-      label: t("statContactForms", { defaultValue: "Kontaktanfragen" }),
+      label: t("statContactForms", { defaultValue: "Contact Requests" }),
       count: counts.contact,
       icon: "message-square",
-      color: "#a855f7",
-      badgeBg: "rgba(168, 85, 247, 0.12)",
+      iconBg: "#8b5cf6",
       isActive: activeTypeFilter === "CONTACT",
       onClick: () => {
         onSelectTypeFilter?.(activeTypeFilter === "CONTACT" ? "" : "CONTACT");
@@ -133,11 +127,10 @@ export function FormSummaryCards({
     },
     {
       id: "sell_car",
-      label: t("statSellCarForms", { defaultValue: "Fahrzeugankauf" }),
+      label: t("statSellCarForms", { defaultValue: "Vehicle Purchases" }),
       count: counts.sell_car,
       icon: "car",
-      color: "#f97316",
-      badgeBg: "rgba(249, 115, 22, 0.12)",
+      iconBg: "#f97316",
       isActive: activeTypeFilter === "SELL_CAR",
       onClick: () => {
         onSelectTypeFilter?.(activeTypeFilter === "SELL_CAR" ? "" : "SELL_CAR");
@@ -150,8 +143,9 @@ export function FormSummaryCards({
       className={`form-summary-grid ${className}`.trim()}
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
-        gap: "var(--space-sm)",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "16px",
+        marginBottom: "20px",
         ...style,
       }}
     >
@@ -162,57 +156,86 @@ export function FormSummaryCards({
           onClick={card.onClick}
           style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            padding: "12px 14px",
+            alignItems: "center",
+            gap: "16px",
+            padding: "18px 20px",
             backgroundColor: card.isActive
-              ? "rgba(255, 255, 255, 0.12)"
-              : "var(--color-admin-card, #121418)",
-            borderRadius: "var(--radius-md, 8px)",
+              ? "var(--color-admin-accent-subtle)"
+              : "var(--color-admin-card)",
+            borderRadius: "16px",
             border: card.isActive
-              ? "1px solid var(--color-primary, var(--color-text))"
-              : "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              ? "2px solid var(--color-admin-accent)"
+              : "1px solid var(--color-admin-border)",
+            boxShadow: card.isActive
+              ? "0 4px 12px rgba(37, 99, 235, 0.12)"
+              : "0 1px 3px rgba(0, 0, 0, 0.04)",
             cursor: "pointer",
             textAlign: "left",
-            transition: "all 0.2s ease",
+            transition: "transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease",
+            outline: "none",
             position: "relative",
-            overflow: "hidden",
+          }}
+          onMouseEnter={(e) => {
+            if (!card.isActive) {
+              e.currentTarget.style.borderColor = "var(--color-admin-accent)";
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.06)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!card.isActive) {
+              e.currentTarget.style.borderColor = "var(--color-admin-border)";
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.04)";
+            }
           }}
         >
+          {/* Left Squircle Icon Box */}
           <div
             style={{
+              width: "48px",
+              height: "48px",
+              borderRadius: "14px",
+              backgroundColor: card.iconBg,
+              color: "#ffffff",
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              marginBottom: "8px",
+              justifyContent: "center",
+              flexShrink: 0,
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.12)",
             }}
           >
+            <Icon name={card.icon} size={22} strokeWidth={2} />
+          </div>
+
+          {/* Right Content */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px", minWidth: 0, flex: 1 }}>
             <span
               style={{
                 fontSize: "11px",
-                fontWeight: 600,
-                color: card.isActive
-                  ? "var(--color-primary, var(--color-text))"
-                  : "var(--color-admin-muted, #94a3b8)",
+                fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: "0.04em",
+                letterSpacing: "0.6px",
+                color: card.isActive ? "var(--color-admin-accent)" : "var(--color-admin-muted)",
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
               }}
             >
               {card.label}
             </span>
-            <Icon name={card.icon} size={15} style={{ color: card.color, opacity: 0.85 }} />
-          </div>
-
-          <div
-            style={{
-              fontSize: "var(--font-size-xl, 22px)",
-              fontWeight: 700,
-              color: card.isActive ? "var(--color-primary, var(--color-text))" : "#ffffff",
-              lineHeight: 1,
-            }}
-          >
-            {card.count}
+            <span
+              style={{
+                fontSize: "1.75rem",
+                fontWeight: 800,
+                letterSpacing: "-0.5px",
+                color: "var(--color-admin-text)",
+                lineHeight: 1.1,
+              }}
+            >
+              {card.count}
+            </span>
           </div>
         </button>
       ))}

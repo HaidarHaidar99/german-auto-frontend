@@ -36,7 +36,7 @@ export function AdminUserMenu({ className = "", style = {} }) {
             borderRadius: "50%",
             backgroundColor: "rgba(255, 255, 255, 0.15)",
             border: "1px solid rgba(255, 255, 255, 0.35)",
-            color: "var(--color-secondary)",
+            color: "#ffffff",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -60,46 +60,12 @@ export function AdminUserMenu({ className = "", style = {} }) {
             <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text)" }}>
               {user?.full_name || user?.email}
             </span>
-            <Badge variant={isSuperAdmin ? "secondary" : "outline"} size="sm">
-              {isSuperAdmin ? t("superAdmin") : t("admin")}
-            </Badge>
           </div>
           <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)" }}>
             {user?.email}
           </span>
         </div>
       </div>
-
-      <button
-        type="button"
-        onClick={handleLogout}
-        title={t("logout")}
-        aria-label={t("logout")}
-        style={{
-          background: "none",
-          border: "1px solid var(--color-admin-border)",
-          borderRadius: "var(--radius-md)",
-          padding: "6px 10px",
-          color: "var(--color-admin-muted)",
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          fontSize: "var(--font-size-xs)",
-          transition: "all var(--transition-fast)",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = "var(--color-error)";
-          e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.4)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = "var(--color-admin-muted)";
-          e.currentTarget.style.borderColor = "var(--color-admin-border)";
-        }}
-      >
-        <Icon name="log-out" size={14} />
-        <span className="hide-mobile">{t("logout")}</span>
-      </button>
     </div>
   );
 }

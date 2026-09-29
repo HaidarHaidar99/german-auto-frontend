@@ -29,15 +29,15 @@ function RoleBadge({ role }) {
           display: "inline-flex",
           alignItems: "center",
           gap: "5px",
-          padding: "3px 9px",
-          borderRadius: "var(--radius-sm)",
+          padding: "3px 10px",
+          borderRadius: "6px",
           fontSize: "11px",
           fontWeight: 700,
           letterSpacing: "0.5px",
           textTransform: "uppercase",
-          backgroundColor: "rgba(255, 255, 255, 0.16)",
-          color: "var(--color-secondary)",
-          border: "1px solid rgba(255, 255, 255, 0.4)",
+          backgroundColor: "rgba(245, 158, 11, 0.12)",
+          color: "#d97706",
+          border: "1px solid rgba(245, 158, 11, 0.35)",
         }}
       >
         <Icon name="award" size={12} />
@@ -53,15 +53,15 @@ function RoleBadge({ role }) {
           display: "inline-flex",
           alignItems: "center",
           gap: "5px",
-          padding: "3px 9px",
-          borderRadius: "var(--radius-sm)",
+          padding: "3px 10px",
+          borderRadius: "6px",
           fontSize: "11px",
           fontWeight: 700,
           letterSpacing: "0.5px",
           textTransform: "uppercase",
-          backgroundColor: "rgba(59, 130, 246, 0.14)",
-          color: "#60a5fa",
-          border: "1px solid rgba(59, 130, 246, 0.3)",
+          backgroundColor: "#e0f2fe",
+          color: "#0284c7",
+          border: "1px solid rgba(2, 132, 199, 0.2)",
         }}
       >
         <Icon name="shield" size={12} />
@@ -76,15 +76,14 @@ function RoleBadge({ role }) {
         display: "inline-flex",
         alignItems: "center",
         gap: "5px",
-        padding: "3px 9px",
-        borderRadius: "var(--radius-sm)",
+        padding: "3px 10px",
+        borderRadius: "6px",
         fontSize: "11px",
         fontWeight: 600,
         letterSpacing: "0.5px",
         textTransform: "uppercase",
-        backgroundColor: "rgba(255, 255, 255, 0.06)",
+        backgroundColor: "var(--color-admin-border-subtle)",
         color: "var(--color-admin-muted)",
-        border: "1px solid rgba(255, 255, 255, 0.12)",
       }}
     >
       <Icon name="user" size={12} />
@@ -190,62 +189,75 @@ export function UserTable({
               <tr
                 style={{
                   borderBottom: "1px solid var(--color-admin-border)",
-                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  backgroundColor: "var(--color-admin-border-subtle)",
                   color: "var(--color-admin-muted)",
-                  fontSize: "var(--font-size-xs)",
+                  fontSize: "11px",
+                  fontWeight: 700,
                   textTransform: "uppercase",
-                  letterSpacing: "0.5px",
+                  letterSpacing: "0.6px",
                 }}
               >
-                <th style={{ padding: "14px 18px", fontWeight: 600 }}>{t("name", { defaultValue: "Name" })}</th>
-                <th style={{ padding: "14px 18px", fontWeight: 600 }}>{t("email", { defaultValue: "E-Mail" })}</th>
-                <th style={{ padding: "14px 18px", fontWeight: 600 }}>{t("role", { defaultValue: "Rolle" })}</th>
-                <th style={{ padding: "14px 18px", fontWeight: 600 }}>{t("status", { defaultValue: "Status" })}</th>
-                <th style={{ padding: "14px 18px", fontWeight: 600 }}>{t("created", { defaultValue: "Erstellt" })}</th>
-                <th style={{ padding: "14px 18px", fontWeight: 600 }}>{t("updated", { defaultValue: "Aktualisiert" })}</th>
-                <th style={{ padding: "14px 18px", fontWeight: 600, textAlign: "right" }}>
-                  {t("actions", { defaultValue: "Aktionen" })}
-                </th>
+                <th style={{ padding: "14px 18px" }}>FULL NAME</th>
+                <th style={{ padding: "14px 18px" }}>EMAIL ADDRESS</th>
+                <th style={{ padding: "14px 18px" }}>ROLE</th>
+                <th style={{ padding: "14px 18px" }}>STATUS</th>
+                <th style={{ padding: "14px 18px" }}>CREATED DATE</th>
+                <th style={{ padding: "14px 18px" }}>UPDATED</th>
+                <th style={{ padding: "14px 18px", textAlign: "right" }}>ACTIONS</th>
               </tr>
             </thead>
             <tbody>
               {users.map((item, index) => {
                 const isSelf = item.id === currentUserId;
-                const isEven = index % 2 === 0;
 
                 return (
                   <tr
                     key={item.id}
                     style={{
-                      borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-                      backgroundColor: isEven ? "transparent" : "rgba(255, 255, 255, 0.015)",
-                      transition: "background-color var(--transition-fast)",
+                      borderBottom: "1px solid var(--color-admin-border)",
+                      backgroundColor: "transparent",
+                      transition: "background-color 0.15s ease",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
+                      e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.05))";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = isEven
                         ? "transparent"
-                        : "rgba(255, 255, 255, 0.015)";
+                        : "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.015))";
                     }}
                   >
                     {/* Name */}
                     <td style={{ padding: "14px 18px" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                         <div
+                          className="user-initial-circle"
                           style={{
-                            width: "32px",
-                            height: "32px",
+                            width: "36px",
+                            height: "36px",
                             borderRadius: "50%",
-                            backgroundColor: "rgba(255, 255, 255, 0.08)",
+                            backgroundColor: "var(--color-admin-card, #ffffff)",
+                            border: "1.5px solid var(--color-admin-border, #e2e8f0)",
+                            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            color: "var(--color-admin-text)",
-                            fontWeight: 700,
-                            fontSize: "12px",
+                            color: "var(--color-admin-accent, #2563eb)",
+                            fontWeight: 800,
+                            fontSize: "13px",
                             flexShrink: 0,
+                            transition: "all 0.2s ease",
+                            cursor: "default",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = "var(--color-admin-accent, #2563eb)";
+                            e.currentTarget.style.transform = "scale(1.08)";
+                            e.currentTarget.style.boxShadow = "0 3px 8px rgba(37, 99, 235, 0.18)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = "var(--color-admin-border, #e2e8f0)";
+                            e.currentTarget.style.transform = "scale(1)";
+                            e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.08)";
                           }}
                         >
                           {(item.full_name || item.email || "U").charAt(0).toUpperCase()}
@@ -257,13 +269,13 @@ export function UserTable({
                           {isSelf && (
                             <span
                               style={{
-                                fontSize: "10px",
-                                color: "var(--color-secondary)",
-                                fontWeight: 700,
-                                textTransform: "uppercase",
+                                fontSize: "11px",
+                                color: "var(--color-admin-accent)",
+                                fontStyle: "italic",
+                                fontWeight: 600,
                               }}
                             >
-                              (Sie / Ihr Konto)
+                              {" "}(You)
                             </span>
                           )}
                         </div>
@@ -423,22 +435,43 @@ export function UserTable({
                   gap: "var(--space-sm)",
                 }}
               >
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: "var(--font-size-base)", color: "var(--color-admin-text)" }}>
-                    {item.full_name || "—"}
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div
+                    style={{
+                      width: "34px",
+                      height: "34px",
+                      borderRadius: "50%",
+                      backgroundColor: "var(--color-admin-card, #ffffff)",
+                      border: "1.5px solid var(--color-admin-border, #e2e8f0)",
+                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.08)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "var(--color-admin-accent, #2563eb)",
+                      fontWeight: 800,
+                      fontSize: "12px",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {(item.full_name || item.email || "U").charAt(0).toUpperCase()}
                   </div>
-                  {isSelf && (
-                    <span
-                      style={{
-                        fontSize: "10px",
-                        color: "var(--color-secondary)",
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      (Sie / Ihr Konto)
-                    </span>
-                  )}
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: "var(--font-size-base)", color: "var(--color-admin-text)" }}>
+                      {item.full_name || "—"}
+                    </div>
+                    {isSelf && (
+                      <span
+                        style={{
+                          fontSize: "11px",
+                          color: "var(--color-admin-accent)",
+                          fontStyle: "italic",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {" "}(You)
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <RoleBadge role={item.role} />
               </div>

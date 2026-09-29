@@ -328,24 +328,6 @@ export function AdminReviewsPage() {
             {reviews.length} {t("statTotalReviews", { defaultValue: "Rezensionen" })}
           </Badge>
         }
-        actions={
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => fetchReviews(true)}
-            disabled={loading || refreshing}
-            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-          >
-            <Icon
-              name="refresh-cw"
-              size={14}
-              style={{
-                animation: refreshing ? "btn-spin 0.8s linear infinite" : "none",
-              }}
-            />
-            <span>{t("refresh", { defaultValue: "Aktualisieren" })}</span>
-          </Button>
-        }
       />
 
       <div
@@ -388,8 +370,6 @@ export function AdminReviewsPage() {
             message={t("noReviewsDesc", {
               defaultValue: "Es sind derzeit keine Kundenstimmen in der Datenbank hinterlegt.",
             })}
-            actionLabel={t("refresh", { defaultValue: "Aktualisieren" })}
-            onAction={() => fetchReviews(true)}
           />
         ) : filteredReviews.length === 0 ? (
           <AdminEmptyState

@@ -74,7 +74,7 @@ export function DeleteUserModal({
         <div
           style={{
             padding: "12px 14px",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            backgroundColor: "var(--color-admin-border-subtle)",
             borderRadius: "var(--radius-md)",
             border: "1px solid var(--color-admin-border)",
             fontSize: "var(--font-size-xs)",

@@ -63,8 +63,8 @@ export function NotificationList({
         return {
           label: t("filterSystem", { defaultValue: "Systemmeldung" }),
           icon: "bell",
-          color: "var(--color-primary, var(--color-text))",
-          bg: "rgba(255, 255, 255, 0.12)",
+          color: "var(--color-admin-accent, #2563eb)",
+          bg: "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.12))",
           targetRoute: null,
           targetLabel: null,
         };
@@ -98,14 +98,13 @@ export function NotificationList({
               padding: "var(--space-md, 16px)",
               borderRadius: "var(--radius-md, 8px)",
               backgroundColor: notif.is_read
-                ? "var(--color-admin-card, #121418)"
-                : "rgba(255, 255, 255, 0.06)",
-              border: notif.is_read
-                ? "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))"
-                : "1px solid rgba(255, 255, 255, 0.35)",
+                ? "var(--color-admin-card, #ffffff)"
+                : "var(--color-admin-accent-subtle, #eff6ff)",
+              border: "1px solid var(--color-admin-border, #e2e8f0)",
               borderLeft: notif.is_read
                 ? "3px solid transparent"
-                : "3px solid var(--color-primary, var(--color-text))",
+                : "3px solid var(--color-admin-accent, #2563eb)",
+              boxShadow: notif.is_read ? "0 1px 3px rgba(0,0,0,0.03)" : "0 2px 8px rgba(37, 99, 235, 0.08)",
               display: "flex",
               alignItems: "flex-start",
               justifyContent: "space-between",

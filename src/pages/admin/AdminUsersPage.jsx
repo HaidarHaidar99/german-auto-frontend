@@ -322,37 +322,15 @@ export function AdminUsersPage() {
             "Verwalten Sie Kunden- und Administratorenkonten, Rollenberechtigungen und Sitzungssicherheit.",
         })}
         actions={
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={refreshing || loading}
-              onClick={() => {
-                fetchUsers(pagination.page, filters, true);
-                fetchStats();
-              }}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              <Icon
-                name="refresh-cw"
-                size={14}
-                style={{
-                  animation: refreshing ? "spin 1s linear infinite" : "none",
-                }}
-              />
-              <span>{t("refresh", { defaultValue: "Aktualisieren" })}</span>
-            </Button>
-
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setCreateModalOpen(true)}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              <Icon name="user-plus" size={16} />
-              <span>{t("addAdministrator", { defaultValue: "Administrator anlegen" })}</span>
-            </Button>
-          </>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setCreateModalOpen(true)}
+            style={{ display: "flex", alignItems: "center", gap: "6px" }}
+          >
+            <Icon name="user-plus" size={16} />
+            <span>{t("addAdministrator", { defaultValue: "Administrator anlegen" })}</span>
+          </Button>
         }
       />
 

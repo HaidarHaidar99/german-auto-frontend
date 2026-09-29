@@ -457,31 +457,15 @@ export function AdminCarsPage() {
           </span>
         }
         actions={
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-            <Button
-              variant="outline"
-              size="sm"
-              loading={refreshing}
-              onClick={() => {
-                fetchCars(true);
-                fetchSummaryCounts();
-              }}
-              style={{ fontSize: "var(--font-size-xs)" }}
-            >
-              <Icon name="refresh-cw" size={14} style={{ marginRight: "6px" }} />
-              {t("refresh", { defaultValue: "Aktualisieren" })}
-            </Button>
-
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={handleOpenCreate}
-              style={{ fontSize: "var(--font-size-xs)" }}
-            >
-              <Icon name="plus" size={14} style={{ marginRight: "6px" }} />
-              {t("addVehicle", { defaultValue: "Fahrzeug anlegen" })}
-            </Button>
-          </div>
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={handleOpenCreate}
+            style={{ fontSize: "var(--font-size-xs)" }}
+          >
+            <Icon name="plus" size={14} style={{ marginRight: "6px" }} />
+            {t("addVehicle", { defaultValue: "Fahrzeug anlegen" })}
+          </Button>
         }
       />
 

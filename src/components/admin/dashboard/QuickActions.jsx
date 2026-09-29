@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Button from "../../ui/Button";
 import Icon from "../../common/Icon";
 
 export function QuickActions({ isSuperAdmin }) {
@@ -12,48 +11,46 @@ export function QuickActions({ isSuperAdmin }) {
       label: t("addVehicle", { defaultValue: "Fahrzeug anlegen" }),
       to: "/admincoresecure/cars",
       icon: "plus",
-      variant: "primary",
+      iconBg: "#2563eb",
     },
     {
       label: t("manageVehicles", { defaultValue: "Fahrzeugbestand" }),
       to: "/admincoresecure/cars",
       icon: "car",
-      variant: "outline",
+      iconBg: "#3b82f6",
     },
     {
       label: t("viewForms", { defaultValue: "Anfragen" }),
       to: "/admincoresecure/forms",
       icon: "mail",
-      variant: "outline",
+      iconBg: "#06b6d4",
     },
     {
       label: t("manageReviews", { defaultValue: "Kundenrezensionen" }),
       to: "/admincoresecure/reviews",
       icon: "star",
-      variant: "outline",
+      iconBg: "#8b5cf6",
     },
     {
       label: t("viewNotifications", { defaultValue: "Benachrichtigungen" }),
       to: "/admincoresecure/notifications",
       icon: "bell",
-      variant: "outline",
+      iconBg: "#f59e0b",
     },
     {
       label: t("manageWebsite", { defaultValue: "CMS Einstellungen" }),
       to: "/admincoresecure/settings",
       icon: "settings",
-      variant: "outline",
+      iconBg: "#64748b",
     },
   ];
 
-  // User Management is strictly SUPER_ADMIN only
   if (isSuperAdmin) {
     actions.push({
       label: t("manageUsers", { defaultValue: "Benutzerverwaltung" }),
       to: "/admincoresecure/users",
       icon: "users",
-      variant: "outline",
-      isSuperAdminOnly: true,
+      iconBg: "#10b981",
     });
   }
 
@@ -61,45 +58,88 @@ export function QuickActions({ isSuperAdmin }) {
     <div
       className="admin-dashboard-quick-actions"
       style={{
-        marginBottom: "var(--space-xl)",
-        padding: "var(--space-md) var(--space-lg)",
+        marginBottom: "24px",
+        padding: "16px 20px",
         backgroundColor: "var(--color-admin-card)",
-        borderRadius: "var(--radius-xl)",
+        borderRadius: "16px",
         border: "1px solid var(--color-admin-border)",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "var(--space-md)",
-        flexWrap: "wrap",
+        flexDirection: "column",
+        gap: "12px",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
-        <Icon name="sliders" size={16} style={{ color: "var(--color-secondary)" }} />
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <Icon name="sliders" size={16} style={{ color: "var(--color-admin-accent)" }} />
         <span
           style={{
-            fontSize: "var(--font-size-xs)",
+            fontSize: "12px",
             fontWeight: 700,
-            color: "var(--color-secondary)",
+            color: "var(--color-admin-accent)",
             textTransform: "uppercase",
-            letterSpacing: "0.5px",
+            letterSpacing: "0.6px",
           }}
         >
-          {t("quickActions", { defaultValue: "Schnellaktionen" })}:
+          {t("quickActions", { defaultValue: "Quick Actions" })}
         </span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", flexWrap: "wrap" }}>
+      <div
+        className="quick-actions-grid"
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+          gap: "10px",
+          width: "100%",
+        }}
+      >
         {actions.map((act) => (
-          <Button
+          <Link
             key={act.label}
-            as={Link}
             to={act.to}
-            variant={act.variant}
-            size="sm"
+            className="quick-action-card"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "10px 14px",
+              backgroundColor: "var(--color-admin-pill-bg)",
+              border: "1px solid var(--color-admin-border)",
+              borderRadius: "10px",
+              textDecoration: "none",
+              color: "var(--color-admin-text)",
+              fontSize: "12px",
+              fontWeight: 600,
+              minHeight: "44px",
+              boxSizing: "border-box",
+              transition: "border-color 0.15s ease, transform 0.15s ease",
+            }}
           >
-            <Icon name={act.icon} size={14} />
-            <span>{act.label}</span>
-          </Button>
+            <div
+              style={{
+                width: "26px",
+                height: "26px",
+                borderRadius: "7px",
+                backgroundColor: act.iconBg,
+                color: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Icon name={act.icon} size={14} strokeWidth={2} />
+            </div>
+            <span
+              style={{
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                lineHeight: 1.2,
+              }}
+            >
+              {act.label}
+            </span>
+          </Link>
         ))}
       </div>
     </div>

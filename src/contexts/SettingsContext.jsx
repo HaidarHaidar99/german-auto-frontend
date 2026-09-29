@@ -11,17 +11,13 @@ export function SettingsProvider({ children }) {
   const applyThemeVariables = useCallback((theme) => {
     if (!theme || typeof theme !== "object") return;
     const root = document.documentElement;
-
-    if (theme.primary_color) root.style.setProperty("--color-primary", theme.primary_color);
-    if (theme.secondary_color) root.style.setProperty("--color-secondary", theme.secondary_color);
-    if (theme.background_color) root.style.setProperty("--color-background", theme.background_color);
-    if (theme.text_color) root.style.setProperty("--color-text", theme.text_color);
-    if (theme.card_color) root.style.setProperty("--color-card", theme.card_color);
+    // Forcing pure black monochrome theme, ignoring CMS color overrides
+    root.style.setProperty("--color-background", "#000000");
+    root.style.setProperty("--color-card", "#000000");
+    root.style.setProperty("--color-surface", "#000000");
+    root.style.setProperty("--color-text", "#ffffff");
+    if (theme.secondary_color) root.style.setProperty("--color-secondary", theme.secondary_color); // Keep gold
     if (theme.accent_color) root.style.setProperty("--color-accent", theme.accent_color);
-
-    if (theme.mode && ["light", "dark"].includes(theme.mode)) {
-      root.setAttribute("data-theme", theme.mode);
-    }
   }, []);
 
   const refreshSettings = useCallback(async () => {

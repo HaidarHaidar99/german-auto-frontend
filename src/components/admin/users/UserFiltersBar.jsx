@@ -85,7 +85,7 @@ export function UserFiltersBar({
               transition: "border-color var(--transition-fast)",
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = "var(--color-secondary)";
+              e.target.style.borderColor = "var(--color-admin-accent)";
             }}
             onBlur={(e) => {
               e.target.style.borderColor = "var(--color-admin-border)";

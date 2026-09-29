@@ -26,6 +26,7 @@ export function UserSummaryCards({
         value={stats.total}
         subtitle={t("statTotalUsersDesc", { defaultValue: "Registrierte Konten in der Datenbank" })}
         icon="users"
+        iconBg="#2563eb"
         loading={loading}
       />
 
@@ -34,6 +35,7 @@ export function UserSummaryCards({
         value={stats.customers}
         subtitle={t("statCustomersDesc", { defaultValue: "Normale Kunden (CUSTOMER)" })}
         icon="user"
+        iconBg="#0284c7"
         loading={loading}
       />
 
@@ -42,6 +44,7 @@ export function UserSummaryCards({
         value={stats.admins}
         subtitle={t("statAdminsDesc", { defaultValue: "Verwaltungskonten (ADMIN)" })}
         icon="shield"
+        iconBg="#10b981"
         loading={loading}
       />
 
@@ -50,6 +53,7 @@ export function UserSummaryCards({
         value={stats.superAdmins}
         subtitle={t("statSuperAdminsDesc", { defaultValue: "Vollzugriff (SUPER_ADMIN)" })}
         icon="award"
+        iconBg="#f59e0b"
         loading={loading}
       />
     </div>

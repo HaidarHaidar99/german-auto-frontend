@@ -57,7 +57,7 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
               height: "36px",
               borderRadius: "50%",
               backgroundColor: "rgba(255, 255, 255, 0.1)",
-              color: "var(--color-secondary)",
+              color: "var(--color-admin-accent)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -131,7 +131,7 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
                 transition: "all var(--transition-fast)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
+                e.currentTarget.style.borderColor = "var(--color-admin-accent)";
                 e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
               }}
               onMouseLeave={(e) => {
@@ -146,7 +146,7 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
                     height: "32px",
                     borderRadius: "50%",
                     backgroundColor: "rgba(255, 255, 255, 0.12)",
-                    color: "var(--color-secondary)",
+                    color: "var(--color-admin-accent)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

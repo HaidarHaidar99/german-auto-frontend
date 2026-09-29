@@ -55,23 +55,23 @@ export function NotificationFiltersBar({
           display: "flex",
           alignItems: "center",
           gap: "4px",
-          backgroundColor: "rgba(255, 255, 255, 0.04)",
+          backgroundColor: "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.03))",
           padding: "3px",
           borderRadius: "var(--radius-sm, 6px)",
-          border: "1px solid rgba(255, 255, 255, 0.06)",
+          border: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
         }}
       >
         <button
           type="button"
           onClick={() => onChangeStatus?.("all")}
           style={{
-            padding: "5px 12px",
+            padding: "6px 14px",
             fontSize: "12px",
-            fontWeight: 600,
-            borderRadius: "4px",
+            fontWeight: 700,
+            borderRadius: "5px",
             border: "none",
-            backgroundColor: statusFilter === "all" ? "var(--color-primary, var(--color-text))" : "transparent",
-            color: statusFilter === "all" ? "#000000" : "var(--color-admin-muted, #94a3b8)",
+            backgroundColor: statusFilter === "all" ? "var(--color-admin-accent, #2563eb)" : "transparent",
+            color: statusFilter === "all" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
             cursor: "pointer",
             transition: "all 0.15s ease",
           }}
@@ -83,18 +83,18 @@ export function NotificationFiltersBar({
           type="button"
           onClick={() => onChangeStatus?.("unread")}
           style={{
-            padding: "5px 12px",
+            padding: "6px 14px",
             fontSize: "12px",
-            fontWeight: 600,
-            borderRadius: "4px",
+            fontWeight: 700,
+            borderRadius: "5px",
             border: "none",
-            backgroundColor: statusFilter === "unread" ? "var(--color-primary, var(--color-text))" : "transparent",
-            color: statusFilter === "unread" ? "#000000" : "var(--color-admin-muted, #94a3b8)",
+            backgroundColor: statusFilter === "unread" ? "var(--color-admin-accent, #2563eb)" : "transparent",
+            color: statusFilter === "unread" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
             cursor: "pointer",
             transition: "all 0.15s ease",
             display: "inline-flex",
             alignItems: "center",
-            gap: "5px",
+            gap: "6px",
           }}
         >
           <span>{t("filterUnread", { defaultValue: "Ungelesen" })}</span>
@@ -102,10 +102,11 @@ export function NotificationFiltersBar({
             <span
               style={{
                 fontSize: "10px",
-                padding: "0 5px",
+                padding: "1px 6px",
                 borderRadius: "10px",
-                backgroundColor: statusFilter === "unread" ? "#000000" : "rgba(245, 158, 11, 0.2)",
-                color: statusFilter === "unread" ? "#ffffff" : "#f59e0b",
+                backgroundColor: statusFilter === "unread" ? "rgba(255, 255, 255, 0.25)" : "var(--color-admin-accent-subtle, #eff6ff)",
+                color: statusFilter === "unread" ? "#ffffff" : "var(--color-admin-accent, #2563eb)",
+                fontWeight: 800,
                 lineHeight: "14px",
               }}
             >
@@ -118,13 +119,13 @@ export function NotificationFiltersBar({
           type="button"
           onClick={() => onChangeStatus?.("read")}
           style={{
-            padding: "5px 12px",
+            padding: "6px 14px",
             fontSize: "12px",
-            fontWeight: 600,
-            borderRadius: "4px",
+            fontWeight: 700,
+            borderRadius: "5px",
             border: "none",
-            backgroundColor: statusFilter === "read" ? "var(--color-primary, var(--color-text))" : "transparent",
-            color: statusFilter === "read" ? "#000000" : "var(--color-admin-muted, #94a3b8)",
+            backgroundColor: statusFilter === "read" ? "var(--color-admin-accent, #2563eb)" : "transparent",
+            color: statusFilter === "read" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
             cursor: "pointer",
             transition: "all 0.15s ease",
           }}

@@ -25,70 +25,77 @@ export function DashboardSummaryCards({
     >
       {/* 1. Total Inventory */}
       <AdminStatCard
-        label={t("statTotalVehicles", { defaultValue: "Fahrzeuge im Bestand" })}
+        label={t("statTotalVehicles", { defaultValue: "Total Services / Vehicles" })}
         value={inventory?.total ?? 0}
-        subtitle={`${inventory?.available ?? 0} ${t("statAvailableVehicles", { defaultValue: "verfügbar" })}`}
-        icon="car"
+        subtitle={`${inventory?.available ?? 0} ${t("statAvailableVehicles", { defaultValue: "available" })}`}
+        icon="layers"
+        iconBg="var(--color-admin-stat-icon-bg-1)"
         to="/admincoresecure/cars"
         loading={loading}
       />
 
-      {/* 2. Available Cars */}
+      {/* 2. Available Cars / Products */}
       <AdminStatCard
-        label={t("statAvailableVehicles", { defaultValue: "Verfügbare Fahrzeuge" })}
+        label={t("statAvailableVehicles", { defaultValue: "Total Products / Cars" })}
         value={inventory?.available ?? 0}
-        subtitle={`${inventory?.featured ?? 0} ${t("featuredVehicles", { defaultValue: "hervorgehoben" })}`}
-        icon="check"
+        subtitle={`${inventory?.featured ?? 0} ${t("featuredVehicles", { defaultValue: "featured" })}`}
+        icon="box"
+        iconBg="var(--color-admin-stat-icon-bg-2)"
         to="/admincoresecure/cars?status=AVAILABLE"
         loading={loading}
       />
 
-      {/* 3. Sold Cars */}
+      {/* 3. Forms */}
       <AdminStatCard
-        label={t("statSoldVehicles", { defaultValue: "Verkaufte Fahrzeuge" })}
-        value={inventory?.sold ?? 0}
-        subtitle={`${inventory?.reserved ?? 0} ${t("statusReserved", { defaultValue: "reserviert" })}`}
-        icon="tag"
-        to="/admincoresecure/cars?status=SOLD"
+        label={t("totalForms", { defaultValue: "Total Forms" })}
+        value={forms?.total ?? forms?.pending ?? 0}
+        subtitle={`${forms?.pending ?? 0} ${t("pendingForms", { defaultValue: "pending review" })}`}
+        icon="mail"
+        iconBg="var(--color-admin-stat-icon-bg-3)"
+        to="/admincoresecure/forms"
         loading={loading}
       />
 
-      {/* 4. Total Users (SUPER_ADMIN) or Unread Inquiries (ADMIN) */}
+      {/* 4. Total Admins / Users */}
       {isSuperAdmin ? (
         <AdminStatCard
-          label={t("statTotalUsers", { defaultValue: "Registrierte Benutzer" })}
+          label={t("statTotalUsers", { defaultValue: "Total Admins" })}
           value={users?.total ?? 0}
-          subtitle={`${users?.unverified ?? 0} ${t("unverifiedUsersSubtitle", { defaultValue: "unbestätigt" })}`}
+          subtitle={`${users?.unverified ?? 0} ${t("unverifiedUsersSubtitle", { defaultValue: "unverified" })}`}
           icon="users"
+          iconBg="var(--color-admin-stat-icon-bg-4)"
           to="/admincoresecure/users"
           loading={loading}
         />
       ) : (
         <AdminStatCard
-          label={t("statPendingInquiries", { defaultValue: "Offene Anfragen" })}
-          value={forms?.pending ?? 0}
-          subtitle={`${forms?.total ?? 0} ${t("totalFormsSubtitle", { defaultValue: "gesamt eingegangen" })}`}
-          icon="mail"
-          to="/admincoresecure/forms?status=NEW"
+          label={t("statSoldVehicles", { defaultValue: "Sold Vehicles" })}
+          value={inventory?.sold ?? 0}
+          subtitle={`${inventory?.reserved ?? 0} ${t("statusReserved", { defaultValue: "reserved" })}`}
+          icon="tag"
+          iconBg="var(--color-admin-stat-icon-bg-4)"
+          to="/admincoresecure/cars?status=SOLD"
           loading={loading}
         />
       )}
 
       {/* 5. Pending Reviews */}
       <AdminStatCard
-        label={t("statPendingReviews", { defaultValue: "Ausstehende Rezensionen" })}
-        value={reviews?.pending ?? 0}
-        subtitle={`${reviews?.total ?? 0} ${t("totalReviewsSubtitle", { defaultValue: "Gesamtbewertungen" })}`}
+        label={t("statPendingReviews", { defaultValue: "Reviews" })}
+        value={reviews?.total ?? reviews?.pending ?? 0}
+        subtitle={`${reviews?.pending ?? 0} ${t("totalReviewsSubtitle", { defaultValue: "pending" })}`}
         icon="star"
-        to="/admincoresecure/reviews?status=PENDING"
+        iconBg="#8b5cf6"
+        to="/admincoresecure/reviews"
         loading={loading}
       />
 
       {/* 6. Notifications */}
       <AdminStatCard
-        label={t("statUnreadNotifications", { defaultValue: "Ungelesene Meldungen" })}
+        label={t("statUnreadNotifications", { defaultValue: "Notifications" })}
         value={notifications?.unreadCount ?? 0}
         icon="bell"
+        iconBg="#0ea5e9"
         to="/admincoresecure/notifications"
         loading={loading}
       />

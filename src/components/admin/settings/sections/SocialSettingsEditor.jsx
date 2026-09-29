@@ -2,16 +2,39 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import SettingsSection from "../SettingsSection";
 import SettingsToggle from "../SettingsToggle";
-import Input from "../../../forms/Input";
 
 const PLATFORMS = [
-  { key: "facebook", label: "Facebook", placeholder: "https://facebook.com/..." },
-  { key: "instagram", label: "Instagram", placeholder: "https://instagram.com/..." },
-  { key: "youtube", label: "YouTube", placeholder: "https://youtube.com/..." },
-  { key: "tiktok", label: "TikTok", placeholder: "https://tiktok.com/@..." },
-  { key: "linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/company/..." },
-  { key: "x", label: "X (Twitter)", placeholder: "https://x.com/..." },
+  { key: "facebook", label: "Facebook", prefix: "https://facebook.com/", placeholder: "username or page" },
+  { key: "instagram", label: "Instagram", prefix: "https://instagram.com/", placeholder: "username" },
+  { key: "whatsapp", label: "WhatsApp", prefix: "https://wa.me/", placeholder: "e.g. 491512345678" },
+  { key: "tiktok", label: "TikTok", prefix: "https://tiktok.com/@", placeholder: "username" },
+  { key: "youtube", label: "YouTube", prefix: "https://youtube.com/@", placeholder: "channel" },
+  { key: "linkedin", label: "LinkedIn", prefix: "https://linkedin.com/company/", placeholder: "company-name" },
+  { key: "x", label: "X (Twitter)", prefix: "https://x.com/", placeholder: "handle" },
 ];
+
+function extractAccount(fullUrl, prefix) {
+  if (!fullUrl) return "";
+  const trimmed = String(fullUrl).trim();
+  if (trimmed.startsWith(prefix)) {
+    return trimmed.slice(prefix.length);
+  }
+  const normalizedPrefix = prefix.replace(/\/+$/, "");
+  if (trimmed.startsWith(normalizedPrefix + "/")) {
+    return trimmed.slice(normalizedPrefix.length + 1);
+  }
+  return trimmed;
+}
+
+function composeUrl(account, prefix) {
+  const trimmed = String(account).trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  const cleanAccount = trimmed.replace(/^@/, "").replace(/^\/+/, "");
+  return `${prefix}${cleanAccount}`;
+}
 
 export function SocialSettingsEditor({
   data = {},
@@ -35,19 +58,20 @@ export function SocialSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.social", { defaultValue: "Social Media Verknüpfungen" })}
+      title={t("settingsSections.social", { defaultValue: "Social Media Links" })}
       subtitle={t("socialSubtitle", {
-        defaultValue: "Aktivieren Sie Ihre offiziellen Social-Media-Kanäle für Footer und Kontaktauftritt.",
+        defaultValue: "Activate your official social media channels. You only need to enter your username or number.",
       })}
       sectionKey="social"
       onReset={onReset}
       resetLoading={resetLoading}
       previewUrl="/"
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-        {PLATFORMS.map(({ key, label, placeholder }) => {
+      <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        {PLATFORMS.map(({ key, label, prefix, placeholder }) => {
           const item = data[key] || { enabled: false, url: "" };
           const err = errors[`social.${key}.url`] || errors[`social.${key}`];
+          const accountVal = extractAccount(item.url || "", prefix);
 
           return (
             <div
@@ -56,13 +80,14 @@ export function SocialSettingsEditor({
                 display: "grid",
                 gridTemplateColumns: "180px 1fr",
                 alignItems: "center",
-                gap: "var(--space-md)",
-                padding: "var(--space-sm) var(--space-md)",
+                gap: "16px",
+                padding: "12px 18px",
                 backgroundColor: item.enabled
-                  ? "rgba(255, 255, 255, 0.03)"
-                  : "rgba(255, 255, 255, 0.01)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
-                borderRadius: "var(--radius-sm, 6px)",
+                  ? "var(--color-admin-card)"
+                  : "var(--color-admin-border-subtle, rgba(0,0,0,0.02))",
+                border: "1px solid var(--color-admin-border)",
+                borderRadius: "12px",
+                transition: "all 0.15s ease",
               }}
             >
               <div>
@@ -75,13 +100,58 @@ export function SocialSettingsEditor({
               </div>
 
               <div>
-                <Input
-                  value={item.url || ""}
-                  disabled={!item.enabled}
-                  onChange={(e) => handlePlatformChange(key, { url: e.target.value })}
-                  placeholder={placeholder}
-                  error={err}
-                />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: "var(--color-admin-pill-bg)",
+                    border: `1px solid ${err ? "#ef4444" : "var(--color-admin-border)"}`,
+                    borderRadius: "8px",
+                    overflow: "hidden",
+                    opacity: item.enabled ? 1 : 0.55,
+                    transition: "border-color 0.15s ease",
+                  }}
+                >
+                  <span
+                    style={{
+                      padding: "8px 12px",
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      backgroundColor: "var(--color-admin-border-subtle)",
+                      color: "var(--color-admin-muted)",
+                      borderRight: "1px solid var(--color-admin-border)",
+                      userSelect: "none",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {prefix}
+                  </span>
+                  <input
+                    type="text"
+                    disabled={!item.enabled}
+                    value={accountVal}
+                    onChange={(e) => {
+                      const typed = e.target.value;
+                      const finalUrl = typed ? composeUrl(typed, prefix) : "";
+                      handlePlatformChange(key, { url: finalUrl });
+                    }}
+                    placeholder={placeholder}
+                    style={{
+                      flex: 1,
+                      border: "none",
+                      outline: "none",
+                      padding: "8px 12px",
+                      fontSize: "13px",
+                      backgroundColor: "transparent",
+                      color: "var(--color-admin-text)",
+                    }}
+                  />
+                </div>
+                {err && (
+                  <span style={{ fontSize: "11px", color: "#ef4444", marginTop: "4px", display: "block" }}>
+                    {err}
+                  </span>
+                )}
               </div>
             </div>
           );

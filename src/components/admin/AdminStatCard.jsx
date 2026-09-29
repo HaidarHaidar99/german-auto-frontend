@@ -8,6 +8,7 @@ export function AdminStatCard({
   value,
   subtitle,
   icon = "activity",
+  iconBg,
   to,
   loading = false,
   className = "",
@@ -18,14 +19,14 @@ export function AdminStatCard({
       className={`admin-stat-card surface-card ${className}`.trim()}
       style={{
         backgroundColor: "var(--color-admin-card)",
-        borderRadius: "var(--radius-xl)",
+        borderRadius: "16px",
         border: "1px solid var(--color-admin-border)",
-        padding: "var(--space-lg)",
-        boxShadow: "var(--shadow-elevation-1)",
+        padding: "20px 24px",
+        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
         display: "flex",
-        flexDirection: "column",
-        gap: "var(--space-xs)",
-        transition: "all var(--transition-fast)",
+        alignItems: "center",
+        gap: "18px",
+        transition: "transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease",
         height: "100%",
         textDecoration: "none",
         color: "inherit",
@@ -33,74 +34,82 @@ export function AdminStatCard({
       }}
       onMouseEnter={(e) => {
         if (to) {
-          e.currentTarget.style.borderColor = "var(--color-secondary)";
+          e.currentTarget.style.borderColor = "var(--color-admin-accent)";
           e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.06)";
         }
       }}
       onMouseLeave={(e) => {
         if (to) {
           e.currentTarget.style.borderColor = "var(--color-admin-border)";
           e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 1px 3px rgba(0, 0, 0, 0.04)";
         }
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      {/* ── Left Colored Squircle Icon Box ──────────────────────── */}
+      <div
+        style={{
+          width: "52px",
+          height: "52px",
+          borderRadius: "14px",
+          backgroundColor: iconBg || "var(--color-admin-stat-icon-bg-1)",
+          color: "#ffffff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexShrink: 0,
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Icon name={icon} size={24} />
+      </div>
+
+      {/* ── Right Content: Label & Large Value ──────────────────── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "4px", minWidth: 0, flex: 1 }}>
         <span
           style={{
-            fontSize: "var(--font-size-xs)",
-            fontWeight: 600,
+            fontSize: "11px",
+            fontWeight: 700,
             textTransform: "uppercase",
-            letterSpacing: "0.5px",
+            letterSpacing: "0.6px",
             color: "var(--color-admin-muted)",
+            lineHeight: 1.2,
           }}
         >
           {label}
         </span>
-        <div
-          style={{
-            width: "36px",
-            height: "36px",
-            borderRadius: "var(--radius-md)",
-            backgroundColor: "rgba(255, 255, 255, 0.12)",
-            color: "var(--color-secondary)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          <Icon name={icon} size={18} />
-        </div>
-      </div>
 
-      <div style={{ margin: "var(--space-xs) 0 2px 0" }}>
-        {loading ? (
-          <Skeleton width="60px" height="32px" borderRadius="var(--radius-sm)" />
-        ) : (
-          <span
-            style={{
-              fontSize: "clamp(1.75rem, 2.5vw, 2.25rem)",
-              fontWeight: 800,
-              letterSpacing: "-0.5px",
-              color: "var(--color-admin-text)",
-            }}
-          >
-            {value !== undefined && value !== null ? value : "—"}
+        <div>
+          {loading ? (
+            <Skeleton width="60px" height="32px" borderRadius="6px" />
+          ) : (
+            <span
+              style={{
+                fontSize: "2rem",
+                fontWeight: 800,
+                letterSpacing: "-0.5px",
+                color: "var(--color-admin-text)",
+                lineHeight: 1.1,
+              }}
+            >
+              {value !== undefined && value !== null ? value : "—"}
+            </span>
+          )}
+        </div>
+
+        {subtitle && (
+          <span style={{ fontSize: "12px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
+            {subtitle}
           </span>
         )}
       </div>
-
-      {subtitle && (
-        <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-          {subtitle}
-        </span>
-      )}
     </div>
   );
 
   if (to) {
     return (
-      <Link to={to} style={{ textDecoration: "none" }}>
+      <Link to={to} style={{ textDecoration: "none", color: "inherit" }}>
         {content}
       </Link>
     );

@@ -63,7 +63,7 @@ export function UserDetailDrawer({
         <div
           style={{
             padding: "var(--space-md)",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            backgroundColor: "var(--color-admin-border-subtle)",
             borderRadius: "var(--radius-lg)",
             border: "1px solid var(--color-admin-border)",
             display: "flex",
@@ -76,14 +76,16 @@ export function UserDetailDrawer({
               width: "48px",
               height: "48px",
               borderRadius: "50%",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              color: "var(--color-secondary)",
+              backgroundColor: "var(--color-admin-card, #ffffff)",
+              border: "1.5px solid var(--color-admin-border)",
+              color: "var(--color-admin-accent)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontWeight: 800,
               fontSize: "1.25rem",
               flexShrink: 0,
+              boxShadow: "0 2px 5px rgba(0, 0, 0, 0.08)",
             }}
           >
             {(user.full_name || user.email || "U").charAt(0).toUpperCase()}
@@ -116,7 +118,7 @@ export function UserDetailDrawer({
                   marginTop: "4px",
                   fontSize: "10px",
                   fontWeight: 700,
-                  color: "var(--color-secondary)",
+                  color: "var(--color-admin-accent)",
                   textTransform: "uppercase",
                 }}
               >
@@ -135,7 +137,7 @@ export function UserDetailDrawer({
               flexDirection: "column",
               gap: "4px",
               paddingBottom: "var(--space-sm)",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              borderBottom: "1px solid var(--color-admin-border)",
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
@@ -146,9 +148,10 @@ export function UserDetailDrawer({
                 style={{
                   fontSize: "12px",
                   color: "var(--color-admin-text)",
-                  backgroundColor: "rgba(255, 255, 255, 0.04)",
+                  backgroundColor: "var(--color-admin-border-subtle)",
                   padding: "4px 8px",
                   borderRadius: "var(--radius-sm)",
+                  border: "1px solid var(--color-admin-border)",
                   wordBreak: "break-all",
                   flex: 1,
                 }}
@@ -174,7 +177,7 @@ export function UserDetailDrawer({
               justifyContent: "space-between",
               alignItems: "center",
               paddingBottom: "var(--space-sm)",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              borderBottom: "1px solid var(--color-admin-border)",
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
@@ -188,16 +191,22 @@ export function UserDetailDrawer({
                 borderRadius: "var(--radius-sm)",
                 backgroundColor:
                   user.role === "SUPER_ADMIN"
-                    ? "rgba(255, 255, 255, 0.16)"
+                    ? "rgba(245, 158, 11, 0.12)"
                     : user.role === "ADMIN"
-                    ? "rgba(59, 130, 246, 0.14)"
-                    : "rgba(255, 255, 255, 0.06)",
+                    ? "rgba(2, 132, 199, 0.1)"
+                    : "var(--color-admin-border-subtle)",
                 color:
                   user.role === "SUPER_ADMIN"
-                    ? "var(--color-secondary)"
+                    ? "#d97706"
                     : user.role === "ADMIN"
-                    ? "#60a5fa"
+                    ? "#0284c7"
                     : "var(--color-admin-muted)",
+                border:
+                  user.role === "SUPER_ADMIN"
+                    ? "1px solid rgba(245, 158, 11, 0.35)"
+                    : user.role === "ADMIN"
+                    ? "1px solid rgba(2, 132, 199, 0.2)"
+                    : "1px solid var(--color-admin-border)",
               }}
             >
               {user.role}
@@ -211,7 +220,7 @@ export function UserDetailDrawer({
               justifyContent: "space-between",
               alignItems: "center",
               paddingBottom: "var(--space-sm)",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              borderBottom: "1px solid var(--color-admin-border)",
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
@@ -241,7 +250,7 @@ export function UserDetailDrawer({
               justifyContent: "space-between",
               alignItems: "center",
               paddingBottom: "var(--space-sm)",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              borderBottom: "1px solid var(--color-admin-border)",
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
@@ -259,7 +268,7 @@ export function UserDetailDrawer({
               justifyContent: "space-between",
               alignItems: "center",
               paddingBottom: "var(--space-sm)",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              borderBottom: "1px solid var(--color-admin-border)",
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>

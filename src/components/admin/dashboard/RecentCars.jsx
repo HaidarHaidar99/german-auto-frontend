@@ -80,7 +80,7 @@ export function RecentCars({ cars = [], loading = false }) {
                   transition: "all var(--transition-fast)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--color-secondary)";
+                  e.currentTarget.style.borderColor = "var(--color-admin-accent)";
                   e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
                 }}
                 onMouseLeave={(e) => {
@@ -142,7 +142,7 @@ export function RecentCars({ cars = [], loading = false }) {
                 </div>
 
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)", flexShrink: 0 }}>
-                  <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-secondary)" }}>
+                  <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-accent)" }}>
                     {car.price ? `${car.price.toLocaleString("de-DE")} €` : "—"}
                   </span>
                   {getStatusBadge(car.status)}

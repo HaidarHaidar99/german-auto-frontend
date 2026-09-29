@@ -263,21 +263,21 @@ export function CarTable({
                   <td style={{ padding: "10px 16px", textAlign: "right", whiteSpace: "nowrap" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                       <IconButton
-                        name="external-link"
+                        icon="external-link"
                         size="sm"
                         ariaLabel="Öffentliche Seite öffnen"
                         onClick={() => window.open(`/cars/${car.slug || car.id}`, "_blank", "noopener,noreferrer")}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
-                        name="edit"
+                        icon="edit"
                         size="sm"
                         ariaLabel="Fahrzeug bearbeiten"
                         onClick={() => onEdit?.(car)}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
-                        name="trash"
+                        icon="trash"
                         size="sm"
                         ariaLabel="Fahrzeug löschen"
                         onClick={() => onDelete?.(car)}
@@ -381,19 +381,19 @@ export function CarTable({
 
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
                   <IconButton
-                    name="eye"
+                    icon="eye"
                     size="sm"
                     ariaLabel="Details"
                     onClick={() => onPreview?.(car)}
                   />
                   <IconButton
-                    name="edit"
+                    icon="edit"
                     size="sm"
                     ariaLabel="Bearbeiten"
                     onClick={() => onEdit?.(car)}
                   />
                   <IconButton
-                    name="trash"
+                    icon="trash"
                     size="sm"
                     ariaLabel="Löschen"
                     onClick={() => onDelete?.(car)}

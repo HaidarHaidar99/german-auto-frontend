@@ -91,3 +91,40 @@
     display: none !important;
   }
 }
+
+/* Admin Panel Mobile Card Optimizations */
+@media (max-width: 768px) {
+  .car-inventory-summary,
+  .form-summary-grid,
+  .review-summary-grid,
+  .notification-summary-grid,
+  .admin-user-summary-cards {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .admin-stat-card,
+  .car-inventory-summary button,
+  .form-summary-grid button,
+  .review-summary-grid button,
+  .notification-summary-grid button {
+    padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+
+  .admin-stat-card > div:first-child,
+  .car-inventory-summary button > div:first-child,
+  .form-summary-grid button > div:first-child,
+  .review-summary-grid button > div:first-child,
+  .notification-summary-grid button > div:first-child {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+  }
+
+  .admin-header-card {
+    padding: 12px 16px !important;
+    margin-bottom: 16px !important;
+  }
+}
+

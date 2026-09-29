@@ -180,7 +180,7 @@ export function AttentionRequired({
                 gap: "var(--space-sm)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
+                e.currentTarget.style.borderColor = "var(--color-admin-accent)";
                 e.currentTarget.style.transform = "translateX(2px)";
               }}
               onMouseLeave={(e) => {
@@ -195,7 +195,7 @@ export function AttentionRequired({
                     height: "32px",
                     borderRadius: "var(--radius-sm)",
                     backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    color: "var(--color-secondary)",
+                    color: "var(--color-admin-accent)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",

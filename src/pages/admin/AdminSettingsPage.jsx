@@ -15,7 +15,6 @@ import { gsap, isReducedMotion } from "../../utils/animation";
 // Section Editors
 import SiteSettingsEditor from "../../components/admin/settings/sections/SiteSettingsEditor";
 import BrandingSettingsEditor from "../../components/admin/settings/sections/BrandingSettingsEditor";
-import ThemeSettingsEditor from "../../components/admin/settings/sections/ThemeSettingsEditor";
 import LanguagesSettingsEditor from "../../components/admin/settings/sections/LanguagesSettingsEditor";
 import ContactSettingsEditor from "../../components/admin/settings/sections/ContactSettingsEditor";
 import HoursSettingsEditor from "../../components/admin/settings/sections/HoursSettingsEditor";
@@ -33,7 +32,6 @@ import GoogleReviewsSettingsEditor from "../../components/admin/settings/section
 const SECTIONS = [
   { key: "site", labelKey: "general", icon: "globe" },
   { key: "branding", labelKey: "branding", icon: "image" },
-  { key: "theme", labelKey: "theme", icon: "sun" },
   { key: "languages", labelKey: "languages", icon: "globe" },
   { key: "contact", labelKey: "contact", icon: "phone" },
   { key: "hours", labelKey: "hours", icon: "clock" },
@@ -241,8 +239,6 @@ export function AdminSettingsPage() {
         return <SiteSettingsEditor {...commonProps} />;
       case "branding":
         return <BrandingSettingsEditor {...commonProps} />;
-      case "theme":
-        return <ThemeSettingsEditor {...commonProps} />;
       case "languages":
         return <LanguagesSettingsEditor {...commonProps} />;
       case "contact":
@@ -280,9 +276,21 @@ export function AdminSettingsPage() {
         title={t("settings")}
         subtitle={t("settingsSubtitle", "Zentrales Content-Management-System & Konfiguration aller 16 Website-Bereiche")}
         badge={
-          <Badge variant="secondary" size="sm">
-            CMS Core
-          </Badge>
+          <span
+            style={{
+              display: "inline-block",
+              padding: "3px 10px",
+              borderRadius: "6px",
+              backgroundColor: "var(--color-admin-accent-subtle)",
+              color: "var(--color-admin-accent)",
+              border: "1px solid var(--color-admin-accent)",
+              fontWeight: 700,
+              fontSize: "11px",
+              letterSpacing: "0.5px",
+            }}
+          >
+            CMS CORE
+          </span>
         }
       />
 
@@ -349,30 +357,32 @@ export function AdminSettingsPage() {
               className="admin-settings-sidebar"
               style={{
                 position: "sticky",
-                top: "calc(var(--admin-header-height, 70px) + var(--space-md))",
-                backgroundColor: "var(--color-admin-card, #121418)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
-                borderRadius: "var(--radius-md, 8px)",
-                padding: "var(--space-sm)",
+                top: "20px",
+                backgroundColor: "var(--color-admin-card)",
+                border: "1px solid var(--color-admin-border)",
+                borderRadius: "16px",
+                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.04)",
+                padding: "16px 12px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "2px",
+                gap: "4px",
                 maxHeight: "calc(100vh - 120px)",
                 overflowY: "auto",
               }}
             >
               <div
                 style={{
-                  padding: "var(--space-xs) var(--space-sm)",
-                  marginBottom: "var(--space-xs)",
+                  padding: "4px 8px 10px 8px",
                   fontSize: "11px",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
                   color: "var(--color-admin-muted)",
+                  borderBottom: "1px solid var(--color-admin-border)",
+                  marginBottom: "6px",
                 }}
               >
-                CMS Sektionen (16)
+                CMS Sektionen ({SECTIONS.length})
               </div>
 
               {SECTIONS.map((sec) => {
@@ -388,47 +398,47 @@ export function AdminSettingsPage() {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      gap: "var(--space-sm)",
-                      padding: "8px 12px",
-                      borderRadius: "var(--radius-sm, 6px)",
+                      gap: "10px",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
                       backgroundColor: isActive
-                        ? "rgba(255, 255, 255, 0.12)"
+                        ? "var(--color-admin-accent-subtle)"
                         : "transparent",
                       border: isActive
-                        ? "1px solid rgba(255, 255, 255, 0.3)"
+                        ? "1px solid var(--color-admin-accent)"
                         : "1px solid transparent",
                       color: isActive
-                        ? "var(--color-primary, var(--color-text))"
-                        : "var(--color-admin-text, #ffffff)",
-                      fontSize: "var(--font-size-xs)",
-                      fontWeight: isActive ? 600 : 400,
+                        ? "var(--color-admin-accent)"
+                        : "var(--color-admin-text)",
+                      fontSize: "13px",
+                      fontWeight: isActive ? 700 : 500,
                       cursor: "pointer",
                       textAlign: "left",
                       transition: "all 0.15s ease",
                       outline: "none",
                     }}
                   >
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                       <Icon
                         name={sec.icon}
-                        size={15}
+                        size={16}
                         style={{
                           color: isActive
-                            ? "var(--color-primary, var(--color-text))"
+                            ? "var(--color-admin-accent)"
                             : "var(--color-admin-muted)",
                         }}
                       />
-                      <span>{t(`settingsSections.${sec.labelKey}`)}</span>
+                      <span>{t(`settingsSections.${sec.labelKey}`, { defaultValue: sec.labelKey })}</span>
                     </div>
 
                     {isDirty && (
                       <span
                         title="Ungespeicherte Änderungen"
                         style={{
-                          width: "6px",
-                          height: "6px",
+                          width: "7px",
+                          height: "7px",
                           borderRadius: "50%",
-                          backgroundColor: "var(--color-primary, var(--color-text))",
+                          backgroundColor: "var(--color-admin-accent)",
                           flexShrink: 0,
                         }}
                       />

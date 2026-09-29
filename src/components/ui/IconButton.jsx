@@ -7,6 +7,7 @@ import Icon from "../common/Icon";
 
 export function IconButton({
   icon,
+  name,
   ariaLabel,
   variant = "secondary",
   size = "md",
@@ -17,6 +18,7 @@ export function IconButton({
   onClick,
   ...props
 }) {
+  const resolvedIcon = icon || name;
   const variantClass = `btn-${variant}`;
   const sizeClass = `btn-icon-${size}`;
   const iconPixelSize = size === "sm" ? 16 : size === "lg" ? 22 : 18;
@@ -44,10 +46,10 @@ export function IconButton({
             animation: "btn-spin 0.6s linear infinite",
           }}
         />
-      ) : typeof icon === "string" ? (
-        <Icon name={icon} size={iconPixelSize} />
+      ) : typeof resolvedIcon === "string" ? (
+        <Icon name={resolvedIcon} size={iconPixelSize} />
       ) : (
-        icon
+        resolvedIcon
       )}
     </button>
   );

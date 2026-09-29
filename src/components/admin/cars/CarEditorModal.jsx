@@ -864,7 +864,7 @@ export function CarEditorModal({
                       <span style={{ color: "var(--color-admin-text, #fff)" }}>{String(v)}</span>
                     </div>
                     <IconButton
-                      name="trash"
+                      icon="trash"
                       size="sm"
                       ariaLabel="Entfernen"
                       onClick={() => handleRemoveCustomField(k)}
@@ -1248,6 +1248,7 @@ export function CarEditorModal({
           }}
         >
           <Button variant="outline" size="sm" type="button" disabled={saving} onClick={onClose}>
+            <Icon name="close" size={14} style={{ marginRight: "6px" }} />
             {t("cancel", { defaultValue: "Abbrechen" })}
           </Button>
 

@@ -76,7 +76,7 @@ export function RecentActivity({ notifications = [], loading = false }) {
                 transition: "all var(--transition-fast)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
+                e.currentTarget.style.borderColor = "var(--color-admin-accent)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = notif.is_read
@@ -91,7 +91,7 @@ export function RecentActivity({ notifications = [], loading = false }) {
                     height: "28px",
                     borderRadius: "var(--radius-sm)",
                     backgroundColor: "rgba(255, 255, 255, 0.12)",
-                    color: "var(--color-secondary)",
+                    color: "var(--color-admin-accent)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -141,7 +141,7 @@ export function RecentActivity({ notifications = [], loading = false }) {
                     width: "8px",
                     height: "8px",
                     borderRadius: "50%",
-                    backgroundColor: "var(--color-secondary)",
+                    backgroundColor: "var(--color-admin-accent)",
                     marginTop: "6px",
                     flexShrink: 0,
                   }}

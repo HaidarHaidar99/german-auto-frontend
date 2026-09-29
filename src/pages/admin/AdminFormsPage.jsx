@@ -336,24 +336,6 @@ export function AdminFormsPage() {
             {forms.length} {t("statTotalForms", { defaultValue: "Eingänge" })}
           </Badge>
         }
-        actions={
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => fetchForms(true)}
-            disabled={loading || refreshing}
-            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-          >
-            <Icon
-              name="refresh-cw"
-              size={14}
-              style={{
-                animation: refreshing ? "btn-spin 0.8s linear infinite" : "none",
-              }}
-            />
-            <span>{t("refresh", { defaultValue: "Aktualisieren" })}</span>
-          </Button>
-        }
       />
 
       <div
@@ -401,8 +383,6 @@ export function AdminFormsPage() {
               defaultValue:
                 "Es sind derzeit keine Anfragen oder Fahrzeugbewertungen in der Datenbank gespeichert.",
             })}
-            actionLabel={t("refresh", { defaultValue: "Aktualisieren" })}
-            onAction={() => fetchForms(true)}
           />
         ) : filteredForms.length === 0 ? (
           <AdminEmptyState

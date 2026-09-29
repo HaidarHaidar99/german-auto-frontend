@@ -33,6 +33,7 @@ const AdminFormsPage         = lazy(() => import("../pages/admin/AdminFormsPage"
 const AdminReviewsPage       = lazy(() => import("../pages/admin/AdminReviewsPage"));
 const AdminNotificationsPage = lazy(() => import("../pages/admin/AdminNotificationsPage"));
 const AdminUsersPage         = lazy(() => import("../pages/admin/AdminUsersPage"));
+const AdminProfilePage       = lazy(() => import("../pages/admin/AdminProfilePage"));
 const DesignSystemPage       = lazy(() => import("../pages/dev/DesignSystemPage"));
 
 export function AppRoutes() {
@@ -125,6 +126,7 @@ export function AppRoutes() {
           <Route path="forms" element={<AdminFormsPage />} />
           <Route path="reviews" element={<AdminReviewsPage />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
           <Route
             path="users"
             element={
