@@ -73,14 +73,8 @@ export function AboutPage() {
   useGsapContext(pageContainerRef, () => {
     if (isReducedMotion()) return;
 
-    gsap.from(".about-hero", {
-      opacity: 0,
-      y: 20,
-      duration: 0.6,
-      ease: "power2.out",
-    });
-
     const animatedSections = [
+      ".about-header-section",
       ".about-story-section",
       ".about-visual-section",
       ".about-locations-section",
@@ -104,15 +98,30 @@ export function AboutPage() {
       style={{
         maxWidth: "1320px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-4xl) var(--space-md) var(--space-4xl)",
       }}
     >
-      {/* 1. Cinematic Hero */}
-      <AboutHero
-        mediaUrl={heroBgMedia}
-        title={t("heroTitle")}
-        subtitle={t("heroSubtitle")}
-      />
+      {/* 1. Typography Header (No Hero Media) */}
+      <div className="about-header-section" style={{ textAlign: "center", marginBottom: "var(--space-4xl)" }}>
+        <h1 style={{ 
+          fontFamily: "var(--font-family-display)", 
+          fontSize: "clamp(2.5rem, 5vw, 4.5rem)", 
+          lineHeight: "1.1", 
+          margin: "0 0 var(--space-md) 0",
+          color: "var(--color-text)" 
+        }}>
+          {t("heroTitle")}
+        </h1>
+        <p style={{
+          fontSize: "var(--font-size-xl)",
+          color: "var(--color-text-muted)",
+          maxWidth: "800px",
+          margin: "0 auto",
+          lineHeight: "1.6"
+        }}>
+          {t("heroSubtitle")}
+        </p>
+      </div>
 
       {/* 2. Story / Introduction (omits cleanly if no CMS description) */}
       <AboutStory

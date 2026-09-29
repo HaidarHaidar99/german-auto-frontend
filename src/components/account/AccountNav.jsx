@@ -15,9 +15,8 @@ export function AccountNav({ className = "", style = {} }) {
   };
 
   const navItems = [
-    { to: "/account", end: true, label: t("navOverview"), icon: "user" },
-    { to: "/account/favorites", end: false, label: t("navFavorites"), icon: "heart" },
-    { to: "/account/security", end: false, label: t("navSecurity"), icon: "shield" },
+    { to: "/account", end: true, label: t("profile", { ns: "account", defaultValue: "Profile" }), icon: "user" },
+    { to: "/account/favorites", end: false, label: t("navFavorites", { ns: "account" }), icon: "heart" },
   ];
 
   return (

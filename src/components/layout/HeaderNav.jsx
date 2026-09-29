@@ -192,13 +192,8 @@ export function HeaderNav({
               {isAuthenticated ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
                   <Button as={Link} to="/account" variant="outline" size="sm">
-                    {t("navOverview", { ns: "account" }) || "Account"}
+                    {t("profile", { ns: "account", defaultValue: "Profile" })}
                   </Button>
-                  {isAdmin && (
-                    <Button as={Link} to="/admincoresecure" variant="outline" size="sm">
-                      {t("admin")}
-                    </Button>
-                  )}
                   <Button variant="ghost" size="sm" onClick={logout}>
                     {t("logout")}
                   </Button>
@@ -332,20 +327,15 @@ export function HeaderNav({
           >
             {isAuthenticated ? (
               <>
-                <Button as={Link} to="/account" variant="outline" size="lg" style={{ width: "100%", maxWidth: "300px", borderRadius: 0, color: "#fff", borderColor: "#3b4255" }}>
-                  {t("navOverview", { ns: "account" }) || "Account"}
+                <Button as={Link} to="/account" variant="outline" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "300px", borderRadius: 0, color: "#fff", borderColor: "#3b4255" }}>
+                  {t("profile", { ns: "account", defaultValue: "Profile" })}
                 </Button>
-                {isAdmin && (
-                  <Button as={Link} to="/admincoresecure" variant="outline" size="lg" style={{ width: "100%", maxWidth: "300px", borderRadius: 0, color: "#fff", borderColor: "#3b4255" }}>
-                    {t("admin")}
-                  </Button>
-                )}
-                <Button variant="ghost" size="lg" onClick={logout} style={{ color: "#a1a1aa" }}>
+                <Button variant="ghost" size="lg" onClick={() => { closeMenu(); logout(); }} style={{ color: "#a1a1aa" }}>
                   {t("logout")}
                 </Button>
               </>
             ) : (
-              <Button as={Link} to="/login" variant="primary" size="lg" style={{ width: "100%", maxWidth: "300px", borderRadius: 0, backgroundColor: "#fff", color: "#000" }}>
+              <Button as={Link} to="/login" variant="primary" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "300px", borderRadius: 0, backgroundColor: "#fff", color: "#000" }}>
                 {t("login")}
               </Button>
             )}

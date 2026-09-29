@@ -146,351 +146,358 @@ export function LoginPage() {
   return (
     <div
       ref={pageContainerRef}
-      className="auth-page-container"
+      className="auth-page-split"
       style={{
-        padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "75vh",
+        minHeight: "100vh",
+        backgroundColor: "var(--color-background)",
       }}
     >
+      {/* Left side: Cinematic Imagery */}
       <div
-        className="auth-card surface-card"
+        className="hide-mobile"
         style={{
-          width: "100%",
-          maxWidth: "460px",
-          backgroundColor: "var(--color-card)",
-          borderRadius: "var(--radius-2xl)",
-          border: "1px solid var(--color-border)",
-          padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
-          boxShadow: "var(--shadow-elevation-2)",
+          flex: 1,
           position: "relative",
-          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          padding: "var(--space-2xl)",
+          color: "#fff",
+          background: "url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80') center/cover no-repeat",
         }}
       >
-        {/* Subtle ambient luxury light accent */}
         <div
-          aria-hidden="true"
           style={{
             position: "absolute",
-            top: 0,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "200px",
-            height: "2px",
-            background: "linear-gradient(90deg, transparent, var(--color-secondary), transparent)",
+            inset: 0,
+            background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%)",
           }}
         />
-
-        <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
-          <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
-            <Badge variant={isAdminTarget ? "primary" : "outline"} size="sm">
-              {isAdminTarget ? "ADMIN CORE" : "German Auto"}
-            </Badge>
-          </div>
-          <h1
-            style={{
-              fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
-              fontWeight: "var(--font-weight-bold)",
-              letterSpacing: "var(--tracking-tight)",
-              margin: "var(--space-2xs) 0 0 0",
-              color: "var(--color-text)",
-            }}
-          >
-            {isAdminTarget ? t("adminPortalTitle") : t("loginTitle")}
-          </h1>
-          {isAdminTarget && (
-            <p
-              style={{
-                fontSize: "var(--font-size-xs)",
-                color: "var(--color-text-secondary)",
-                marginTop: "var(--space-xs)",
-                marginBottom: 0,
-              }}
-            >
-              {t("adminLoginSubtitle")}
-            </p>
-          )}
+        <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
+          <h2 style={{ fontFamily: "var(--font-family-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, marginBottom: "var(--space-sm)" }}>
+            {t("heroTitle", { ns: "common", defaultValue: "Uncompromising Performance." })}
+          </h2>
+          <p style={{ fontSize: "var(--font-size-lg)", color: "rgba(255,255,255,0.7)" }}>
+            {t("heroSubtitle", { ns: "common", defaultValue: "Enter the world of premium automotive excellence." })}
+          </p>
         </div>
+      </div>
 
-        {/* Session Expired Notice */}
-        {location.state?.reason === "session_expired" && !serverError && (
-          <div
-            role="status"
-            style={{
-              padding: "var(--space-sm) var(--space-md)",
-              backgroundColor: "rgba(245, 158, 11, 0.1)",
-              border: "1px solid rgba(245, 158, 11, 0.3)",
-              borderRadius: "var(--radius-md)",
-              color: "#fbbf24",
-              fontSize: "var(--font-size-sm)",
-              marginBottom: "var(--space-md)",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
-            <Icon name="alert-circle" size={16} style={{ flexShrink: 0 }} />
-            <span>
-              {t("sessionExpiredNotice", {
-                defaultValue: "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
-              })}
-            </span>
-          </div>
-        )}
-
-        {/* Server Error Message */}
-        {serverError && (
-          <div
-            role="alert"
-            style={{
-              padding: "var(--space-sm) var(--space-md)",
-              backgroundColor: "rgba(220, 38, 38, 0.1)",
-              border: "1px solid rgba(220, 38, 38, 0.3)",
-              borderRadius: "var(--radius-md)",
-              color: "var(--color-error)",
-              fontSize: "var(--font-size-sm)",
-              marginBottom: "var(--space-md)",
-              display: "flex",
-              alignItems: "flex-start",
-              gap: "var(--space-xs)",
-            }}
-          >
-            <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px" }} />
-            <span>{serverError}</span>
-          </div>
-        )}
-
-        {/* Unverified account resend prompt */}
-        {isUnverified && (
-          <div
-            style={{
-              padding: "var(--space-md)",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              borderRadius: "var(--radius-md)",
-              marginBottom: "var(--space-md)",
-            }}
-          >
-            <p
+      {/* Right side: Auth Form */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
+          position: "relative",
+        }}
+      >
+        <div
+          className="auth-card"
+          style={{
+            width: "100%",
+            maxWidth: "420px",
+          }}
+        >
+          <div style={{ marginBottom: "var(--space-2xl)" }}>
+            <h1
               style={{
-                margin: "0 0 var(--space-sm) 0",
-                fontSize: "var(--font-size-xs)",
-                color: "var(--color-text-secondary)",
-                lineHeight: 1.5,
+                fontFamily: "var(--font-family-display)",
+                fontSize: "clamp(2rem, 3vw, 2.5rem)",
+                lineHeight: 1.1,
+                margin: "0 0 var(--space-xs) 0",
+                color: "var(--color-text)",
               }}
             >
-              {t("unverifiedAccount")}
-            </p>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              loading={resending}
-              onClick={handleResendVerification}
-              fullWidth
-            >
-              {t("resendVerification")}
-            </Button>
-          </div>
-        )}
-
-        {/* Resend Success Message */}
-        {resendSuccess && (
-          <div
-            role="status"
-            style={{
-              padding: "var(--space-sm) var(--space-md)",
-              backgroundColor: "rgba(16, 185, 129, 0.1)",
-              border: "1px solid rgba(16, 185, 129, 0.3)",
-              borderRadius: "var(--radius-md)",
-              color: "var(--color-success)",
-              fontSize: "var(--font-size-sm)",
-              marginBottom: "var(--space-md)",
-              display: "flex",
-              alignItems: "center",
-              gap: "var(--space-xs)",
-            }}
-          >
-            <Icon name="check" size={16} />
-            <span>{t("resendSuccess")}</span>
-          </div>
-        )}
-
-        {/* Continue with Google (CUSTOMER ONLY) */}
-        {!isAdminTarget && (
-          <div style={{ marginBottom: "var(--space-md)" }}>
-            <button
-              type="button"
-              id="btn-google-auth-login"
-              onClick={handleGoogleSignIn}
+              {isAdminTarget ? t("adminPortalTitle") : t("loginTitle")}
+            </h1>
+            <p
               style={{
-                width: "100%",
+                fontSize: "var(--font-size-base)",
+                color: "var(--color-text-secondary)",
+                margin: 0,
+              }}
+            >
+              {isAdminTarget ? t("adminLoginSubtitle") : t("loginSubtitle", { defaultValue: "Welcome back. Please enter your details." })}
+            </p>
+          </div>
+
+          {/* Session Expired Notice */}
+          {location.state?.reason === "session_expired" && !serverError && (
+            <div
+              role="status"
+              style={{
+                padding: "var(--space-sm) var(--space-md)",
+                backgroundColor: "rgba(245, 158, 11, 0.1)",
+                border: "1px solid rgba(245, 158, 11, 0.3)",
+                borderRadius: "var(--radius-md)",
+                color: "#fbbf24",
+                fontSize: "var(--font-size-sm)",
+                marginBottom: "var(--space-md)",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                gap: "12px",
-                padding: "12px 16px",
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-lg)",
-                color: "var(--color-text)",
-                fontSize: "var(--font-size-sm)",
-                fontWeight: "var(--font-weight-semibold)",
-                cursor: "pointer",
-                transition: "all var(--transition-fast)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.borderColor = "var(--color-secondary)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.04)";
-                e.currentTarget.style.borderColor = "var(--color-border)";
+                gap: "8px",
               }}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>
-                <path
-                  fill="#4285F4"
-                  d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.15z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-                />
-              </svg>
-              <span>{t("continueWithGoogle")}</span>
-            </button>
+              <Icon name="alert-circle" size={16} style={{ flexShrink: 0 }} />
+              <span>
+                {t("sessionExpiredNotice", {
+                  defaultValue: "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+                })}
+              </span>
+            </div>
+          )}
 
+          {/* Server Error Message */}
+          {serverError && (
+            <div
+              role="alert"
+              style={{
+                padding: "var(--space-sm) var(--space-md)",
+                backgroundColor: "rgba(220, 38, 38, 0.1)",
+                border: "1px solid rgba(220, 38, 38, 0.3)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-error)",
+                fontSize: "var(--font-size-sm)",
+                marginBottom: "var(--space-md)",
+                display: "flex",
+                alignItems: "flex-start",
+                gap: "var(--space-xs)",
+              }}
+            >
+              <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px" }} />
+              <span>{serverError}</span>
+            </div>
+          )}
+
+          {/* Unverified account resend prompt */}
+          {isUnverified && (
             <div
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "var(--space-sm)",
-                margin: "var(--space-md) 0",
+                padding: "var(--space-md)",
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                border: "1px solid rgba(255, 255, 255, 0.3)",
+                borderRadius: "var(--radius-md)",
+                marginBottom: "var(--space-md)",
               }}
             >
-              <div style={{ flex: 1, height: "1px", backgroundColor: "var(--color-border-subtle)" }} />
-              <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-secondary)" }}>
-                {t("orContinueWithEmail")}
-              </span>
-              <div style={{ flex: 1, height: "1px", backgroundColor: "var(--color-border-subtle)" }} />
+              <p
+                style={{
+                  margin: "0 0 var(--space-sm) 0",
+                  fontSize: "var(--font-size-xs)",
+                  color: "var(--color-text-secondary)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {t("unverifiedAccount")}
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                loading={resending}
+                onClick={handleResendVerification}
+                fullWidth
+              >
+                {t("resendVerification")}
+              </Button>
             </div>
-          </div>
-        )}
+          )}
 
-        <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-          <Input
-            id="login-email"
-            name="email"
-            type="email"
-            label={t("email")}
-            placeholder={t("emailPlaceholder")}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={errors.email}
-            autoComplete="email"
-            required
-            disabled={loading}
-          />
+          {/* Resend Success Message */}
+          {resendSuccess && (
+            <div
+              role="status"
+              style={{
+                padding: "var(--space-sm) var(--space-md)",
+                backgroundColor: "rgba(16, 185, 129, 0.1)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                borderRadius: "var(--radius-md)",
+                color: "var(--color-success)",
+                fontSize: "var(--font-size-sm)",
+                marginBottom: "var(--space-md)",
+                display: "flex",
+                alignItems: "center",
+                gap: "var(--space-xs)",
+              }}
+            >
+              <Icon name="check" size={16} />
+              <span>{t("resendSuccess")}</span>
+            </div>
+          )}
 
-          <div style={{ position: "relative" }}>
+          <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
             <Input
-              id="login-password"
-              name="password"
-              type={showPassword ? "text" : "password"}
-              label={t("password")}
-              placeholder={t("passwordPlaceholder")}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
-              autoComplete="current-password"
+              id="login-email"
+              name="email"
+              type="email"
+              label={t("email")}
+              placeholder={t("emailPlaceholder")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  document.getElementById("login-password")?.focus();
+                }
+              }}
+              error={errors.email}
+              autoComplete="email"
               required
               disabled={loading}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
-              style={{
-                position: "absolute",
-                right: "12px",
-                top: "36px",
-                background: "none",
-                border: "none",
-                color: "var(--color-text-subtle)",
-                cursor: "pointer",
-                padding: "4px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Icon name={showPassword ? "eye-off" : "eye"} size={16} />
-            </button>
-          </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Link
-              to={isAdminTarget ? "/forgot-password?target=admin" : "/forgot-password"}
+            <div style={{ position: "relative" }}>
+              <Input
+                id="login-password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                label={t("password")}
+                placeholder={t("passwordPlaceholder")}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                error={errors.password}
+                autoComplete="current-password"
+                required
+                disabled={loading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "36px",
+                  background: "none",
+                  border: "none",
+                  color: "var(--color-text-subtle)",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon name={showPassword ? "eye-off" : "eye"} size={16} />
+              </button>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "-8px" }}>
+              <Link
+                to={isAdminTarget ? "/forgot-password?target=admin" : "/forgot-password"}
+                style={{
+                  fontSize: "var(--font-size-sm)",
+                  fontWeight: 500,
+                  color: "var(--color-text)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "4px",
+                  transition: "color var(--transition-fast)",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text)")}
+              >
+                {t("forgotPassword")}
+              </Link>
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              fullWidth
+              style={{ marginTop: "var(--space-sm)", borderRadius: "0px" }}
+            >
+              {loading ? t("loggingIn") : t("loginTitle")}
+            </Button>
+
+            {/* Continue with Google (CUSTOMER ONLY) */}
+            {!isAdminTarget && (
+              <div style={{ marginTop: "var(--space-md)" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "var(--space-sm)",
+                    margin: "var(--space-lg) 0",
+                  }}
+                >
+                  <div style={{ flex: 1, height: "1px", backgroundColor: "var(--color-border-subtle)" }} />
+                  <span style={{ fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wide)", color: "var(--color-text-secondary)" }}>
+                    {t("orContinueWithEmail", { defaultValue: "Or" })}
+                  </span>
+                  <div style={{ flex: 1, height: "1px", backgroundColor: "var(--color-border-subtle)" }} />
+                </div>
+
+                <button
+                  type="button"
+                  id="btn-google-auth-login"
+                  onClick={handleGoogleSignIn}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "12px",
+                    padding: "12px 16px",
+                    backgroundColor: "transparent",
+                    border: "1px solid var(--color-border)",
+                    borderRadius: "0px",
+                    color: "var(--color-text)",
+                    fontSize: "var(--font-size-sm)",
+                    fontWeight: "var(--font-weight-semibold)",
+                    cursor: "pointer",
+                    transition: "all var(--transition-fast)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "var(--color-surface-hover)";
+                    e.currentTarget.style.borderColor = "var(--color-text)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = "var(--color-border)";
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style={{ flexShrink: 0 }}>
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.15z" />
+                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
+                    <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+                  </svg>
+                  <span>{t("continueWithGoogle")}</span>
+                </button>
+              </div>
+            )}
+          </form>
+
+          {!isAdminTarget && (
+            <div
               style={{
-                fontSize: "var(--font-size-xs)",
+                marginTop: "var(--space-2xl)",
+                textAlign: "center",
+                fontSize: "var(--font-size-sm)",
                 color: "var(--color-text-secondary)",
-                textDecoration: "none",
-                transition: "color var(--transition-fast)",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-secondary)")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
-            >
-              {t("forgotPassword")}
-            </Link>
-          </div>
-
-          <Button
-            type="submit"
-            variant="primary"
-            size="lg"
-            loading={loading}
-            fullWidth
-            style={{ marginTop: "var(--space-xs)" }}
-          >
-            {loading ? t("loggingIn") : t("loginTitle")}
-          </Button>
-        </form>
-
-        {!isAdminTarget && (
-          <div
-            style={{
-              marginTop: "var(--space-xl)",
-              paddingTop: "var(--space-lg)",
-              borderTop: "1px solid var(--color-border-subtle)",
-              textAlign: "center",
-              fontSize: "var(--font-size-sm)",
-              color: "var(--color-text-secondary)",
-            }}
-          >
-            {t("noAccount")}{" "}
-            <Link
-              to="/signup"
-              style={{
-                color: "var(--color-secondary)",
-                fontWeight: "var(--font-weight-semibold)",
-                textDecoration: "none",
               }}
             >
-              {t("signupTitle")}
-            </Link>
-          </div>
-        )}
+              {t("noAccount")}{" "}
+              <Link
+                to="/signup"
+                style={{
+                  color: "var(--color-text)",
+                  fontWeight: "var(--font-weight-bold)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "4px",
+                }}
+              >
+                {t("signupTitle")}
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
