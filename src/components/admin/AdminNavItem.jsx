@@ -37,19 +37,23 @@ export function AdminNavItem({
         ...style,
       })}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        {icon && (
-          <span style={{ display: "flex", alignItems: "center", color: isActive ? "#ffffff" : "var(--color-admin-muted)" }}>
-            <Icon name={icon} size={18} />
-          </span>
-        )}
-        <span>{label}</span>
-      </div>
+      {({ isActive }) => (
+        <>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {icon && (
+              <span style={{ display: "flex", alignItems: "center", color: isActive ? "#ffffff" : "var(--color-admin-muted)" }}>
+                <Icon name={icon} size={18} />
+              </span>
+            )}
+            <span>{label}</span>
+          </div>
 
-      {typeof badgeCount === "number" && badgeCount > 0 && (
-        <Badge variant="secondary" size="sm">
-          {badgeCount}
-        </Badge>
+          {typeof badgeCount === "number" && badgeCount > 0 && (
+            <Badge variant="secondary" size="sm">
+              {badgeCount}
+            </Badge>
+          )}
+        </>
       )}
     </NavLink>
   );

@@ -6,6 +6,7 @@ import { useSettings } from "../../contexts/SettingsContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 import IconButton from "../ui/IconButton";
 import Button from "../ui/Button";
+import Icon from "../common/Icon";
 import gsap from "gsap";
 
 /**
