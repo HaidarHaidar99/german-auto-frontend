@@ -8,10 +8,10 @@
 
 :root {
   /* ==========================================================================
-     1. COLOR SYSTEM (Strict Monochrome B&W)
+     1. COLOR SYSTEM (Strict Monochrome B&W with Gold Accents)
      ========================================================================== */
   --color-primary: #000000;            /* Pure black */
-  --color-secondary: #ffffff;          /* Pure white accent */
+  --color-secondary: #d4af37;          /* Gold accent for subtitles */
   --color-background: #090a0c;         /* Atmospheric carbon black */
   --color-surface: #14161b;            /* Subtle elevated dark slate */
   --color-card: #181b22;               /* Card/module surface */

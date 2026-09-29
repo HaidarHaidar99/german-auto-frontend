@@ -58,6 +58,7 @@ export function SellYourCarPage() {
   const [submitError, setSubmitError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [submissionId, setSubmissionId] = useState(null);
+  const [step, setStep] = useState(1);
 
   const pageContainerRef = useRef(null);
   const formRef = useRef(null);
@@ -238,11 +239,46 @@ export function SellYourCarPage() {
       errs.preferred_contact = t("errPreferredContactRequired");
     }
 
-    if (!form.privacy_consent) {
+    if (form.privacy_consent === false) {
       errs.privacy_consent = t("errPrivacyRequired");
     }
 
     return errs;
+  };
+
+  const handleNext = () => {
+    const validationErrors = validateForm();
+    const currentStepErrors = {};
+    if (step === 1) {
+      if (validationErrors.brand) currentStepErrors.brand = validationErrors.brand;
+      if (validationErrors.model) currentStepErrors.model = validationErrors.model;
+      if (validationErrors.vin) currentStepErrors.vin = validationErrors.vin;
+      if (validationErrors.first_registration) currentStepErrors.first_registration = validationErrors.first_registration;
+    } else if (step === 2) {
+      if (validationErrors.postal_code) currentStepErrors.postal_code = validationErrors.postal_code;
+      if (validationErrors.mileage_km) currentStepErrors.mileage_km = validationErrors.mileage_km;
+      if (validationErrors.accident_free) currentStepErrors.accident_free = validationErrors.accident_free;
+      if (validationErrors.repainting) currentStepErrors.repainting = validationErrors.repainting;
+      if (validationErrors.min_price) currentStepErrors.min_price = validationErrors.min_price;
+      if (validationErrors.images) currentStepErrors.images = validationErrors.images;
+    }
+
+    if (Object.keys(currentStepErrors).length > 0) {
+      setErrors((prev) => ({ ...prev, ...currentStepErrors }));
+      const firstErrorKey = Object.keys(currentStepErrors)[0];
+      const el = document.getElementById(firstErrorKey);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.focus();
+      }
+      return;
+    }
+    
+    setStep(step + 1);
+  };
+
+  const handlePrev = () => {
+    setStep(step - 1);
   };
 
   // Submission handler
@@ -253,13 +289,20 @@ export function SellYourCarPage() {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      // Scroll to the first error
-      const firstErrorKey = Object.keys(validationErrors)[0];
-      const el = document.getElementById(firstErrorKey);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-        el.focus();
+      // Determine which step has errors and jump to it
+      if (validationErrors.brand || validationErrors.model || validationErrors.vin || validationErrors.first_registration) {
+        setStep(1);
+      } else if (validationErrors.postal_code || validationErrors.mileage_km || validationErrors.accident_free || validationErrors.repainting || validationErrors.min_price || validationErrors.images) {
+        setStep(2);
       }
+      const firstErrorKey = Object.keys(validationErrors)[0];
+      setTimeout(() => {
+        const el = document.getElementById(firstErrorKey);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.focus();
+        }
+      }, 100);
       return;
     }
 
@@ -380,6 +423,63 @@ export function SellYourCarPage() {
       )}
 
       {/* ─── Multi-Section Automotive Valuation Form ─────────────────── */}
+      <div style={{ maxWidth: "800px", margin: "0 auto var(--space-2xl)", position: "relative" }}>
+        {/* Wizard Progress Bar */}
+        <div style={{ display: "flex", justifyContent: "space-between", position: "relative", marginBottom: "var(--space-2xl)" }}>
+          {/* Animated Line */}
+          <div style={{ position: "absolute", top: "24px", left: "10%", right: "10%", height: "2px", backgroundColor: "var(--color-border)", zIndex: 0 }}>
+            <div style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              height: "100%",
+              backgroundColor: "var(--color-secondary)",
+              width: step === 1 ? "0%" : step === 2 ? "50%" : "100%",
+              transition: "width 0.8s cubic-bezier(0.16, 1, 0.3, 1)"
+            }} />
+            <div style={{
+              position: "absolute",
+              top: "-12px",
+              left: step === 1 ? "0%" : step === 2 ? "50%" : "100%",
+              transition: "left 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+              color: "var(--color-secondary)",
+              backgroundColor: "var(--color-background)",
+              padding: "2px",
+              borderRadius: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 2
+            }}>
+              <Icon name="truck" size={24} />
+            </div>
+          </div>
+
+          {[
+            { id: 1, label: "Vehicle Data", icon: "car" },
+            { id: 2, label: "Condition", icon: "sliders" },
+            { id: 3, label: "Contact", icon: "user" }
+          ].map((s) => (
+            <div key={s.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", zIndex: 1, position: "relative", width: "80px" }}>
+              <div style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "50%",
+                backgroundColor: step >= s.id ? "var(--color-secondary)" : "var(--color-card)",
+                color: step >= s.id ? "#000" : "var(--color-text-muted)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: `2px solid ${step >= s.id ? "var(--color-secondary)" : "var(--color-border)"}`,
+                transition: "all 0.4s ease"
+              }}>
+                <Icon name={s.icon} size={20} />
+              </div>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: step >= s.id ? "var(--color-text)" : "var(--color-text-muted)", textAlign: "center" }}>
+                {s.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
       <form
         ref={formRef}
         onSubmit={handleSubmit}
@@ -387,6 +487,7 @@ export function SellYourCarPage() {
         style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xl)" }}
       >
         {/* ── SECTION 1: VEHICLE IDENTIFICATION ──────────────────────── */}
+        {step === 1 && (
         <section
           className="form-card-section"
           aria-labelledby="section-vehicle-heading"
@@ -474,12 +575,16 @@ export function SellYourCarPage() {
               onChange={(e) => handleChange("vin", e.target.value.toUpperCase())}
               error={errors.vin}
               required
-              style={{ textTransform: "uppercase" }}
             />
           </div>
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "var(--space-xl)" }}>
+            <Button variant="primary" onClick={handleNext}>Next Step</Button>
+          </div>
         </section>
+        )}
 
         {/* ── SECTION 2: CONDITION & SPECIFICATIONS ──────────────────── */}
+        {step === 2 && (
         <section
           className="form-card-section"
           aria-labelledby="section-details-heading"
@@ -604,9 +709,16 @@ export function SellYourCarPage() {
               error={errors.additional_info}
             />
           </div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "var(--space-xl)" }}>
+            <Button variant="outline" onClick={handlePrev}>Previous</Button>
+            <Button variant="primary" onClick={handleNext}>Next Step</Button>
+          </div>
         </section>
+        )}
 
-        {/* ── SECTION 3: VEHICLE PHOTOS ──────────────────────────────── */}
+        {/* ── SECTION 3: CONTACT INFORMATION & PHOTOS ─────────────────────────── */}
+        {step === 3 && (
+        <>
         <section
           className="form-card-section"
           aria-labelledby="section-images-heading"
@@ -832,7 +944,12 @@ export function SellYourCarPage() {
               <span>Diskrete & unverbindliche Bewertung ohne Verkaufsverpflichtung.</span>
             </div>
           </div>
+          <div style={{ display: "flex", justifyContent: "flex-start", marginTop: "var(--space-md)" }}>
+            <Button variant="outline" onClick={handlePrev}>Previous</Button>
+          </div>
         </section>
+        </>
+        )}
       </form>
     </main>
   );

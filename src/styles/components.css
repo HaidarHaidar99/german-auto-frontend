@@ -223,16 +223,14 @@
   width: 100%;
   font-family: var(--font-family-body);
   font-size: var(--font-size-sm);
-  color: var(--color-text);
-  background-color: var(--color-surface);
+  color: #FFFFFF;
+  background-color: #000000;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: 0px;
   padding: 0 var(--space-md);
   height: var(--control-height-md);
   outline: none;
-  transition: border-color var(--duration-fast) var(--ease-smooth),
-              box-shadow var(--duration-fast) var(--ease-smooth),
-              background-color var(--duration-fast) var(--ease-smooth);
+  transition: border-color var(--duration-fast) var(--ease-smooth);
 }
 
 .form-input:hover,
@@ -244,9 +242,10 @@
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
-  border-color: var(--color-secondary);
-  background-color: var(--color-card);
-  box-shadow: 0 0 0 3px var(--color-accent-subtle);
+  border-color: var(--color-border-hover);
+  background-color: #000000;
+  box-shadow: none;
+  outline: none;
 }
 
 .form-input:disabled,

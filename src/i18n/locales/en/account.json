@@ -20,7 +20,7 @@
   "favoritesCount_plural": "{{count}} vehicles",
   "noFavoritesTitle": "No Saved Favorites",
   "noFavoritesMessage": "You currently have no motorcars saved to your watchlist.",
-  "exploreInventory": "Explore Vehicle Inventory",
+  "exploreCars": "Explore Vehicle Cars",
   "securityOverviewTitle": "Security & Credentials",
   "securityOverviewSubtitle": "Password management and account protection.",
   "changePasswordLink": "Change Password",

@@ -32,14 +32,14 @@ export function AdminNavItem({
         textDecoration: "none",
         color: isActive ? "#ffffff" : "var(--color-admin-muted)",
         backgroundColor: isActive ? "rgba(255, 255, 255, 0.12)" : "transparent",
-        borderLeft: isActive ? "3px solid var(--color-secondary)" : "3px solid transparent",
+        borderLeft: isActive ? "3px solid #ffffff" : "3px solid transparent",
         transition: "all var(--transition-fast)",
         ...style,
       })}
     >
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         {icon && (
-          <span style={{ display: "flex", alignItems: "center", color: "var(--color-secondary)" }}>
+          <span style={{ display: "flex", alignItems: "center", color: isActive ? "#ffffff" : "var(--color-admin-muted)" }}>
             <Icon name={icon} size={18} />
           </span>
         )}

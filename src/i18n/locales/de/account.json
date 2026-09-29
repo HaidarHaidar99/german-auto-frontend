@@ -20,7 +20,7 @@
   "favoritesCount_plural": "{{count}} Fahrzeuge",
   "noFavoritesTitle": "Keine Favoriten hinterlegt",
   "noFavoritesMessage": "Sie haben noch keine Fahrzeuge in Ihrer persönlichen Merkliste gespeichert.",
-  "exploreInventory": "Fahrzeugbestand entdecken",
+  "exploreCars": "Autos entdecken",
   "securityOverviewTitle": "Sicherheit & Anmeldedaten",
   "securityOverviewSubtitle": "Passwortverwaltung und Kontoschutz.",
   "changePasswordLink": "Passwort ändern",
