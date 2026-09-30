@@ -33,17 +33,20 @@ export function HeaderNav({
   const menuBgRef = useRef(null);
   const menuItemsRef = useRef([]);
 
-  // Close menu on route change
+  // Always ensure header is visible, close mobile menu, and reset scroll tracking on route change
   useEffect(() => {
     if (menuOpen) {
       closeMenu();
     }
-  }, [location.pathname]);
+    setIsVisible(true);
+    setIsScrolled(false);
+    lastScrollY.current = 0;
+  }, [location.pathname, location.search]);
 
   // Dynamic header visibility: disappears on scroll down, reappears even if 1px scroll up
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
 
       if (menuOpen || currentScrollY <= 15) {
         setIsVisible(true);
@@ -60,8 +63,23 @@ export function HeaderNav({
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [menuOpen]);
+
+    // Sync with Lenis smooth scroll engine if active
+    let unsubscribeLenis = null;
+    if (window.__lenis && typeof window.__lenis.on === "function") {
+      window.__lenis.on("scroll", handleScroll);
+      unsubscribeLenis = () => {
+        try {
+          window.__lenis?.off("scroll", handleScroll);
+        } catch {}
+      };
+    }
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (unsubscribeLenis) unsubscribeLenis();
+    };
+  }, [menuOpen, location.pathname]);
 
   const openMenu = () => {
     setMenuOpen(true);

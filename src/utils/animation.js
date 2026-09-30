@@ -58,6 +58,9 @@ export function initSmoothScroll(options = {}) {
   gsap.ticker.add(tickerCallback);
   gsap.ticker.lagSmoothing(0);
 
+  // Expose on window for global scroll synchronization
+  window.__lenis = lenis;
+
   // Return wrapped object with full cleanup
   return {
     instance: lenis,
@@ -65,6 +68,9 @@ export function initSmoothScroll(options = {}) {
       lenis.off("scroll", updateScrollTrigger);
       gsap.ticker.remove(tickerCallback);
       lenis.destroy();
+      if (window.__lenis === lenis) {
+        window.__lenis = null;
+      }
     },
   };
 }
