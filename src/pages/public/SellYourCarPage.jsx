@@ -749,7 +749,7 @@ export function SellYourCarPage() {
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.2s ease",
-                      boxShadow: form.accident_free === "yes" ? "0 1px 4px rgba(212, 175, 55, 0.3)" : "none",
+                      boxShadow: "none",
                     }}
                   >
                     {(i18n.language || "").startsWith("en") ? "Yes" : "Ja"}
@@ -772,7 +772,7 @@ export function SellYourCarPage() {
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.2s ease",
-                      boxShadow: form.accident_free === "no" ? "0 1px 4px rgba(212, 175, 55, 0.3)" : "none",
+                      boxShadow: "none",
                     }}
                   >
                     {(i18n.language || "").startsWith("en") ? "No" : "Nein"}
@@ -819,7 +819,7 @@ export function SellYourCarPage() {
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.2s ease",
-                      boxShadow: form.repainting === "yes" ? "0 1px 4px rgba(212, 175, 55, 0.3)" : "none",
+                      boxShadow: "none",
                     }}
                   >
                     {(i18n.language || "").startsWith("en") ? "Yes" : "Ja"}
@@ -842,7 +842,7 @@ export function SellYourCarPage() {
                       alignItems: "center",
                       justifyContent: "center",
                       transition: "all 0.2s ease",
-                      boxShadow: form.repainting === "no" ? "0 1px 4px rgba(212, 175, 55, 0.3)" : "none",
+                      boxShadow: "none",
                     }}
                   >
                     {(i18n.language || "").startsWith("en") ? "No" : "Nein"}

@@ -137,20 +137,18 @@ export function CarCardBase({
         borderRadius: "var(--radius-xl, 16px)",
         background: "linear-gradient(180deg, #131518 0%, #0c0d0f 100%)",
         border: "1px solid rgba(255, 255, 255, 0.09)",
-        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 28px -8px rgba(0, 0, 0, 0.6)",
-        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        boxShadow: "none",
+        transition: "border-color 0.25s ease, transform 0.25s ease",
         cursor: onSelect ? "pointer" : "default",
         ...style,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.28)";
-        e.currentTarget.style.transform = "translateY(-4px)";
-        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 36px -10px rgba(0, 0, 0, 0.8)";
+        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.22)";
+        e.currentTarget.style.transform = "translateY(-3px)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.09)";
         e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 28px -8px rgba(0, 0, 0, 0.6)";
       }}
     >
       {/* Media Stage */}
@@ -164,6 +162,18 @@ export function CarCardBase({
               e.stopPropagation();
             }}
             onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchStart={(e) => {
+              e.stopPropagation();
+            }}
+            onTouchEnd={(e) => {
+              e.stopPropagation();
+            }}
+            onPointerDown={(e) => {
+              e.stopPropagation();
+            }}
+            onPointerUp={(e) => {
               e.stopPropagation();
             }}
             onMouseEnter={(e) => {

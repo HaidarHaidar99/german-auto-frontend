@@ -68,6 +68,18 @@ export function CarMediaFrame({
           onMouseDown={(e) => {
             e.stopPropagation();
           }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+          }}
+          onTouchEnd={(e) => {
+            e.stopPropagation();
+          }}
+          onPointerDown={(e) => {
+            e.stopPropagation();
+          }}
+          onPointerUp={(e) => {
+            e.stopPropagation();
+          }}
           style={{
             position: "absolute",
             top: "var(--space-md)",

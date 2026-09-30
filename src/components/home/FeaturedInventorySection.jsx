@@ -48,6 +48,28 @@ export function FeaturedInventorySection() {
     loadFeaturedCars();
   }, [loadFeaturedCars]);
 
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const updateScrollState = useCallback(() => {
+    if (!trackRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = trackRef.current;
+    setCanScrollLeft(scrollLeft > 15);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 15);
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    updateScrollState();
+    track.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState);
+    return () => {
+      track.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState, cars]);
+
   const handleFavoriteClick = async (carId) => {
     await toggleFavorite(carId);
   };
@@ -59,6 +81,7 @@ export function FeaturedInventorySection() {
       left: dir === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
+    setTimeout(updateScrollState, 350);
   };
 
   return (
@@ -141,79 +164,81 @@ export function FeaturedInventorySection() {
               boxSizing: "border-box",
             }}
           >
-            {/* Left Arrow Button */}
-            <button
-              type="button"
-              onClick={() => handleScroll("left")}
-              aria-label="Previous cars"
-              style={{
-                position: "absolute",
-                left: "4px",
-                top: "46%",
-                transform: "translateY(-50%)",
-                zIndex: 25,
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(18, 20, 24, 0.95)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(212, 175, 55, 0.5)",
-                color: "#D4AF37",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.8)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#D4AF37";
-                e.currentTarget.style.color = "#000000";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
-                e.currentTarget.style.color = "#D4AF37";
-              }}
-            >
-              <Icon name="chevron-left" size={16} />
-            </button>
+            {/* Left Arrow Button - ONLY visible if not on first car card */}
+            {canScrollLeft && (
+              <button
+                type="button"
+                onClick={() => handleScroll("left")}
+                aria-label="Previous cars"
+                style={{
+                  position: "absolute",
+                  left: "4px",
+                  top: "46%",
+                  transform: "translateY(-50%)",
+                  zIndex: 25,
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(18, 20, 24, 0.95)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "#ffffff",
+                  boxShadow: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  outline: "none",
+                  transition: "border-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.5)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                <Icon name="chevron-left" size={16} />
+              </button>
+            )}
 
-            {/* Right Arrow Button */}
-            <button
-              type="button"
-              onClick={() => handleScroll("right")}
-              aria-label="Next cars"
-              style={{
-                position: "absolute",
-                right: "4px",
-                top: "46%",
-                transform: "translateY(-50%)",
-                zIndex: 25,
-                width: "32px",
-                height: "32px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(18, 20, 24, 0.95)",
-                backdropFilter: "blur(8px)",
-                border: "1px solid rgba(212, 175, 55, 0.5)",
-                color: "#D4AF37",
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.8)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#D4AF37";
-                e.currentTarget.style.color = "#000000";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
-                e.currentTarget.style.color = "#D4AF37";
-              }}
-            >
-              <Icon name="chevron-right" size={16} />
-            </button>
+            {/* Right Arrow Button - ONLY visible if can scroll right */}
+            {canScrollRight && (
+              <button
+                type="button"
+                onClick={() => handleScroll("right")}
+                aria-label="Next cars"
+                style={{
+                  position: "absolute",
+                  right: "4px",
+                  top: "46%",
+                  transform: "translateY(-50%)",
+                  zIndex: 25,
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(18, 20, 24, 0.95)",
+                  backdropFilter: "blur(8px)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "#ffffff",
+                  boxShadow: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  outline: "none",
+                  transition: "border-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.5)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                <Icon name="chevron-right" size={16} />
+              </button>
+            )}
 
             <div
               ref={trackRef}
