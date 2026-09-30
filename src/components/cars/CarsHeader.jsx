@@ -14,7 +14,7 @@ export function CarsHeader() {
     <section
       style={{
         position: "relative",
-        padding: "clamp(var(--space-2xl), 5vw, var(--space-4xl)) 0 clamp(var(--space-xl), 3vw, var(--space-2xl))",
+        padding: "20px 0 16px",
         backgroundColor: "var(--color-surface)",
         borderBottom: "1px solid var(--color-border-subtle)",
         overflow: "hidden",
@@ -27,22 +27,24 @@ export function CarsHeader() {
           top: "-30%",
           left: "50%",
           transform: "translateX(-50%)",
-          width: "800px",
-          height: "400px",
+          width: "600px",
+          height: "250px",
           background: "radial-gradient(ellipse at 50% 50%, var(--color-accent-subtle) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
 
       <Container size="default" style={{ position: "relative", zIndex: 1 }}>
-        <div style={{ maxWidth: "780px" }}>
-          <Eyebrow>{t("title", "Fahrzeugbestand")}</Eyebrow>
-          <Display size="xl" style={{ margin: "var(--space-2xs) 0 var(--space-sm)" }}>
+        <div style={{ maxWidth: "680px" }}>
+          <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-secondary, #D4AF37)", display: "block", marginBottom: "2px" }}>
+            {t("title", "Fahrzeugbestand")}
+          </span>
+          <h1 style={{ margin: "2px 0 4px", fontSize: "clamp(1.4rem, 2.2vw, 1.85rem)", fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" }}>
             {t("pageTitle", "Exklusiver Fahrzeugbestand")}
-          </Display>
-          <Text variant="lead" style={{ margin: 0, color: "var(--color-text-muted)" }}>
+          </h1>
+          <p style={{ margin: 0, fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.4 }}>
             {t("pageSubtitle", "Kuratierte Auswahl erstklassiger Automobile mit meisterhafter Ingenieurskunst und geprüfter Qualität.")}
-          </Text>
+          </p>
         </div>
       </Container>
     </section>

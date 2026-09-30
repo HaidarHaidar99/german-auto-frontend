@@ -156,7 +156,7 @@ export function CarsPage() {
       <div ref={inventoryTopRef} />
 
       {/* 2. Main Inventory Content Section */}
-      <Section spacing="default" style={{ paddingTop: "var(--space-2xl)" }}>
+      <Section spacing="default" style={{ paddingTop: "var(--space-md)" }}>
         <Container size="default">
           {/* 3. Search & Filter Bar with Mobile Drawer */}
           <CarsFilterBar
@@ -242,15 +242,30 @@ export function CarsPage() {
                 </div>
               </div>
 
-              {/* Cars stacked under each other */}
+              {/* Cars Grid: 3 cards per line on desktop */}
+              <style>{`
+                .cars-inventory-grid {
+                  display: grid;
+                  grid-template-columns: 1fr;
+                  gap: 16px;
+                  width: 100%;
+                }
+                @media (min-width: 640px) {
+                  .cars-inventory-grid {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 20px;
+                  }
+                }
+                @media (min-width: 1024px) {
+                  .cars-inventory-grid {
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 24px;
+                  }
+                }
+              `}</style>
               <div
-                className="cars-vertical-list"
+                className="cars-inventory-grid"
                 style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "var(--space-xl)",
-                  maxWidth: "860px",
-                  margin: "0 auto",
                   width: "100%",
                 }}
               >
@@ -264,7 +279,7 @@ export function CarsPage() {
                     car.image_url;
 
                   return (
-                    <div key={car.id} style={{ width: "100%" }}>
+                    <div key={car.id} style={{ width: "100%", minWidth: 0 }}>
                       <CarCardBase
                         brand={car.brand}
                         model={car.model || car.title}

@@ -130,9 +130,17 @@ export function FeaturedInventorySection() {
           />
         )}
 
-        {/* Real Cars Horizontal Scroll Track with Left & Right Arrows flanking the cards */}
+        {/* Real Cars Carousel with Left & Right Arrows flanking the centered card */}
         {!loading && !error && cars.length > 0 && (
-          <div style={{ position: "relative", width: "100%" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "460px",
+              margin: "0 auto",
+              boxSizing: "border-box",
+            }}
+          >
             {/* Left Arrow Button */}
             <button
               type="button"
@@ -140,38 +148,34 @@ export function FeaturedInventorySection() {
               aria-label="Previous cars"
               style={{
                 position: "absolute",
-                left: "-18px",
-                top: "50%",
+                left: "4px",
+                top: "46%",
                 transform: "translateY(-50%)",
-                zIndex: 20,
-                width: "44px",
-                height: "44px",
+                zIndex: 25,
+                width: "32px",
+                height: "32px",
                 borderRadius: "50%",
-                backgroundColor: "rgba(18, 20, 24, 0.92)",
-                backdropFilter: "blur(12px)",
-                border: "1.5px solid rgba(212, 175, 55, 0.4)",
+                backgroundColor: "rgba(18, 20, 24, 0.95)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(212, 175, 55, 0.5)",
                 color: "#D4AF37",
-                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.7)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.8)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-                transition: "all 0.22s ease",
+                transition: "all 0.2s ease",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "#D4AF37";
                 e.currentTarget.style.color = "#000000";
-                e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
-                e.currentTarget.style.boxShadow = "0 0 16px rgba(212, 175, 55, 0.6)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.92)";
+                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
                 e.currentTarget.style.color = "#D4AF37";
-                e.currentTarget.style.transform = "translateY(-50%) scale(1)";
-                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.7)";
               }}
             >
-              <Icon name="arrow-left" size={18} />
+              <Icon name="chevron-left" size={16} />
             </button>
 
             {/* Right Arrow Button */}
@@ -181,38 +185,34 @@ export function FeaturedInventorySection() {
               aria-label="Next cars"
               style={{
                 position: "absolute",
-                right: "-18px",
-                top: "50%",
+                right: "4px",
+                top: "46%",
                 transform: "translateY(-50%)",
-                zIndex: 20,
-                width: "44px",
-                height: "44px",
+                zIndex: 25,
+                width: "32px",
+                height: "32px",
                 borderRadius: "50%",
-                backgroundColor: "rgba(18, 20, 24, 0.92)",
-                backdropFilter: "blur(12px)",
-                border: "1.5px solid rgba(212, 175, 55, 0.4)",
+                backgroundColor: "rgba(18, 20, 24, 0.95)",
+                backdropFilter: "blur(8px)",
+                border: "1px solid rgba(212, 175, 55, 0.5)",
                 color: "#D4AF37",
-                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.7)",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.8)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-                transition: "all 0.22s ease",
+                transition: "all 0.2s ease",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "#D4AF37";
                 e.currentTarget.style.color = "#000000";
-                e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
-                e.currentTarget.style.boxShadow = "0 0 16px rgba(212, 175, 55, 0.6)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.92)";
+                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
                 e.currentTarget.style.color = "#D4AF37";
-                e.currentTarget.style.transform = "translateY(-50%) scale(1)";
-                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.7)";
               }}
             >
-              <Icon name="arrow-right" size={18} />
+              <Icon name="chevron-right" size={16} />
             </button>
 
             <div
@@ -221,14 +221,16 @@ export function FeaturedInventorySection() {
               style={{
                 display: "flex",
                 flexDirection: "row",
-                gap: "var(--space-lg)",
+                gap: "16px",
                 overflowX: "auto",
                 scrollSnapType: "x mandatory",
                 scrollBehavior: "smooth",
-                padding: "8px 2px 24px",
+                padding: "8px 42px 20px",
                 WebkitOverflowScrolling: "touch",
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
+                width: "100%",
+                boxSizing: "border-box",
               }}
             >
               {cars.map((car) => {
@@ -241,8 +243,11 @@ export function FeaturedInventorySection() {
                   <div
                     key={car.id}
                     style={{
-                      flex: "0 0 clamp(290px, 82vw, 360px)",
-                      scrollSnapAlign: "start",
+                      flex: "0 0 100%",
+                      maxWidth: "340px",
+                      margin: "0 auto",
+                      scrollSnapAlign: "center",
+                      boxSizing: "border-box",
                     }}
                   >
                     <CarCardBase

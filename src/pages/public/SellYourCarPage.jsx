@@ -426,7 +426,24 @@ export function SellYourCarPage() {
       )}
 
       {/* ─── Multi-Section Automotive Valuation Form ─────────────────── */}
-      <div style={{ maxWidth: "800px", width: "100%", margin: "0 auto var(--space-2xl)", position: "relative", boxSizing: "border-box" }}>
+      {/* ─── Multi-Section Automotive Valuation Form ─────────────────── */}
+      <style>{`
+        @keyframes goldGlowPulse {
+          0% {
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4), inset 0 0 6px rgba(212, 175, 55, 0.15);
+            border-color: #D4AF37;
+          }
+          50% {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.75), inset 0 0 12px rgba(212, 175, 55, 0.3);
+            border-color: #f6e082;
+          }
+          100% {
+            box-shadow: 0 0 8px rgba(212, 175, 55, 0.4), inset 0 0 6px rgba(212, 175, 55, 0.15);
+            border-color: #D4AF37;
+          }
+        }
+      `}</style>
+      <div style={{ maxWidth: "560px", width: "100%", margin: "0 auto var(--space-2xl)", position: "relative", boxSizing: "border-box" }}>
         {/* Wizard Progress Bar */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative", marginBottom: "var(--space-2xl)", width: "100%" }}>
           {/* Animated Line */}
@@ -458,7 +475,7 @@ export function SellYourCarPage() {
 
           {[
             { id: 1, label: (i18n.language || "").startsWith("en") ? "Vehicle Data" : "Fahrzeugdaten", icon: "car" },
-            { id: 2, label: (i18n.language || "").startsWith("en") ? "Condition" : "Zustand & Details", icon: "sliders" },
+            { id: 2, label: (i18n.language || "").startsWith("en") ? "Condition & Photos" : "Zustand & Fotos", icon: "sliders" },
             { id: 3, label: (i18n.language || "").startsWith("en") ? "Contact" : "Kontaktdaten", icon: "user" }
           ].map((s) => (
             <div key={s.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", zIndex: 1, position: "relative", flex: 1, minWidth: 0 }}>
@@ -488,7 +505,7 @@ export function SellYourCarPage() {
         ref={formRef}
         onSubmit={handleSubmit}
         noValidate
-        style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xl)" }}
+        style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xl)", maxWidth: "560px", width: "100%", margin: "0 auto" }}
       >
         {/* ── SECTION 1: VEHICLE IDENTIFICATION ──────────────────────── */}
         {step === 1 && (
@@ -527,47 +544,12 @@ export function SellYourCarPage() {
 
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+              display: "flex",
+              flexDirection: "column",
               gap: "var(--space-md)",
             }}
           >
-            <Input
-              id="brand"
-              name="brand"
-              label={t("brandLabel")}
-              placeholder={t("brandPlaceholder")}
-              value={form.brand}
-              onChange={(e) => handleChange("brand", e.target.value)}
-              error={errors.brand}
-              required
-            />
-
-            <Input
-              id="model"
-              name="model"
-              label={t("modelLabel")}
-              placeholder={t("modelPlaceholder")}
-              value={form.model}
-              onChange={(e) => handleChange("model", e.target.value)}
-              error={errors.model}
-              required
-            />
-
-            <Input
-              id="first_registration"
-              name="first_registration"
-              type="date"
-              max={today}
-              min="1900-01-01"
-              label={t("firstRegistrationLabel")}
-              helperText={t("firstRegistrationHelper")}
-              value={form.first_registration}
-              onChange={(e) => handleChange("first_registration", e.target.value)}
-              error={errors.first_registration}
-              required
-            />
-
+            {/* 1. Vehicle Identification Number (VIN) */}
             <div style={{ position: "relative" }}>
               <Input
                 id="vin"
@@ -598,7 +580,69 @@ export function SellYourCarPage() {
                 <span>{(form.vin || "").length} / 17</span>
               </div>
             </div>
+
+            {/* 2. First Registration (with visible calendar icon) */}
+            <div style={{ position: "relative" }}>
+              <Input
+                id="first_registration"
+                name="first_registration"
+                type="date"
+                max={today}
+                min="1900-01-01"
+                label={t("firstRegistrationLabel")}
+                helperText={t("firstRegistrationHelper")}
+                value={form.first_registration}
+                onChange={(e) => handleChange("first_registration", e.target.value)}
+                error={errors.first_registration}
+                required
+                endIcon={
+                  <span
+                    onClick={() => {
+                      try {
+                        document.getElementById("first_registration")?.showPicker?.();
+                      } catch (err) {}
+                    }}
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      color: "#D4AF37",
+                      pointerEvents: "auto",
+                      transition: "transform 0.2s ease",
+                    }}
+                    title="Kalender öffnen"
+                  >
+                    <Icon name="calendar" size={18} color="#D4AF37" />
+                  </span>
+                }
+              />
+            </div>
+
+            {/* 3. Make */}
+            <Input
+              id="brand"
+              name="brand"
+              label={t("brandLabel")}
+              placeholder={t("brandPlaceholder")}
+              value={form.brand}
+              onChange={(e) => handleChange("brand", e.target.value)}
+              error={errors.brand}
+              required
+            />
+
+            {/* 4. Model & Variant */}
+            <Input
+              id="model"
+              name="model"
+              label={t("modelLabel")}
+              placeholder={t("modelPlaceholder")}
+              value={form.model}
+              onChange={(e) => handleChange("model", e.target.value)}
+              error={errors.model}
+              required
+            />
           </div>
+
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "var(--space-xl)" }}>
             <Button variant="primary" onClick={handleNext}>
               {(i18n.language || "").startsWith("en") ? "Next Step" : "Nächster Schritt"}
@@ -607,7 +651,7 @@ export function SellYourCarPage() {
         </section>
         )}
 
-        {/* ── SECTION 2: CONDITION & SPECIFICATIONS ──────────────────── */}
+        {/* ── SECTION 2: CONDITION & SPECIFICATIONS & PHOTOS ─────────── */}
         {step === 2 && (
         <section
           className="form-card-section"
@@ -644,11 +688,12 @@ export function SellYourCarPage() {
 
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+              display: "flex",
+              flexDirection: "column",
               gap: "var(--space-md)",
             }}
           >
+            {/* Postal code */}
             <Input
               id="postal_code"
               name="postal_code"
@@ -660,6 +705,7 @@ export function SellYourCarPage() {
               required
             />
 
+            {/* Mileage */}
             <Input
               id="mileage_km"
               name="mileage_km"
@@ -675,142 +721,161 @@ export function SellYourCarPage() {
               required
             />
 
-            {/* Unfallfrei — Luxury Gold Switch Button */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }} id="accident_free">
-              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
-                {t("accidentFreeLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
-              </label>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "6px",
-                  background: "rgba(255, 255, 255, 0.04)",
-                  padding: "4px",
-                  borderRadius: "10px",
-                  border: `1px solid ${errors.accident_free ? "var(--color-error)" : form.accident_free ? "rgba(212, 175, 55, 0.5)" : "rgba(255, 255, 255, 0.12)"}`,
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => handleChange("accident_free", "yes")}
+            {/* In the same line: 2 switch buttons like the language button */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "12px",
+                alignItems: "flex-start",
+              }}
+            >
+              {/* Unfallfrei (Accident Free) Switch Button */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }} id="accident_free">
+                <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
+                  {t("accidentFreeLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+                </label>
+                <div
                   style={{
-                    padding: "9px 12px",
-                    borderRadius: "7px",
-                    border: form.accident_free === "yes" ? "1px solid #D4AF37" : "1px solid transparent",
-                    backgroundColor: form.accident_free === "yes" ? "#D4AF37" : "transparent",
-                    color: form.accident_free === "yes" ? "#000000" : "rgba(255, 255, 255, 0.75)",
-                    fontWeight: 700,
-                    fontSize: "13px",
-                    cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
-                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-                    boxShadow: form.accident_free === "yes" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
+                    backgroundColor: "rgba(255, 255, 255, 0.04)",
+                    border: `1px solid ${errors.accident_free ? "var(--color-error)" : form.accident_free ? "rgba(212, 175, 55, 0.5)" : "var(--color-border)"}`,
+                    borderRadius: "9999px",
+                    padding: "3px",
+                    gap: "3px",
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 >
-                  <Icon name="check" size={15} color={form.accident_free === "yes" ? "#000" : "currentColor"} />
-                  {t("accidentFreeYes", { defaultValue: "Ja" })}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleChange("accident_free", "no")}
-                  style={{
-                    padding: "9px 12px",
-                    borderRadius: "7px",
-                    border: form.accident_free === "no" ? "1px solid #D4AF37" : "1px solid transparent",
-                    backgroundColor: form.accident_free === "no" ? "#D4AF37" : "transparent",
-                    color: form.accident_free === "no" ? "#000000" : "rgba(255, 255, 255, 0.75)",
-                    fontWeight: 700,
-                    fontSize: "13px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
-                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-                    boxShadow: form.accident_free === "no" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
-                  }}
-                >
-                  <Icon name="x" size={15} color={form.accident_free === "no" ? "#000" : "currentColor"} />
-                  {t("accidentFreeNo", { defaultValue: "Nein" })}
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleChange("accident_free", "yes")}
+                    style={{
+                      flex: 1,
+                      padding: "8px 10px",
+                      minHeight: "34px",
+                      borderRadius: "9999px",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      color: form.accident_free === "yes" ? "#000000" : "var(--color-text-secondary)",
+                      backgroundColor: form.accident_free === "yes" ? "#D4AF37" : "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "4px",
+                      transition: "all 0.25s ease",
+                      boxShadow: form.accident_free === "yes" ? "0 2px 10px rgba(212, 175, 55, 0.4)" : "none",
+                    }}
+                  >
+                    {t("accidentFreeYes", { defaultValue: "Ja" })}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleChange("accident_free", "no")}
+                    style={{
+                      flex: 1,
+                      padding: "8px 10px",
+                      minHeight: "34px",
+                      borderRadius: "9999px",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      color: form.accident_free === "no" ? "#000000" : "var(--color-text-secondary)",
+                      backgroundColor: form.accident_free === "no" ? "#D4AF37" : "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "4px",
+                      transition: "all 0.25s ease",
+                      boxShadow: form.accident_free === "no" ? "0 2px 10px rgba(212, 175, 55, 0.4)" : "none",
+                    }}
+                  >
+                    {t("accidentFreeNo", { defaultValue: "Nein" })}
+                  </button>
+                </div>
+                {errors.accident_free && (
+                  <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.accident_free}</span>
+                )}
               </div>
-              {errors.accident_free && (
-                <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.accident_free}</span>
-              )}
+
+              {/* Nachlackierung (Repainting) Switch Button */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }} id="repainting">
+                <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
+                  {t("repaintingLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+                </label>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    backgroundColor: "rgba(255, 255, 255, 0.04)",
+                    border: `1px solid ${errors.repainting ? "var(--color-error)" : form.repainting ? "rgba(212, 175, 55, 0.5)" : "var(--color-border)"}`,
+                    borderRadius: "9999px",
+                    padding: "3px",
+                    gap: "3px",
+                    width: "100%",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleChange("repainting", "yes")}
+                    style={{
+                      flex: 1,
+                      padding: "8px 10px",
+                      minHeight: "34px",
+                      borderRadius: "9999px",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      color: form.repainting === "yes" ? "#000000" : "var(--color-text-secondary)",
+                      backgroundColor: form.repainting === "yes" ? "#D4AF37" : "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "4px",
+                      transition: "all 0.25s ease",
+                      boxShadow: form.repainting === "yes" ? "0 2px 10px rgba(212, 175, 55, 0.4)" : "none",
+                    }}
+                  >
+                    {t("repaintingYes", { defaultValue: "Ja" })}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleChange("repainting", "no")}
+                    style={{
+                      flex: 1,
+                      padding: "8px 10px",
+                      minHeight: "34px",
+                      borderRadius: "9999px",
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      color: form.repainting === "no" ? "#000000" : "var(--color-text-secondary)",
+                      backgroundColor: form.repainting === "no" ? "#D4AF37" : "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "4px",
+                      transition: "all 0.25s ease",
+                      boxShadow: form.repainting === "no" ? "0 2px 10px rgba(212, 175, 55, 0.4)" : "none",
+                    }}
+                  >
+                    {t("repaintingNo", { defaultValue: "Nein" })}
+                  </button>
+                </div>
+                {errors.repainting && (
+                  <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.repainting}</span>
+                )}
+              </div>
             </div>
 
-            {/* Nachlackierung — Luxury Gold Switch Button */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }} id="repainting">
-              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
-                {t("repaintingLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
-              </label>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "6px",
-                  background: "rgba(255, 255, 255, 0.04)",
-                  padding: "4px",
-                  borderRadius: "10px",
-                  border: `1px solid ${errors.repainting ? "var(--color-error)" : form.repainting ? "rgba(212, 175, 55, 0.5)" : "rgba(255, 255, 255, 0.12)"}`,
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => handleChange("repainting", "yes")}
-                  style={{
-                    padding: "9px 12px",
-                    borderRadius: "7px",
-                    border: form.repainting === "yes" ? "1px solid #D4AF37" : "1px solid transparent",
-                    backgroundColor: form.repainting === "yes" ? "#D4AF37" : "transparent",
-                    color: form.repainting === "yes" ? "#000000" : "rgba(255, 255, 255, 0.75)",
-                    fontWeight: 700,
-                    fontSize: "13px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
-                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-                    boxShadow: form.repainting === "yes" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
-                  }}
-                >
-                  <Icon name="check" size={15} color={form.repainting === "yes" ? "#000" : "currentColor"} />
-                  {t("repaintingYes", { defaultValue: "Ja" })}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleChange("repainting", "no")}
-                  style={{
-                    padding: "9px 12px",
-                    borderRadius: "7px",
-                    border: form.repainting === "no" ? "1px solid #D4AF37" : "1px solid transparent",
-                    backgroundColor: form.repainting === "no" ? "#D4AF37" : "transparent",
-                    color: form.repainting === "no" ? "#000000" : "rgba(255, 255, 255, 0.75)",
-                    fontWeight: 700,
-                    fontSize: "13px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "6px",
-                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-                    boxShadow: form.repainting === "no" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
-                  }}
-                >
-                  <Icon name="x" size={15} color={form.repainting === "no" ? "#000" : "currentColor"} />
-                  {t("repaintingNo", { defaultValue: "Nein" })}
-                </button>
-              </div>
-              {errors.repainting && (
-                <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.repainting}</span>
-              )}
-            </div>
-
+            {/* Minimum Price */}
             <Input
               id="min_price"
               name="min_price"
@@ -824,9 +889,8 @@ export function SellYourCarPage() {
               error={errors.min_price}
               startIcon={<span style={{ color: "var(--color-secondary)" }}>€</span>}
             />
-          </div>
 
-          <div style={{ marginTop: "var(--space-md)" }}>
+            {/* Additional info */}
             <Textarea
               id="additional_info"
               name="additional_info"
@@ -838,7 +902,37 @@ export function SellYourCarPage() {
               onChange={(e) => handleChange("additional_info", e.target.value)}
               error={errors.additional_info}
             />
+
+            {/* Image Uploader moved to Step 2 */}
+            <div style={{ marginTop: "var(--space-xs)" }} id="images">
+              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em", display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                <Icon name="camera" size={16} color="var(--color-secondary)" />
+                <span>{t("sectionImagesTitle")}</span>
+              </label>
+              <FileUpload
+                label={t("uploadFormatsHint")}
+                accept="image/jpeg,image/png,image/webp,image/avif"
+                multiple={true}
+                maxFiles={5}
+                maxSizeBytes={10 * 1024 * 1024}
+                files={images}
+                onFilesSelected={(newFiles) => {
+                  setImages(newFiles);
+                  if (errors.images) {
+                    setErrors((prev) => {
+                      const next = { ...prev };
+                      delete next.images;
+                      return next;
+                    });
+                  }
+                }}
+                dropText={t("uploadDropText")}
+                removeText={t("removeImage")}
+                error={errors.images}
+              />
+            </div>
           </div>
+
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "var(--space-xl)" }}>
             <Button variant="outline" onClick={handlePrev}>
               {(i18n.language || "").startsWith("en") ? "Previous" : "Zurück"}
@@ -850,66 +944,8 @@ export function SellYourCarPage() {
         </section>
         )}
 
-        {/* ── SECTION 3: CONTACT INFORMATION & PHOTOS ─────────────────────────── */}
+        {/* ── SECTION 3: CONTACT INFORMATION & SUBMIT ────────────────── */}
         {step === 3 && (
-        <>
-        <section
-          className="form-card-section"
-          aria-labelledby="section-images-heading"
-          style={{
-            backgroundColor: "var(--color-card)",
-            borderRadius: "var(--radius-xl)",
-            border: "1px solid var(--color-border)",
-            padding: "var(--space-xl)",
-            boxShadow: "var(--shadow-elevation-1)",
-          }}
-        >
-          <div style={{ marginBottom: "var(--space-lg)" }}>
-            <h2
-              id="section-images-heading"
-              style={{
-                fontSize: "var(--font-size-lg)",
-                fontWeight: "var(--font-weight-semibold)",
-                letterSpacing: "var(--tracking-tight)",
-                margin: "0 0 var(--space-3xs) 0",
-                display: "flex",
-                alignItems: "center",
-                gap: "var(--space-xs)",
-                color: "var(--color-text)",
-              }}
-            >
-              <Icon name="camera" size={20} color="var(--color-secondary)" />
-              <span>{t("sectionImagesTitle")}</span>
-            </h2>
-            <p style={{ margin: 0, fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)" }}>
-              {t("sectionImagesDesc")}
-            </p>
-          </div>
-
-          <FileUpload
-            label={t("uploadFormatsHint")}
-            accept="image/jpeg,image/png,image/webp,image/avif"
-            multiple={true}
-            maxFiles={5}
-            maxSizeBytes={10 * 1024 * 1024}
-            files={images}
-            onFilesSelected={(newFiles) => {
-              setImages(newFiles);
-              if (errors.images) {
-                setErrors((prev) => {
-                  const next = { ...prev };
-                  delete next.images;
-                  return next;
-                });
-              }
-            }}
-            dropText={t("uploadDropText")}
-            removeText={t("removeImage")}
-            error={errors.images}
-          />
-        </section>
-
-        {/* ── SECTION 4: CONTACT INFORMATION ─────────────────────────── */}
         <section
           className="form-card-section"
           aria-labelledby="section-contact-heading"
@@ -919,9 +955,12 @@ export function SellYourCarPage() {
             border: "1px solid var(--color-border)",
             padding: "var(--space-xl)",
             boxShadow: "var(--shadow-elevation-1)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "var(--space-lg)",
           }}
         >
-          <div style={{ marginBottom: "var(--space-lg)" }}>
+          <div>
             <h2
               id="section-contact-heading"
               style={{
@@ -945,11 +984,12 @@ export function SellYourCarPage() {
 
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
+              display: "flex",
+              flexDirection: "column",
               gap: "var(--space-md)",
             }}
           >
+            {/* First Name */}
             <Input
               id="first_name"
               name="first_name"
@@ -961,6 +1001,7 @@ export function SellYourCarPage() {
               required
             />
 
+            {/* Last Name */}
             <Input
               id="last_name"
               name="last_name"
@@ -972,6 +1013,7 @@ export function SellYourCarPage() {
               required
             />
 
+            {/* Email */}
             <Input
               id="email"
               name="email"
@@ -985,6 +1027,7 @@ export function SellYourCarPage() {
               required
             />
 
+            {/* Phone */}
             <Input
               id="phone"
               name="phone"
@@ -998,38 +1041,63 @@ export function SellYourCarPage() {
               required
             />
 
-            <Select
-              id="preferred_contact"
-              name="preferred_contact"
-              label={t("preferredContactLabel")}
-              placeholder={t("preferredContactSelect")}
-              value={form.preferred_contact}
-              onChange={(e) => handleChange("preferred_contact", e.target.value)}
-              error={errors.preferred_contact}
-              options={[
-                { value: "EMAIL", label: t("contactEmail") },
-                { value: "WHATSAPP", label: t("contactWhatsApp") },
-                { value: "PHONE", label: t("contactPhone") },
-              ]}
-              required
-            />
+            {/* Preferred Contact Method: 3 Logos with Gold Animation */}
+            <div id="preferred_contact" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
+                {t("preferredContactLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+              </label>
+              
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "12px",
+                  width: "100%",
+                }}
+              >
+                {[
+                  { value: "EMAIL", label: t("contactEmail", { defaultValue: "E-Mail" }), icon: "mail" },
+                  { value: "WHATSAPP", label: t("contactWhatsApp", { defaultValue: "WhatsApp" }), icon: "whatsapp" },
+                  { value: "PHONE", label: t("contactPhone", { defaultValue: "Telefon" }), icon: "phone" },
+                ].map((opt) => {
+                  const isSelected = form.preferred_contact === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => handleChange("preferred_contact", opt.value)}
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
+                        padding: "16px 8px",
+                        borderRadius: "14px",
+                        cursor: "pointer",
+                        backgroundColor: isSelected ? "rgba(212, 175, 55, 0.16)" : "rgba(255, 255, 255, 0.03)",
+                        border: isSelected ? "2px solid #D4AF37" : "1px solid var(--color-border)",
+                        color: isSelected ? "#D4AF37" : "var(--color-text-secondary)",
+                        animation: isSelected ? "goldGlowPulse 2.2s infinite ease-in-out" : "none",
+                        transform: isSelected ? "scale(1.03)" : "scale(1)",
+                        transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+                        minHeight: "86px",
+                      }}
+                    >
+                      <Icon name={opt.icon} size={26} color={isSelected ? "#D4AF37" : "currentColor"} />
+                      <span style={{ fontSize: "12px", fontWeight: isSelected ? 700 : 500, letterSpacing: "0.02em" }}>
+                        {opt.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.preferred_contact && (
+                <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.preferred_contact}</span>
+              )}
+            </div>
           </div>
-        </section>
 
-        {/* ── SECTION 5: PRIVACY CONSENT & SUBMISSION ─────────────────── */}
-        <section
-          className="form-card-section"
-          style={{
-            backgroundColor: "var(--color-card)",
-            borderRadius: "var(--radius-xl)",
-            border: "1px solid var(--color-border)",
-            padding: "var(--space-xl)",
-            boxShadow: "var(--shadow-elevation-1)",
-            display: "flex",
-            flexDirection: "column",
-            gap: "var(--space-lg)",
-          }}
-        >
           <Checkbox
             id="privacy_consent"
             name="privacy_consent"
@@ -1068,7 +1136,7 @@ export function SellYourCarPage() {
               disabled={loading}
               iconLeft="send"
               style={{
-                minWidth: "260px",
+                minWidth: "220px",
                 padding: "var(--space-md) var(--space-xl)",
                 fontSize: "var(--font-size-base)",
               }}
@@ -1083,17 +1151,16 @@ export function SellYourCarPage() {
                 gap: "var(--space-2xs)",
                 fontSize: "var(--font-size-xs)",
                 color: "var(--color-text-subtle)",
+                width: "100%",
+                justifyContent: "center",
+                marginTop: "4px",
               }}
             >
               <Icon name="shield-check" size={15} color="var(--color-secondary)" />
               <span>Diskrete & unverbindliche Bewertung ohne Verkaufsverpflichtung.</span>
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "flex-start", marginTop: "var(--space-md)" }}>
-            <Button variant="outline" onClick={handlePrev}>Previous</Button>
-          </div>
         </section>
-        </>
         )}
       </form>
     </main>

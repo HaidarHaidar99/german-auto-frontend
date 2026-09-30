@@ -16,13 +16,13 @@ export function AboutHero({ title, subtitle, mediaUrl, className = "", style = {
       className={`about-hero ${className}`.trim()}
       style={{
         position: "relative",
-        padding: hasMedia ? "var(--space-4xl) var(--space-md) var(--space-3xl)" : "var(--space-3xl) var(--space-md) var(--space-2xl)",
-        borderRadius: "var(--radius-2xl)",
+        padding: "var(--space-xl) var(--space-md)",
+        borderRadius: "var(--radius-xl)",
         overflow: "hidden",
-        marginBottom: "var(--space-3xl)",
+        marginBottom: "var(--space-xl)",
         border: "1px solid var(--color-border-subtle)",
         backgroundColor: "var(--color-card)",
-        minHeight: hasMedia ? "420px" : "auto",
+        minHeight: "auto",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -56,21 +56,21 @@ export function AboutHero({ title, subtitle, mediaUrl, className = "", style = {
       )}
 
       {/* Typography Stage */}
-      <div style={{ position: "relative", zIndex: 2, maxWidth: "860px", margin: "0 auto" }}>
-        <div style={{ display: "inline-block", marginBottom: "var(--space-sm)" }}>
-          <Badge variant="secondary" size="md">
+      <div style={{ position: "relative", zIndex: 2, maxWidth: "680px", margin: "0 auto" }}>
+        <div style={{ display: "inline-block", marginBottom: "var(--space-2xs)" }}>
+          <Badge variant="secondary" size="sm">
             {t("heroBadge")}
           </Badge>
         </div>
 
         <h1
           style={{
-            fontSize: "clamp(2.25rem, 4.5vw, 3.75rem)",
+            fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
             fontWeight: "var(--font-weight-bold)",
             letterSpacing: "var(--tracking-tight)",
-            lineHeight: 1.15,
+            lineHeight: 1.2,
             color: "var(--color-text)",
-            margin: "0 0 var(--space-md) 0",
+            margin: "0 0 var(--space-xs) 0",
           }}
         >
           {title || t("heroTitle")}
@@ -78,11 +78,11 @@ export function AboutHero({ title, subtitle, mediaUrl, className = "", style = {
 
         <p
           style={{
-            fontSize: "var(--font-size-lg)",
-            lineHeight: "var(--line-height-relaxed)",
+            fontSize: "14px",
+            lineHeight: 1.5,
             color: "var(--color-text-secondary)",
             margin: 0,
-            maxWidth: "680px",
+            maxWidth: "600px",
             marginLeft: "auto",
             marginRight: "auto",
           }}

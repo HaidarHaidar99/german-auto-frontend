@@ -14,26 +14,26 @@ export function ContactHero({ title, subtitle, className = "", style = {} }) {
       className={`contact-hero ${className}`.trim()}
       style={{
         textAlign: "center",
-        maxWidth: "800px",
-        margin: "0 auto var(--space-3xl)",
-        paddingTop: "var(--space-xl)",
+        maxWidth: "680px",
+        margin: "0 auto var(--space-xl)",
+        paddingTop: "var(--space-md)",
         ...style,
       }}
     >
-      <div style={{ display: "inline-block", marginBottom: "var(--space-sm)" }}>
-        <Badge variant="secondary" size="md">
+      <div style={{ display: "inline-block", marginBottom: "var(--space-2xs)" }}>
+        <Badge variant="secondary" size="sm">
           {t("contactBadge")}
         </Badge>
       </div>
 
       <h1
         style={{
-          fontSize: "clamp(2rem, 4vw, 3rem)",
+          fontSize: "clamp(1.4rem, 2.5vw, 2rem)",
           fontWeight: "var(--font-weight-bold)",
           letterSpacing: "var(--tracking-tight)",
-          lineHeight: 1.15,
+          lineHeight: 1.2,
           color: "var(--color-text)",
-          margin: "0 0 var(--space-md) 0",
+          margin: "0 0 var(--space-xs) 0",
         }}
       >
         {title || t("contactHeroTitle")}
@@ -41,8 +41,8 @@ export function ContactHero({ title, subtitle, className = "", style = {} }) {
 
       <p
         style={{
-          fontSize: "var(--font-size-base)",
-          lineHeight: "var(--line-height-relaxed)",
+          fontSize: "14px",
+          lineHeight: 1.5,
           color: "var(--color-text-secondary)",
           margin: 0,
         }}

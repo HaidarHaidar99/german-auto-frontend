@@ -156,11 +156,24 @@
   --container-ultrawide: 1720px;
 
   /* Component Dimensions */
-  --header-height: 90px;
+  --header-height: 105px;
   --control-height-sm: 36px;
   --control-height-md: 46px;
   --control-height-lg: 54px;
   --touch-target-min: 44px;
+}
+
+input[type="date"] {
+  color-scheme: dark !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+:root {
 
   /* ==========================================================================
      4. RADIUS & SHADOW ELEVATION (Restrained Luxury Depth)
