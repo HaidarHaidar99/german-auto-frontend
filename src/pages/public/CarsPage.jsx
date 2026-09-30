@@ -32,15 +32,6 @@ export function CarsPage() {
   const { settings } = useSettings();
 
   const inventoryTopRef = useRef(null);
-  const carsScrollRef = useRef(null);
-  const [viewMode, setViewMode] = useState("scroll"); // 'scroll' | 'grid'
-
-  const handleScrollCars = (direction) => {
-    if (carsScrollRef.current) {
-      const scrollAmount = direction === "right" ? 380 : -380;
-      carsScrollRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-    }
-  };
 
   // Parse filters from URL search parameters
   const [filters, setFilters] = useState(() => ({
@@ -248,202 +239,53 @@ export function CarsPage() {
                     {cars.length} {t("carsCount", { defaultValue: "Fahrzeuge" })}
                   </span>
 
-                  <div
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                      padding: "3px 10px",
-                      borderRadius: "9999px",
-                      backgroundColor: "rgba(255, 255, 255, 0.06)",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      fontSize: "11px",
-                      color: "#94a3b8",
-                      fontWeight: 500,
-                    }}
-                  >
-                    <Icon name="arrow-right" size={12} color="#ffffff" />
-                    <span>{t("scrollRightHint", { defaultValue: "Nach rechts scrollen für mehr Fahrzeuge" })}</span>
-                  </div>
-                </div>
-
-                {/* Controls (Arrows + Grid/Scroll Toggle) */}
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <button
-                    type="button"
-                    onClick={() => handleScrollCars("left")}
-                    aria-label="Scroll left"
-                    style={{
-                      width: "34px",
-                      height: "34px",
-                      borderRadius: "50%",
-                      backgroundColor: "rgba(255, 255, 255, 0.08)",
-                      border: "1px solid rgba(255, 255, 255, 0.15)",
-                      color: "#ffffff",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#ffffff";
-                      e.currentTarget.style.color = "#000000";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                      e.currentTarget.style.color = "#ffffff";
-                    }}
-                  >
-                    <Icon name="arrow-left" size={14} />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleScrollCars("right")}
-                    aria-label="Scroll right"
-                    style={{
-                      width: "34px",
-                      height: "34px",
-                      borderRadius: "50%",
-                      backgroundColor: "rgba(255, 255, 255, 0.08)",
-                      border: "1px solid rgba(255, 255, 255, 0.15)",
-                      color: "#ffffff",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#ffffff";
-                      e.currentTarget.style.color = "#000000";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                      e.currentTarget.style.color = "#ffffff";
-                    }}
-                  >
-                    <Icon name="arrow-right" size={14} />
-                  </button>
-
-                  <div style={{ width: "1px", height: "20px", backgroundColor: "rgba(255, 255, 255, 0.15)", margin: "0 4px" }} />
-
-                  <button
-                    type="button"
-                    onClick={() => setViewMode(viewMode === "scroll" ? "grid" : "scroll")}
-                    title={viewMode === "scroll" ? "Rasteransicht" : "Scroll-Ansicht"}
-                    style={{
-                      padding: "6px 12px",
-                      borderRadius: "6px",
-                      backgroundColor: "rgba(255, 255, 255, 0.06)",
-                      border: "1px solid rgba(255, 255, 255, 0.15)",
-                      color: "#ffffff",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "6px",
-                    }}
-                  >
-                    <Icon name={viewMode === "scroll" ? "layers" : "sliders"} size={13} />
-                    <span>{viewMode === "scroll" ? t("viewGrid", { defaultValue: "Raster" }) : t("viewScroll", { defaultValue: "Showcase" })}</span>
-                  </button>
                 </div>
               </div>
 
-              {/* View Render: Scroll vs Grid */}
-              {viewMode === "scroll" ? (
-                <div
-                  ref={carsScrollRef}
-                  className="cars-horizontal-scroll-track"
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "var(--space-lg)",
-                    overflowX: "auto",
-                    scrollSnapType: "x mandatory",
-                    scrollBehavior: "smooth",
-                    padding: "8px 2px 20px",
-                    WebkitOverflowScrolling: "touch",
-                    scrollbarWidth: "thin",
-                  }}
-                >
-                  {cars.map((car) => {
-                    const identifier = car.slug || car.id;
-                    const isFav = isCarFavorite(car.id);
-                    const primaryImage =
-                      car.media?.thumbnail ||
-                      car.media?.gallery?.[0] ||
-                      car.images?.[0] ||
-                      car.image_url;
+              {/* Cars stacked under each other */}
+              <div
+                className="cars-vertical-list"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "var(--space-xl)",
+                  maxWidth: "860px",
+                  margin: "0 auto",
+                  width: "100%",
+                }}
+              >
+                {cars.map((car) => {
+                  const identifier = car.slug || car.id;
+                  const isFav = isCarFavorite(car.id);
+                  const primaryImage =
+                    car.media?.thumbnail ||
+                    car.media?.gallery?.[0] ||
+                    car.images?.[0] ||
+                    car.image_url;
 
-                    return (
-                      <div
-                        key={car.id}
-                        style={{
-                          flex: "0 0 clamp(290px, 82vw, 360px)",
-                          scrollSnapAlign: "start",
-                        }}
-                      >
-                        <CarCardBase
-                          brand={car.brand}
-                          model={car.model || car.title}
-                          price={car.price}
-                          oldPrice={car.old_price}
-                          status={car.status}
-                          mileage={car.mileage_km || car.mileage}
-                          fuel={car.fuel_type}
-                          transmission={car.transmission}
-                          registration={car.first_registration || car.registration_year}
-                          condition={car.condition}
-                          image={primaryImage}
-                          isFavorite={isFav}
-                          onFavoriteToggle={() => handleFavoriteClick(car.id)}
-                          onSelect={() => navigate(`/cars/${identifier}`)}
-                          ctaLabel={t("viewDetails", "Details anzeigen")}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <ScrollReveal stagger={0.06}>
-                  <Grid cols="responsive" gap="lg">
-                    {cars.map((car) => {
-                      const identifier = car.slug || car.id;
-                      const isFav = isCarFavorite(car.id);
-                      const primaryImage =
-                        car.media?.thumbnail ||
-                        car.media?.gallery?.[0] ||
-                        car.images?.[0] ||
-                        car.image_url;
-
-                      return (
-                        <CarCardBase
-                          key={car.id}
-                          brand={car.brand}
-                          model={car.model || car.title}
-                          price={car.price}
-                          oldPrice={car.old_price}
-                          status={car.status}
-                          mileage={car.mileage_km || car.mileage}
-                          fuel={car.fuel_type}
-                          transmission={car.transmission}
-                          registration={car.first_registration || car.registration_year}
-                          condition={car.condition}
-                          image={primaryImage}
-                          isFavorite={isFav}
-                          onFavoriteToggle={() => handleFavoriteClick(car.id)}
-                          onSelect={() => navigate(`/cars/${identifier}`)}
-                          ctaLabel={t("viewDetails", "Details anzeigen")}
-                        />
-                      );
-                    })}
-                  </Grid>
-                </ScrollReveal>
-              )}
+                  return (
+                    <div key={car.id} style={{ width: "100%" }}>
+                      <CarCardBase
+                        brand={car.brand}
+                        model={car.model || car.title}
+                        price={car.price}
+                        oldPrice={car.old_price}
+                        status={car.status}
+                        mileage={car.mileage_km || car.mileage}
+                        fuel={car.fuel_type}
+                        transmission={car.transmission}
+                        registration={car.first_registration || car.registration_year}
+                        condition={car.condition}
+                        image={primaryImage}
+                        isFavorite={isFav}
+                        onFavoriteToggle={() => handleFavoriteClick(car.id)}
+                        onSelect={() => navigate(`/cars/${identifier}`)}
+                        ctaLabel={t("viewDetails", "Details anzeigen")}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 

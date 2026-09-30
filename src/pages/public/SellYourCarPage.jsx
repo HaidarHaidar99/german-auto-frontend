@@ -19,7 +19,7 @@ import { gsap, isReducedMotion } from "../../utils/animation";
 // Validation Regexes matching backend validator
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/;
-const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/i;
+const VIN_RE = /^[A-Z0-9]{17}$/i;
 const POSTAL_RE = /^[A-Z0-9][A-Z0-9\s-]{1,8}[A-Z0-9]$/i;
 
 const INITIAL_FORM = {
@@ -454,11 +454,11 @@ export function SellYourCarPage() {
           </div>
 
           {[
-            { id: 1, label: "Vehicle Data", icon: "car" },
-            { id: 2, label: "Condition", icon: "sliders" },
-            { id: 3, label: "Contact", icon: "user" }
+            { id: 1, label: (i18n.language || "").startsWith("en") ? "Vehicle Data" : "Fahrzeugdaten", icon: "car" },
+            { id: 2, label: (i18n.language || "").startsWith("en") ? "Condition" : "Zustand & Details", icon: "sliders" },
+            { id: 3, label: (i18n.language || "").startsWith("en") ? "Contact" : "Kontaktdaten", icon: "user" }
           ].map((s) => (
-            <div key={s.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", zIndex: 1, position: "relative", width: "80px" }}>
+            <div key={s.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", zIndex: 1, position: "relative", width: "95px" }}>
               <div style={{
                 width: "48px",
                 height: "48px",
@@ -473,7 +473,7 @@ export function SellYourCarPage() {
               }}>
                 <Icon name={s.icon} size={20} />
               </div>
-              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: step >= s.id ? "var(--color-secondary)" : "var(--color-text-muted)", textAlign: "center" }}>
+              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: step >= s.id ? "var(--color-secondary)" : "var(--color-text-muted)", textAlign: "center", whiteSpace: "nowrap" }}>
                 {s.label}
               </span>
             </div>
@@ -564,21 +564,41 @@ export function SellYourCarPage() {
               required
             />
 
-            <Input
-              id="vin"
-              name="vin"
-              label={t("vinLabel")}
-              placeholder={t("vinPlaceholder")}
-              helperText={t("vinHelper")}
-              value={form.vin}
-              maxLength={17}
-              onChange={(e) => handleChange("vin", e.target.value.toUpperCase())}
-              error={errors.vin}
-              required
-            />
+            <div style={{ position: "relative" }}>
+              <Input
+                id="vin"
+                name="vin"
+                label={t("vinLabel")}
+                placeholder={t("vinPlaceholder")}
+                helperText={t("vinHelper")}
+                value={form.vin}
+                maxLength={17}
+                onChange={(e) => {
+                  const sanitized = e.target.value.replace(/[^A-Za-z0-9]/g, "").toUpperCase().slice(0, 17);
+                  handleChange("vin", sanitized);
+                }}
+                error={errors.vin}
+                required
+              />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "-14px",
+                  marginBottom: "8px",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  color: (form.vin || "").length === 17 ? "#10b981" : "var(--color-secondary, #D4AF37)",
+                }}
+              >
+                <span>{(form.vin || "").length} / 17</span>
+              </div>
+            </div>
           </div>
           <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "var(--space-xl)" }}>
-            <Button variant="primary" onClick={handleNext}>Next Step</Button>
+            <Button variant="primary" onClick={handleNext}>
+              {(i18n.language || "").startsWith("en") ? "Next Step" : "Nächster Schritt"}
+            </Button>
           </div>
         </section>
         )}
@@ -710,8 +730,12 @@ export function SellYourCarPage() {
             />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", marginTop: "var(--space-xl)" }}>
-            <Button variant="outline" onClick={handlePrev}>Previous</Button>
-            <Button variant="primary" onClick={handleNext}>Next Step</Button>
+            <Button variant="outline" onClick={handlePrev}>
+              {(i18n.language || "").startsWith("en") ? "Previous" : "Zurück"}
+            </Button>
+            <Button variant="primary" onClick={handleNext}>
+              {(i18n.language || "").startsWith("en") ? "Next Step" : "Nächster Schritt"}
+            </Button>
           </div>
         </section>
         )}
@@ -908,13 +932,24 @@ export function SellYourCarPage() {
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
-              gap: "var(--space-md)",
+              flexDirection: "row",
+              justifyContent: "space-between",
               alignItems: "center",
+              flexWrap: "wrap",
+              gap: "var(--space-md)",
               paddingTop: "var(--space-sm)",
               borderTop: "1px solid var(--color-border-subtle)",
+              width: "100%",
             }}
           >
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handlePrev}
+            >
+              {(i18n.language || "").startsWith("en") ? "Previous" : "Zurück"}
+            </Button>
+
             <Button
               type="submit"
               variant="primary"
@@ -923,8 +958,8 @@ export function SellYourCarPage() {
               disabled={loading}
               iconLeft="send"
               style={{
-                minWidth: "280px",
-                padding: "var(--space-md) var(--space-2xl)",
+                minWidth: "260px",
+                padding: "var(--space-md) var(--space-xl)",
                 fontSize: "var(--font-size-base)",
               }}
             >

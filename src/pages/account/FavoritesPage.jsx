@@ -111,9 +111,9 @@ export function FavoritesPage() {
       ref={pageContainerRef}
       className="favorites-page"
       style={{
-        maxWidth: "1280px",
+        maxWidth: "920px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-xl) clamp(var(--space-md), 5vw, var(--space-2xl)) var(--space-4xl)",
       }}
     >
       <AccountHeader user={user} />

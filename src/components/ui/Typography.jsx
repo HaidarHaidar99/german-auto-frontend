@@ -118,12 +118,12 @@ export function Price({
 }) {
   // Format numeric value nicely for European/German standards if it's a number
   const formattedValue = typeof value === "number"
-    ? new Intl.NumberFormat("de-DE").format(value)
-    : value;
+    ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    : String(value || "").replace(/\./g, ",");
 
   const formattedOldPrice = typeof oldPrice === "number"
-    ? new Intl.NumberFormat("de-DE").format(oldPrice)
-    : oldPrice;
+    ? oldPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    : String(oldPrice || "").replace(/\./g, ",");
 
   const sizeClass = {
     lg: "type-price-lg",

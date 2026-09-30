@@ -47,15 +47,15 @@ export function AccountPage() {
       ref={pageContainerRef}
       className="account-page"
       style={{
-        maxWidth: "1280px",
+        maxWidth: "920px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-xl) clamp(var(--space-md), 5vw, var(--space-2xl)) var(--space-4xl)",
       }}
     >
       <AccountHeader user={user} />
       <AccountNav style={{ marginBottom: "var(--space-2xl)" }} />
 
-      <div className="account-content-area">
+      <div className="account-content-area" style={{ maxWidth: "860px", margin: "0 auto", width: "100%" }}>
         <AccountProfileCard user={user} />
       </div>
     </main>

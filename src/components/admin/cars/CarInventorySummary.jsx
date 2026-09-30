@@ -15,10 +15,12 @@ export function CarInventorySummary({
 }) {
   const { t } = useTranslation(["admin", "cars", "common"]);
 
-  const total = summaryCounts?.total != null ? summaryCounts.total : cars.length;
-  const available = summaryCounts?.available != null
+  const total = (summaryCounts?.total != null && summaryCounts.total > 0)
+    ? summaryCounts.total
+    : (cars.length > 0 ? cars.length : (summaryCounts?.total ?? 0));
+  const available = (summaryCounts?.available != null && summaryCounts.available > 0)
     ? summaryCounts.available
-    : cars.filter((c) => c.status === "AVAILABLE" && c.is_visible !== false).length;
+    : (cars.filter((c) => c.status === "AVAILABLE" && c.is_visible !== false).length || summaryCounts?.available || 0);
   const reserved = summaryCounts?.reserved != null
     ? summaryCounts.reserved
     : cars.filter((c) => c.status === "RESERVED").length;

@@ -130,12 +130,12 @@ export function AdminCarsPage() {
       ]);
 
       setSummaryCounts({
-        total: allRes?.data?.meta?.total ?? 0,
-        available: availRes?.data?.meta?.total ?? 0,
-        reserved: resRes?.data?.meta?.total ?? 0,
-        sold: soldRes?.data?.meta?.total ?? 0,
-        featured: featRes?.data?.meta?.total ?? 0,
-        hidden: hiddenRes?.data?.meta?.total ?? 0,
+        total: allRes?.meta?.total ?? allRes?.data?.meta?.total ?? 0,
+        available: availRes?.meta?.total ?? availRes?.data?.meta?.total ?? 0,
+        reserved: resRes?.meta?.total ?? resRes?.data?.meta?.total ?? 0,
+        sold: soldRes?.meta?.total ?? soldRes?.data?.meta?.total ?? 0,
+        featured: featRes?.meta?.total ?? featRes?.data?.meta?.total ?? 0,
+        hidden: hiddenRes?.meta?.total ?? hiddenRes?.data?.meta?.total ?? 0,
       });
     } catch {
       // Non-blocking fallback
@@ -172,7 +172,7 @@ export function AdminCarsPage() {
 
       const res = await carsService.adminGetCars(params);
       const fetchedCars = res?.data?.cars || [];
-      const meta = res?.data?.meta || {
+      const meta = res?.meta || res?.data?.meta || {
         page,
         limit,
         total: fetchedCars.length,
@@ -181,6 +181,13 @@ export function AdminCarsPage() {
 
       setCars(fetchedCars);
       setPagination(meta);
+
+      if (fetchedCars.length > 0) {
+        setSummaryCounts((prev) => ({
+          ...prev,
+          total: prev.total > 0 ? prev.total : (meta.total || fetchedCars.length),
+        }));
+      }
 
       // Extract brands from returned cars if not yet populated
       if (fetchedCars.length > 0) {

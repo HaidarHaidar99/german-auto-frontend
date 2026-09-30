@@ -147,10 +147,10 @@ export function HeaderNav({
               src={activeLogoUrl}
               alt={siteName}
               style={{
-                height: "54px",
-                maxHeight: "58px",
+                height: "72px",
+                maxHeight: "76px",
                 width: "auto",
-                maxWidth: "200px",
+                maxWidth: "280px",
                 objectFit: "contain",
                 borderRadius: "4px",
                 display: "block",

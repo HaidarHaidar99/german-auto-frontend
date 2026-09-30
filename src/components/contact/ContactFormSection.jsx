@@ -290,7 +290,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
         backgroundColor: "var(--color-card)",
         borderRadius: "var(--radius-xl)",
         border: "1px solid var(--color-border)",
-        padding: "var(--space-xl)",
+        padding: "clamp(var(--space-md), 4vw, var(--space-xl))",
         boxShadow: "var(--shadow-elevation-1)",
         ...style,
       }}
@@ -382,7 +382,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: "var(--space-md)",
           }}
         >
@@ -414,7 +414,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
             gap: "var(--space-md)",
           }}
         >

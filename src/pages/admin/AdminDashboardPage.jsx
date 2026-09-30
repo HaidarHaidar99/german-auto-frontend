@@ -18,36 +18,37 @@ export function AdminDashboardPage() {
 
   const isSuperAdmin = user?.role === "SUPER_ADMIN";
 
-  const [loading, setLoading] = useState(true);
+  const DASHBOARD_CACHE_KEY = "german_auto_admin_dashboard_cache";
+
+  const [dashboardData, setDashboardData] = useState(() => {
+    try {
+      const cached = localStorage.getItem(DASHBOARD_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.inventory) return parsed;
+      }
+    } catch {}
+    return {
+      inventory: { total: 0, available: 0, sold: 0, reserved: 0, hidden: 0, featured: 0, recent: [] },
+      forms: { pending: 0, total: 0, recent: [] },
+      reviews: { pending: 0, total: 0, recent: [] },
+      notifications: { unreadCount: 0, recent: [] },
+      users: null,
+    };
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem(DASHBOARD_CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed?.inventory) return false;
+      }
+    } catch {}
+    return true;
+  });
   const [refreshing, setRefreshing] = useState(false);
   const [fetchError, setFetchError] = useState(null);
-
-  const [dashboardData, setDashboardData] = useState({
-    inventory: {
-      total: 0,
-      available: 0,
-      sold: 0,
-      reserved: 0,
-      hidden: 0,
-      featured: 0,
-      recent: [],
-    },
-    forms: {
-      pending: 0,
-      total: 0,
-      recent: [],
-    },
-    reviews: {
-      pending: 0,
-      total: 0,
-      recent: [],
-    },
-    notifications: {
-      unreadCount: 0,
-      recent: [],
-    },
-    users: null,
-  });
 
   useEffect(() => {
     document.title = `${t("dashboard", { defaultValue: "Dashboard" })} | ADMINCORE`;
@@ -57,14 +58,15 @@ export function AdminDashboardPage() {
   const loadData = useCallback(async (isRefresh = false) => {
     if (isRefresh) {
       setRefreshing(true);
-    } else {
-      setLoading(true);
     }
     setFetchError(null);
 
     try {
       const data = await adminDashboardService.getDashboardData({ isSuperAdmin });
       setDashboardData(data);
+      try {
+        localStorage.setItem(DASHBOARD_CACHE_KEY, JSON.stringify(data));
+      } catch {}
     } catch (err) {
       setFetchError(err.message || t("errorLoading", { defaultValue: "Error loading dashboard data." }));
     } finally {

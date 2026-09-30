@@ -69,7 +69,7 @@ export function ContactPage() {
       style={{
         maxWidth: "1320px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-xl) clamp(var(--space-sm), 4vw, var(--space-xl)) var(--space-4xl)",
       }}
     >
       {/* ─── Hero Section ────────────────────────────────────────────── */}

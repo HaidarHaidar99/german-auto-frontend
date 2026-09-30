@@ -27,12 +27,13 @@ export function FeaturedInventorySection() {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const trackRef = useRef(null);
 
   const loadFeaturedCars = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await carsService.getCars({ is_featured: true, limit: 6 });
+      const res = await carsService.getCars({ is_featured: true, limit: 12 });
       const carList = res?.data?.cars || [];
       setCars(carList);
     } catch (err) {
@@ -50,46 +51,121 @@ export function FeaturedInventorySection() {
     await toggleFavorite(carId);
   };
 
+  const handleScroll = (dir) => {
+    if (!trackRef.current) return;
+    const scrollAmount = 370;
+    trackRef.current.scrollBy({
+      left: dir === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <Section spacing="spacious" style={{ position: "relative" }}>
       <Container size="default">
-        {/* Section Header */}
+        {/* Section Header with Left/Right Arrows */}
         <div
           style={{
             display: "flex",
-            alignItems: "flex-end",
+            alignItems: "center",
             justifyContent: "space-between",
             flexWrap: "wrap",
             gap: "var(--space-md)",
-            marginBottom: "var(--space-2xl)",
+            marginBottom: "var(--space-xl)",
           }}
         >
           <div>
-            <Eyebrow>{t("featuredTitle", "Ausgewählte Fahrzeuge")}</Eyebrow>
-            <Heading level={2} style={{ margin: 0 }}>
-              {t("featuredSubtitle", "Exklusive Empfehlungen aus unserem aktuellen Bestand")}
+            <Heading level={2} style={{ margin: 0, fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)" }}>
+              {t("featuredSubtitle", "Exklusive Empfehlungen")}
             </Heading>
           </div>
 
-          <Button
-            as={Link}
-            to="/cars"
-            variant="outline"
-            size="md"
-            iconRight="arrow-right"
-          >
-            {t("viewAllCars", "Gesamten Bestand ansehen")}
-          </Button>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {/* 2 Small Arrows to switch between cars */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <button
+                type="button"
+                onClick={() => handleScroll("left")}
+                aria-label="Previous cars"
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "#ffffff",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--color-secondary, #D4AF37)";
+                  e.currentTarget.style.color = "#000000";
+                  e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.color = "#ffffff";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                <Icon name="arrow-left" size={16} />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleScroll("right")}
+                aria-label="Next cars"
+                style={{
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "#ffffff",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "var(--color-secondary, #D4AF37)";
+                  e.currentTarget.style.color = "#000000";
+                  e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.color = "#ffffff";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                <Icon name="arrow-right" size={16} />
+              </button>
+            </div>
+
+            <Button
+              as={Link}
+              to="/cars"
+              variant="outline"
+              size="sm"
+              iconRight="arrow-right"
+            >
+              {t("viewAllCars", "Alle ansehen")}
+            </Button>
+          </div>
         </div>
 
         {/* Loading State: Skeletons */}
         {loading && (
-          <Grid cols="responsive" gap="lg">
+          <div style={{ display: "flex", gap: "var(--space-lg)", overflow: "hidden" }}>
             {[1, 2, 3].map((n) => (
               <div
                 key={n}
                 className="surface-card"
-                style={{ padding: "var(--space-md)", borderRadius: "var(--radius-lg)" }}
+                style={{ flex: "0 0 340px", padding: "var(--space-md)", borderRadius: "var(--radius-lg)" }}
               >
                 <Skeleton width="100%" height="220px" borderRadius="var(--radius-md)" style={{ marginBottom: "var(--space-md)" }} />
                 <Skeleton width="40%" height="16px" style={{ marginBottom: "var(--space-xs)" }} />
@@ -98,7 +174,7 @@ export function FeaturedInventorySection() {
                 <Skeleton width="100%" height="40px" borderRadius="var(--radius-md)" />
               </div>
             ))}
-          </Grid>
+          </div>
         )}
 
         {/* Error State with Retry */}
@@ -120,19 +196,39 @@ export function FeaturedInventorySection() {
           />
         )}
 
-        {/* Real Cars Grid */}
+        {/* Real Cars Horizontal Scroll Track */}
         {!loading && !error && cars.length > 0 && (
-          <ScrollReveal stagger={0.08}>
-            <Grid cols="responsive" gap="lg">
-              {cars.map((car) => {
-                const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
-                const mainImage = car.images?.[0] || car.media?.[0]?.url || car.image_url;
-                const identifier = car.slug || car.id;
-                const isFav = isCarFavorite(car.id);
+          <div
+            ref={trackRef}
+            className="featured-cars-track"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: "var(--space-lg)",
+              overflowX: "auto",
+              scrollSnapType: "x mandatory",
+              scrollBehavior: "smooth",
+              padding: "8px 2px 24px",
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            {cars.map((car) => {
+              const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
+              const mainImage = car.images?.[0] || car.media?.[0]?.url || car.image_url;
+              const identifier = car.slug || car.id;
+              const isFav = isCarFavorite(car.id);
 
-                return (
+              return (
+                <div
+                  key={car.id}
+                  style={{
+                    flex: "0 0 clamp(290px, 82vw, 360px)",
+                    scrollSnapAlign: "start",
+                  }}
+                >
                   <CarCardBase
-                    key={car.id}
                     brand={car.brand}
                     model={car.model || title}
                     price={car.price}
@@ -149,10 +245,10 @@ export function FeaturedInventorySection() {
                     onSelect={() => navigate(`/cars/${identifier}`)}
                     ctaLabel={t("viewDetails", "Details anzeigen")}
                   />
-                );
-              })}
-            </Grid>
-          </ScrollReveal>
+                </div>
+              );
+            })}
+          </div>
         )}
       </Container>
     </Section>

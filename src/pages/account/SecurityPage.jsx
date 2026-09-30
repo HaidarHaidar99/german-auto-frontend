@@ -120,15 +120,15 @@ export function SecurityPage() {
       ref={pageContainerRef}
       className="security-page"
       style={{
-        maxWidth: "1280px",
+        maxWidth: "920px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-xl) clamp(var(--space-md), 5vw, var(--space-2xl)) var(--space-4xl)",
       }}
     >
       <AccountHeader user={user} />
       <AccountNav style={{ marginBottom: "var(--space-2xl)" }} />
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xl)", maxWidth: "800px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2xl)", maxWidth: "860px", margin: "0 auto", width: "100%" }}>
         {/* ── Section 1: Change Password ────────────────────────────────────────── */}
         <section
           aria-labelledby="change-password-heading"

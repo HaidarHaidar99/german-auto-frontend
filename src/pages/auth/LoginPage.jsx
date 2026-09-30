@@ -136,8 +136,24 @@ export function LoginPage() {
         navigate(fromPath && fromPath !== "/admin/login" ? fromPath : "/admincoresecure", { replace: true });
       } else {
         // Dedicated customer authentication
-        await customerLogin(email.trim().toLowerCase(), password);
+        const customerResult = await customerLogin(email.trim().toLowerCase(), password);
         setPassword("");
+
+        const loggedUser = customerResult?.data?.user;
+        const loggedToken = customerResult?.data?.token;
+
+        // If user is ADMIN or SUPER_ADMIN, automatically elevate & navigate straight to admin portal
+        if (loggedUser && (loggedUser.role === "ADMIN" || loggedUser.role === "SUPER_ADMIN")) {
+          if (loggedToken) {
+            localStorage.setItem("german_auto_admin_token", loggedToken);
+          }
+          localStorage.setItem("german_auto_admin_user", JSON.stringify(loggedUser));
+          if (adminAuth?.refreshAdmin) {
+            try { await adminAuth.refreshAdmin(); } catch {}
+          }
+          navigate("/admincoresecure", { replace: true });
+          return;
+        }
 
         const from = location.state?.from;
         let fromPath = null;

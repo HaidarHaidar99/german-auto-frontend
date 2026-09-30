@@ -224,7 +224,7 @@ export function CarCardBase({
               letterSpacing: "-0.02em",
             }}
           >
-            {currency} {typeof price === "number" ? new Intl.NumberFormat("de-DE").format(price) : price}
+            {currency} {typeof price === "number" ? price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : String(price || "").replace(/\./g, ",")}
           </div>
           {oldPrice && (
             <div
@@ -234,7 +234,7 @@ export function CarCardBase({
                 textDecoration: "line-through",
               }}
             >
-              {currency} {typeof oldPrice === "number" ? new Intl.NumberFormat("de-DE").format(oldPrice) : oldPrice}
+              {currency} {typeof oldPrice === "number" ? oldPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : String(oldPrice || "").replace(/\./g, ",")}
             </div>
           )}
         </div>

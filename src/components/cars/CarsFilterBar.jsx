@@ -386,7 +386,7 @@ export function CarsFilterBar({
 
             {filters.max_price && (
               <Badge variant="secondary" size="md">
-                ≤ {new Intl.NumberFormat("de-DE").format(filters.max_price)} €
+                ≤ {filters.max_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} €
                 <button
                   type="button"
                   onClick={() => handleFieldChange("max_price", undefined)}

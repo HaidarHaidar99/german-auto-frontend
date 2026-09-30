@@ -24,12 +24,10 @@ export function CarContactCard({ car, className = "", style = {} }) {
   const whatsapp = contact.whatsapp ? String(contact.whatsapp).trim() : null;
   const email = contact.email ? String(contact.email).trim() : null;
 
-  const locale = i18n.language === "de" ? "de-DE" : "en-US";
-  const currencyFmt = new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  });
+  const formatCommaCurrency = (val) => {
+    const num = Math.round(Number(val) || 0);
+    return `${num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} €`;
+  };
 
   const priceNum = typeof car?.price === "number" ? car.price : Number(car?.price) || 0;
   const oldPriceNum = typeof car?.old_price === "number" ? car.old_price : Number(car?.old_price) || 0;
@@ -143,7 +141,7 @@ export function CarContactCard({ car, className = "", style = {} }) {
                 textDecoration: "line-through",
               }}
             >
-              {currencyFmt.format(oldPriceNum)}
+              {formatCommaCurrency(oldPriceNum)}
             </span>
             <span
               style={{
@@ -155,7 +153,7 @@ export function CarContactCard({ car, className = "", style = {} }) {
                 borderRadius: "var(--radius-sm)",
               }}
             >
-              - {currencyFmt.format(oldPriceNum - priceNum)}
+              - {formatCommaCurrency(oldPriceNum - priceNum)}
             </span>
           </div>
         )}
@@ -169,7 +167,7 @@ export function CarContactCard({ car, className = "", style = {} }) {
             fontVariantNumeric: "tabular-nums",
           }}
         >
-          {currencyFmt.format(priceNum)}
+          {formatCommaCurrency(priceNum)}
         </div>
         <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)", marginTop: "var(--space-3xs)" }}>
           inkl. MwSt. / Bruttopreis

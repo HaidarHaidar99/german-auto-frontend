@@ -142,7 +142,7 @@ export function FileUpload({
             ? "var(--color-accent-subtle)"
             : "var(--color-surface)",
           borderRadius: "var(--radius-lg)",
-          padding: "var(--space-md)",
+          padding: "clamp(12px, 3vw, 20px)",
           textAlign: "center",
           cursor: disabled ? "not-allowed" : "pointer",
           transition: "all var(--duration-fast) var(--ease-smooth)",
@@ -160,28 +160,28 @@ export function FileUpload({
           style={{ display: "none" }}
         />
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-xs)" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
           <div
             style={{
-              width: "48px",
-              height: "48px",
+              width: "38px",
+              height: "38px",
               borderRadius: "50%",
               backgroundColor: "var(--color-card)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "var(--color-secondary)",
-              marginBottom: "var(--space-2xs)",
+              marginBottom: "2px",
             }}
           >
-            <Icon name="upload" size={24} />
+            <Icon name="upload" size={20} />
           </div>
 
-          <p style={{ margin: 0, fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)" }}>
+          <p style={{ margin: 0, fontWeight: 600, fontSize: "13px", color: "var(--color-text)" }}>
             {dropText}
           </p>
 
-          <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)" }}>
+          <span style={{ fontSize: "11px", color: "var(--color-text-subtle)" }}>
             {helperText || `Formate: ${accept.replace(/image\//g, "")} (max. ${Math.round(maxSizeBytes / 1024 / 1024)} MB)`}
           </span>
         </div>
@@ -197,9 +197,9 @@ export function FileUpload({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-            gap: "var(--space-sm)",
-            marginTop: "var(--space-sm)",
+            gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+            gap: "8px",
+            marginTop: "8px",
           }}
         >
           {selectedFiles.map((file, idx) => {
@@ -210,12 +210,12 @@ export function FileUpload({
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "var(--space-sm)",
-                  padding: "var(--space-sm)",
+                  gap: "8px",
+                  padding: "6px 8px",
                   backgroundColor: "var(--color-surface)",
                   border: "1px solid var(--color-border-subtle)",
                   borderRadius: "var(--radius-md)",
-                  fontSize: "var(--font-size-xs)",
+                  fontSize: "11px",
                   overflow: "hidden",
                 }}
               >
@@ -224,8 +224,8 @@ export function FileUpload({
                     src={previewUrl}
                     alt={file.name}
                     style={{
-                      width: "48px",
-                      height: "48px",
+                      width: "36px",
+                      height: "36px",
                       borderRadius: "var(--radius-sm)",
                       objectFit: "cover",
                       backgroundColor: "var(--color-card)",
@@ -235,8 +235,8 @@ export function FileUpload({
                 ) : (
                   <div
                     style={{
-                      width: "48px",
-                      height: "48px",
+                      width: "36px",
+                      height: "36px",
                       borderRadius: "var(--radius-sm)",
                       backgroundColor: "var(--color-card)",
                       display: "flex",
@@ -246,7 +246,7 @@ export function FileUpload({
                       flexShrink: 0,
                     }}
                   >
-                    <Icon name="image" size={20} />
+                    <Icon name="image" size={18} />
                   </div>
                 )}
 
