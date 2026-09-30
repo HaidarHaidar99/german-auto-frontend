@@ -100,62 +100,28 @@ export function SignupPage() {
   return (
     <div
       ref={pageContainerRef}
-      className="auth-page-split"
+      className="auth-page-centered"
       style={{
         display: "flex",
-        minHeight: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "calc(100vh - var(--header-height, 80px))",
+        padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
         backgroundColor: "var(--color-background)",
       }}
     >
-      {/* Left side: Cinematic Imagery */}
       <div
-        className="hide-mobile"
+        className="auth-card"
         style={{
-          flex: 1,
-          position: "relative",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-end",
-          padding: "var(--space-2xl)",
-          color: "#fff",
-          background: "url('https://images.unsplash.com/photo-1614200179396-2bdb77ebf81b?auto=format&fit=crop&q=80') center/cover no-repeat",
+          width: "100%",
+          maxWidth: "460px",
+          backgroundColor: "#0d0e12",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "14px",
+          padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
+          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%)",
-          }}
-        />
-        <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
-          <h2 style={{ fontFamily: "var(--font-family-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, marginBottom: "var(--space-sm)" }}>
-            {t("heroTitle", { ns: "common", defaultValue: "Join the Elite." })}
-          </h2>
-          <p style={{ fontSize: "var(--font-size-lg)", color: "rgba(255,255,255,0.7)" }}>
-            {t("heroSubtitle", { ns: "common", defaultValue: "Create your profile for exclusive automotive access." })}
-          </p>
-        </div>
-      </div>
-
-      {/* Right side: Auth Form */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
-          position: "relative",
-        }}
-      >
-        <div
-          className="auth-card"
-          style={{
-            width: "100%",
-            maxWidth: "420px",
-          }}
-        >
         {isSuccess ? (
           /* Polished Verification-Required State */
           <div style={{ textAlign: "center", padding: "var(--space-md) 0" }}>
@@ -470,17 +436,19 @@ export function SignupPage() {
               <Link
                 to="/login"
                 style={{
-                  color: "var(--color-secondary)",
-                  fontWeight: "var(--font-weight-semibold)",
-                  textDecoration: "none",
+                  color: "#D4AF37",
+                  fontWeight: "var(--font-weight-bold)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "4px",
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#f3e198")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#D4AF37")}
               >
                 {t("loginTitle")}
               </Link>
             </div>
           </>
         )}
-      </div>
       </div>
     </div>
   );

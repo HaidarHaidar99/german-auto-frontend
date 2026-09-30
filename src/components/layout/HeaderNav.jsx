@@ -91,7 +91,7 @@ export function HeaderNav({
   };
 
   const siteName = settings?.site?.name || "German Auto";
-  const logoUrl = settings?.branding?.logo_url;
+  const activeLogoUrl = settings?.branding?.logo_url || "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
 
   const isTransparent = transparent && !isScrolled && !menuOpen;
 
@@ -135,8 +135,6 @@ export function HeaderNav({
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "var(--space-sm)",
-              color: "#ffffff",
               textDecoration: "none",
               zIndex: 10000,
               transition: "opacity 0.3s ease, visibility 0.3s ease",
@@ -145,21 +143,20 @@ export function HeaderNav({
               visibility: menuOpen ? "hidden" : "visible",
             }}
           >
-            {logoUrl ? (
-              <img src={logoUrl} alt={siteName} style={{ maxHeight: "36px", objectFit: "contain", filter: menuOpen ? "brightness(0) invert(1)" : "none" }} />
-            ) : (
-              <span
-                style={{
-                  fontFamily: "var(--font-family-display)",
-                  fontSize: "1.25rem",
-                  fontWeight: 800,
-                  letterSpacing: "var(--tracking-widest)", // More premium tracking
-                  textTransform: "uppercase"
-                }}
-              >
-                {siteName}
-              </span>
-            )}
+            <img
+              src={activeLogoUrl}
+              alt={siteName}
+              style={{
+                height: "54px",
+                maxHeight: "58px",
+                width: "auto",
+                maxWidth: "200px",
+                objectFit: "contain",
+                borderRadius: "4px",
+                display: "block",
+                filter: menuOpen ? "brightness(0) invert(1)" : "none",
+              }}
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

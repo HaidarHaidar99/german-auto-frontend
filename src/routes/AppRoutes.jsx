@@ -22,9 +22,9 @@ const VerifyEmailPage    = lazy(() => import("../pages/auth/VerifyEmailPage"));
 const ForgotPasswordPage = lazy(() => import("../pages/auth/ForgotPasswordPage"));
 const ResetPasswordPage  = lazy(() => import("../pages/auth/ResetPasswordPage"));
 
-const AccountPage        = lazy(() => import("../pages/account/AccountPage"));
-const FavoritesPage      = lazy(() => import("../pages/account/FavoritesPage"));
-const SecurityPage       = lazy(() => import("../pages/account/SecurityPage"));
+import AccountPage from "../pages/account/AccountPage";
+import FavoritesPage from "../pages/account/FavoritesPage";
+import SecurityPage from "../pages/account/SecurityPage";
 
 const AdminDashboardPage     = lazy(() => import("../pages/admin/AdminDashboardPage"));
 const AdminSettingsPage      = lazy(() => import("../pages/admin/AdminSettingsPage"));

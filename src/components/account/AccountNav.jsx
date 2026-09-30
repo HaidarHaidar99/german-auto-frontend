@@ -18,24 +18,18 @@ export function AccountNav({ className = "", style = {} }) {
       className={`account-nav ${className}`.trim()}
       aria-label="Account-Navigation"
       style={{
-        display: "flex",
-        flexDirection: "row",
-        gap: "var(--space-xs)",
-        overflowX: "auto",
-        paddingBottom: "var(--space-2xs)",
-        WebkitOverflowScrolling: "touch",
-        scrollbarWidth: "none",
+        width: "100%",
+        marginBottom: "var(--space-xl)",
         ...style,
       }}
     >
       <div
         className="account-nav-list"
         style={{
-          display: "flex",
-          gap: "var(--space-xs)",
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "10px",
           width: "100%",
-          alignItems: "center",
-          flexWrap: "wrap",
         }}
       >
         {navItems.map((item) => (
@@ -47,19 +41,20 @@ export function AccountNav({ className = "", style = {} }) {
               `account-nav-link ${isActive ? "is-active" : ""}`
             }
             style={({ isActive }) => ({
-              display: "inline-flex",
+              display: "flex",
               alignItems: "center",
-              gap: "var(--space-xs)",
-              padding: "10px 18px",
-              borderRadius: "var(--radius-full)",
-              fontSize: "var(--font-size-sm)",
-              fontWeight: isActive ? 600 : 500,
+              justifyContent: "center",
+              gap: "8px",
+              padding: "12px 14px",
+              borderRadius: "10px",
+              fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
+              fontWeight: 600,
               textDecoration: "none",
-              color: isActive ? "#ffffff" : "var(--color-text-secondary)",
-              backgroundColor: isActive ? "rgba(255, 255, 255, 0.12)" : "var(--color-card)",
-              border: isActive ? "1px solid rgba(255, 255, 255, 0.4)" : "1px solid var(--color-border)",
-              boxShadow: "none", // Explicitly no outside shadow per user request
-              transition: "all var(--transition-fast)",
+              color: isActive ? "#D4AF37" : "rgba(255, 255, 255, 0.85)",
+              backgroundColor: isActive ? "rgba(212, 175, 55, 0.18)" : "rgba(212, 175, 55, 0.06)",
+              border: isActive ? "1px solid rgba(212, 175, 55, 0.6)" : "1px solid rgba(212, 175, 55, 0.2)",
+              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+              textAlign: "center",
               whiteSpace: "nowrap",
             })}
           >

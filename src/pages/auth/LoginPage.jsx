@@ -180,64 +180,28 @@ export function LoginPage() {
   return (
     <div
       ref={pageContainerRef}
-      className="auth-page-split"
+      className="auth-page-centered"
       style={{
         display: "flex",
-        minHeight: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "calc(100vh - var(--header-height, 80px))",
+        padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
         backgroundColor: "var(--color-background)",
       }}
     >
-      {/* Left side: Cinematic Imagery */}
-      {!isAdminTarget && (
-        <div
-          className="hide-mobile"
-          style={{
-            flex: 1,
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            padding: "var(--space-2xl)",
-            color: "#fff",
-            background: "url('https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?auto=format&fit=crop&q=80') center/cover no-repeat",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.2) 100%)",
-            }}
-          />
-          <div style={{ position: "relative", zIndex: 1, maxWidth: "500px" }}>
-            <h2 style={{ fontFamily: "var(--font-family-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, marginBottom: "var(--space-sm)" }}>
-              {t("heroTitle", { ns: "common", defaultValue: "Uncompromising Performance." })}
-            </h2>
-            <p style={{ fontSize: "var(--font-size-lg)", color: "rgba(255,255,255,0.7)" }}>
-              {t("heroSubtitle", { ns: "common", defaultValue: "Enter the world of premium automotive excellence." })}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Right side: Auth Form */}
       <div
+        className="auth-card"
         style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
-          position: "relative",
+          width: "100%",
+          maxWidth: "440px",
+          backgroundColor: "#0d0e12",
+          border: "1px solid rgba(255, 255, 255, 0.1)",
+          borderRadius: "14px",
+          padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
+          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
         }}
       >
-        <div
-          className="auth-card"
-          style={{
-            width: "100%",
-            maxWidth: "420px",
-          }}
-        >
           {isAdminTarget && (
             <div style={{ marginBottom: "var(--space-lg)" }}>
               <Link
@@ -449,14 +413,14 @@ export function LoginPage() {
                 to={isAdminTarget ? "/forgot-password?target=admin" : "/forgot-password"}
                 style={{
                   fontSize: "var(--font-size-sm)",
-                  fontWeight: 500,
-                  color: "var(--color-text)",
+                  fontWeight: 600,
+                  color: "#D4AF37",
                   textDecoration: "underline",
                   textUnderlineOffset: "4px",
                   transition: "color var(--transition-fast)",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text-secondary)")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text)")}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#f3e198")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#D4AF37")}
               >
                 {t("forgotPassword")}
               </Link>
@@ -486,11 +450,13 @@ export function LoginPage() {
                 <Link
                   to="/signup"
                   style={{
-                    color: "var(--color-text)",
+                    color: "#D4AF37",
                     fontWeight: "var(--font-weight-bold)",
                     textDecoration: "underline",
                     textUnderlineOffset: "4px",
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#f3e198")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#D4AF37")}
                 >
                   {t("signupTitle")}
                 </Link>
@@ -552,7 +518,6 @@ export function LoginPage() {
           )}
         </div>
       </div>
-    </div>
   );
 }
 

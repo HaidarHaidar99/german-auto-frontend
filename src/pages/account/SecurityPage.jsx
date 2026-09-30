@@ -21,7 +21,9 @@ export function SecurityPage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
@@ -203,37 +205,24 @@ export function SecurityPage() {
           )}
 
           <form onSubmit={handlePasswordSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            <Input
-              id="security-current-password"
-              name="current_password"
-              type="password"
-              label={t("currentPassword")}
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-              error={formErrors.currentPassword}
-              autoComplete="current-password"
-              required
-              disabled={passwordLoading}
-            />
-
             <div style={{ position: "relative" }}>
               <Input
-                id="security-new-password"
-                name="new_password"
-                type={showPassword ? "text" : "password"}
-                label={t("newPassword")}
+                id="security-current-password"
+                name="current_password"
+                type={showCurrentPassword ? "text" : "password"}
+                label={t("currentPassword")}
                 placeholder={t("passwordPlaceholder", { ns: "auth" })}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                error={formErrors.newPassword}
-                autoComplete="new-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                error={formErrors.currentPassword}
+                autoComplete="current-password"
                 required
                 disabled={passwordLoading}
               />
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                aria-label={showCurrentPassword ? "Passwort verbergen" : "Passwort anzeigen"}
                 style={{
                   position: "absolute",
                   right: "12px",
@@ -248,23 +237,81 @@ export function SecurityPage() {
                   justifyContent: "center",
                 }}
               >
-                <Icon name={showPassword ? "eye-off" : "eye"} size={16} />
+                <Icon name={showCurrentPassword ? "eye-off" : "eye"} size={16} />
               </button>
             </div>
 
-            <Input
-              id="security-confirm-new-password"
-              name="confirm_new_password"
-              type={showPassword ? "text" : "password"}
-              label={t("confirmNewPassword")}
-              placeholder={t("passwordPlaceholder", { ns: "auth" })}
-              value={confirmNewPassword}
-              onChange={(e) => setConfirmNewPassword(e.target.value)}
-              error={formErrors.confirmNewPassword}
-              autoComplete="new-password"
-              required
-              disabled={passwordLoading}
-            />
+            <div style={{ position: "relative" }}>
+              <Input
+                id="security-new-password"
+                name="new_password"
+                type={showNewPassword ? "text" : "password"}
+                label={t("newPassword")}
+                placeholder={t("passwordPlaceholder", { ns: "auth" })}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                error={formErrors.newPassword}
+                autoComplete="new-password"
+                required
+                disabled={passwordLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                aria-label={showNewPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "36px",
+                  background: "none",
+                  border: "none",
+                  color: "var(--color-text-subtle)",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon name={showNewPassword ? "eye-off" : "eye"} size={16} />
+              </button>
+            </div>
+
+            <div style={{ position: "relative" }}>
+              <Input
+                id="security-confirm-new-password"
+                name="confirm_new_password"
+                type={showConfirmPassword ? "text" : "password"}
+                label={t("confirmNewPassword")}
+                placeholder={t("passwordPlaceholder", { ns: "auth" })}
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                error={formErrors.confirmNewPassword}
+                autoComplete="new-password"
+                required
+                disabled={passwordLoading}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                style={{
+                  position: "absolute",
+                  right: "12px",
+                  top: "36px",
+                  background: "none",
+                  border: "none",
+                  color: "var(--color-text-subtle)",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon name={showConfirmPassword ? "eye-off" : "eye"} size={16} />
+              </button>
+            </div>
 
             <div>
               <Button

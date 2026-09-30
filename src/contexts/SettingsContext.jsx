@@ -1,11 +1,29 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import settingsService from "../services/settings/settings.service";
 
+export const DEFAULT_LOGO_URL = "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
+const SETTINGS_STORAGE_KEY = "german_auto_cached_settings";
+
 const SettingsContext = createContext(null);
 
 export function SettingsProvider({ children }) {
-  const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState(() => {
+    try {
+      const cached = localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (cached) return JSON.parse(cached);
+    } catch {
+      // Ignore parse error
+    }
+    return {
+      branding: {
+        logo_url: DEFAULT_LOGO_URL,
+      },
+      site: {
+        name: "German Auto",
+      },
+    };
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const applyThemeVariables = useCallback((theme) => {
@@ -22,10 +40,14 @@ export function SettingsProvider({ children }) {
 
   const refreshSettings = useCallback(async () => {
     try {
-      setLoading(true);
       const res = await settingsService.getSettings();
       const data = res?.data?.settings || {};
       setSettings(data);
+      try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(data));
+      } catch {
+        // Ignore storage error
+      }
       if (data.theme) {
         applyThemeVariables(data.theme);
       }

@@ -22,8 +22,8 @@ export function LoadingState({ message = null, minHeight = "200px" }) {
         style={{
           width: "36px",
           height: "36px",
-          border: "3px solid rgba(2, 132, 199, 0.15)",
-          borderTopColor: "#0284c7",
+          border: "3px solid rgba(212, 175, 55, 0.2)",
+          borderTopColor: "#D4AF37",
           borderRadius: "50%",
           animation: "spin 0.8s linear infinite",
         }}

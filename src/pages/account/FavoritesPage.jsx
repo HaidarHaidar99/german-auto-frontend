@@ -13,48 +13,66 @@ import { Grid } from "../../components/ui/Layout";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
 
+let cachedFavoritesCars = null;
+
 export function FavoritesPage() {
   const { t } = useTranslation(["account", "cars", "common"]);
-  const { user, isAuthenticated, isCarFavorite, toggleFavorite } = useAuth();
+  const { user, isAuthenticated, favorites = [], isCarFavorite, toggleFavorite } = useAuth();
   const navigate = useNavigate();
   const pageContainerRef = useRef(null);
 
-  const [cars, setCars] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cars, setCars] = useState(() => cachedFavoritesCars || []);
+  const [loading, setLoading] = useState(() => !cachedFavoritesCars);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     document.title = `${t("favoritesPageTitle")} | German Auto`;
   }, [t]);
 
-  const loadFavorites = React.useCallback(async () => {
+  const loadFavorites = React.useCallback(async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && !cachedFavoritesCars) {
+        setLoading(true);
+      }
       setError(null);
+
       if (!isAuthenticated) {
         const guestIds = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("german_auto_guest_favorites") || "[]") : [];
         if (guestIds.length === 0) {
           setCars([]);
+          cachedFavoritesCars = [];
           setLoading(false);
           return;
         }
         const res = await carsService.getCars({ limit: 100 });
         const allCars = res?.data?.cars || [];
-        setCars(allCars.filter((c) => guestIds.includes(c.id)));
+        const filtered = allCars.filter((c) => guestIds.includes(c.id));
+        setCars(filtered);
+        cachedFavoritesCars = filtered;
       } else {
+        if (favorites.length === 0) {
+          setCars([]);
+          cachedFavoritesCars = [];
+          setLoading(false);
+          return;
+        }
         const res = await carsService.getFavorites();
-        setCars(res?.data?.cars || []);
+        const favCars = res?.data?.cars || [];
+        setCars(favCars);
+        cachedFavoritesCars = favCars;
       }
     } catch (err) {
-      setError(err?.message || "Fehler beim Laden der Favoriten.");
-      setCars([]);
+      if (!cachedFavoritesCars) {
+        setError(err?.message || "Fehler beim Laden der Favoriten.");
+        setCars([]);
+      }
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, favorites.length]);
 
   useEffect(() => {
-    loadFavorites();
+    loadFavorites(Boolean(cachedFavoritesCars));
   }, [loadFavorites]);
 
   useGsapContext(pageContainerRef, () => {

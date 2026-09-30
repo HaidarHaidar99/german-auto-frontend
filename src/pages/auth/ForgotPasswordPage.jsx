@@ -111,17 +111,12 @@ export function ForgotPasswordPage() {
         />
 
         <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
-          <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
-            <Badge variant={isAdminTarget ? "primary" : "outline"} size="sm">
-              {isAdminTarget ? "ADMIN CORE" : "German Auto"}
-            </Badge>
-          </div>
           <h1
             style={{
               fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
               fontWeight: "var(--font-weight-bold)",
               letterSpacing: "var(--tracking-tight)",
-              margin: "var(--space-2xs) 0 0 0",
+              margin: 0,
               color: "var(--color-text)",
             }}
           >
@@ -213,9 +208,14 @@ export function ForgotPasswordPage() {
                 to={isAdminTarget ? "/admin/login" : "/login"}
                 style={{
                   fontSize: "var(--font-size-sm)",
-                  color: "var(--color-text-secondary)",
-                  textDecoration: "none",
+                  color: "#D4AF37",
+                  fontWeight: 600,
+                  textDecoration: "underline",
+                  textUnderlineOffset: "4px",
+                  transition: "color var(--transition-fast)",
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#f3e198")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#D4AF37")}
               >
                 ← {t("backToLogin")}
               </Link>
