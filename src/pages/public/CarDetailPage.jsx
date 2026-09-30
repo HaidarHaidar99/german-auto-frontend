@@ -7,7 +7,6 @@ import CarMediaGallery from "../../components/car-detail/CarMediaGallery";
 import CarTechnicalSpecs from "../../components/car-detail/CarTechnicalSpecs";
 import CarEquipment from "../../components/car-detail/CarEquipment";
 import CarContactCard from "../../components/car-detail/CarContactCard";
-import CarRelatedSection from "../../components/car-detail/CarRelatedSection";
 import Skeleton from "../../components/ui/Skeleton";
 import ErrorState from "../../components/ui/ErrorState";
 import EmptyState from "../../components/ui/EmptyState";
@@ -359,9 +358,6 @@ export function CarDetailPage() {
           <CarContactCard car={car} />
         </div>
       </div>
-
-      {/* ─── Real Related Vehicles Section ─────────────────────────────── */}
-      <CarRelatedSection currentCarId={car.id} currentBrand={car.brand} />
 
       {/* Responsive layout styles via embedded CSS */}
       <style>{`
