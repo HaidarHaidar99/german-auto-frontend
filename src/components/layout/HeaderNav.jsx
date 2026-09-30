@@ -20,7 +20,8 @@ export function HeaderNav({
   className = "",
 }) {
   const { t } = useTranslation(["navigation", "common"]);
-  const { isAuthenticated, logout, isAdmin, favorites = [] } = useAuth();
+  const { isAuthenticated, logout, isAdmin, favorites = [], user } = useAuth();
+  const isUserLoggedIn = Boolean(isAuthenticated && user);
   const { settings } = useSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,25 +51,30 @@ export function HeaderNav({
     setMenuOpen(true);
     document.body.style.overflow = "hidden"; // Prevent scrolling
 
+    gsap.killTweensOf([menuBgRef.current, ...menuItemsRef.current]);
+
     const tl = gsap.timeline();
     tl.to(menuBgRef.current, {
       y: "0%",
-      duration: 0.6,
-      ease: "power3.inOut",
+      duration: 0.35,
+      ease: "power2.out",
     })
     .fromTo(menuItemsRef.current, {
-      y: -25,
-      opacity: 0
+      y: -24,
+      opacity: 0,
     }, {
       y: 0,
       opacity: 1,
-      duration: 0.45,
-      stagger: 0.05,
-      ease: "power2.out",
-    }, "-=0.2");
+      duration: 0.28,
+      stagger: 0.04,
+      ease: "power1.out", // Falls smoothly in one single direction with zero recoil
+      clearProps: "transform",
+    }, "-=0.1");
   };
 
   const closeMenu = () => {
+    gsap.killTweensOf([menuBgRef.current, ...menuItemsRef.current]);
+
     const tl = gsap.timeline({
       onComplete: () => {
         setMenuOpen(false);
@@ -77,17 +83,15 @@ export function HeaderNav({
     });
 
     tl.to(menuItemsRef.current, {
-      y: 20,
       opacity: 0,
-      duration: 0.3,
-      stagger: -0.05,
-      ease: "power2.in",
+      duration: 0.15,
+      ease: "power1.in",
     })
     .to(menuBgRef.current, {
       y: "-100%",
-      duration: 0.5,
-      ease: "power3.inOut",
-    }, "-=0.1");
+      duration: 0.3,
+      ease: "power2.in",
+    }, "-=0.05");
   };
 
   const siteName = settings?.site?.name || "German Auto";
@@ -106,15 +110,10 @@ export function HeaderNav({
           right: 0,
           height: "var(--header-height)",
           zIndex: 9999, // High z-index to stay above everything
-          backgroundColor: isTransparent
-            ? "transparent"
-            : menuOpen 
-              ? "transparent" // Let the menu background show through
-              : "rgba(0, 0, 0, 0.85)", // Use pure black overlay
-          backdropFilter: isTransparent || menuOpen ? "none" : "blur(16px)",
-          WebkitBackdropFilter: isTransparent || menuOpen ? "none" : "blur(16px)",
-          borderBottom: `1px solid ${isTransparent || menuOpen ? "transparent" : "var(--color-border)"}`,
-          transition: "background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease",
+          backgroundColor: isTransparent ? "transparent" : "rgba(0, 0, 0, 0.85)",
+          backdropFilter: isTransparent ? "none" : "blur(16px)",
+          WebkitBackdropFilter: isTransparent ? "none" : "blur(16px)",
+          borderBottom: isTransparent ? "none" : "1px solid var(--color-border)",
           display: "flex",
           alignItems: "center",
         }}
@@ -128,7 +127,7 @@ export function HeaderNav({
             width: "100%",
           }}
         >
-          {/* Logo / Brand Name (hidden when mobile menu is open per user request) */}
+          {/* Logo / Brand Name - completely stable with no shadow or action on nav click */}
           <Link
             to="/"
             onClick={() => menuOpen && closeMenu()}
@@ -137,10 +136,9 @@ export function HeaderNav({
               alignItems: "center",
               textDecoration: "none",
               zIndex: 10000,
-              transition: "opacity 0.3s ease, visibility 0.3s ease",
-              opacity: menuOpen ? 0 : 1,
-              pointerEvents: menuOpen ? "none" : "auto",
-              visibility: menuOpen ? "hidden" : "visible",
+              boxShadow: "none",
+              border: "none",
+              outline: "none",
             }}
           >
             <img
@@ -154,7 +152,9 @@ export function HeaderNav({
                 objectFit: "contain",
                 borderRadius: "4px",
                 display: "block",
-                filter: menuOpen ? "brightness(0) invert(1)" : "none",
+                border: "none",
+                boxShadow: "none",
+                filter: "none",
               }}
             />
           </Link>
@@ -396,7 +396,7 @@ export function HeaderNav({
                 borderRadius: "var(--radius-md)",
                 border: "1px solid transparent",
                 backgroundColor: "transparent",
-                transition: "all 0.25s ease",
+                transition: "color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = "#ffffff";
@@ -460,7 +460,7 @@ export function HeaderNav({
 
             {/* 2. Profile Icon */}
             <Link
-              to={isAuthenticated ? "/account" : "/login"}
+              to={isUserLoggedIn ? "/account" : "/login"}
               onClick={closeMenu}
               aria-label={t("profile", { ns: "account", defaultValue: "Profile" })}
               title={t("profile", { ns: "account", defaultValue: "Profile" })}
@@ -475,7 +475,7 @@ export function HeaderNav({
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-                transition: "all 0.2s ease",
+                transition: "background-color 0.2s ease",
                 textDecoration: "none",
                 flexShrink: 0,
               }}
@@ -490,7 +490,7 @@ export function HeaderNav({
             </Link>
 
             {/* 3. Login or Logout Icon */}
-            {isAuthenticated ? (
+            {isUserLoggedIn ? (
               <button
                 type="button"
                 onClick={() => { closeMenu(); logout(); }}
@@ -507,7 +507,7 @@ export function HeaderNav({
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
-                  transition: "all 0.2s ease",
+                  transition: "background-color 0.2s ease",
                   flexShrink: 0,
                   padding: 0,
                 }}
@@ -537,7 +537,7 @@ export function HeaderNav({
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
-                  transition: "all 0.2s ease",
+                  transition: "background-color 0.2s ease",
                   textDecoration: "none",
                   flexShrink: 0,
                 }}
@@ -548,7 +548,7 @@ export function HeaderNav({
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
-                <Icon name="log-in" size={20} color="#ffffff" />
+                <Icon name="key" size={20} color="#ffffff" />
               </Link>
             )}
           </div>
