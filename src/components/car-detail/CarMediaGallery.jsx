@@ -74,6 +74,50 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
     });
   }, []);
 
+  // Highway line & car touch/pointer scrubbing logic
+  const [isScrubbing, setIsScrubbing] = useState(false);
+  const highwayTrackRef = useRef(null);
+  const isPointerDownRef = useRef(false);
+
+  const updateScrub = useCallback((clientX) => {
+    if (!highwayTrackRef.current || uniquePhotos.length <= 1) return;
+    const rect = highwayTrackRef.current.getBoundingClientRect();
+    if (rect.width <= 0) return;
+    const clickX = clientX - rect.left;
+    const pct = Math.max(0, Math.min(1, clickX / rect.width));
+    const targetIdx = Math.round(pct * (uniquePhotos.length - 1));
+    handleSelectPhoto(targetIdx);
+  }, [uniquePhotos.length, handleSelectPhoto]);
+
+  const handlePointerDown = (e) => {
+    isPointerDownRef.current = true;
+    setIsScrubbing(true);
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+    updateScrub(e.clientX);
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDownRef.current) return;
+    updateScrub(e.clientX);
+  };
+
+  const handlePointerUp = (e) => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    setIsScrubbing(false);
+    try {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    } catch {}
+  };
+
+  // Touch fallback for touch devices
+  const handleTouchScrub = (e) => {
+    if (!e.touches || e.touches.length === 0) return;
+    updateScrub(e.touches[0].clientX);
+  };
+
   // Keyboard navigation for active anytime anywhere
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -564,22 +608,81 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
         )}
       </div>
 
-      {/* ─── Automotive Progress Highway with Driving Car ─── */}
+      {/* ─── 1. Gallery View / Thumbnail Strip (ABOVE the gold line) ─── */}
+      {activeTab === "photos" && uniquePhotos.length > 1 && (
+        <div
+          className="thumbnail-strip"
+          style={{
+            display: "grid",
+            gridAutoFlow: "column",
+            gridAutoColumns: "minmax(84px, 110px)",
+            gap: "var(--space-xs)",
+            marginTop: "12px",
+            overflowX: "auto",
+            paddingBottom: "4px",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          {uniquePhotos.map((photo, idx) => {
+            const isActive = idx === activePhotoIdx;
+            return (
+              <button
+                key={photo + idx}
+                type="button"
+                aria-label={`Bild ${idx + 1} auswählen`}
+                onClick={() => handleSelectPhoto(idx)}
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "16 / 10",
+                  padding: 0,
+                  borderRadius: "var(--radius-sm)",
+                  border: "2px solid",
+                  borderColor: isActive ? "#D4AF37" : "var(--color-border-subtle)",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                  backgroundColor: "var(--color-surface)",
+                  opacity: isActive ? 1 : 0.65,
+                  transform: isActive ? "scale(1.02)" : "scale(1)",
+                  transition: "all var(--duration-fast) var(--ease-smooth)",
+                  boxShadow: isActive ? "0 0 10px rgba(212, 175, 55, 0.4)" : "none",
+                }}
+              >
+                <img
+                  src={photo}
+                  alt={`Thumbnail ${idx + 1}`}
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    display: "block",
+                  }}
+                />
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* ─── 2. Interactive Gold Highway Track with Touch & Drag Driving Car (BELOW gallery view) ─── */}
       {activeTab === "photos" && uniquePhotos.length > 1 && (
         <div
           className="gallery-highway-track"
           style={{
-            marginTop: "14px",
-            marginBottom: "12px",
-            padding: "10px 16px",
+            marginTop: "10px",
+            marginBottom: "6px",
+            padding: "8px 14px",
             borderRadius: "14px",
-            backgroundColor: "rgba(14, 16, 20, 0.9)",
+            backgroundColor: "rgba(12, 14, 18, 0.85)",
             border: "1px solid rgba(212, 175, 55, 0.25)",
             backdropFilter: "blur(12px)",
             display: "flex",
             alignItems: "center",
-            gap: "16px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
+            gap: "14px",
+            boxShadow: "0 4px 18px rgba(0, 0, 0, 0.5)",
+            userSelect: "none",
           }}
         >
           {/* Active Image Counter */}
@@ -587,12 +690,12 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              gap: "6px",
               color: "#D4AF37",
               fontSize: "13px",
               fontWeight: 700,
               fontVariantNumeric: "tabular-nums",
-              minWidth: "75px",
+              minWidth: "70px",
               userSelect: "none",
             }}
           >
@@ -602,38 +705,40 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             </span>
           </div>
 
-          {/* Interactive Golden Highway Track */}
+          {/* Interactive Golden Highway Track - Touch & Drag Enabled */}
           <div
-            onClick={(e) => {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const clickX = e.clientX - rect.left;
-              const pct = Math.max(0, Math.min(1, clickX / rect.width));
-              const targetIdx = Math.round(pct * (uniquePhotos.length - 1));
-              handleSelectPhoto(targetIdx);
-            }}
+            ref={highwayTrackRef}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+            onTouchStart={handleTouchScrub}
+            onTouchMove={handleTouchScrub}
             style={{
               position: "relative",
               flex: 1,
-              height: "28px",
+              height: "30px",
               display: "flex",
               alignItems: "center",
-              cursor: "pointer",
+              cursor: isScrubbing ? "grabbing" : "pointer",
+              touchAction: "none",
               padding: "0 4px",
             }}
-            title="Klicken zum Navigieren"
+            title="Berühren oder ziehen, um das Auto zu steuern"
           >
-            {/* Dark Groove Track */}
+            {/* Dark Groove Track - No White Lines! */}
             <div
               style={{
                 position: "relative",
                 width: "100%",
                 height: "6px",
                 borderRadius: "999px",
-                backgroundColor: "rgba(255, 255, 255, 0.12)",
-                boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.6)",
+                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                border: "1px solid rgba(212, 175, 55, 0.2)",
+                boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.9)",
               }}
             >
-              {/* Active Gold Road Line */}
+              {/* Active Gold Road Line - The Only Highlight Line */}
               <div
                 style={{
                   position: "absolute",
@@ -643,25 +748,27 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   width: `${uniquePhotos.length > 1 ? (activePhotoIdx / (uniquePhotos.length - 1)) * 100 : 100}%`,
                   borderRadius: "999px",
                   background: "linear-gradient(90deg, #996515 0%, #D4AF37 70%, #F5DEB3 100%)",
-                  boxShadow: "0 0 12px rgba(212, 175, 55, 0.65)",
-                  transition: "width 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
+                  boxShadow: "0 0 12px rgba(212, 175, 55, 0.75)",
+                  transition: isScrubbing ? "none" : "width 0.35s cubic-bezier(0.25, 1, 0.5, 1)",
                 }}
               />
 
-              {/* Small Car Icon Driving Left / Right Along the Line */}
+              {/* Small Car Icon - Touch & Drag Capable */}
               <div
                 style={{
                   position: "absolute",
                   top: "50%",
                   left: `${uniquePhotos.length > 1 ? (activePhotoIdx / (uniquePhotos.length - 1)) * 100 : 100}%`,
                   transform: `translate(-50%, -75%) ${driveDirection === "left" ? "scaleX(-1)" : "scaleX(1)"}`,
-                  transition: "left 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.25s ease",
-                  pointerEvents: "none",
-                  zIndex: 5,
+                  transition: isScrubbing ? "none" : "left 0.35s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s ease",
+                  cursor: isScrubbing ? "grabbing" : "grab",
+                  touchAction: "none",
+                  zIndex: 10,
+                  padding: "4px",
                   filter: "drop-shadow(0 3px 8px rgba(212, 175, 55, 0.85))",
                 }}
               >
-                <svg width="26" height="15" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="28" height="16" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1.5 9.5H3.5C3.8 8.1 5 7 6.5 7C8 7 9.2 8.1 9.5 9.5H14.5C14.8 8.1 16 7 17.5 7C19 7 20.2 8.1 20.5 9.5H22.5C23.1 9.5 23.5 9.1 23.5 8.5V6.8C23.5 6.1 23.1 5.5 22.5 5.2L18.8 3.5C18.2 3.2 17.5 3 16.8 3H10.5C9.6 3 8.7 3.4 8.2 4.1L5.8 7H3C1.9 7 1 7.9 1 9V9.5H1.5Z" fill="#D4AF37"/>
                   <path d="M9 4.5H10.5C11 4.5 11.5 4.7 11.8 5L13.5 6.8H8L9 4.5Z" fill="#0d0e11"/>
                   <path d="M14.5 6.8L13 4.8C13.2 4.6 13.5 4.5 13.8 4.5H16.5L18.5 6.8H14.5Z" fill="#0d0e11"/>
@@ -676,15 +783,15 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             </div>
           </div>
 
-          {/* Quick Step Arrows */}
+          {/* Quick Step Buttons */}
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <button
               type="button"
               onClick={handlePrevPhoto}
               aria-label="Previous photo"
               style={{
-                width: "32px",
-                height: "32px",
+                width: "30px",
+                height: "30px",
                 borderRadius: "50%",
                 backgroundColor: "rgba(255, 255, 255, 0.06)",
                 border: "1px solid rgba(212, 175, 55, 0.3)",
@@ -713,8 +820,8 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
               onClick={handleNextPhoto}
               aria-label="Next photo"
               style={{
-                width: "32px",
-                height: "32px",
+                width: "30px",
+                height: "30px",
                 borderRadius: "50%",
                 backgroundColor: "rgba(255, 255, 255, 0.06)",
                 border: "1px solid rgba(212, 175, 55, 0.3)",
@@ -742,61 +849,13 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
         </div>
       )}
 
-      {/* Thumbnail Strip (only for photos tab when more than 1 image exists) */}
-      {activeTab === "photos" && uniquePhotos.length > 1 && (
-        <div
-          className="thumbnail-strip"
-          style={{
-            display: "grid",
-            gridAutoFlow: "column",
-            gridAutoColumns: "minmax(84px, 110px)",
-            gap: "var(--space-xs)",
-            marginTop: "var(--space-xs)",
-            overflowX: "auto",
-            paddingBottom: "var(--space-2xs)",
-            scrollbarWidth: "thin",
-          }}
-        >
-          {uniquePhotos.map((photo, idx) => {
-            const isActive = idx === activePhotoIdx;
-            return (
-              <button
-                key={photo + idx}
-                type="button"
-                aria-label={`Bild ${idx + 1} auswählen`}
-                onClick={() => handleSelectPhoto(idx)}
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  aspectRatio: "16 / 10",
-                  padding: 0,
-                  borderRadius: "var(--radius-sm)",
-                  border: "2px solid",
-                  borderColor: isActive ? "#D4AF37" : "var(--color-border-subtle)",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  backgroundColor: "var(--color-surface)",
-                  opacity: isActive ? 1 : 0.65,
-                  transform: isActive ? "scale(1.02)" : "scale(1)",
-                  transition: "all var(--duration-fast) var(--ease-smooth)",
-                }}
-              >
-                <img
-                  src={photo}
-                  alt={`Thumbnail ${idx + 1}`}
-                  loading="lazy"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                />
-              </button>
-            );
-          })}
-        </div>
-      )}
+      <style>{`
+        .thumbnail-strip::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+      `}</style>
     </div>
   );
 }

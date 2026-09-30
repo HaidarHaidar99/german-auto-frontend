@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
+import ScrollToTop from "./components/common/ScrollToTop";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
@@ -8,6 +9,7 @@ import AppRoutes from "./routes/AppRoutes";
 export function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <AdminAuthProvider>
           <SettingsProvider>

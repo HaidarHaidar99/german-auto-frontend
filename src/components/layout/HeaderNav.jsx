@@ -24,6 +24,8 @@ export function HeaderNav({
   const isUserLoggedIn = Boolean(isAuthenticated && user);
   const { settings } = useSettings();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -38,14 +40,28 @@ export function HeaderNav({
     }
   }, [location.pathname]);
 
+  // Dynamic header visibility: disappears on scroll down, reappears even if 1px scroll up
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+
+      if (menuOpen || currentScrollY <= 15) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        // Scrolling down -> hide header
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        // Scrolling up even 1px -> immediately show header
+        setIsVisible(true);
+      }
+
+      setIsScrolled(currentScrollY > 20);
+      lastScrollY.current = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [menuOpen]);
 
   const openMenu = () => {
     setMenuOpen(true);
@@ -116,6 +132,8 @@ export function HeaderNav({
           borderBottom: isTransparent ? "none" : "1px solid var(--color-border)",
           display: "flex",
           alignItems: "center",
+          transform: isVisible ? "translateY(0)" : "translateY(-100%)",
+          transition: "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease",
         }}
       >
         <div
