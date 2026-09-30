@@ -158,11 +158,24 @@ export function CarCardBase({
         aspectRatio="16-9"
         badge={statusBadge}
         action={
-          <FavoriteButton
-            isFavorite={isFavorite}
-            onToggle={onFavoriteToggle}
-            ariaLabel={`${brand} ${model} zu Favoriten hinzufügen`}
-          />
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+            }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+            }}
+            onMouseEnter={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <FavoriteButton
+              isFavorite={isFavorite}
+              onToggle={onFavoriteToggle}
+              ariaLabel={`${brand} ${model} zu Favoriten hinzufügen`}
+            />
+          </div>
         }
       >
         <CinematicImage

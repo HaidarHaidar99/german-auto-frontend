@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import carsService from "../../services/cars/cars.service";
@@ -9,6 +9,7 @@ import AccountEmptyState from "../../components/account/AccountEmptyState";
 import CarCardBase from "../../components/automotive/CarCardBase";
 import Skeleton from "../../components/ui/Skeleton";
 import ErrorState from "../../components/ui/ErrorState";
+import Button from "../../components/ui/Button";
 import { Grid } from "../../components/ui/Layout";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
@@ -116,8 +117,37 @@ export function FavoritesPage() {
         padding: "var(--space-xl) clamp(var(--space-md), 5vw, var(--space-2xl)) var(--space-4xl)",
       }}
     >
-      <AccountHeader user={user} />
-      <AccountNav style={{ marginBottom: "var(--space-2xl)" }} />
+      {isAuthenticated ? (
+        <>
+          <AccountHeader user={user} />
+          <AccountNav style={{ marginBottom: "var(--space-2xl)" }} />
+        </>
+      ) : (
+        <div
+          style={{
+            marginBottom: "var(--space-xl)",
+            padding: "16px 20px",
+            borderRadius: "var(--radius-lg)",
+            backgroundColor: "rgba(212, 175, 55, 0.08)",
+            border: "1px solid rgba(212, 175, 55, 0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ color: "#D4AF37", fontSize: "20px" }}>★</span>
+            <span style={{ fontSize: "14px", color: "var(--color-text)" }}>
+              {t("guestNotice", { defaultValue: "Melden Sie sich an, um Ihre Favoriten auf allen Ihren Geräten zu synchronisieren." })}
+            </span>
+          </div>
+          <Button as={Link} to="/login" variant="secondary" size="sm" style={{ borderRadius: "6px" }}>
+            {t("login", { defaultValue: "Anmelden" })}
+          </Button>
+        </div>
+      )}
 
       <div className="favorites-content-area">
         <div style={{ marginBottom: "var(--space-xl)" }}>

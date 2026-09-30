@@ -131,19 +131,22 @@ export function FileUpload({
         onDragLeave={handleDragLeave}
         onClick={() => !disabled && inputRef.current?.click()}
         style={{
-          border: `2px dashed ${
+          border: `1px dashed ${
             displayError
               ? "var(--color-error)"
               : isDragOver
               ? "var(--color-secondary)"
-              : "var(--color-border)"
+              : "rgba(212, 175, 55, 0.35)"
           }`,
           backgroundColor: isDragOver
-            ? "var(--color-accent-subtle)"
-            : "var(--color-surface)",
-          borderRadius: "var(--radius-lg)",
-          padding: "clamp(12px, 3vw, 20px)",
-          textAlign: "center",
+            ? "rgba(212, 175, 55, 0.08)"
+            : "rgba(255, 255, 255, 0.02)",
+          borderRadius: "8px",
+          padding: "8px 12px",
+          minHeight: "44px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           cursor: disabled ? "not-allowed" : "pointer",
           transition: "all var(--duration-fast) var(--ease-smooth)",
           opacity: disabled ? 0.5 : 1,
@@ -160,35 +163,35 @@ export function FileUpload({
           style={{ display: "none" }}
         />
 
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", justifyContent: "center" }}>
           <div
             style={{
-              width: "38px",
-              height: "38px",
+              width: "26px",
+              height: "26px",
               borderRadius: "50%",
-              backgroundColor: "var(--color-card)",
+              backgroundColor: "rgba(212, 175, 55, 0.12)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              color: "var(--color-secondary)",
-              marginBottom: "2px",
+              color: "var(--color-secondary, #D4AF37)",
+              flexShrink: 0,
             }}
           >
-            <Icon name="upload" size={20} />
+            <Icon name="upload" size={14} />
           </div>
 
-          <p style={{ margin: 0, fontWeight: 600, fontSize: "13px", color: "var(--color-text)" }}>
+          <span style={{ fontWeight: 600, fontSize: "12px", color: "var(--color-text)" }}>
             {dropText}
-          </p>
+          </span>
 
           <span style={{ fontSize: "11px", color: "var(--color-text-subtle)" }}>
-            {helperText || `Formate: ${accept.replace(/image\//g, "")} (max. ${Math.round(maxSizeBytes / 1024 / 1024)} MB)`}
+            ({helperText || `max. ${Math.round(maxSizeBytes / 1024 / 1024)} MB`})
           </span>
         </div>
       </div>
 
       {displayError && (
-        <span className="form-helper is-error" style={{ display: "block", marginTop: "var(--space-2xs)" }}>
+        <span className="form-helper is-error" style={{ display: "block", marginTop: "var(--space-2xs)", fontSize: "11px" }}>
           {displayError}
         </span>
       )}
@@ -197,9 +200,9 @@ export function FileUpload({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-            gap: "8px",
-            marginTop: "8px",
+            gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
+            gap: "6px",
+            marginTop: "6px",
           }}
         >
           {selectedFiles.map((file, idx) => {

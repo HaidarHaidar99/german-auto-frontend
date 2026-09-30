@@ -20,7 +20,7 @@ export function HeaderNav({
   className = "",
 }) {
   const { t } = useTranslation(["navigation", "common"]);
-  const { isAuthenticated, logout, isAdmin } = useAuth();
+  const { isAuthenticated, logout, isAdmin, favorites = [] } = useAuth();
   const { settings } = useSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,12 +57,12 @@ export function HeaderNav({
       ease: "power3.inOut",
     })
     .fromTo(menuItemsRef.current, {
-      y: 50,
+      y: -25,
       opacity: 0
     }, {
       y: 0,
       opacity: 1,
-      duration: 0.5,
+      duration: 0.45,
       stagger: 0.05,
       ease: "power2.out",
     }, "-=0.2");
@@ -147,10 +147,10 @@ export function HeaderNav({
               src={activeLogoUrl}
               alt={siteName}
               style={{
-                height: "72px",
-                maxHeight: "76px",
+                height: "82px",
+                maxHeight: "88px",
                 width: "auto",
-                maxWidth: "280px",
+                maxWidth: "340px",
                 objectFit: "contain",
                 borderRadius: "4px",
                 display: "block",
@@ -190,6 +190,62 @@ export function HeaderNav({
             
             <div className="hide-mobile" style={{ opacity: menuOpen ? 0 : 1, transition: "opacity 0.3s ease", pointerEvents: menuOpen ? 'none' : 'auto', display: "flex", alignItems: "center", gap: "var(--space-md)" }}>
               <LanguageSwitcher />
+
+              {/* Favorites Action Button (Desktop) */}
+              <Link
+                to="/account/favorites"
+                title={t("favorites", { defaultValue: "Favoriten" })}
+                style={{
+                  position: "relative",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: favorites.length > 0 ? "#ef4444" : "#ffffff",
+                  border: favorites.length > 0 ? "1px solid rgba(239, 68, 68, 0.5)" : "1px solid rgba(255, 255, 255, 0.2)",
+                  transition: "all 0.25s ease",
+                  textDecoration: "none",
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.18)";
+                  e.currentTarget.style.borderColor = "#D4AF37";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                  e.currentTarget.style.borderColor = favorites.length > 0 ? "rgba(239, 68, 68, 0.5)" : "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                <Icon name={favorites.length > 0 ? "heart-filled" : "heart"} size={18} color={favorites.length > 0 ? "#ef4444" : "currentColor"} />
+                {favorites.length > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "-4px",
+                      right: "-4px",
+                      minWidth: "18px",
+                      height: "18px",
+                      borderRadius: "9px",
+                      backgroundColor: "#D4AF37",
+                      color: "#000000",
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "0 4px",
+                      lineHeight: 1,
+                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    {favorites.length}
+                  </span>
+                )}
+              </Link>
+
               {isAuthenticated ? (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
                   <Link
@@ -229,9 +285,56 @@ export function HeaderNav({
               )}
             </div>
 
-            {/* Cinematic Hamburger Toggle (Mobile & Desktop optional) */}
-            <div className="hide-desktop" style={{ display: menuOpen ? "none" : "block" }}>
-               <LanguageSwitcher />
+            {/* Mobile Actions: Language + Favorite */}
+            <div className="hide-desktop" style={{ display: menuOpen ? "none" : "flex", alignItems: "center", gap: "10px" }}>
+              <LanguageSwitcher />
+
+              {/* Favorites Action Button (Mobile Header) */}
+              <Link
+                to="/account/favorites"
+                title={t("favorites", { defaultValue: "Favoriten" })}
+                style={{
+                  position: "relative",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: favorites.length > 0 ? "#ef4444" : "#ffffff",
+                  border: favorites.length > 0 ? "1px solid rgba(239, 68, 68, 0.5)" : "1px solid rgba(255, 255, 255, 0.2)",
+                  transition: "all 0.25s ease",
+                  textDecoration: "none",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon name={favorites.length > 0 ? "heart-filled" : "heart"} size={17} color={favorites.length > 0 ? "#ef4444" : "currentColor"} />
+                {favorites.length > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "-4px",
+                      right: "-4px",
+                      minWidth: "17px",
+                      height: "17px",
+                      borderRadius: "9px",
+                      backgroundColor: "#D4AF37",
+                      color: "#000000",
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "0 3px",
+                      lineHeight: 1,
+                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.5)",
+                    }}
+                  >
+                    {favorites.length}
+                  </span>
+                )}
+              </Link>
             </div>
             <button
               onClick={menuOpen ? closeMenu : openMenu}
@@ -319,6 +422,7 @@ export function HeaderNav({
             { to: "/", label: t("home", { defaultValue: "Home" }) },
             { to: "/cars", label: t("inventory") },
             { to: "/sell-your-car", label: t("sellYourCar") },
+            { to: "/account/favorites", label: `${t("favorites", { defaultValue: "Favoriten" })}${favorites.length > 0 ? ` (${favorites.length})` : ""}` },
             { to: "/about", label: t("about") },
             { to: "/contact", label: t("contact") }
           ].map((item, i) => (
@@ -358,7 +462,7 @@ export function HeaderNav({
           ))}
           
           <div 
-            ref={el => menuItemsRef.current[5] = el} 
+            ref={el => menuItemsRef.current[6] = el} 
             style={{ 
               marginTop: "2rem", 
               opacity: 0, 

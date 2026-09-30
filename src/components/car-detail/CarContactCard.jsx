@@ -45,11 +45,6 @@ export function CarContactCard({ car, className = "", style = {} }) {
   const inquiryLink = `/contact?car=${encodeURIComponent(carTitle || "Fahrzeuganfrage")}`;
 
   const handleToggleFavorite = async () => {
-    if (!isAuthenticated) {
-      setFavoriteNotice(true);
-      setTimeout(() => setFavoriteNotice(false), 4000);
-      return;
-    }
     await toggleFavorite(car?.id);
   };
 

@@ -390,7 +390,10 @@ export function SellYourCarPage() {
       style={{
         maxWidth: "960px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-xl) clamp(10px, 3.5vw, var(--space-md)) var(--space-4xl)",
+        width: "100%",
+        boxSizing: "border-box",
+        overflowX: "hidden",
       }}
     >
       {/* ─── Hero Section with 4-Step Visual ─────────────────────────── */}
@@ -423,11 +426,11 @@ export function SellYourCarPage() {
       )}
 
       {/* ─── Multi-Section Automotive Valuation Form ─────────────────── */}
-      <div style={{ maxWidth: "800px", margin: "0 auto var(--space-2xl)", position: "relative" }}>
+      <div style={{ maxWidth: "800px", width: "100%", margin: "0 auto var(--space-2xl)", position: "relative", boxSizing: "border-box" }}>
         {/* Wizard Progress Bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", position: "relative", marginBottom: "var(--space-2xl)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative", marginBottom: "var(--space-2xl)", width: "100%" }}>
           {/* Animated Line */}
-          <div style={{ position: "absolute", top: "24px", left: "10%", right: "10%", height: "2px", backgroundColor: "var(--color-border)", zIndex: 0 }}>
+          <div style={{ position: "absolute", top: "22px", left: "16%", right: "16%", height: "2px", backgroundColor: "var(--color-border)", zIndex: 0 }}>
             <div style={{
               position: "absolute",
               top: 0,
@@ -439,7 +442,7 @@ export function SellYourCarPage() {
             }} />
             <div style={{
               position: "absolute",
-              top: "-12px",
+              top: "-11px",
               left: step === 1 ? "0%" : step === 2 ? "50%" : "100%",
               transition: "left 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
               color: "var(--color-secondary)",
@@ -449,7 +452,7 @@ export function SellYourCarPage() {
               transform: "translateX(-50%)",
               zIndex: 2
             }}>
-              <Icon name="truck" size={24} />
+              <Icon name="truck" size={22} />
             </div>
           </div>
 
@@ -458,10 +461,10 @@ export function SellYourCarPage() {
             { id: 2, label: (i18n.language || "").startsWith("en") ? "Condition" : "Zustand & Details", icon: "sliders" },
             { id: 3, label: (i18n.language || "").startsWith("en") ? "Contact" : "Kontaktdaten", icon: "user" }
           ].map((s) => (
-            <div key={s.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px", zIndex: 1, position: "relative", width: "95px" }}>
+            <div key={s.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", zIndex: 1, position: "relative", flex: 1, minWidth: 0 }}>
               <div style={{
-                width: "48px",
-                height: "48px",
+                width: "44px",
+                height: "44px",
                 borderRadius: "50%",
                 backgroundColor: step >= s.id ? "var(--color-secondary)" : "var(--color-card)",
                 color: step >= s.id ? "#000" : "var(--color-text-muted)",
@@ -469,11 +472,12 @@ export function SellYourCarPage() {
                 alignItems: "center",
                 justifyContent: "center",
                 border: `2px solid ${step >= s.id ? "var(--color-secondary)" : "var(--color-border)"}`,
-                transition: "all 0.4s ease"
+                transition: "all 0.4s ease",
+                flexShrink: 0,
               }}>
-                <Icon name={s.icon} size={20} />
+                <Icon name={s.icon} size={18} />
               </div>
-              <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.05em", color: step >= s.id ? "var(--color-secondary)" : "var(--color-text-muted)", textAlign: "center", whiteSpace: "nowrap" }}>
+              <span style={{ fontSize: "clamp(10px, 2.5vw, 11px)", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.04em", color: step >= s.id ? "var(--color-secondary)" : "var(--color-text-muted)", textAlign: "center", wordBreak: "break-word" }}>
                 {s.label}
               </span>
             </div>
@@ -524,7 +528,7 @@ export function SellYourCarPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
               gap: "var(--space-md)",
             }}
           >
@@ -641,7 +645,7 @@ export function SellYourCarPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
               gap: "var(--space-md)",
             }}
           >
@@ -671,35 +675,141 @@ export function SellYourCarPage() {
               required
             />
 
-            <Select
-              id="accident_free"
-              name="accident_free"
-              label={t("accidentFreeLabel")}
-              placeholder={t("accidentFreeSelect")}
-              value={form.accident_free}
-              onChange={(e) => handleChange("accident_free", e.target.value)}
-              error={errors.accident_free}
-              options={[
-                { value: "yes", label: t("accidentFreeYes") },
-                { value: "no", label: t("accidentFreeNo") },
-              ]}
-              required
-            />
+            {/* Unfallfrei — Luxury Gold Switch Button */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }} id="accident_free">
+              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
+                {t("accidentFreeLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+              </label>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "6px",
+                  background: "rgba(255, 255, 255, 0.04)",
+                  padding: "4px",
+                  borderRadius: "10px",
+                  border: `1px solid ${errors.accident_free ? "var(--color-error)" : form.accident_free ? "rgba(212, 175, 55, 0.5)" : "rgba(255, 255, 255, 0.12)"}`,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleChange("accident_free", "yes")}
+                  style={{
+                    padding: "9px 12px",
+                    borderRadius: "7px",
+                    border: form.accident_free === "yes" ? "1px solid #D4AF37" : "1px solid transparent",
+                    backgroundColor: form.accident_free === "yes" ? "#D4AF37" : "transparent",
+                    color: form.accident_free === "yes" ? "#000000" : "rgba(255, 255, 255, 0.75)",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                    boxShadow: form.accident_free === "yes" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
+                  }}
+                >
+                  <Icon name="check" size={15} color={form.accident_free === "yes" ? "#000" : "currentColor"} />
+                  {t("accidentFreeYes", { defaultValue: "Ja" })}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleChange("accident_free", "no")}
+                  style={{
+                    padding: "9px 12px",
+                    borderRadius: "7px",
+                    border: form.accident_free === "no" ? "1px solid #D4AF37" : "1px solid transparent",
+                    backgroundColor: form.accident_free === "no" ? "#D4AF37" : "transparent",
+                    color: form.accident_free === "no" ? "#000000" : "rgba(255, 255, 255, 0.75)",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                    boxShadow: form.accident_free === "no" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
+                  }}
+                >
+                  <Icon name="x" size={15} color={form.accident_free === "no" ? "#000" : "currentColor"} />
+                  {t("accidentFreeNo", { defaultValue: "Nein" })}
+                </button>
+              </div>
+              {errors.accident_free && (
+                <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.accident_free}</span>
+              )}
+            </div>
 
-            <Select
-              id="repainting"
-              name="repainting"
-              label={t("repaintingLabel")}
-              placeholder={t("repaintingSelect")}
-              value={form.repainting}
-              onChange={(e) => handleChange("repainting", e.target.value)}
-              error={errors.repainting}
-              options={[
-                { value: "yes", label: t("repaintingYes") },
-                { value: "no", label: t("repaintingNo") },
-              ]}
-              required
-            />
+            {/* Nachlackierung — Luxury Gold Switch Button */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }} id="repainting">
+              <label style={{ fontSize: "12px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
+                {t("repaintingLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+              </label>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "6px",
+                  background: "rgba(255, 255, 255, 0.04)",
+                  padding: "4px",
+                  borderRadius: "10px",
+                  border: `1px solid ${errors.repainting ? "var(--color-error)" : form.repainting ? "rgba(212, 175, 55, 0.5)" : "rgba(255, 255, 255, 0.12)"}`,
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleChange("repainting", "yes")}
+                  style={{
+                    padding: "9px 12px",
+                    borderRadius: "7px",
+                    border: form.repainting === "yes" ? "1px solid #D4AF37" : "1px solid transparent",
+                    backgroundColor: form.repainting === "yes" ? "#D4AF37" : "transparent",
+                    color: form.repainting === "yes" ? "#000000" : "rgba(255, 255, 255, 0.75)",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                    boxShadow: form.repainting === "yes" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
+                  }}
+                >
+                  <Icon name="check" size={15} color={form.repainting === "yes" ? "#000" : "currentColor"} />
+                  {t("repaintingYes", { defaultValue: "Ja" })}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleChange("repainting", "no")}
+                  style={{
+                    padding: "9px 12px",
+                    borderRadius: "7px",
+                    border: form.repainting === "no" ? "1px solid #D4AF37" : "1px solid transparent",
+                    backgroundColor: form.repainting === "no" ? "#D4AF37" : "transparent",
+                    color: form.repainting === "no" ? "#000000" : "rgba(255, 255, 255, 0.75)",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                    boxShadow: form.repainting === "no" ? "0 0 12px rgba(212, 175, 55, 0.4)" : "none",
+                  }}
+                >
+                  <Icon name="x" size={15} color={form.repainting === "no" ? "#000" : "currentColor"} />
+                  {t("repaintingNo", { defaultValue: "Nein" })}
+                </button>
+              </div>
+              {errors.repainting && (
+                <span style={{ fontSize: "11px", color: "var(--color-error)" }}>{errors.repainting}</span>
+              )}
+            </div>
 
             <Input
               id="min_price"
@@ -836,7 +946,7 @@ export function SellYourCarPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))",
               gap: "var(--space-md)",
             }}
           >

@@ -61,6 +61,13 @@ export function CarMediaFrame({
       {/* Top Right Action Slot (e.g. Favorite Button) */}
       {action && (
         <div
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+          }}
           style={{
             position: "absolute",
             top: "var(--space-md)",

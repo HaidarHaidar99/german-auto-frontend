@@ -64,7 +64,7 @@ export function FeaturedInventorySection() {
   return (
     <Section spacing="spacious" style={{ position: "relative" }}>
       <Container size="default">
-        {/* Section Header with Left/Right Arrows */}
+        {/* Section Header */}
         <div
           style={{
             display: "flex",
@@ -81,82 +81,15 @@ export function FeaturedInventorySection() {
             </Heading>
           </div>
 
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            {/* 2 Small Arrows to switch between cars */}
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <button
-                type="button"
-                onClick={() => handleScroll("left")}
-                aria-label="Previous cars"
-                style={{
-                  width: "38px",
-                  height: "38px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  color: "#ffffff",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--color-secondary, #D4AF37)";
-                  e.currentTarget.style.color = "#000000";
-                  e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.color = "#ffffff";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                }}
-              >
-                <Icon name="arrow-left" size={16} />
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleScroll("right")}
-                aria-label="Next cars"
-                style={{
-                  width: "38px",
-                  height: "38px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  color: "#ffffff",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--color-secondary, #D4AF37)";
-                  e.currentTarget.style.color = "#000000";
-                  e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.color = "#ffffff";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                }}
-              >
-                <Icon name="arrow-right" size={16} />
-              </button>
-            </div>
-
-            <Button
-              as={Link}
-              to="/cars"
-              variant="outline"
-              size="sm"
-              iconRight="arrow-right"
-            >
-              {t("viewAllCars", "Alle ansehen")}
-            </Button>
-          </div>
+          <Button
+            as={Link}
+            to="/cars"
+            variant="outline"
+            size="sm"
+            iconRight="arrow-right"
+          >
+            {t("viewAllCars", "Alle ansehen")}
+          </Button>
         </div>
 
         {/* Loading State: Skeletons */}
@@ -197,58 +130,142 @@ export function FeaturedInventorySection() {
           />
         )}
 
-        {/* Real Cars Horizontal Scroll Track */}
+        {/* Real Cars Horizontal Scroll Track with Left & Right Arrows flanking the cards */}
         {!loading && !error && cars.length > 0 && (
-          <div
-            ref={trackRef}
-            className="featured-cars-track"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "var(--space-lg)",
-              overflowX: "auto",
-              scrollSnapType: "x mandatory",
-              scrollBehavior: "smooth",
-              padding: "8px 2px 24px",
-              WebkitOverflowScrolling: "touch",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
-          >
-            {cars.map((car) => {
-              const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
-              const mainImage = car.images?.[0] || car.media?.[0]?.url || car.image_url;
-              const identifier = car.slug || car.id;
-              const isFav = isCarFavorite(car.id);
+          <div style={{ position: "relative", width: "100%" }}>
+            {/* Left Arrow Button */}
+            <button
+              type="button"
+              onClick={() => handleScroll("left")}
+              aria-label="Previous cars"
+              style={{
+                position: "absolute",
+                left: "-18px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 20,
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(18, 20, 24, 0.92)",
+                backdropFilter: "blur(12px)",
+                border: "1.5px solid rgba(212, 175, 55, 0.4)",
+                color: "#D4AF37",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.7)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.22s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#D4AF37";
+                e.currentTarget.style.color = "#000000";
+                e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
+                e.currentTarget.style.boxShadow = "0 0 16px rgba(212, 175, 55, 0.6)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.92)";
+                e.currentTarget.style.color = "#D4AF37";
+                e.currentTarget.style.transform = "translateY(-50%) scale(1)";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.7)";
+              }}
+            >
+              <Icon name="arrow-left" size={18} />
+            </button>
 
-              return (
-                <div
-                  key={car.id}
-                  style={{
-                    flex: "0 0 clamp(290px, 82vw, 360px)",
-                    scrollSnapAlign: "start",
-                  }}
-                >
-                  <CarCardBase
-                    brand={car.brand}
-                    model={car.model || title}
-                    price={car.price}
-                    oldPrice={car.old_price}
-                    status={car.status}
-                    mileage={car.mileage}
-                    fuel={car.fuel_type}
-                    transmission={car.transmission}
-                    registration={car.registration_year || car.first_registration}
-                    condition={car.condition}
-                    image={mainImage}
-                    isFavorite={isFav}
-                    onFavoriteToggle={() => handleFavoriteClick(car.id)}
-                    onSelect={() => navigate(`/cars/${identifier}`)}
-                    ctaLabel={t("viewDetails", "Details anzeigen")}
-                  />
-                </div>
-              );
-            })}
+            {/* Right Arrow Button */}
+            <button
+              type="button"
+              onClick={() => handleScroll("right")}
+              aria-label="Next cars"
+              style={{
+                position: "absolute",
+                right: "-18px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                zIndex: 20,
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                backgroundColor: "rgba(18, 20, 24, 0.92)",
+                backdropFilter: "blur(12px)",
+                border: "1.5px solid rgba(212, 175, 55, 0.4)",
+                color: "#D4AF37",
+                boxShadow: "0 8px 24px rgba(0, 0, 0, 0.7)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.22s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#D4AF37";
+                e.currentTarget.style.color = "#000000";
+                e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
+                e.currentTarget.style.boxShadow = "0 0 16px rgba(212, 175, 55, 0.6)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.92)";
+                e.currentTarget.style.color = "#D4AF37";
+                e.currentTarget.style.transform = "translateY(-50%) scale(1)";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(0, 0, 0, 0.7)";
+              }}
+            >
+              <Icon name="arrow-right" size={18} />
+            </button>
+
+            <div
+              ref={trackRef}
+              className="featured-cars-track"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "var(--space-lg)",
+                overflowX: "auto",
+                scrollSnapType: "x mandatory",
+                scrollBehavior: "smooth",
+                padding: "8px 2px 24px",
+                WebkitOverflowScrolling: "touch",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {cars.map((car) => {
+                const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
+                const mainImage = car.images?.[0] || car.media?.[0]?.url || car.image_url;
+                const identifier = car.slug || car.id;
+                const isFav = isCarFavorite(car.id);
+
+                return (
+                  <div
+                    key={car.id}
+                    style={{
+                      flex: "0 0 clamp(290px, 82vw, 360px)",
+                      scrollSnapAlign: "start",
+                    }}
+                  >
+                    <CarCardBase
+                      brand={car.brand}
+                      model={car.model || title}
+                      price={car.price}
+                      oldPrice={car.old_price}
+                      status={car.status}
+                      mileage={car.mileage}
+                      fuel={car.fuel_type}
+                      transmission={car.transmission}
+                      registration={car.registration_year || car.first_registration}
+                      condition={car.condition}
+                      image={mainImage}
+                      isFavorite={isFav}
+                      onFavoriteToggle={() => handleFavoriteClick(car.id)}
+                      onSelect={() => navigate(`/cars/${identifier}`)}
+                      ctaLabel={t("viewDetails", "Details anzeigen")}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </Container>
