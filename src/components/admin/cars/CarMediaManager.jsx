@@ -51,7 +51,7 @@ export function CarMediaManager({ media = {}, onChange }) {
       });
 
       const res = await carsService.adminUploadMedia(formData);
-      const uploadedUrls = res.data?.data?.urls || res.data?.urls || [];
+      const uploadedUrls = res?.data?.urls || res?.urls || res?.data?.data?.urls || (Array.isArray(res) ? res : []);
 
       if (uploadedUrls.length > 0) {
         const nextGallery = [...gallery, ...uploadedUrls].slice(0, 20);
