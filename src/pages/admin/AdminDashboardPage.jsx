@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import adminDashboardService from "../../services/adminDashboard/adminDashboard.service";
 import AdminPageHeader from "../../components/admin/AdminPageHeader";
 import DashboardSummaryCards from "../../components/admin/dashboard/DashboardSummaryCards";
@@ -13,7 +13,7 @@ import { gsap, isReducedMotion } from "../../utils/animation";
 
 export function AdminDashboardPage() {
   const { t } = useTranslation(["admin", "common"]);
-  const { user } = useAuth();
+  const { user } = useAdminAuth();
   const pageContainerRef = useRef(null);
 
   const isSuperAdmin = user?.role === "SUPER_ADMIN";

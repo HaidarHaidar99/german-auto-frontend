@@ -144,11 +144,9 @@ export function AuthProvider({ children }) {
       setError(null);
       broadcastAuthEvent("logout");
 
-      // Clean redirect if currently on a protected route
+      // Clean redirect if currently on a customer protected route
       const currentPath = locationRef.current.pathname;
-      const isProtected =
-        currentPath.startsWith("/admincoresecure") ||
-        currentPath.startsWith("/account");
+      const isProtected = currentPath.startsWith("/account");
 
       if (isProtected && currentPath !== "/") {
         navigate("/", { replace: true });
@@ -179,7 +177,12 @@ export function AuthProvider({ children }) {
     let isHandling401 = false;
     let lockTimeout = null;
 
-    const unsubscribe = onUnauthorized(({ endpoint }) => {
+    const unsubscribe = onUnauthorized(({ endpoint, isAdminScope }) => {
+      // 0. Ignore admin scope requests (handled independently by AdminAuthProvider)
+      if (isAdminScope || endpoint.includes("/admin")) {
+        return;
+      }
+
       // 1. Ignore public authentication workflows where 401 is expected credential failure
       const isPublicAuthEndpoint =
         endpoint.includes("/auth/login") ||
@@ -213,12 +216,10 @@ export function AuthProvider({ children }) {
       setFavorites([]);
       broadcastAuthEvent("session_expired");
 
-      // 5. If currently on a protected route, redirect to /login preserving the return path
+      // 5. If currently on a customer protected route, redirect to /login preserving the return path
       const currentLoc = locationRef.current;
       const currentPath = currentLoc.pathname;
-      const isProtected =
-        currentPath.startsWith("/admincoresecure") ||
-        currentPath.startsWith("/account");
+      const isProtected = currentPath.startsWith("/account");
 
       if (isProtected && currentPath !== "/") {
         navigate("/", {
@@ -249,9 +250,7 @@ export function AuthProvider({ children }) {
             setFavorites([]);
 
             const currentPath = locationRef.current.pathname;
-            const isProtected =
-              currentPath.startsWith("/admincoresecure") ||
-              currentPath.startsWith("/account");
+            const isProtected = currentPath.startsWith("/account");
 
             if (isProtected && currentPath !== "/") {
               navigate("/", {

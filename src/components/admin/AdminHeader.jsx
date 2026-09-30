@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import notificationsService from "../../services/notifications/notifications.service";
 import IconButton from "../ui/IconButton";
 import Icon from "../common/Icon";
@@ -13,7 +13,7 @@ export function AdminHeader({
   className = "",
   style = {},
 }) {
-  const { user, role } = useAuth();
+  const { user, role } = useAdminAuth();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";

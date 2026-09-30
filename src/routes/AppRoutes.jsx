@@ -82,11 +82,6 @@ export function AppRoutes() {
             }
           />
           <Route
-            path="/admin/login"
-            element={<LoginPage />}
-          />
-          <Route path="/admin" element={<Navigate to="/admincoresecure" replace />} />
-          <Route
             path="/signup"
             element={
               <PublicOnlyRoute>
@@ -102,6 +97,10 @@ export function AppRoutes() {
           {/* 404 Route */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
+
+        {/* Dedicated Admin Portal Routes (Completely outside PublicLayout) */}
+        <Route path="/admin/login" element={<LoginPage />} />
+        <Route path="/admin" element={<Navigate to="/admincoresecure" replace />} />
 
         {/* Admin Core Secure Route Boundary (ADMIN and SUPER_ADMIN only) */}
         <Route

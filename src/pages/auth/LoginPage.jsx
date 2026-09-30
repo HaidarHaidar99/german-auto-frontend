@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import authService from "../../services/auth/auth.service";
 import Input from "../../components/forms/Input";
 import Button from "../../components/ui/Button";
@@ -15,7 +16,8 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function LoginPage() {
   const { t } = useTranslation(["auth", "common"]);
-  const { login, isAuthenticated, isAdmin, user, logout } = useAuth();
+  const { login: customerLogin, isAuthenticated: isCustomerAuthenticated } = useAuth();
+  const adminAuth = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pageContainerRef = useRef(null);
@@ -47,20 +49,28 @@ export function LoginPage() {
       : `${t("loginTitle")} | German Auto`;
   }, [t, isAdminTarget]);
 
-  // Redirect logic based on target and auth state
+  // Dedicated, completely isolated redirect logic
   useEffect(() => {
-    if (isAuthenticated) {
-      if (!isAdminTarget) {
-        navigate("/account", { replace: true });
-      } else if (isAdmin) {
+    if (isAdminTarget) {
+      // Admin flow: ONLY check admin auth status, completely ignore customer status
+      if (adminAuth?.isAuthenticated && adminAuth?.isAdmin) {
         const from = location.state?.from;
         let fromPath = null;
         if (typeof from === "string") fromPath = from;
         else if (from?.pathname) fromPath = from.pathname + (from.search || "");
         navigate(fromPath || "/admincoresecure", { replace: true });
       }
+    } else {
+      // Customer flow: ONLY check customer auth status, completely ignore admin status
+      if (isCustomerAuthenticated) {
+        const from = location.state?.from;
+        let fromPath = null;
+        if (typeof from === "string") fromPath = from;
+        else if (from?.pathname) fromPath = from.pathname + (from.search || "");
+        navigate(fromPath || "/account", { replace: true });
+      }
     }
-  }, [isAuthenticated, isAdmin, isAdminTarget, navigate, location.state]);
+  }, [isAdminTarget, adminAuth?.isAuthenticated, adminAuth?.isAdmin, isCustomerAuthenticated, navigate, location.state]);
 
   // Handle Google OAuth redirect errors
   useEffect(() => {
@@ -111,24 +121,33 @@ export function LoginPage() {
 
     setLoading(true);
     try {
-      const res = await login(email.trim().toLowerCase(), password);
-      // Wipe password from component state immediately after authentication
-      setPassword("");
+      if (isAdminTarget) {
+        // Dedicated admin authentication
+        await adminAuth.login(email.trim().toLowerCase(), password);
+        setPassword("");
 
-      // Determine return URL
-      const userRole = res?.data?.user?.role;
-      const isAdminRole = userRole === "ADMIN" || userRole === "SUPER_ADMIN";
-      const from = location.state?.from;
+        const from = location.state?.from;
+        let fromPath = null;
+        if (typeof from === "string") {
+          fromPath = from;
+        } else if (from?.pathname) {
+          fromPath = from.pathname + (from.search || "");
+        }
+        navigate(fromPath && fromPath !== "/admin/login" ? fromPath : "/admincoresecure", { replace: true });
+      } else {
+        // Dedicated customer authentication
+        await customerLogin(email.trim().toLowerCase(), password);
+        setPassword("");
 
-      let fromPath = null;
-      if (typeof from === "string") {
-        fromPath = from;
-      } else if (from?.pathname) {
-        fromPath = from.pathname + (from.search || "");
+        const from = location.state?.from;
+        let fromPath = null;
+        if (typeof from === "string") {
+          fromPath = from;
+        } else if (from?.pathname) {
+          fromPath = from.pathname + (from.search || "");
+        }
+        navigate(fromPath && fromPath !== "/login" ? fromPath : "/account", { replace: true });
       }
-
-      const redirectTarget = fromPath && fromPath !== "/login" ? fromPath : (isAdminRole ? "/admincoresecure" : "/account");
-      navigate(redirectTarget, { replace: true });
     } catch (err) {
       const msg = err?.message || "Anmeldung fehlgeschlagen.";
       setServerError(msg);
@@ -219,6 +238,28 @@ export function LoginPage() {
             maxWidth: "420px",
           }}
         >
+          {isAdminTarget && (
+            <div style={{ marginBottom: "var(--space-lg)" }}>
+              <Link
+                to="/"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontSize: "var(--font-size-xs)",
+                  color: "var(--color-text-secondary)",
+                  textDecoration: "none",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  fontWeight: 600,
+                }}
+              >
+                <Icon name="arrow-left" size={14} />
+                <span>{t("backToWebsite", { defaultValue: "Zur Website" })}</span>
+              </Link>
+            </div>
+          )}
+
           <div style={{ marginBottom: "var(--space-2xl)" }}>
             <h1
               style={{
@@ -242,8 +283,8 @@ export function LoginPage() {
             </p>
           </div>
 
-          {/* Session Expired Notice */}
-          {location.state?.reason === "session_expired" && !serverError && (
+          {/* Session Expired Notice (Customer Only) */}
+          {!isAdminTarget && location.state?.reason === "session_expired" && !serverError && (
             <div
               role="status"
               style={{
@@ -265,49 +306,6 @@ export function LoginPage() {
                   defaultValue: "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
                 })}
               </span>
-            </div>
-          )}
-
-          {/* Currently logged in as non-admin notice */}
-          {isAdminTarget && isAuthenticated && !isAdmin && (
-            <div
-              style={{
-                padding: "var(--space-sm) var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                border: "1px solid var(--color-border)",
-                borderRadius: "var(--radius-md)",
-                fontSize: "var(--font-size-xs)",
-                marginBottom: "var(--space-md)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "var(--space-sm)",
-              }}
-            >
-              <div>
-                <span style={{ color: "var(--color-text-muted)" }}>
-                  {t("loggedInAs", { defaultValue: "Angemeldet als:" })}
-                </span>{" "}
-                <strong style={{ color: "var(--color-text)" }}>{user?.email}</strong>
-                <div style={{ fontSize: "11px", color: "var(--color-text-secondary)", marginTop: "2px" }}>
-                  {t("adminLoginPrompt", { defaultValue: "Geben Sie Ihre Administrator-Zugangsdaten ein, um fortzufahren." })}
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => logout()}
-                style={{
-                  background: "transparent",
-                  border: "1px solid var(--color-border-subtle)",
-                  color: "var(--color-text-secondary)",
-                  borderRadius: "var(--radius-sm)",
-                  padding: "4px 8px",
-                  fontSize: "11px",
-                  cursor: "pointer",
-                }}
-              >
-                {t("logout", { defaultValue: "Abmelden" })}
-              </button>
             </div>
           )}
 

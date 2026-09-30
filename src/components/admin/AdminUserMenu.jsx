@@ -1,18 +1,18 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import Badge from "../ui/Badge";
 import Icon from "../common/Icon";
 
 export function AdminUserMenu({ className = "", style = {} }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { user, role, logout } = useAuth();
+  const { user, role, logout } = useAdminAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   const isSuperAdmin = role === "SUPER_ADMIN";

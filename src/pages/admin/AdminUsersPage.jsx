@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import adminUsersService from "../../services/adminUsers/adminUsers.service";
 import AdminPageHeader from "../../components/admin/AdminPageHeader";
 import UserSummaryCards from "../../components/admin/users/UserSummaryCards";
@@ -23,7 +23,7 @@ const PAGE_SIZE = 10;
 
 export function AdminUsersPage() {
   const { t } = useTranslation(["admin", "common"]);
-  const { user: currentUser, isSuperAdmin } = useAuth();
+  const { user: currentUser, isSuperAdmin } = useAdminAuth();
   const pageContainerRef = useRef(null);
 
   // ─── State ──────────────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import notificationsService from "../../services/notifications/notifications.service";
 import AdminNavItem from "./AdminNavItem";
 import Badge from "../ui/Badge";
@@ -9,7 +9,7 @@ import Icon from "../common/Icon";
 
 export function AdminSidebar({ className = "", style = {} }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { user, role, logout } = useAuth();
+  const { user, role, logout } = useAdminAuth();
   const isSuperAdmin = role === "SUPER_ADMIN";
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -48,7 +48,7 @@ export function AdminSidebar({ className = "", style = {} }) {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   const navItems = [

@@ -3,12 +3,12 @@ import Modal from "../ui/Modal";
 import Button from "../ui/Button";
 import Input from "../forms/Input";
 import Icon from "../common/Icon";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import authService from "../../services/auth/auth.service";
 import adminUsersService from "../../services/adminUsers/adminUsers.service";
 
 export function AdminProfileModal({ isOpen, onClose }) {
-  const { user, role, refreshUser } = useAuth();
+  const { user, role, refreshUser } = useAdminAuth();
   const isSuperAdmin = role === "SUPER_ADMIN";
 
   // Tab State

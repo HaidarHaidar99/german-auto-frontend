@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import Drawer from "../ui/Drawer";
 import AdminNavItem from "./AdminNavItem";
 import LanguageSwitcher from "../common/LanguageSwitcher";
@@ -9,13 +9,13 @@ import Icon from "../common/Icon";
 
 export function AdminMobileNav({ isOpen, onClose }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { user, role, logout, isSuperAdmin } = useAuth();
+  const { user, role, logout, isSuperAdmin } = useAdminAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     onClose();
     await logout();
-    navigate("/login");
+    navigate("/admin/login");
   };
 
   const displayName =

@@ -79,6 +79,22 @@ async function request(endpoint, options = {}) {
     options.body = JSON.stringify(options.body);
   }
 
+  // If request is within admin scope, attach independent admin token if present
+  const isAdminScope =
+    options.isAdmin ||
+    (typeof window !== "undefined" && (
+      window.location.pathname.startsWith("/admin") ||
+      window.location.pathname.startsWith("/admincoresecure")
+    )) ||
+    endpoint.includes("/admin");
+
+  if (isAdminScope && !headers["Authorization"] && typeof window !== "undefined") {
+    const adminToken = window.localStorage.getItem("german_auto_admin_token");
+    if (adminToken) {
+      headers["Authorization"] = `Bearer ${adminToken}`;
+    }
+  }
+
   const config = {
     ...options,
     headers,
@@ -103,7 +119,7 @@ async function request(endpoint, options = {}) {
 
       // Broadcast 401 Unauthorized event to listeners for session handling
       if (res.status === 401) {
-        notifyUnauthorized({ endpoint, url, message, data, status: res.status });
+        notifyUnauthorized({ endpoint, url, message, data, status: res.status, isAdminScope });
       }
 
       throw new ApiError(message, res.status, errors, data);

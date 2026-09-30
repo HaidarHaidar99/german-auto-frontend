@@ -6,13 +6,13 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/forms/Input";
 import Icon from "../../components/common/Icon";
 import Badge from "../../components/ui/Badge";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAdminAuth } from "../../contexts/AdminAuthContext";
 import authService from "../../services/auth/auth.service";
 import adminUsersService from "../../services/adminUsers/adminUsers.service";
 
 export function AdminProfilePage() {
   const { t } = useTranslation(["admin", "common"]);
-  const { user, role, refreshUser } = useAuth();
+  const { user, role, refreshUser } = useAdminAuth();
   const isSuperAdmin = role === "SUPER_ADMIN";
 
   // Active Tab: 'profile' | 'security' | 'role'
