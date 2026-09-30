@@ -28,8 +28,9 @@ export function AccountNav({ className = "", style = {} }) {
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "10px",
+          gap: "6px",
           width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {navItems.map((item) => (
@@ -42,12 +43,13 @@ export function AccountNav({ className = "", style = {} }) {
             }
             style={({ isActive }) => ({
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: "8px",
-              padding: "12px 14px",
+              gap: "4px",
+              padding: "10px 4px",
               borderRadius: "10px",
-              fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
+              fontSize: "clamp(10px, 2.6vw, 12px)",
               fontWeight: 600,
               textDecoration: "none",
               color: isActive ? "#D4AF37" : "rgba(255, 255, 255, 0.85)",
@@ -55,11 +57,15 @@ export function AccountNav({ className = "", style = {} }) {
               border: isActive ? "1px solid rgba(212, 175, 55, 0.6)" : "1px solid rgba(212, 175, 55, 0.2)",
               transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
               textAlign: "center",
-              whiteSpace: "nowrap",
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+              lineHeight: 1.15,
+              minWidth: 0,
+              boxSizing: "border-box",
             })}
           >
             <Icon name={item.icon} size={16} />
-            <span>{item.label}</span>
+            <span style={{ display: "block", maxWidth: "100%" }}>{item.label}</span>
           </NavLink>
         ))}
       </div>

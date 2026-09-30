@@ -413,31 +413,143 @@ export function HeaderNav({
             </Link>
           ))}
           
+          {/* Mobile Menu Bottom: Exactly 3 Centered Circular Icons with White Border */}
           <div 
             ref={el => menuItemsRef.current[5] = el} 
             style={{ 
-              marginTop: "2rem", 
+              marginTop: "2.5rem", 
               opacity: 0, 
               display: "flex", 
-              flexDirection: "column", 
-              gap: "var(--space-md)",
+              flexDirection: "row", 
+              gap: "24px",
               alignItems: "center",
+              justifyContent: "center",
               width: "100%",
             }}
           >
+            {/* 1. Favorites Icon */}
+            <Link
+              to="/account/favorites"
+              onClick={closeMenu}
+              aria-label={t("favorites", { defaultValue: "Favoriten" })}
+              title={t("favorites", { defaultValue: "Favoriten" })}
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "50%",
+                border: "1.5px solid #ffffff",
+                backgroundColor: "transparent",
+                color: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                textDecoration: "none",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
+              <Icon name="heart" size={20} color="#ffffff" />
+            </Link>
+
+            {/* 2. Profile Icon */}
+            <Link
+              to={isAuthenticated ? "/account" : "/login"}
+              onClick={closeMenu}
+              aria-label={t("profile", { ns: "account", defaultValue: "Profile" })}
+              title={t("profile", { ns: "account", defaultValue: "Profile" })}
+              style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "50%",
+                border: "1.5px solid #ffffff",
+                backgroundColor: "transparent",
+                color: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                textDecoration: "none",
+                flexShrink: 0,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
+              <Icon name="user" size={20} color="#ffffff" />
+            </Link>
+
+            {/* 3. Login or Logout Icon */}
             {isAuthenticated ? (
-              <>
-                <Button as={Link} to="/account" variant="outline" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "320px", borderRadius: 0, color: "#fff", borderColor: "rgba(255, 255, 255, 0.3)" }}>
-                  {t("profile", { ns: "account", defaultValue: "Profile" })}
-                </Button>
-                <Button variant="ghost" size="lg" onClick={() => { closeMenu(); logout(); }} style={{ color: "#a1a1aa" }}>
-                  {t("logout")}
-                </Button>
-              </>
+              <button
+                type="button"
+                onClick={() => { closeMenu(); logout(); }}
+                aria-label={t("logout", { defaultValue: "Abmelden" })}
+                title={t("logout", { defaultValue: "Abmelden" })}
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  border: "1.5px solid #ffffff",
+                  backgroundColor: "transparent",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  flexShrink: 0,
+                  padding: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+              >
+                <Icon name="log-out" size={20} color="#ffffff" />
+              </button>
             ) : (
-              <Button as={Link} to="/login" variant="primary" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "320px", borderRadius: 0, backgroundColor: "#fff", color: "#000" }}>
-                {t("login")}
-              </Button>
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                aria-label={t("login", { defaultValue: "Anmelden" })}
+                title={t("login", { defaultValue: "Anmelden" })}
+                style={{
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  border: "1.5px solid #ffffff",
+                  backgroundColor: "transparent",
+                  color: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  textDecoration: "none",
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "transparent";
+                }}
+              >
+                <Icon name="log-in" size={20} color="#ffffff" />
+              </Link>
             )}
           </div>
         </nav>

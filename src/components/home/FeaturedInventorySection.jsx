@@ -34,8 +34,8 @@ export function FeaturedInventorySection() {
     try {
       setLoading(true);
       setError(null);
-      const res = await carsService.getCars({ is_featured: true, limit: 12 });
-      const carList = res?.data?.cars || [];
+      const res = await carsService.getCars({ is_featured: true, limit: 3 });
+      const carList = (res?.data?.cars || []).slice(0, 3);
       setCars(carList);
     } catch (err) {
       setError(err?.message || "Fehler beim Laden des Fahrzeugbestands.");

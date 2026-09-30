@@ -117,36 +117,11 @@ export function FavoritesPage() {
         padding: "var(--space-xl) clamp(var(--space-md), 5vw, var(--space-2xl)) var(--space-4xl)",
       }}
     >
-      {isAuthenticated ? (
+      {isAuthenticated && (
         <>
           <AccountHeader user={user} />
           <AccountNav style={{ marginBottom: "var(--space-2xl)" }} />
         </>
-      ) : (
-        <div
-          style={{
-            marginBottom: "var(--space-xl)",
-            padding: "16px 20px",
-            borderRadius: "var(--radius-lg)",
-            backgroundColor: "rgba(212, 175, 55, 0.08)",
-            border: "1px solid rgba(212, 175, 55, 0.25)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "12px",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ color: "#D4AF37", fontSize: "20px" }}>★</span>
-            <span style={{ fontSize: "14px", color: "var(--color-text)" }}>
-              {t("guestNotice", { defaultValue: "Melden Sie sich an, um Ihre Favoriten auf allen Ihren Geräten zu synchronisieren." })}
-            </span>
-          </div>
-          <Button as={Link} to="/login" variant="secondary" size="sm" style={{ borderRadius: "6px" }}>
-            {t("login", { defaultValue: "Anmelden" })}
-          </Button>
-        </div>
       )}
 
       <div className="favorites-content-area">

@@ -29,8 +29,8 @@ const INITIAL_FORM = {
   first_registration: "",
   postal_code: "",
   mileage_km: "",
-  accident_free: "",
-  repainting: "",
+  accident_free: "no",
+  repainting: "no",
   min_price: "",
   additional_info: "",
   first_name: "",
@@ -532,7 +532,31 @@ export function SellYourCarPage() {
               gap: "var(--space-md)",
             }}
           >
-            {/* 1. First Registration (with visible calendar icon) */}
+            {/* 1. Make */}
+            <Input
+              id="brand"
+              name="brand"
+              label={t("brandLabel")}
+              placeholder={t("brandPlaceholder")}
+              value={form.brand}
+              onChange={(e) => handleChange("brand", e.target.value)}
+              error={errors.brand}
+              required
+            />
+
+            {/* 2. Model & Variant */}
+            <Input
+              id="model"
+              name="model"
+              label={t("modelLabel")}
+              placeholder={t("modelPlaceholder")}
+              value={form.model}
+              onChange={(e) => handleChange("model", e.target.value)}
+              error={errors.model}
+              required
+            />
+
+            {/* 3. First Registration (the day - with visible calendar icon) */}
             <div style={{ position: "relative" }}>
               <Input
                 id="first_registration"
@@ -568,30 +592,6 @@ export function SellYourCarPage() {
                 }
               />
             </div>
-
-            {/* 2. Make */}
-            <Input
-              id="brand"
-              name="brand"
-              label={t("brandLabel")}
-              placeholder={t("brandPlaceholder")}
-              value={form.brand}
-              onChange={(e) => handleChange("brand", e.target.value)}
-              error={errors.brand}
-              required
-            />
-
-            {/* 3. Model & Variant */}
-            <Input
-              id="model"
-              name="model"
-              label={t("modelLabel")}
-              placeholder={t("modelPlaceholder")}
-              value={form.model}
-              onChange={(e) => handleChange("model", e.target.value)}
-              error={errors.model}
-              required
-            />
 
             {/* 4. Vehicle Identification Number (VIN) - Last Field */}
             <div style={{ position: "relative" }}>
@@ -710,13 +710,13 @@ export function SellYourCarPage() {
                 display: "grid",
                 gridTemplateColumns: "1fr 1fr",
                 gap: "10px",
-                alignItems: "flex-start",
+                alignItems: "flex-end",
               }}
             >
               {/* Unfallfrei (Accident Free) Switch Button */}
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }} id="accident_free">
-                <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
-                  {t("accidentFreeLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+                <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em", minHeight: "24px", display: "flex", alignItems: "flex-end" }}>
+                  <span>{t("accidentFreeLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span></span>
                 </label>
                 <div
                   style={{
@@ -785,8 +785,8 @@ export function SellYourCarPage() {
 
               {/* Nachlackierung (Repainting) Switch Button */}
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }} id="repainting">
-                <label style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.02em" }}>
-                  {t("repaintingLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span>
+                <label style={{ fontSize: "9.5px", fontWeight: 700, color: "var(--color-text)", letterSpacing: "0.01em", minHeight: "24px", display: "flex", alignItems: "flex-end", lineHeight: 1.15 }}>
+                  <span>{t("repaintingLabel")} <span style={{ color: "var(--color-secondary, #D4AF37)" }}>*</span></span>
                 </label>
                 <div
                   style={{
