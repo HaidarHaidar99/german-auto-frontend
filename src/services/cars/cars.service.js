@@ -25,6 +25,9 @@ export const carsService = {
   adminSetStatus: (id, status) => apiClient.patch(`/cars/admin/${id}/status`, { status }),
   adminToggleFeatured: (id, is_featured) => apiClient.patch(`/cars/admin/${id}/featured`, { is_featured }),
   adminSetVisibility: (id, is_visible) => apiClient.patch(`/cars/admin/${id}/visibility`, { is_visible }),
+  adminUploadMedia: (formData) => apiClient.post("/cars/admin/upload-media", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  }),
 };
 
 export default carsService;

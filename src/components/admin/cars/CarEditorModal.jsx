@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../ui/Modal";
 import Button from "../../ui/Button";
-import IconButton from "../../ui/IconButton";
 import Input from "../../forms/Input";
 import Select from "../../forms/Select";
 import Textarea from "../../forms/Textarea";
 import SettingsToggle from "../settings/SettingsToggle";
 import SettingsField from "../settings/SettingsField";
 import Icon from "../../common/Icon";
+import carsService from "../../../services/cars/cars.service";
 
 const CATEGORIES = [
   { value: "SEDAN", label: "Limousine (SEDAN)" },
@@ -90,9 +90,6 @@ const INITIAL_FORM = {
   media: {
     thumbnail: "",
     gallery: [],
-    video: "",
-    images_360: [],
-    model_3d: "",
   },
   is_featured: false,
   is_visible: true,
@@ -100,81 +97,42 @@ const INITIAL_FORM = {
 
 export function CarEditorModal({
   isOpen,
-  car = null, // null for create mode, object for edit mode
+  car = null,
   saving = false,
-  errors = {},
+  errors: serverErrors = {},
   onSave,
   onClose,
 }) {
   const { t } = useTranslation(["admin", "cars", "common"]);
 
   const [form, setForm] = useState(INITIAL_FORM);
-  const [activeTab, setActiveTab] = useState("core"); // "core" | "specs" | "equipment" | "media"
+  const [activeTab, setActiveTab] = useState("core");
+  const [formErrors, setFormErrors] = useState({});
   const [newEquipmentItem, setNewEquipmentItem] = useState("");
   const [newCustomKey, setNewCustomKey] = useState("");
   const [newCustomVal, setNewCustomVal] = useState("");
-  const [newGalleryUrl, setNewGalleryUrl] = useState("");
-  const [new360Url, setNew360Url] = useState("");
-  const [mediaValidationError, setMediaValidationError] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [mediaError, setMediaError] = useState(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef(null);
 
-  // Track created local object URLs to guarantee cleanup and prevent memory leaks
-  const trackedBlobUrls = useRef(new Set());
-
-  // Revoke tracked blob URLs on unmount
-  useEffect(() => {
-    const urls = trackedBlobUrls.current;
-    return () => {
-      urls.forEach((blobUrl) => {
-        try {
-          URL.revokeObjectURL(blobUrl);
-        } catch {
-          // ignore
-        }
-      });
-      urls.clear();
-    };
-  }, []);
-
-  const createTrackedBlobUrl = (file) => {
-    const blobUrl = URL.createObjectURL(file);
-    trackedBlobUrls.current.add(blobUrl);
-    return blobUrl;
-  };
-
-  const revokeTrackedBlobUrl = (url) => {
-    if (url && typeof url === "string" && url.startsWith("blob:")) {
-      try {
-        URL.revokeObjectURL(url);
-      } catch {
-        // ignore
-      }
-      trackedBlobUrls.current.delete(url);
-    }
-  };
-
-  const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
-  const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB limit matching storage service
-
-  const validateImageFile = (file) => {
-    if (!file) return { valid: false, error: "Keine Datei ausgewählt." };
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      return {
-        valid: false,
-        error: `Ungültiger Dateityp (${file.type || "unbekannt"}). Erlaubt sind JPG, PNG, WEBP und AVIF.`,
-      };
-    }
-    if (file.size > MAX_IMAGE_SIZE) {
-      return {
-        valid: false,
-        error: `Dateigröße (${(file.size / (1024 * 1024)).toFixed(1)} MB) überschreitet das Limit von 10 MB.`,
-      };
-    }
-    return { valid: true };
-  };
-
-  // Initialize draft on open
+  // Initialize form draft on modal open or car change
   useEffect(() => {
     if (car) {
+      // Determine gallery and thumbnail cleanly
+      const initialGallery = Array.isArray(car.media?.gallery)
+        ? [...car.media.gallery]
+        : Array.isArray(car.images)
+        ? [...car.images]
+        : [];
+
+      const initialThumbnail = car.media?.thumbnail || car.image_url || initialGallery[0] || "";
+
+      // Ensure thumbnail is present in gallery if gallery was empty
+      if (initialThumbnail && !initialGallery.includes(initialThumbnail)) {
+        initialGallery.unshift(initialThumbnail);
+      }
+
       setForm({
         ...INITIAL_FORM,
         ...car,
@@ -189,72 +147,213 @@ export function CarEditorModal({
         equipment: Array.isArray(car.equipment) ? [...car.equipment] : [],
         custom_fields: typeof car.custom_fields === "object" && car.custom_fields !== null ? { ...car.custom_fields } : {},
         media: {
-          thumbnail: car.media?.thumbnail || "",
-          gallery: Array.isArray(car.media?.gallery) ? [...car.media.gallery] : [],
-          video: car.media?.video || "",
-          images_360: Array.isArray(car.media?.images_360) ? [...car.media.images_360] : [],
-          model_3d: car.media?.model_3d || "",
+          thumbnail: initialThumbnail,
+          gallery: initialGallery.slice(0, 20),
         },
       });
     } else {
       setForm(INITIAL_FORM);
     }
     setActiveTab("core");
-    setMediaValidationError(null);
+    setFormErrors({});
+    setMediaError(null);
   }, [car, isOpen]);
+
+  // Merge server validation errors if any
+  useEffect(() => {
+    if (serverErrors && Object.keys(serverErrors).length > 0) {
+      setFormErrors((prev) => ({ ...prev, ...serverErrors }));
+    }
+  }, [serverErrors]);
 
   const handleChange = (field, val) => {
     setForm((prev) => ({
       ...prev,
       [field]: val,
     }));
+    if (formErrors[field]) {
+      setFormErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
   };
 
-  const handleMediaChange = (mediaKey, val) => {
+  // ── Image Upload & Device Selection ──────────────────────────────────────────
+
+  const processFiles = async (filesList) => {
+    const rawFiles = Array.from(filesList || []);
+    if (rawFiles.length === 0) return;
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/jpg"];
+    const validFiles = rawFiles.filter((f) => allowedTypes.includes(f.type));
+
+    if (validFiles.length === 0) {
+      setMediaError("Nur Bilddateien (JPG, PNG, WEBP, AVIF) sind erlaubt.");
+      return;
+    }
+
+    const currentGallery = form.media.gallery || [];
+    const availableSlots = 20 - currentGallery.length;
+
+    if (availableSlots <= 0) {
+      setMediaError("Maximal 20 Galeriebilder erlaubt.");
+      return;
+    }
+
+    const filesToUpload = validFiles.slice(0, availableSlots);
+    setIsUploading(true);
+    setMediaError(null);
+
+    try {
+      // 1. Try uploading to backend / Supabase storage
+      const formData = new FormData();
+      filesToUpload.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      const res = await carsService.adminUploadMedia(formData);
+      const uploadedUrls = res.data?.data?.urls || res.data?.urls || [];
+
+      if (uploadedUrls.length > 0) {
+        const nextGallery = [...currentGallery, ...uploadedUrls].slice(0, 20);
+        const nextThumbnail = form.media.thumbnail || nextGallery[0] || "";
+
+        setForm((prev) => ({
+          ...prev,
+          media: {
+            ...prev.media,
+            gallery: nextGallery,
+            thumbnail: nextThumbnail,
+          },
+        }));
+
+        setFormErrors((prev) => {
+          const next = { ...prev };
+          delete next.media;
+          return next;
+        });
+        return;
+      }
+      throw new Error("No URLs returned from upload endpoint");
+    } catch (uploadErr) {
+      console.warn("[CarEditorModal] Upload endpoint fallback to base64 Data URLs:", uploadErr);
+      // 2. Resilient fallback: Convert to Data URLs so the admin NEVER loses work
+      try {
+        const dataUrls = await Promise.all(
+          filesToUpload.map(
+            (file) =>
+              new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+              })
+          )
+        );
+
+        const nextGallery = [...currentGallery, ...dataUrls].slice(0, 20);
+        const nextThumbnail = form.media.thumbnail || nextGallery[0] || "";
+
+        setForm((prev) => ({
+          ...prev,
+          media: {
+            ...prev.media,
+            gallery: nextGallery,
+            thumbnail: nextThumbnail,
+          },
+        }));
+
+        setFormErrors((prev) => {
+          const next = { ...prev };
+          delete next.media;
+          return next;
+        });
+      } catch (readErr) {
+        setMediaError("Fehler beim Verarbeiten der Bilddateien.");
+      }
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileInputChange = (e) => {
+    processFiles(e.target.files);
+    e.target.value = "";
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleSetCover = (imgUrl) => {
     setForm((prev) => ({
       ...prev,
       media: {
         ...prev.media,
-        [mediaKey]: val,
+        thumbnail: imgUrl,
       },
     }));
   };
 
-  // Thumbnail actions
-  const handleThumbnailUrlChange = (val) => {
-    if (form.media.thumbnail?.startsWith("blob:")) {
-      revokeTrackedBlobUrl(form.media.thumbnail);
+  const handleRemoveImage = (index) => {
+    const currentGallery = form.media.gallery || [];
+    const removedUrl = currentGallery[index];
+    const nextGallery = currentGallery.filter((_, idx) => idx !== index);
+    let nextThumbnail = form.media.thumbnail;
+
+    if (nextThumbnail === removedUrl) {
+      nextThumbnail = nextGallery[0] || "";
     }
-    handleMediaChange("thumbnail", val);
-    setMediaValidationError(null);
+
+    setForm((prev) => ({
+      ...prev,
+      media: {
+        ...prev.media,
+        gallery: nextGallery,
+        thumbnail: nextThumbnail,
+      },
+    }));
   };
 
-  const handleThumbnailFileSelect = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = "";
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      setMediaValidationError(validation.error);
-      return;
-    }
-    setMediaValidationError(null);
-    if (form.media.thumbnail?.startsWith("blob:")) {
-      revokeTrackedBlobUrl(form.media.thumbnail);
-    }
-    const blobUrl = createTrackedBlobUrl(file);
-    handleMediaChange("thumbnail", blobUrl);
+  const handleMoveImage = (index, direction) => {
+    const currentGallery = [...(form.media.gallery || [])];
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= currentGallery.length) return;
+
+    const temp = currentGallery[index];
+    currentGallery[index] = currentGallery[targetIdx];
+    currentGallery[targetIdx] = temp;
+
+    setForm((prev) => ({
+      ...prev,
+      media: {
+        ...prev.media,
+        gallery: currentGallery,
+      },
+    }));
   };
 
-  const handleClearThumbnail = () => {
-    if (form.media.thumbnail?.startsWith("blob:")) {
-      revokeTrackedBlobUrl(form.media.thumbnail);
-    }
-    handleMediaChange("thumbnail", "");
-    setMediaValidationError(null);
-  };
+  // ── Equipment actions ────────────────────────────────────────────────────────
 
-  // Equipment actions
   const handleAddEquipment = () => {
     const trimmed = newEquipmentItem.trim();
     if (!trimmed) return;
@@ -272,7 +371,8 @@ export function CarEditorModal({
     }));
   };
 
-  // Custom field actions
+  // ── Custom fields actions ────────────────────────────────────────────────────
+
   const handleAddCustomField = () => {
     const k = newCustomKey.trim();
     const v = newCustomVal.trim();
@@ -296,125 +396,100 @@ export function CarEditorModal({
     });
   };
 
-  // Gallery actions
-  const handleAddGalleryUrl = () => {
-    const url = newGalleryUrl.trim();
-    if (!url) return;
-    if (form.media.gallery.length >= 20) {
-      alert("Maximal 20 Galeriebilder erlaubt.");
-      return;
-    }
-    setMediaValidationError(null);
-    handleMediaChange("gallery", [...form.media.gallery, url]);
-    setNewGalleryUrl("");
-  };
+  // ── Validation and Submit ────────────────────────────────────────────────────
 
-  const handleGalleryFileSelect = (e) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
-    e.target.value = "";
+  const validate = () => {
+    const errors = {};
 
-    const availableSlots = 20 - form.media.gallery.length;
-    if (availableSlots <= 0) {
-      alert("Maximal 20 Galeriebilder erlaubt.");
-      return;
+    // 1. Company Name / Brand
+    if (!form.brand?.trim()) {
+      errors.brand = "Marke / Hersteller ist ein Pflichtfeld.";
     }
 
-    const filesToProcess = files.slice(0, availableSlots);
-    const newUrls = [];
-
-    for (const file of filesToProcess) {
-      const validation = validateImageFile(file);
-      if (!validation.valid) {
-        setMediaValidationError(validation.error);
-        return;
-      }
-      const blobUrl = createTrackedBlobUrl(file);
-      newUrls.push(blobUrl);
+    // 2. Model
+    if (!form.model?.trim()) {
+      errors.model = "Modell ist ein Pflichtfeld.";
     }
 
-    setMediaValidationError(null);
-    handleMediaChange("gallery", [...form.media.gallery, ...newUrls]);
-  };
-
-  const handleRemoveGalleryImage = (index) => {
-    const targetUrl = form.media.gallery[index];
-    revokeTrackedBlobUrl(targetUrl);
-    handleMediaChange("gallery", form.media.gallery.filter((_, idx) => idx !== index));
-  };
-
-  const handleMoveGalleryImage = (index, direction) => {
-    const newGallery = [...form.media.gallery];
-    const targetIdx = index + direction;
-    if (targetIdx < 0 || targetIdx >= newGallery.length) return;
-    const temp = newGallery[index];
-    newGallery[index] = newGallery[targetIdx];
-    newGallery[targetIdx] = temp;
-    handleMediaChange("gallery", newGallery);
-  };
-
-  // 360 images actions
-  const handleAdd360Url = () => {
-    const url = new360Url.trim();
-    if (!url) return;
-    setMediaValidationError(null);
-    handleMediaChange("images_360", [...form.media.images_360, url]);
-    setNew360Url("");
-  };
-
-  const handle360FileSelect = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = "";
-    const validation = validateImageFile(file);
-    if (!validation.valid) {
-      setMediaValidationError(validation.error);
-      return;
+    // 3. Car Name / Title
+    if (!form.title?.trim()) {
+      errors.title = "Fahrzeugname / Titel ist ein Pflichtfeld.";
     }
-    setMediaValidationError(null);
-    const blobUrl = createTrackedBlobUrl(file);
-    handleMediaChange("images_360", [...form.media.images_360, blobUrl]);
-  };
 
-  const handleRemove360Image = (index) => {
-    const targetUrl = form.media.images_360[index];
-    revokeTrackedBlobUrl(targetUrl);
-    handleMediaChange("images_360", form.media.images_360.filter((_, idx) => idx !== index));
+    // 4. Condition (Used or New)
+    if (!form.condition) {
+      errors.condition = "Fahrzeugzustand (Neu / Gebraucht) ist ein Pflichtfeld.";
+    }
+
+    // 5. Price
+    if (form.price === "" || form.price === null || isNaN(Number(form.price)) || Number(form.price) < 0) {
+      errors.price = "Gültiger Kaufpreis (€) ist ein Pflichtfeld.";
+    }
+
+    // 6. Mileage (km)
+    if (form.mileage_km === "" || form.mileage_km === null || isNaN(Number(form.mileage_km)) || Number(form.mileage_km) < 0) {
+      errors.mileage_km = "Kilometerstand (km) ist ein Pflichtfeld.";
+    }
+
+    // 7. Power (PS)
+    if (form.performance_hp === "" || form.performance_hp === null || isNaN(Number(form.performance_hp)) || Number(form.performance_hp) <= 0) {
+      errors.performance_hp = "Leistung (PS) ist ein Pflichtfeld.";
+    }
+
+    // 8. First Registration
+    if (!form.first_registration?.trim()) {
+      errors.first_registration = "Erstzulassung ist ein Pflichtfeld.";
+    }
+
+    // 9. Fuel Type
+    if (!form.fuel_type) {
+      errors.fuel_type = "Kraftstoffart ist ein Pflichtfeld.";
+    }
+
+    // 10. Transmission
+    if (!form.transmission) {
+      errors.transmission = "Getriebe ist ein Pflichtfeld.";
+    }
+
+    // 11. At least 1 image
+    const imagesCount = (form.media?.gallery?.length || 0) + (form.media?.thumbnail ? 1 : 0);
+    if (imagesCount === 0) {
+      errors.media = "Mindestens 1 Fahrzeugbild ist erforderlich.";
+    }
+
+    return errors;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Check if any media contains local temporary blob: URLs
-    const hasBlobThumbnail = form.media?.thumbnail?.startsWith("blob:");
-    const hasBlobGallery = Array.isArray(form.media?.gallery) && form.media.gallery.some((u) => u?.startsWith("blob:"));
-    const hasBlob360 = Array.isArray(form.media?.images_360) && form.media.images_360.some((u) => u?.startsWith("blob:"));
+    const errorsFound = validate();
+    if (Object.keys(errorsFound).length > 0) {
+      setFormErrors(errorsFound);
 
-    if (hasBlobThumbnail || hasBlobGallery || hasBlob360) {
-      setActiveTab("media");
-      setMediaValidationError(
-        t("blobMediaNotPersisted", {
-          defaultValue:
-            "Lokale Dateiauswahl dient nur der temporären Vorschau. Bitte hinterlegen Sie permanente Medien-URLs (z. B. https://... aus dem CDN oder Storage-Bucket) für die dauerhafte Speicherung.",
-        })
-      );
+      // Auto-switch to tab containing the first error
+      if (
+        errorsFound.brand ||
+        errorsFound.model ||
+        errorsFound.title ||
+        errorsFound.price ||
+        errorsFound.condition ||
+        errorsFound.mileage_km ||
+        errorsFound.performance_hp ||
+        errorsFound.first_registration ||
+        errorsFound.fuel_type ||
+        errorsFound.transmission
+      ) {
+        setActiveTab("core");
+      } else if (errorsFound.media) {
+        setActiveTab("media");
+      }
       return;
     }
 
-    // Clean payload for submission
-    const cleanMedia = {
-      thumbnail: form.media?.thumbnail?.trim() || null,
-      gallery: Array.isArray(form.media?.gallery)
-        ? form.media.gallery.filter((u) => u && !u.startsWith("blob:")).map((u) => u.trim())
-        : [],
-      video: form.media?.video?.trim() || null,
-      images_360: Array.isArray(form.media?.images_360)
-        ? form.media.images_360.filter((u) => u && !u.startsWith("blob:")).map((u) => u.trim())
-        : [],
-      model_3d: form.media?.model_3d?.trim() || null,
-    };
+    const currentGallery = form.media?.gallery || [];
+    const currentThumbnail = form.media?.thumbnail || currentGallery[0] || null;
 
-    // Prepare payload matching car schema
     const payload = {
       brand: form.brand.trim(),
       model: form.model.trim(),
@@ -424,24 +499,27 @@ export function CarEditorModal({
       status: form.status,
       price: Number(form.price),
       old_price: form.old_price !== "" && form.old_price != null ? Number(form.old_price) : null,
-      description_de: form.description_de || null,
-      description_en: form.description_en || null,
+      description_de: form.description_de?.trim() || null,
+      description_en: form.description_en?.trim() || null,
       fuel_type: form.fuel_type,
       transmission: form.transmission,
-      mileage_km: form.mileage_km !== "" && form.mileage_km != null ? Number(form.mileage_km) : null,
-      first_registration: form.first_registration || null,
+      mileage_km: Number(form.mileage_km),
+      first_registration: form.first_registration,
       engine_displacement_cc: form.engine_displacement_cc !== "" && form.engine_displacement_cc != null ? Number(form.engine_displacement_cc) : null,
-      performance_hp: form.performance_hp !== "" && form.performance_hp != null ? Number(form.performance_hp) : null,
-      seats: form.seats !== "" && form.seats != null ? Number(form.seats) : null,
-      vehicle_owners: form.vehicle_owners !== "" && form.vehicle_owners != null ? Number(form.vehicle_owners) : null,
-      vehicle_condition: form.vehicle_condition || null,
+      performance_hp: Number(form.performance_hp),
+      seats: form.seats !== "" && form.seats != null ? Number(form.seats) : 5,
+      vehicle_owners: form.vehicle_owners !== "" && form.vehicle_owners != null ? Number(form.vehicle_owners) : 1,
+      vehicle_condition: form.vehicle_condition?.trim() || null,
       air_conditioning: Boolean(form.air_conditioning),
       camera: Boolean(form.camera),
       interior_design: form.interior_design,
-      interior_color: form.interior_color || null,
+      interior_color: form.interior_color?.trim() || null,
       equipment: form.equipment,
       custom_fields: form.custom_fields,
-      media: cleanMedia,
+      media: {
+        thumbnail: currentThumbnail,
+        gallery: currentGallery.slice(0, 20),
+      },
       is_featured: Boolean(form.is_featured),
       is_visible: Boolean(form.is_visible),
     };
@@ -453,11 +531,14 @@ export function CarEditorModal({
     onSave?.(payload);
   };
 
+  const galleryImages = form.media?.gallery || [];
+  const currentCover = form.media?.thumbnail || galleryImages[0] || "";
+
   const tabs = [
-    { key: "core", label: "Grunddaten & Preis" },
-    { key: "specs", label: "Technische Daten & Merkmale" },
+    { key: "core", label: "Grunddaten & Pflichtfelder *" },
+    { key: "specs", label: "Weitere Details" },
     { key: "equipment", label: `Ausstattung (${form.equipment.length})` },
-    { key: "media", label: `Medien (${form.media.gallery.length + (form.media.thumbnail ? 1 : 0) + (form.media.images_360?.length || 0)})` },
+    { key: "media", label: `Bilder (${galleryImages.length}/20) *` },
   ];
 
   return (
@@ -490,7 +571,7 @@ export function CarEditorModal({
                 borderRadius: "var(--radius-sm, 6px)",
                 border: "none",
                 backgroundColor: activeTab === t.key ? "rgba(255, 255, 255, 0.15)" : "transparent",
-                color: activeTab === t.key ? "var(--color-primary, var(--color-text))" : "var(--color-admin-muted)",
+                color: activeTab === t.key ? "#ffffff" : "var(--color-admin-muted)",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
                 transition: "all 0.15s ease",
@@ -501,61 +582,82 @@ export function CarEditorModal({
           ))}
         </div>
 
-        {/* Tab 1: Core Data & Pricing */}
+        {/* Global Error Notice if required fields are missing */}
+        {Object.keys(formErrors).length > 0 && (
+          <div
+            style={{
+              padding: "10px 14px",
+              backgroundColor: "rgba(239, 68, 68, 0.12)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              borderRadius: "var(--radius-md, 8px)",
+              color: "#f87171",
+              fontSize: "12px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <Icon name="alert-triangle" size={16} />
+            <span>Bitte füllen Sie alle erforderlichen Pflichtfelder aus (siehe rot markierte Felder).</span>
+          </div>
+        )}
+
+        {/* ── Tab 1: Grunddaten & Pflichtfelder ───────────────────────────── */}
         {activeTab === "core" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
+            {/* Row 1: Marke, Modell, Fahrzeugname/Titel */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Marke" required error={errors.brand}>
+              <SettingsField label="Marke / Hersteller" required error={formErrors.brand}>
                 <Input
                   value={form.brand}
                   onChange={(e) => handleChange("brand", e.target.value)}
-                  placeholder="z. B. Porsche"
+                  placeholder="z. B. Porsche, BMW, Mercedes"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label="Modell" required error={errors.model}>
+              <SettingsField label="Modell" required error={formErrors.model}>
                 <Input
                   value={form.model}
                   onChange={(e) => handleChange("model", e.target.value)}
-                  placeholder="z. B. 911 GT3 RS"
+                  placeholder="z. B. 911 GT3 RS, M3"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label="Titel (Überschrift)" required error={errors.title}>
+              <SettingsField label="Fahrzeugname / Titel" required error={formErrors.title}>
                 <Input
                   value={form.title}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  placeholder="Porsche 911 (992) GT3 RS Weissach"
+                  placeholder="z. B. Porsche 911 GT3 RS Weissach"
                   required
                 />
               </SettingsField>
             </div>
 
+            {/* Row 2: Kaufpreis, Zustand (Neu/Gebraucht), Fahrzeugklasse */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Kaufpreis (€)" required error={errors.price}>
+              <SettingsField label="Kaufpreis (€)" required error={formErrors.price}>
                 <Input
                   type="number"
                   min="0"
                   value={form.price}
                   onChange={(e) => handleChange("price", e.target.value)}
-                  placeholder="295000"
+                  placeholder="z. B. 89900"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label="Ursprünglicher Preis (€)" helper="Optional (für Rabattanzeige)" error={errors.old_price}>
-                <Input
-                  type="number"
-                  min="0"
-                  value={form.old_price}
-                  onChange={(e) => handleChange("old_price", e.target.value)}
-                  placeholder="315000"
+              <SettingsField label="Fahrzeugzustand (Neu / Gebraucht)" required error={formErrors.condition}>
+                <Select
+                  value={form.condition}
+                  onChange={(e) => handleChange("condition", e.target.value)}
+                  options={CONDITIONS}
+                  required
                 />
               </SettingsField>
 
-              <SettingsField label="Fahrzeugklasse" error={errors.category}>
+              <SettingsField label="Fahrzeugklasse" error={formErrors.category}>
                 <Select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
@@ -564,52 +666,91 @@ export function CarEditorModal({
               </SettingsField>
             </div>
 
+            {/* Row 3: Kilometerstand, Leistung, Erstzulassung */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Fahrzeugzustand" error={errors.condition}>
-                <Select
-                  value={form.condition}
-                  onChange={(e) => handleChange("condition", e.target.value)}
-                  options={CONDITIONS}
+              <SettingsField label="Kilometerstand (km)" required error={formErrors.mileage_km}>
+                <Input
+                  type="number"
+                  min="0"
+                  value={form.mileage_km}
+                  onChange={(e) => handleChange("mileage_km", e.target.value)}
+                  placeholder="z. B. 25000"
+                  required
                 />
               </SettingsField>
 
-              <SettingsField label="Bestands-Status" error={errors.status}>
+              <SettingsField label="Leistung (PS)" required error={formErrors.performance_hp}>
+                <Input
+                  type="number"
+                  min="1"
+                  value={form.performance_hp}
+                  onChange={(e) => handleChange("performance_hp", e.target.value)}
+                  placeholder="z. B. 510"
+                  required
+                />
+              </SettingsField>
+
+              <SettingsField label="Erstzulassung (Datum/Jahr)" required error={formErrors.first_registration}>
+                <Input
+                  type="date"
+                  value={form.first_registration}
+                  onChange={(e) => handleChange("first_registration", e.target.value)}
+                  required
+                />
+              </SettingsField>
+            </div>
+
+            {/* Row 4: Kraftstoffart, Getriebe, Bestandsstatus */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
+              <SettingsField label="Kraftstoffart" required error={formErrors.fuel_type}>
+                <Select
+                  value={form.fuel_type}
+                  onChange={(e) => handleChange("fuel_type", e.target.value)}
+                  options={FUELS}
+                  required
+                />
+              </SettingsField>
+
+              <SettingsField label="Getriebe" required error={formErrors.transmission}>
+                <Select
+                  value={form.transmission}
+                  onChange={(e) => handleChange("transmission", e.target.value)}
+                  options={TRANSMISSIONS}
+                  required
+                />
+              </SettingsField>
+
+              <SettingsField label="Bestands-Status" error={formErrors.status}>
                 <Select
                   value={form.status}
                   onChange={(e) => handleChange("status", e.target.value)}
                   options={STATUSES}
                 />
               </SettingsField>
+            </div>
 
-              <SettingsField label="URL-Slug" helper="Optional (wird sonst automatisch erzeugt)" error={errors.slug}>
+            {/* Row 5: Ursprünglicher Preis, URL-Slug */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "var(--space-sm)" }}>
+              <SettingsField label="Ursprünglicher Preis (€)" helper="Optional (für Rabattanzeige)" error={formErrors.old_price}>
+                <Input
+                  type="number"
+                  min="0"
+                  value={form.old_price}
+                  onChange={(e) => handleChange("old_price", e.target.value)}
+                  placeholder="z. B. 95000"
+                />
+              </SettingsField>
+
+              <SettingsField label="URL-Slug" helper="Optional (wird sonst automatisch erzeugt)" error={formErrors.slug}>
                 <Input
                   value={form.slug}
                   onChange={(e) => handleChange("slug", e.target.value)}
-                  placeholder="porsche-911-gt3-rs-weissach"
+                  placeholder="z. B. porsche-911-gt3-rs"
                 />
               </SettingsField>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Beschreibung (Deutsch)" locale="de" error={errors.description_de}>
-                <Textarea
-                  value={form.description_de}
-                  onChange={(e) => handleChange("description_de", e.target.value)}
-                  placeholder="Ausführliche Fahrzeugbeschreibung in deutscher Sprache..."
-                  rows={4}
-                />
-              </SettingsField>
-
-              <SettingsField label="Description (English)" locale="en" error={errors.description_en}>
-                <Textarea
-                  value={form.description_en}
-                  onChange={(e) => handleChange("description_en", e.target.value)}
-                  placeholder="Comprehensive vehicle specification and history in English..."
-                  rows={4}
-                />
-              </SettingsField>
-            </div>
-
+            {/* Row 6: Toggles */}
             <div style={{ display: "flex", gap: "var(--space-xl)", marginTop: "var(--space-xs)" }}>
               <SettingsToggle
                 label="Featured (Auf Startseite hervorheben)"
@@ -626,69 +767,41 @@ export function CarEditorModal({
           </div>
         )}
 
-        {/* Tab 2: Specs & Technical Data */}
+        {/* ── Tab 2: Weitere Details & Beschreibung ──────────────────────── */}
         {activeTab === "specs" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Kraftstoffart" error={errors.fuel_type}>
-                <Select
-                  value={form.fuel_type}
-                  onChange={(e) => handleChange("fuel_type", e.target.value)}
-                  options={FUELS}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
+              <SettingsField label="Beschreibung (Deutsch)" locale="de" error={formErrors.description_de}>
+                <Textarea
+                  value={form.description_de}
+                  onChange={(e) => handleChange("description_de", e.target.value)}
+                  placeholder="Ausführliche Fahrzeugbeschreibung in deutscher Sprache..."
+                  rows={4}
                 />
               </SettingsField>
 
-              <SettingsField label="Getriebe" error={errors.transmission}>
-                <Select
-                  value={form.transmission}
-                  onChange={(e) => handleChange("transmission", e.target.value)}
-                  options={TRANSMISSIONS}
-                />
-              </SettingsField>
-
-              <SettingsField label="Kilometerstand (km)" error={errors.mileage_km}>
-                <Input
-                  type="number"
-                  min="0"
-                  value={form.mileage_km}
-                  onChange={(e) => handleChange("mileage_km", e.target.value)}
-                  placeholder="12500"
+              <SettingsField label="Description (English)" locale="en" error={formErrors.description_en}>
+                <Textarea
+                  value={form.description_en}
+                  onChange={(e) => handleChange("description_en", e.target.value)}
+                  placeholder="Comprehensive vehicle specification and history in English..."
+                  rows={4}
                 />
               </SettingsField>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Erstzulassung (Datum)" error={errors.first_registration}>
-                <Input
-                  type="date"
-                  value={form.first_registration}
-                  onChange={(e) => handleChange("first_registration", e.target.value)}
-                />
-              </SettingsField>
-
-              <SettingsField label="Leistung (PS)" error={errors.performance_hp}>
-                <Input
-                  type="number"
-                  min="0"
-                  value={form.performance_hp}
-                  onChange={(e) => handleChange("performance_hp", e.target.value)}
-                  placeholder="525"
-                />
-              </SettingsField>
-
-              <SettingsField label="Hubraum (ccm)" error={errors.engine_displacement_cc}>
+              <SettingsField label="Hubraum (ccm)" error={formErrors.engine_displacement_cc}>
                 <Input
                   type="number"
                   min="0"
                   value={form.engine_displacement_cc}
                   onChange={(e) => handleChange("engine_displacement_cc", e.target.value)}
-                  placeholder="3996"
+                  placeholder="z. B. 3996"
                 />
               </SettingsField>
-            </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Sitze (1–100)" error={errors.seats}>
+              <SettingsField label="Sitze" error={formErrors.seats}>
                 <Input
                   type="number"
                   min="1"
@@ -698,7 +811,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Vorbesitzer (Fahrzeughalter)" error={errors.vehicle_owners}>
+              <SettingsField label="Vorbesitzer (Fahrzeughalter)" error={formErrors.vehicle_owners}>
                 <Input
                   type="number"
                   min="0"
@@ -707,18 +820,10 @@ export function CarEditorModal({
                   onChange={(e) => handleChange("vehicle_owners", e.target.value)}
                 />
               </SettingsField>
-
-              <SettingsField label="Zustandsbeschreibung (z. B. Unfallfrei)" error={errors.vehicle_condition}>
-                <Input
-                  value={form.vehicle_condition}
-                  onChange={(e) => handleChange("vehicle_condition", e.target.value)}
-                  placeholder="Unfallfrei, scheckheftgepflegt"
-                />
-              </SettingsField>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Innenausstattung" error={errors.interior_design}>
+              <SettingsField label="Innenausstattung" error={formErrors.interior_design}>
                 <Select
                   value={form.interior_design}
                   onChange={(e) => handleChange("interior_design", e.target.value)}
@@ -726,11 +831,21 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Innenfarbe" error={errors.interior_color}>
+              <SettingsField label="Innenfarbe" error={formErrors.interior_color}>
                 <Input
                   value={form.interior_color}
                   onChange={(e) => handleChange("interior_color", e.target.value)}
-                  placeholder="Schwarz / Kontrastnaht GT-Silber"
+                  placeholder="Schwarz / Kontrastnaht"
+                />
+              </SettingsField>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-sm)" }}>
+              <SettingsField label="Zustandsbeschreibung (z. B. Unfallfrei)" error={formErrors.vehicle_condition}>
+                <Input
+                  value={form.vehicle_condition}
+                  onChange={(e) => handleChange("vehicle_condition", e.target.value)}
+                  placeholder="Unfallfrei, scheckheftgepflegt bei Vertragswerkstatt"
                 />
               </SettingsField>
             </div>
@@ -748,494 +863,531 @@ export function CarEditorModal({
                 onChange={(checked) => handleChange("camera", checked)}
               />
             </div>
-          </div>
-        )}
 
-        {/* Tab 3: Dynamic Equipment & Custom Fields */}
-        {activeTab === "equipment" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
-            {/* Equipment Array Editor */}
-            <div>
-              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #fff)" }}>
-                Ausstattungsliste (Equipment)
-              </h4>
-              <p style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-                Fügen Sie Sonderausstattungen, Assistenzsysteme und Pakete einzeln hinzu.
-              </p>
+            {/* Custom Attributes / Fields */}
+            <div style={{ borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))", paddingTop: "var(--space-sm)" }}>
+              <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 700, color: "var(--color-admin-text)", display: "block", marginBottom: "8px" }}>
+                Benutzerdefinierte Merkmale (Key-Value)
+              </label>
 
-              <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-sm)" }}>
+              <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-xs)" }}>
                 <Input
-                  value={newEquipmentItem}
-                  onChange={(e) => setNewEquipmentItem(e.target.value)}
-                  placeholder="z. B. Keramikbremse (PCCB), Liftsystem Vorderachse, Sportsitze Plus"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddEquipment();
-                    }
-                  }}
+                  value={newCustomKey}
+                  onChange={(e) => setNewCustomKey(e.target.value)}
+                  placeholder="Eigenschaft (z. B. Garantie)"
                   style={{ flex: 1 }}
                 />
-                <Button type="button" variant="outline" size="sm" onClick={handleAddEquipment}>
+                <Input
+                  value={newCustomVal}
+                  onChange={(e) => setNewCustomVal(e.target.value)}
+                  placeholder="Wert (z. B. 24 Monate Porsche Approved)"
+                  style={{ flex: 2 }}
+                />
+                <Button type="button" variant="outline" size="sm" onClick={handleAddCustomField}>
                   <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
                   Hinzufügen
                 </Button>
               </div>
 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", maxHeight: "180px", overflowY: "auto", padding: "4px" }}>
+              {Object.entries(form.custom_fields).length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxHeight: "160px", overflowY: "auto" }}>
+                  {Object.entries(form.custom_fields).map(([k, v]) => (
+                    <div
+                      key={k}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "6px 10px",
+                        backgroundColor: "rgba(255, 255, 255, 0.03)",
+                        border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+                        borderRadius: "4px",
+                        fontSize: "12px",
+                      }}
+                    >
+                      <span><strong>{k}:</strong> {v}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomField(k)}
+                        style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: "2px" }}
+                        title="Entfernen"
+                      >
+                        <Icon name="trash" size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── Tab 3: Ausstattung (Equipment) ─────────────────────────────── */}
+        {activeTab === "equipment" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
+            <div style={{ display: "flex", gap: "var(--space-xs)" }}>
+              <Input
+                value={newEquipmentItem}
+                onChange={(e) => setNewEquipmentItem(e.target.value)}
+                placeholder="Ausstattungsmerkmal hinzufügen (z. B. Keramikbremsen, Panoramadach)..."
+                style={{ flex: 1 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddEquipment();
+                  }
+                }}
+              />
+              <Button type="button" variant="outline" size="sm" onClick={handleAddEquipment}>
+                <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
+                Hinzufügen
+              </Button>
+            </div>
+
+            {form.equipment.length > 0 ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: "var(--space-xs)",
+                  maxHeight: "320px",
+                  overflowY: "auto",
+                  padding: "8px",
+                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                }}
+              >
                 {form.equipment.map((item, idx) => (
-                  <div
+                  <span
                     key={idx}
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "6px",
                       padding: "4px 10px",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      borderRadius: "9999px",
+                      backgroundColor: "rgba(255, 255, 255, 0.08)",
                       border: "1px solid rgba(255, 255, 255, 0.12)",
-                      borderRadius: "var(--radius-sm, 4px)",
-                      fontSize: "var(--font-size-xs)",
-                      color: "var(--color-admin-text, #ffffff)",
+                      fontSize: "12px",
+                      color: "#ffffff",
                     }}
                   >
-                    <span>{item}</span>
+                    {item}
                     <button
                       type="button"
                       onClick={() => handleRemoveEquipment(idx)}
                       style={{
                         background: "none",
                         border: "none",
-                        padding: 0,
+                        color: "rgba(255, 255, 255, 0.6)",
                         cursor: "pointer",
-                        color: "var(--color-admin-muted)",
-                        fontSize: "14px",
-                        lineHeight: 1,
+                        display: "flex",
+                        alignItems: "center",
+                        padding: 0,
                       }}
+                      title="Entfernen"
                     >
-                      &times;
+                      <Icon name="close" size={12} />
                     </button>
-                  </div>
+                  </span>
                 ))}
               </div>
-            </div>
-
-            {/* Custom Fields Editor */}
-            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "var(--space-md)" }}>
-              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #fff)" }}>
-                Benutzerdefinierte Felder (Custom Fields)
-              </h4>
-              <p style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-                Beliebige Schlüssel-Wert-Paare für Spezialangaben (z. B. Fahrgestellnummer, Werksgarantie).
-              </p>
-
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "var(--space-xs)", marginBottom: "var(--space-sm)" }}>
-                <Input
-                  value={newCustomKey}
-                  onChange={(e) => setNewCustomKey(e.target.value)}
-                  placeholder="Schlüssel (z. B. VIN)"
-                />
-                <Input
-                  value={newCustomVal}
-                  onChange={(e) => setNewCustomVal(e.target.value)}
-                  placeholder="Wert (z. B. WP0ZZZ99ZPS...)"
-                />
-                <Button type="button" variant="outline" size="sm" onClick={handleAddCustomField}>
-                  <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                  Feld anlegen
-                </Button>
+            ) : (
+              <div
+                style={{
+                  padding: "var(--space-xl)",
+                  textAlign: "center",
+                  border: "1px dashed var(--color-admin-border, rgba(255, 255, 255, 0.12))",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-admin-muted)",
+                  fontSize: "var(--font-size-xs)",
+                }}
+              >
+                Noch keine Ausstattungsmerkmale hinzugefügt. Geben Sie oben Merkmale ein und drücken Sie Enter.
               </div>
-
-              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                {Object.entries(form.custom_fields).map(([k, v]) => (
-                  <div
-                    key={k}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "6px 12px",
-                      backgroundColor: "rgba(255, 255, 255, 0.03)",
-                      borderRadius: "4px",
-                      fontSize: "var(--font-size-xs)",
-                    }}
-                  >
-                    <div>
-                      <strong style={{ color: "var(--color-primary, var(--color-text))" }}>{k}:</strong>{" "}
-                      <span style={{ color: "var(--color-admin-text, #fff)" }}>{String(v)}</span>
-                    </div>
-                    <IconButton
-                      icon="trash"
-                      size="sm"
-                      ariaLabel="Entfernen"
-                      onClick={() => handleRemoveCustomField(k)}
-                      style={{ color: "var(--color-error, #ef4444)" }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
           </div>
         )}
 
-        {/* Tab 4: Media Management */}
+        {/* ── Tab 4: Fahrzeugbilder (Device Upload Only & Cover Designation) ── */}
         {activeTab === "media" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            {/* Storage Architecture & Guidelines Banner */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "var(--space-sm)",
-                padding: "var(--space-sm) var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "var(--radius-sm, 6px)",
-                fontSize: "var(--font-size-xs)",
-                color: "var(--color-admin-text, #ffffff)",
-                lineHeight: 1.5,
-              }}
-            >
-              <Icon name="info" size={16} style={{ color: "var(--color-primary, var(--color-text))", marginTop: "2px", flexShrink: 0 }} />
+            {/* Header info */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
               <div>
-                <strong style={{ color: "var(--color-primary, var(--color-text))" }}>Fahrzeugmedien-Architektur:</strong>{" "}
-                Fahrzeugmedien werden über permanente URLs (z.&nbsp;B. im Supabase Storage Bucket <code>german-auto-media</code> oder CDN) im Datensatz gespeichert. Lokale Dateiauswahl dient ausschließlich der temporären Browser-Vorschau und Validierung. Für die dauerhafte Speicherung in der Datenbank ist eine permanente HTTPS-URL erforderlich.
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#ffffff" }}>
+                  Fahrzeugbilder ({galleryImages.length} von max. 20)
+                </h4>
+                <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--color-admin-muted)" }}>
+                  Laden Sie bis zu 20 Bilder direkt von Ihrem Gerät hoch. Das erste Bild wird automatisch als Cover verwendet, Sie können aber jedes Bild als Cover festlegen.
+                </p>
               </div>
+
+              {galleryImages.length < 20 && (
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
+                  Bilder vom Gerät hochladen
+                </Button>
+              )}
             </div>
 
-            {/* Validation Error Alert */}
-            {mediaValidationError && (
+            {/* Hidden file input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              style={{ display: "none" }}
+              onChange={handleFileInputChange}
+            />
+
+            {/* Upload Area / Drag & Drop Dropzone */}
+            {galleryImages.length < 20 && (
               <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
                 style={{
+                  border: isDragOver ? "2px dashed #D4AF37" : "2px dashed rgba(255, 255, 255, 0.2)",
+                  borderRadius: "var(--radius-lg, 12px)",
+                  padding: "24px 16px",
+                  textAlign: "center",
+                  backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
                   display: "flex",
+                  flexDirection: "column",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px 12px",
-                  backgroundColor: "rgba(239, 68, 68, 0.12)",
-                  border: "1px solid rgba(239, 68, 68, 0.3)",
-                  borderRadius: "var(--radius-sm, 6px)",
-                  fontSize: "var(--font-size-xs)",
-                  color: "#ef4444",
+                  justifyContent: "center",
+                  gap: "8px",
                 }}
               >
-                <span>{mediaValidationError}</span>
-                <button
-                  type="button"
-                  onClick={() => setMediaValidationError(null)}
-                  style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: "14px" }}
+                <div
+                  style={{
+                    width: "44px",
+                    height: "44px",
+                    borderRadius: "50%",
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#D4AF37",
+                  }}
                 >
-                  &times;
-                </button>
+                  <Icon name="upload" size={22} />
+                </div>
+                <div>
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "#ffffff" }}>
+                    Bilder hierher ziehen oder durchsuchen
+                  </span>
+                  <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
+                    JPG, PNG, WEBP oder AVIF (max. 15 MB pro Bild)
+                  </span>
+                </div>
               </div>
             )}
 
-            {/* 1. Thumbnail */}
-            <div>
-              <SettingsField label="Haupt-Vorschaubild (Thumbnail URL)" helper="Wird in Listenansichten und als Startbild auf der Detailseite genutzt. Permanente URL erforderlich.">
-                <div style={{ display: "flex", gap: "var(--space-xs)" }}>
-                  <Input
-                    value={form.media.thumbnail || ""}
-                    onChange={(e) => handleThumbnailUrlChange(e.target.value)}
-                    placeholder="https://..."
-                    style={{ flex: 1 }}
+            {/* Uploading progress indicator */}
+            {isUploading && (
+              <div
+                style={{
+                  padding: "10px 14px",
+                  backgroundColor: "rgba(212, 175, 55, 0.1)",
+                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                  borderRadius: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  color: "#D4AF37",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                }}
+              >
+                <span
+                  style={{
+                    width: "14px",
+                    height: "14px",
+                    border: "2px solid #D4AF37",
+                    borderTopColor: "transparent",
+                    borderRadius: "50%",
+                    display: "inline-block",
+                    animation: "btn-spin 0.6s linear infinite",
+                  }}
+                />
+                <span>Bilder werden hochgeladen... Bitte einen Moment warten.</span>
+              </div>
+            )}
+
+            {/* Media Error Notice */}
+            {(mediaError || formErrors.media) && (
+              <div
+                style={{
+                  padding: "8px 12px",
+                  backgroundColor: "rgba(239, 68, 68, 0.12)",
+                  border: "1px solid rgba(239, 68, 68, 0.3)",
+                  borderRadius: "6px",
+                  color: "#f87171",
+                  fontSize: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <Icon name="alert-triangle" size={14} />
+                <span>{mediaError || formErrors.media}</span>
+              </div>
+            )}
+
+            {/* Cover Image Spotlight Preview (if a cover is selected) */}
+            {currentCover && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: "14px",
+                  alignItems: "center",
+                  padding: "12px 16px",
+                  backgroundColor: "rgba(212, 175, 55, 0.05)",
+                  border: "1px solid rgba(212, 175, 55, 0.3)",
+                  borderRadius: "var(--radius-md, 8px)",
+                }}
+              >
+                <div
+                  style={{
+                    width: "110px",
+                    height: "70px",
+                    borderRadius: "6px",
+                    overflow: "hidden",
+                    border: "2px solid #D4AF37",
+                    flexShrink: 0,
+                    backgroundColor: "#000",
+                  }}
+                >
+                  <img
+                    src={currentCover}
+                    alt="Cover Vorschau"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
-                  <label
+                </div>
+                <div>
+                  <span
                     style={{
                       display: "inline-flex",
                       alignItems: "center",
-                      padding: "0 12px",
-                      borderRadius: "var(--radius-sm, 6px)",
-                      backgroundColor: "rgba(255, 255, 255, 0.08)",
-                      cursor: "pointer",
-                      fontSize: "var(--font-size-xs)",
-                      color: "var(--color-admin-text, #fff)",
-                      whiteSpace: "nowrap",
+                      gap: "4px",
+                      padding: "2px 8px",
+                      borderRadius: "9999px",
+                      backgroundColor: "#D4AF37",
+                      color: "#000000",
+                      fontSize: "10px",
+                      fontWeight: 800,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                      marginBottom: "4px",
                     }}
                   >
-                    <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                    Lokale Datei (Vorschau)
-                    <input
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/avif"
-                      style={{ display: "none" }}
-                      onChange={handleThumbnailFileSelect}
-                    />
-                  </label>
-                  {form.media.thumbnail && (
-                    <Button type="button" variant="outline" size="sm" onClick={handleClearThumbnail} style={{ color: "var(--color-error, #ef4444)" }}>
-                      Entfernen
-                    </Button>
-                  )}
+                    ⭐ Aktuelles Coverbild
+                  </span>
+                  <p style={{ margin: 0, fontSize: "11px", color: "var(--color-admin-muted)" }}>
+                    Dieses Bild wird als Hauptdarstellung in allen Listen, Fahrzeugkarten und im Showroom verwendet.
+                  </p>
                 </div>
-              </SettingsField>
-
-              {form.media.thumbnail && (
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)", marginTop: "6px" }}>
-                  <div style={{ width: "120px", height: "80px", borderRadius: "6px", overflow: "hidden", backgroundColor: "#000", border: "1px solid rgba(255, 255, 255, 0.15)" }}>
-                    <img src={form.media.thumbnail} alt={t("thumbnailPreview")} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  </div>
-                  <div style={{ fontSize: "11px" }}>
-                    {form.media.thumbnail.startsWith("blob:") ? (
-                      <span style={{ color: "#eab308", fontWeight: 600 }}>{t("localPreviewWarning")}</span>
-                    ) : (
-                      <span style={{ color: "#22c55e", fontWeight: 500 }}>{t("permanentUrlSaved")}</span>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 2. Gallery Images */}
-            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "var(--space-md)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
-                <h4 style={{ margin: 0, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #fff)" }}>
-                  Fotogalerie ({form.media.gallery.length} / 20)
-                </h4>
-                <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                  Maximal 20 Bilder • Reihenfolge per Pfeiltasten anpassen
-                </span>
               </div>
+            )}
 
-              <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-sm)" }}>
-                <Input
-                  value={newGalleryUrl}
-                  onChange={(e) => setNewGalleryUrl(e.target.value)}
-                  placeholder="Bild-URL einfügen (https://...)"
-                  style={{ flex: 1 }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddGalleryUrl();
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" size="sm" onClick={handleAddGalleryUrl}>
-                  <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                  URL hinzufügen
-                </Button>
-                <label
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0 12px",
-                    borderRadius: "var(--radius-sm, 6px)",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
-                    cursor: "pointer",
-                    fontSize: "var(--font-size-xs)",
-                    color: "var(--color-admin-text, #fff)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                  Lokale Bilder (Vorschau)
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/jpeg,image/png,image/webp,image/avif"
-                    style={{ display: "none" }}
-                    onChange={handleGalleryFileSelect}
-                  />
-                </label>
-              </div>
+            {/* Gallery Images Grid */}
+            {galleryImages.length > 0 ? (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+                  gap: "var(--space-sm)",
+                  maxHeight: "360px",
+                  overflowY: "auto",
+                  padding: "4px",
+                }}
+              >
+                {galleryImages.map((imgUrl, idx) => {
+                  const isCover = imgUrl === currentCover;
 
-              {/* Gallery Grid with Reorder / Delete */}
-              {form.media.gallery.length > 0 ? (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                    gap: "var(--space-sm)",
-                    maxHeight: "280px",
-                    overflowY: "auto",
-                    padding: "4px",
-                  }}
-                >
-                  {form.media.gallery.map((imgUrl, idx) => (
+                  return (
                     <div
                       key={idx}
                       style={{
                         position: "relative",
-                        borderRadius: "6px",
+                        borderRadius: "8px",
                         overflow: "hidden",
-                        border: imgUrl.startsWith("blob:")
-                          ? "1px solid #eab308"
-                          : "1px solid rgba(255, 255, 255, 0.12)",
-                        backgroundColor: "#000",
+                        border: isCover ? "2px solid #D4AF37" : "1px solid rgba(255, 255, 255, 0.12)",
+                        backgroundColor: "#0d0e11",
+                        display: "flex",
+                        flexDirection: "column",
                       }}
                     >
-                      <div style={{ height: "90px" }}>
-                        <img src={imgUrl} alt={`Galerie ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      {/* Image Thumbnail */}
+                      <div style={{ height: "95px", position: "relative" }}>
+                        <img
+                          src={imgUrl}
+                          alt={`Fahrzeug Bild ${idx + 1}`}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                        />
+
+                        {/* Cover Badge Overlay */}
+                        {isCover && (
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "4px",
+                              left: "4px",
+                              backgroundColor: "#D4AF37",
+                              color: "#000000",
+                              fontSize: "9px",
+                              fontWeight: 800,
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              textTransform: "uppercase",
+                              letterSpacing: "0.04em",
+                              boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+                            }}
+                          >
+                            ⭐ Cover
+                          </div>
+                        )}
                       </div>
 
+                      {/* Card Actions Footer */}
                       <div
                         style={{
+                          padding: "6px 8px",
+                          backgroundColor: "rgba(18, 20, 24, 0.95)",
                           display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "2px 6px",
-                          backgroundColor: "rgba(0, 0, 0, 0.8)",
-                          fontSize: "11px",
+                          flexDirection: "column",
+                          gap: "4px",
                         }}
                       >
-                        <div style={{ display: "flex", gap: "2px" }}>
+                        {/* Set as Cover button if not already cover */}
+                        {!isCover ? (
                           <button
                             type="button"
-                            disabled={idx === 0}
-                            onClick={() => handleMoveGalleryImage(idx, -1)}
-                            style={{ background: "none", border: "none", color: "#fff", cursor: idx === 0 ? "default" : "pointer", opacity: idx === 0 ? 0.3 : 1 }}
-                            title="Nach links verschieben"
+                            onClick={() => handleSetCover(imgUrl)}
+                            style={{
+                              width: "100%",
+                              padding: "4px 6px",
+                              backgroundColor: "rgba(212, 175, 55, 0.15)",
+                              color: "#D4AF37",
+                              border: "1px solid rgba(212, 175, 55, 0.35)",
+                              borderRadius: "4px",
+                              fontSize: "10px",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              transition: "all 0.15s ease",
+                            }}
                           >
-                            &larr;
+                            Als Cover setzen
                           </button>
+                        ) : (
+                          <div
+                            style={{
+                              textAlign: "center",
+                              fontSize: "10px",
+                              fontWeight: 700,
+                              color: "#D4AF37",
+                              padding: "4px 0",
+                            }}
+                          >
+                            Hauptbild
+                          </div>
+                        )}
+
+                        {/* Reorder and Delete Row */}
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "2px" }}>
+                          <div style={{ display: "flex", gap: "2px" }}>
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveImage(idx, -1)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#ffffff",
+                                cursor: idx === 0 ? "default" : "pointer",
+                                opacity: idx === 0 ? 0.2 : 0.8,
+                                padding: "2px 4px",
+                                fontSize: "12px",
+                              }}
+                              title="Nach links verschieben"
+                            >
+                              &larr;
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === galleryImages.length - 1}
+                              onClick={() => handleMoveImage(idx, 1)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "#ffffff",
+                                cursor: idx === galleryImages.length - 1 ? "default" : "pointer",
+                                opacity: idx === galleryImages.length - 1 ? 0.2 : 0.8,
+                                padding: "2px 4px",
+                                fontSize: "12px",
+                              }}
+                              title="Nach rechts verschieben"
+                            >
+                              &rarr;
+                            </button>
+                          </div>
+
+                          <span style={{ fontSize: "10px", color: "var(--color-admin-muted)" }}>
+                            #{idx + 1}
+                          </span>
+
                           <button
                             type="button"
-                            disabled={idx === form.media.gallery.length - 1}
-                            onClick={() => handleMoveGalleryImage(idx, 1)}
-                            style={{ background: "none", border: "none", color: "#fff", cursor: idx === form.media.gallery.length - 1 ? "default" : "pointer", opacity: idx === form.media.gallery.length - 1 ? 0.3 : 1 }}
-                            title="Nach rechts verschieben"
+                            onClick={() => handleRemoveImage(idx)}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#ef4444",
+                              cursor: "pointer",
+                              padding: "2px",
+                              display: "flex",
+                              alignItems: "center",
+                            }}
+                            title="Bild entfernen"
                           >
-                            &rarr;
+                            <Icon name="trash" size={13} />
                           </button>
                         </div>
-
-                        <span style={{ color: imgUrl.startsWith("blob:") ? "#eab308" : "var(--color-admin-muted)", fontSize: "10px" }}>
-                          {imgUrl.startsWith("blob:") ? "⚠️ Vorschau" : `#${idx + 1}`}
-                        </span>
-
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveGalleryImage(idx)}
-                          style={{ background: "none", border: "none", color: "var(--color-error, #ef4444)", cursor: "pointer", padding: "2px" }}
-                          title="Bild entfernen"
-                        >
-                          <Icon name="trash" size={12} />
-                        </button>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ padding: "var(--space-md)", textAlign: "center", border: "1px dashed rgba(255, 255, 255, 0.1)", borderRadius: "6px", color: "var(--color-admin-muted)", fontSize: "var(--font-size-xs)" }}>
-                  Noch keine Galeriebilder hinzugefügt. Geben Sie eine URL ein oder wählen Sie Bilddateien aus.
-                </div>
-              )}
-            </div>
-
-            {/* 3. 360° Images */}
-            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "var(--space-md)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
-                <h4 style={{ margin: 0, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #fff)" }}>
-                  360°-Ansichten ({form.media.images_360?.length || 0})
-                </h4>
-                <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                  Panorama- oder Dreh-Bilder für interaktive 360°-Fahrzeugansicht
-                </span>
+                  );
+                })}
               </div>
-
-              <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-sm)" }}>
-                <Input
-                  value={new360Url}
-                  onChange={(e) => setNew360Url(e.target.value)}
-                  placeholder="360°-Bild-URL einfügen (https://...)"
-                  style={{ flex: 1 }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAdd360Url();
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" size="sm" onClick={handleAdd360Url}>
-                  <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                  URL hinzufügen
-                </Button>
-                <label
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "0 12px",
-                    borderRadius: "var(--radius-sm, 6px)",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
-                    cursor: "pointer",
-                    fontSize: "var(--font-size-xs)",
-                    color: "var(--color-admin-text, #fff)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                  Datei wählen
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/avif"
-                    style={{ display: "none" }}
-                    onChange={handle360FileSelect}
-                  />
-                </label>
+            ) : (
+              <div
+                style={{
+                  padding: "var(--space-xl)",
+                  textAlign: "center",
+                  border: "1px dashed var(--color-admin-border, rgba(255, 255, 255, 0.12))",
+                  borderRadius: "var(--radius-md)",
+                  color: "var(--color-admin-muted)",
+                  fontSize: "var(--font-size-xs)",
+                }}
+              >
+                Noch keine Bilder hochgeladen. Klicken Sie oben auf "Bilder vom Gerät hochladen", um Fahrzeugbilder von Ihrem Computer oder Smartphone hinzuzufügen.
               </div>
-
-              {form.media.images_360 && form.media.images_360.length > 0 && (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(110px, 1fr))",
-                    gap: "var(--space-xs)",
-                    maxHeight: "180px",
-                    overflowY: "auto",
-                    padding: "4px",
-                  }}
-                >
-                  {form.media.images_360.map((imgUrl, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        position: "relative",
-                        borderRadius: "4px",
-                        overflow: "hidden",
-                        border: "1px solid rgba(255, 255, 255, 0.12)",
-                        backgroundColor: "#000",
-                      }}
-                    >
-                      <div style={{ height: "70px" }}>
-                        <img src={imgUrl} alt={`360° ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "2px 4px", backgroundColor: "rgba(0, 0, 0, 0.8)" }}>
-                        <span style={{ fontSize: "10px", color: "var(--color-admin-muted)" }}>360° #{idx + 1}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemove360Image(idx)}
-                          style={{ background: "none", border: "none", color: "var(--color-error, #ef4444)", cursor: "pointer", padding: 0 }}
-                          title="Entfernen"
-                        >
-                          <Icon name="trash" size={11} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* 4. Video & 3D Model Fields */}
-            <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "var(--space-md)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Fahrzeugvideo (URL)" helper="MP4 / WebM oder Stream-URL">
-                <Input
-                  value={form.media.video || ""}
-                  onChange={(e) => handleMediaChange("video", e.target.value)}
-                  placeholder="https://..."
-                />
-              </SettingsField>
-
-              <SettingsField label="3D-Modell (URL)" helper="GLB / GLTF Modellreferenz">
-                <Input
-                  value={form.media.model_3d || ""}
-                  onChange={(e) => handleMediaChange("model_3d", e.target.value)}
-                  placeholder="https://..."
-                />
-              </SettingsField>
-            </div>
+            )}
           </div>
         )}
 
-        {/* Bottom Save & Cancel Bar */}
+        {/* ── Bottom Save & Cancel Bar ───────────────────────────────────── */}
         <div
           style={{
             display: "flex",
@@ -1247,12 +1399,12 @@ export function CarEditorModal({
             borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
           }}
         >
-          <Button variant="outline" size="sm" type="button" disabled={saving} onClick={onClose}>
+          <Button variant="outline" size="sm" type="button" disabled={saving || isUploading} onClick={onClose}>
             <Icon name="close" size={14} style={{ marginRight: "6px" }} />
             {t("cancel", { defaultValue: "Abbrechen" })}
           </Button>
 
-          <Button variant="primary" size="sm" type="submit" loading={saving}>
+          <Button variant="primary" size="sm" type="submit" loading={saving} disabled={isUploading}>
             <Icon name="save" size={14} style={{ marginRight: "6px" }} />
             {car ? "Änderungen speichern" : "Fahrzeug erstellen"}
           </Button>

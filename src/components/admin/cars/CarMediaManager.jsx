@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import Input from "../../forms/Input";
 import Button from "../../ui/Button";
 import Badge from "../../ui/Badge";
 import Icon from "../../common/Icon";
+import carsService from "../../../services/cars/cars.service";
 
 export function CarMediaManager({ media = {}, onChange }) {
   const { t } = useTranslation(["admin", "cars", "common"]);
-  const [newGalleryUrl, setNewGalleryUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const [mediaError, setMediaError] = useState(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef(null);
 
   const gallery = Array.isArray(media.gallery) ? media.gallery : [];
-  const thumbnail = media.thumbnail || "";
-  const video = media.video || "";
-  const model3d = media.model_3d || "";
+  const thumbnail = media.thumbnail || gallery[0] || "";
 
   const updateMedia = (key, val) => {
     onChange?.({
@@ -22,34 +22,89 @@ export function CarMediaManager({ media = {}, onChange }) {
     });
   };
 
-  const handleAddGalleryImage = () => {
-    const url = newGalleryUrl.trim();
-    if (!url) return;
+  const processFiles = async (filesList) => {
+    const rawFiles = Array.from(filesList || []);
+    if (rawFiles.length === 0) return;
 
-    if (gallery.length >= 20) {
-      setMediaError(t("maxGalleryImagesError", { defaultValue: "Maximal 20 Galeriebilder erlaubt." }));
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/jpg"];
+    const validFiles = rawFiles.filter((f) => allowedTypes.includes(f.type));
+
+    if (validFiles.length === 0) {
+      setMediaError("Nur Bilddateien (JPG, PNG, WEBP, AVIF) sind erlaubt.");
       return;
     }
 
-    setMediaError(null);
-    updateMedia("gallery", [...gallery, url]);
-    setNewGalleryUrl("");
+    const availableSlots = 20 - gallery.length;
+    if (availableSlots <= 0) {
+      setMediaError("Maximal 20 Galeriebilder erlaubt.");
+      return;
+    }
 
-    // If no cover thumbnail is set yet, auto-set the first gallery image as cover
-    if (!thumbnail) {
-      updateMedia("thumbnail", url);
+    const filesToUpload = validFiles.slice(0, availableSlots);
+    setIsUploading(true);
+    setMediaError(null);
+
+    try {
+      const formData = new FormData();
+      filesToUpload.forEach((file) => {
+        formData.append("images", file);
+      });
+
+      const res = await carsService.adminUploadMedia(formData);
+      const uploadedUrls = res.data?.data?.urls || res.data?.urls || [];
+
+      if (uploadedUrls.length > 0) {
+        const nextGallery = [...gallery, ...uploadedUrls].slice(0, 20);
+        const nextThumbnail = thumbnail || nextGallery[0] || "";
+        onChange?.({
+          ...media,
+          gallery: nextGallery,
+          thumbnail: nextThumbnail,
+        });
+        return;
+      }
+      throw new Error("No URLs returned");
+    } catch (err) {
+      console.warn("[CarMediaManager] Upload endpoint failed, using base64 fallback:", err);
+      try {
+        const dataUrls = await Promise.all(
+          filesToUpload.map(
+            (file) =>
+              new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+              })
+          )
+        );
+        const nextGallery = [...gallery, ...dataUrls].slice(0, 20);
+        const nextThumbnail = thumbnail || nextGallery[0] || "";
+        onChange?.({
+          ...media,
+          gallery: nextGallery,
+          thumbnail: nextThumbnail,
+        });
+      } catch (readErr) {
+        setMediaError("Fehler beim Verarbeiten der Bilddateien.");
+      }
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const handleRemoveGalleryImage = (index) => {
     const removedUrl = gallery[index];
     const nextGallery = gallery.filter((_, idx) => idx !== index);
-    updateMedia("gallery", nextGallery);
-
-    // If removed image was the thumbnail, update thumbnail to new first gallery image or empty
+    let nextThumbnail = thumbnail;
     if (thumbnail === removedUrl) {
-      updateMedia("thumbnail", nextGallery[0] || "");
+      nextThumbnail = nextGallery[0] || "";
     }
+    onChange?.({
+      ...media,
+      gallery: nextGallery,
+      thumbnail: nextThumbnail,
+    });
   };
 
   const handleMoveGalleryImage = (index, direction) => {
@@ -68,396 +123,314 @@ export function CarMediaManager({ media = {}, onChange }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xl)" }}>
-      {/* ── 1. Cover / Thumbnail Image ────────────────────────────────────── */}
-      <div
-        style={{
-          padding: "var(--space-md)",
-          backgroundColor: "rgba(255, 255, 255, 0.02)",
-          borderRadius: "var(--radius-lg)",
-          border: "1px solid var(--color-admin-border)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-sm)" }}>
-          <label style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-text)" }}>
-            {t("primaryCoverImage", { defaultValue: "Hauptbild / Cover-Thumbnail" })}
-          </label>
-          {thumbnail && (
-            <Badge variant="success" size="sm">
-              {t("coverActive", { defaultValue: "Aktiv" })}
-            </Badge>
-          )}
-        </div>
-
-        <div style={{ display: "flex", gap: "var(--space-md)", alignItems: "flex-start", flexWrap: "wrap" }}>
-          {thumbnail ? (
-            <div
-              style={{
-                position: "relative",
-                width: "140px",
-                height: "90px",
-                borderRadius: "var(--radius-md)",
-                overflow: "hidden",
-                border: "1px solid var(--color-admin-accent)",
-                flexShrink: 0,
-                backgroundColor: "var(--color-surface)",
-              }}
-            >
-              <img
-                src={thumbnail}
-                alt="Cover Preview"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => updateMedia("thumbnail", "")}
-                title={t("removeCover", { defaultValue: "Cover entfernen" })}
-                style={{
-                  position: "absolute",
-                  top: "4px",
-                  right: "4px",
-                  background: "rgba(0, 0, 0, 0.75)",
-                  color: "#ef4444",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: "22px",
-                  height: "22px",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Icon name="close" size={12} />
-              </button>
-            </div>
-          ) : (
-            <div
-              style={{
-                width: "140px",
-                height: "90px",
-                borderRadius: "var(--radius-md)",
-                border: "1px dashed var(--color-admin-border)",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "4px",
-                color: "var(--color-admin-muted)",
-                fontSize: "11px",
-                flexShrink: 0,
-              }}
-            >
-              <Icon name="image" size={24} />
-              <span>{t("noCoverImage", { defaultValue: "Kein Coverbild" })}</span>
-            </div>
-          )}
-
-          <div style={{ flex: 1, minWidth: "220px" }}>
-            <Input
-              value={thumbnail}
-              onChange={(e) => updateMedia("thumbnail", e.target.value)}
-              placeholder="https://.../cover.webp"
-              style={{ height: "38px", fontSize: "var(--font-size-xs)" }}
-            />
-            <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)", marginTop: "4px", display: "block" }}>
-              {t("coverImageHint", { defaultValue: "Wird als Hauptdarstellung in Listen und Showroom verwendet." })}
-            </span>
+    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
+      {/* ── 1. Cover Image Spotlight ────────────────────────────────────────── */}
+      {thumbnail && (
+        <div
+          style={{
+            display: "flex",
+            gap: "14px",
+            alignItems: "center",
+            padding: "12px 16px",
+            backgroundColor: "rgba(212, 175, 55, 0.05)",
+            border: "1px solid rgba(212, 175, 55, 0.3)",
+            borderRadius: "var(--radius-md, 8px)",
+          }}
+        >
+          <div
+            style={{
+              width: "110px",
+              height: "70px",
+              borderRadius: "6px",
+              overflow: "hidden",
+              border: "2px solid #D4AF37",
+              flexShrink: 0,
+              backgroundColor: "#000",
+            }}
+          >
+            <img src={thumbnail} alt="Cover Vorschau" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
-        </div>
-      </div>
-
-      {/* ── 2. Gallery Images (up to 20) ─────────────────────────────────── */}
-      <div
-        style={{
-          padding: "var(--space-md)",
-          backgroundColor: "rgba(255, 255, 255, 0.02)",
-          borderRadius: "var(--radius-lg)",
-          border: "1px solid var(--color-admin-border)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-sm)" }}>
           <div>
-            <label style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-text)" }}>
-              {t("galleryImages", { defaultValue: "Galeriebilder" })}
-            </label>
-            <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)", marginLeft: "8px" }}>
-              ({gallery.length} / 20)
-            </span>
-          </div>
-
-          {gallery.length >= 20 && (
-            <Badge variant="warning" size="sm">
-              {t("maxReached", { defaultValue: "Limit erreicht (20/20)" })}
+            <Badge variant="primary" size="sm" style={{ backgroundColor: "#D4AF37", color: "#000000", fontWeight: 800 }}>
+              ⭐ Aktuelles Coverbild
             </Badge>
-          )}
+            <p style={{ margin: "4px 0 0", fontSize: "11px", color: "var(--color-admin-muted)" }}>
+              Dieses Bild wird als Hauptdarstellung in Listen und auf Fahrzeugkarten verwendet.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2. Device Image Upload Area ─────────────────────────────────────── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+        <div>
+          <label style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-text)" }}>
+            Fahrzeugbilder ({gallery.length} von max. 20)
+          </label>
+          <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)", marginLeft: "8px" }}>
+            Mindestens 1 Bild erforderlich
+          </span>
         </div>
 
-        {/* Add Gallery URL Input */}
-        <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-md)" }}>
-          <div style={{ flex: 1 }}>
-            <Input
-              value={newGalleryUrl}
-              onChange={(e) => {
-                setNewGalleryUrl(e.target.value);
-                setMediaError(null);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddGalleryImage();
-                }
-              }}
-              placeholder="https://.../gallery-photo.webp"
-              style={{ height: "36px", fontSize: "var(--font-size-xs)" }}
-              disabled={gallery.length >= 20}
-            />
-          </div>
+        {gallery.length < 20 && (
           <Button
             type="button"
-            variant="outline"
+            variant="primary"
             size="sm"
-            onClick={handleAddGalleryImage}
-            disabled={!newGalleryUrl.trim() || gallery.length >= 20}
-            style={{ height: "36px" }}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
           >
-            <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-            {t("addImage", { defaultValue: "Hinzufügen" })}
+            <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
+            Bilder vom Gerät hochladen
           </Button>
-        </div>
-
-        {mediaError && (
-          <div style={{ color: "#ef4444", fontSize: "var(--font-size-xs)", marginBottom: "var(--space-sm)" }}>
-            {mediaError}
-          </div>
         )}
+      </div>
 
-        {/* Gallery Thumbnails Grid */}
-        {gallery.length === 0 ? (
-          <div
-            style={{
-              padding: "var(--space-lg)",
-              textAlign: "center",
-              border: "1px dashed var(--color-admin-border)",
-              borderRadius: "var(--radius-md)",
-              color: "var(--color-admin-muted)",
-              fontSize: "var(--font-size-xs)",
-            }}
-          >
-            {t("noGalleryImages", { defaultValue: "Noch keine Bilder in der Galerie. Fügen Sie Bild-URLs oben hinzu." })}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/jpeg,image/png,image/webp,image/avif"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          processFiles(e.target.files);
+          e.target.value = "";
+        }}
+      />
+
+      {/* Drag & Drop Area */}
+      {gallery.length < 20 && (
+        <div
+          onDragOver={(e) => {
+            e.preventDefault();
+            setIsDragOver(true);
+          }}
+          onDragLeave={() => setIsDragOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setIsDragOver(false);
+            if (e.dataTransfer.files?.length) {
+              processFiles(e.dataTransfer.files);
+            }
+          }}
+          onClick={() => fileInputRef.current?.click()}
+          style={{
+            border: isDragOver ? "2px dashed #D4AF37" : "2px dashed rgba(255, 255, 255, 0.2)",
+            borderRadius: "var(--radius-lg, 12px)",
+            padding: "24px 16px",
+            textAlign: "center",
+            backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "rgba(255, 255, 255, 0.02)",
+            cursor: "pointer",
+            transition: "all 0.2s ease",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "8px",
+          }}
+        >
+          <Icon name="upload" size={24} style={{ color: "#D4AF37" }} />
+          <div>
+            <span style={{ fontSize: "13px", fontWeight: 700, color: "#ffffff" }}>
+              Bilder hierher ziehen oder durchsuchen
+            </span>
+            <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
+              JPG, PNG, WEBP oder AVIF direkt von Ihrem Gerät hochladen (max. 20 Bilder)
+            </span>
           </div>
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
-              gap: "var(--space-sm)",
-            }}
-          >
-            {gallery.map((url, idx) => {
-              const isCover = thumbnail === url;
+        </div>
+      )}
 
-              return (
-                <div
-                  key={`${url}-${idx}`}
-                  style={{
-                    position: "relative",
-                    borderRadius: "var(--radius-md)",
-                    overflow: "hidden",
-                    border: `1px solid ${isCover ? "var(--color-admin-accent)" : "var(--color-admin-border)"}`,
-                    backgroundColor: "rgba(0, 0, 0, 0.4)",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  <div style={{ position: "relative", width: "100%", height: "90px" }}>
-                    <img
-                      src={url}
-                      alt={`Gallery ${idx + 1}`}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                      onError={(e) => {
-                        e.currentTarget.src = "data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22140%22%20height%3D%2290%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20fill%3D%22%23222%22%20width%3D%22140%22%20height%3D%2290%22%2F%3E%3Ctext%20fill%3D%22%23666%22%20font-size%3D%2211%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%3EBildfehler%3C%2Ftext%3E%3C%2Fsvg%3E";
-                      }}
-                    />
+      {/* Progress & Error indicators */}
+      {isUploading && (
+        <div
+          style={{
+            padding: "8px 12px",
+            backgroundColor: "rgba(212, 175, 55, 0.1)",
+            border: "1px solid rgba(212, 175, 55, 0.3)",
+            borderRadius: "6px",
+            color: "#D4AF37",
+            fontSize: "12px",
+          }}
+        >
+          Bilder werden hochgeladen... Bitte warten.
+        </div>
+      )}
 
-                    {isCover && (
-                      <span
-                        style={{
-                          position: "absolute",
-                          bottom: "4px",
-                          left: "4px",
-                          backgroundColor: "var(--color-admin-accent)",
-                          color: "#000",
-                          fontSize: "9px",
-                          fontWeight: 700,
-                          padding: "1px 4px",
-                          borderRadius: "2px",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        Cover
-                      </span>
-                    )}
+      {mediaError && (
+        <div
+          style={{
+            padding: "8px 12px",
+            backgroundColor: "rgba(239, 68, 68, 0.12)",
+            border: "1px solid rgba(239, 68, 68, 0.3)",
+            borderRadius: "6px",
+            color: "#f87171",
+            fontSize: "12px",
+          }}
+        >
+          {mediaError}
+        </div>
+      )}
 
-                    <span
+      {/* ── 3. Gallery Grid ─────────────────────────────────────────────────── */}
+      {gallery.length > 0 ? (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
+            gap: "var(--space-sm)",
+            maxHeight: "360px",
+            overflowY: "auto",
+            padding: "4px",
+          }}
+        >
+          {gallery.map((url, idx) => {
+            const isCover = url === thumbnail;
+
+            return (
+              <div
+                key={idx}
+                style={{
+                  position: "relative",
+                  borderRadius: "8px",
+                  overflow: "hidden",
+                  border: isCover ? "2px solid #D4AF37" : "1px solid rgba(255, 255, 255, 0.12)",
+                  backgroundColor: "#0d0e11",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <div style={{ height: "95px", position: "relative" }}>
+                  <img src={url} alt={`Bild ${idx + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  {isCover && (
+                    <div
                       style={{
                         position: "absolute",
                         top: "4px",
                         left: "4px",
-                        backgroundColor: "rgba(0, 0, 0, 0.7)",
-                        color: "#fff",
-                        fontSize: "10px",
-                        padding: "1px 5px",
-                        borderRadius: "2px",
+                        backgroundColor: "#D4AF37",
+                        color: "#000000",
+                        fontSize: "9px",
+                        fontWeight: 800,
+                        padding: "2px 6px",
+                        borderRadius: "4px",
+                        textTransform: "uppercase",
                       }}
                     >
-                      {idx + 1}
-                    </span>
-                  </div>
+                      ⭐ Cover
+                    </div>
+                  )}
+                </div>
 
-                  {/* Thumbnail Controls: Reorder, Set Cover, Remove */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "4px 6px",
-                      backgroundColor: "rgba(255, 255, 255, 0.03)",
-                      borderTop: "1px solid var(--color-admin-border)",
-                    }}
-                  >
+                <div
+                  style={{
+                    padding: "6px 8px",
+                    backgroundColor: "rgba(18, 20, 24, 0.95)",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                  }}
+                >
+                  {!isCover ? (
+                    <button
+                      type="button"
+                      onClick={() => handleSetAsThumbnail(url)}
+                      style={{
+                        width: "100%",
+                        padding: "4px 6px",
+                        backgroundColor: "rgba(212, 175, 55, 0.15)",
+                        color: "#D4AF37",
+                        border: "1px solid rgba(212, 175, 55, 0.35)",
+                        borderRadius: "4px",
+                        fontSize: "10px",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      Als Cover setzen
+                    </button>
+                  ) : (
+                    <div style={{ textAlign: "center", fontSize: "10px", fontWeight: 700, color: "#D4AF37", padding: "4px 0" }}>
+                      Hauptbild
+                    </div>
+                  )}
+
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: "2px" }}>
                     <div style={{ display: "flex", gap: "2px" }}>
                       <button
                         type="button"
                         disabled={idx === 0}
                         onClick={() => handleMoveGalleryImage(idx, -1)}
-                        title={t("moveLeft", { defaultValue: "Nach links verschieben" })}
                         style={{
                           background: "none",
                           border: "none",
-                          color: idx === 0 ? "rgba(255, 255, 255, 0.2)" : "var(--color-admin-muted)",
+                          color: "#ffffff",
                           cursor: idx === 0 ? "default" : "pointer",
-                          padding: "2px",
+                          opacity: idx === 0 ? 0.2 : 0.8,
+                          padding: "2px 4px",
+                          fontSize: "12px",
                         }}
+                        title="Nach links verschieben"
                       >
-                        <Icon name="chevron-left" size={12} />
+                        &larr;
                       </button>
-
                       <button
                         type="button"
                         disabled={idx === gallery.length - 1}
                         onClick={() => handleMoveGalleryImage(idx, 1)}
-                        title={t("moveRight", { defaultValue: "Nach rechts verschieben" })}
                         style={{
                           background: "none",
                           border: "none",
-                          color: idx === gallery.length - 1 ? "rgba(255, 255, 255, 0.2)" : "var(--color-admin-muted)",
+                          color: "#ffffff",
                           cursor: idx === gallery.length - 1 ? "default" : "pointer",
-                          padding: "2px",
+                          opacity: idx === gallery.length - 1 ? 0.2 : 0.8,
+                          padding: "2px 4px",
+                          fontSize: "12px",
                         }}
+                        title="Nach rechts verschieben"
                       >
-                        <Icon name="chevron-right" size={12} />
+                        &rarr;
                       </button>
                     </div>
 
-                    {!isCover && (
-                      <button
-                        type="button"
-                        onClick={() => handleSetAsThumbnail(url)}
-                        title={t("setAsCover", { defaultValue: "Als Coverbild festlegen" })}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          color: "var(--color-admin-accent)",
-                          fontSize: "10px",
-                          fontWeight: 600,
-                          cursor: "pointer",
-                          padding: "2px 4px",
-                        }}
-                      >
-                        Cover
-                      </button>
-                    )}
+                    <span style={{ fontSize: "10px", color: "var(--color-admin-muted)" }}>#{idx + 1}</span>
 
                     <button
                       type="button"
                       onClick={() => handleRemoveGalleryImage(idx)}
-                      title={t("removeImage", { defaultValue: "Bild entfernen" })}
                       style={{
                         background: "none",
                         border: "none",
                         color: "#ef4444",
                         cursor: "pointer",
                         padding: "2px",
+                        display: "flex",
+                        alignItems: "center",
                       }}
+                      title="Bild entfernen"
                     >
-                      <Icon name="trash" size={12} />
+                      <Icon name="trash" size={13} />
                     </button>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* ── 3. Video, 360 Spin & 3D Model ─────────────────────────────────── */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "var(--space-md)",
-        }}
-      >
-        {/* Video URL */}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
         <div
           style={{
-            padding: "var(--space-md)",
-            backgroundColor: "rgba(255, 255, 255, 0.02)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--color-admin-border)",
+            padding: "var(--space-xl)",
+            textAlign: "center",
+            border: "1px dashed var(--color-admin-border, rgba(255, 255, 255, 0.12))",
+            borderRadius: "var(--radius-md)",
+            color: "var(--color-admin-muted)",
+            fontSize: "var(--font-size-xs)",
           }}
         >
-          <label style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-text)", display: "block", marginBottom: "4px" }}>
-            {t("videoUrl", { defaultValue: "Video URL (optional)" })}
-          </label>
-          <Input
-            value={video}
-            onChange={(e) => updateMedia("video", e.target.value)}
-            placeholder="https://.../walkaround.mp4 oder YouTube"
-            style={{ height: "36px", fontSize: "var(--font-size-xs)" }}
-          />
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)", marginTop: "4px", display: "block" }}>
-            {t("videoHint", { defaultValue: "MP4 Video oder Stream-Link für Fahrzeugpräsentation." })}
-          </span>
+          Noch keine Bilder hochgeladen. Klicken Sie oben auf "Bilder vom Gerät hochladen".
         </div>
-
-        {/* 3D Model URL */}
-        <div
-          style={{
-            padding: "var(--space-md)",
-            backgroundColor: "rgba(255, 255, 255, 0.02)",
-            borderRadius: "var(--radius-lg)",
-            border: "1px solid var(--color-admin-border)",
-          }}
-        >
-          <label style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-text)", display: "block", marginBottom: "4px" }}>
-            {t("model3dUrl", { defaultValue: "3D-Modell URL (optional)" })}
-          </label>
-          <Input
-            value={model3d}
-            onChange={(e) => updateMedia("model_3d", e.target.value)}
-            placeholder="https://.../model.glb"
-            style={{ height: "36px", fontSize: "var(--font-size-xs)" }}
-          />
-          <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)", marginTop: "4px", display: "block" }}>
-            {t("model3dHint", { defaultValue: "GLB / glTF 3D-Fahrzeugmodell für interaktiven Showroom." })}
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
