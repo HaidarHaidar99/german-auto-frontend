@@ -21,6 +21,9 @@ export function CarCardBase({
   oldPrice,
   currency = "€",
   image,
+  thumbnail,
+  coverImage,
+  media,
   status = "AVAILABLE",
   mileage,
   fuel,
@@ -36,6 +39,14 @@ export function CarCardBase({
 }) {
   const { t } = useTranslation(["cars"]);
   const cardRef = useRef(null);
+
+  const displayImage =
+    thumbnail ||
+    coverImage ||
+    media?.thumbnail ||
+    image ||
+    media?.gallery?.[0] ||
+    null;
 
   // Status mapping
   const statusBadge = {
@@ -189,7 +200,7 @@ export function CarCardBase({
         }
       >
         <CinematicImage
-          src={image}
+          src={displayImage}
           alt={`${brand} ${model}`}
           zoomOnHover
         />

@@ -274,6 +274,8 @@ export function CarsPage() {
                   const isFav = isCarFavorite(car.id);
                   const primaryImage =
                     car.media?.thumbnail ||
+                    car.thumbnail ||
+                    car.cover_image ||
                     car.media?.gallery?.[0] ||
                     car.images?.[0] ||
                     car.image_url;
@@ -283,6 +285,7 @@ export function CarsPage() {
                       <CarCardBase
                         brand={car.brand}
                         model={car.model || car.title}
+                        thumbnail={car.media?.thumbnail || car.thumbnail || car.cover_image}
                         price={car.price}
                         oldPrice={car.old_price}
                         status={car.status}

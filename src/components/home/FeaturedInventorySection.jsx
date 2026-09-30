@@ -259,7 +259,14 @@ export function FeaturedInventorySection() {
             >
               {cars.map((car) => {
                 const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
-                const mainImage = car.images?.[0] || car.media?.[0]?.url || car.image_url;
+                const mainImage =
+                  car.media?.thumbnail ||
+                  car.thumbnail ||
+                  car.cover_image ||
+                  car.images?.[0] ||
+                  car.media?.gallery?.[0] ||
+                  car.media?.[0]?.url ||
+                  car.image_url;
                 const identifier = car.slug || car.id;
                 const isFav = isCarFavorite(car.id);
 
@@ -286,6 +293,7 @@ export function FeaturedInventorySection() {
                       registration={car.registration_year || car.first_registration}
                       condition={car.condition}
                       image={mainImage}
+                      thumbnail={mainImage}
                       isFavorite={isFav}
                       onFavoriteToggle={() => handleFavoriteClick(car.id)}
                       onSelect={() => navigate(`/cars/${identifier}`)}
