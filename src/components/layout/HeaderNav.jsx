@@ -128,7 +128,7 @@ export function HeaderNav({
             width: "100%",
           }}
         >
-          {/* Logo / Brand Name */}
+          {/* Logo / Brand Name (hidden when mobile menu is open per user request) */}
           <Link
             to="/"
             onClick={() => menuOpen && closeMenu()}
@@ -136,10 +136,13 @@ export function HeaderNav({
               display: "flex",
               alignItems: "center",
               gap: "var(--space-sm)",
-              color: "#ffffff", // Force white per user request
+              color: "#ffffff",
               textDecoration: "none",
               zIndex: 10000,
-              transition: "color 0.3s ease"
+              transition: "opacity 0.3s ease, visibility 0.3s ease",
+              opacity: menuOpen ? 0 : 1,
+              pointerEvents: menuOpen ? "none" : "auto",
+              visibility: menuOpen ? "hidden" : "visible",
             }}
           >
             {logoUrl ? (
@@ -230,7 +233,7 @@ export function HeaderNav({
             </div>
 
             {/* Cinematic Hamburger Toggle (Mobile & Desktop optional) */}
-            <div className="hide-desktop">
+            <div className="hide-desktop" style={{ display: menuOpen ? "none" : "block" }}>
                <LanguageSwitcher />
             </div>
             <button
@@ -249,6 +252,7 @@ export function HeaderNav({
                 width: "40px",
                 height: "40px",
                 color: menuOpen ? "#fff" : "var(--color-text)",
+                zIndex: 10001,
               }}
               className="hide-desktop"
             >
@@ -294,19 +298,25 @@ export function HeaderNav({
           zIndex: 9998,
           display: menuOpen ? "flex" : "none", // Avoid rendering when closed to prevent interaction
           flexDirection: "column",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignItems: "center",
-          padding: "var(--space-2xl)",
+          paddingTop: "calc(var(--header-height, 70px) + 3rem)",
+          paddingBottom: "3rem",
+          paddingLeft: "var(--space-xl)",
+          paddingRight: "var(--space-xl)",
+          overflowY: "auto",
+          WebkitOverflowScrolling: "touch",
           transform: "translateY(-100%)", // Initial state for GSAP
         }}
       >
         <nav style={{ 
           display: "flex", 
           flexDirection: "column", 
-          gap: "var(--space-xl)", 
+          gap: "1.25rem", 
           textAlign: "center",
           width: "100%",
-          maxWidth: "600px"
+          maxWidth: "480px",
+          margin: "0 auto",
         }}>
           {[
             { to: "/", label: t("home", { defaultValue: "Home" }) },
@@ -321,37 +331,50 @@ export function HeaderNav({
               onClick={closeMenu}
               ref={el => menuItemsRef.current[i] = el}
               style={{ 
-                fontSize: "var(--font-size-4xl)", 
+                fontSize: "clamp(1.5rem, 5vw, 2.15rem)", 
                 fontWeight: 700, 
                 color: "#ffffff", 
                 textDecoration: "none",
-                letterSpacing: "var(--tracking-tight)",
+                letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 opacity: 0, // Initial state for GSAP
                 display: "block",
-                padding: "10px 0"
+                padding: "12px 20px",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid transparent",
+                backgroundColor: "transparent",
+                transition: "all 0.25s ease",
               }}
-              onMouseEnter={(e) => gsap.to(e.target, { color: "#8e95a5", duration: 0.3 })}
-              onMouseLeave={(e) => gsap.to(e.target, { color: "#ffffff", duration: 0.3 })}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "#ffffff";
+                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "#ffffff";
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "transparent";
+              }}
             >
               {item.label}
             </Link>
           ))}
           
           <div 
-            ref={el => menuItemsRef.current[4] = el} 
+            ref={el => menuItemsRef.current[5] = el} 
             style={{ 
-              marginTop: "var(--space-2xl)", 
+              marginTop: "2rem", 
               opacity: 0, 
               display: "flex", 
               flexDirection: "column", 
               gap: "var(--space-md)",
-              alignItems: "center"
+              alignItems: "center",
+              width: "100%",
             }}
           >
             {isAuthenticated ? (
               <>
-                <Button as={Link} to="/account" variant="outline" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "300px", borderRadius: 0, color: "#fff", borderColor: "#3b4255" }}>
+                <Button as={Link} to="/account" variant="outline" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "320px", borderRadius: 0, color: "#fff", borderColor: "rgba(255, 255, 255, 0.3)" }}>
                   {t("profile", { ns: "account", defaultValue: "Profile" })}
                 </Button>
                 <Button variant="ghost" size="lg" onClick={() => { closeMenu(); logout(); }} style={{ color: "#a1a1aa" }}>
@@ -359,7 +382,7 @@ export function HeaderNav({
                 </Button>
               </>
             ) : (
-              <Button as={Link} to="/login" variant="primary" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "300px", borderRadius: 0, backgroundColor: "#fff", color: "#000" }}>
+              <Button as={Link} to="/login" variant="primary" size="lg" onClick={closeMenu} style={{ width: "100%", maxWidth: "320px", borderRadius: 0, backgroundColor: "#fff", color: "#000" }}>
                 {t("login")}
               </Button>
             )}

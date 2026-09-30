@@ -61,11 +61,7 @@ export function AppRoutes() {
           />
           <Route
             path="/account/favorites"
-            element={
-              <ProtectedRoute>
-                <FavoritesPage />
-              </ProtectedRoute>
-            }
+            element={<FavoritesPage />}
           />
           <Route
             path="/account/security"
@@ -87,11 +83,7 @@ export function AppRoutes() {
           />
           <Route
             path="/admin/login"
-            element={
-              <PublicOnlyRoute>
-                <LoginPage />
-              </PublicOnlyRoute>
-            }
+            element={<LoginPage />}
           />
           <Route path="/admin" element={<Navigate to="/admincoresecure" replace />} />
           <Route

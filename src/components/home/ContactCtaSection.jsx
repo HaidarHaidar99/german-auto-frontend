@@ -163,7 +163,7 @@ export function ContactCtaSection({ contactConfig, hoursConfig }) {
                       color: "var(--color-secondary)",
                     }}
                   >
-                    <Icon name="phone" size={18} />
+                    <Icon name="whatsapp" size={18} />
                   </div>
                   <div>
                     <span style={{ fontSize: "var(--font-size-2xs)", textTransform: "uppercase", color: "var(--color-text-subtle)", letterSpacing: "var(--tracking-wide)" }}>

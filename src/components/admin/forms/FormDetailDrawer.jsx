@@ -274,7 +274,7 @@ export function FormDetailDrawer({
                 onClick={() => window.open(waUrl, "_blank", "noopener,noreferrer")}
                 style={{ fontSize: "11px", height: "30px", borderColor: "rgba(34, 197, 94, 0.4)", color: "#22c55e" }}
               >
-                <Icon name="message-circle" size={13} style={{ marginRight: "4px" }} />
+                <Icon name="whatsapp" size={13} style={{ marginRight: "4px" }} />
                 {t("chatWhatsApp", { defaultValue: "WhatsApp" })}
               </Button>
             )}

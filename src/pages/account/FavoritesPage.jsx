@@ -15,7 +15,7 @@ import { gsap, isReducedMotion } from "../../utils/animation";
 
 export function FavoritesPage() {
   const { t } = useTranslation(["account", "cars", "common"]);
-  const { user, isCarFavorite, toggleFavorite } = useAuth();
+  const { user, isAuthenticated, isCarFavorite, toggleFavorite } = useAuth();
   const navigate = useNavigate();
   const pageContainerRef = useRef(null);
 
@@ -31,15 +31,27 @@ export function FavoritesPage() {
     try {
       setLoading(true);
       setError(null);
-      const res = await carsService.getFavorites();
-      setCars(res?.data?.cars || []);
+      if (!isAuthenticated) {
+        const guestIds = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("german_auto_guest_favorites") || "[]") : [];
+        if (guestIds.length === 0) {
+          setCars([]);
+          setLoading(false);
+          return;
+        }
+        const res = await carsService.getCars({ limit: 100 });
+        const allCars = res?.data?.cars || [];
+        setCars(allCars.filter((c) => guestIds.includes(c.id)));
+      } else {
+        const res = await carsService.getFavorites();
+        setCars(res?.data?.cars || []);
+      }
     } catch (err) {
       setError(err?.message || "Fehler beim Laden der Favoriten.");
       setCars([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     loadFavorites();

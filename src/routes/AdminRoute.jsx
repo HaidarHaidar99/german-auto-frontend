@@ -14,18 +14,8 @@ export function AdminRoute({ children, requireSuperAdmin = false }) {
     return <LoadingState minHeight="50vh" />;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" state={{ from: location }} replace />;
-  }
-
-  if (!isAdmin) {
-    return (
-      <UnauthorizedState
-        message={t("adminOnlyNotice", {
-          defaultValue: "Zugriff verweigert. Dieser Bereich ist nur für Administratoren zugänglich.",
-        })}
-      />
-    );
+  if (!isAuthenticated || !isAdmin) {
+    return <Navigate to="/admin/login" state={{ from: location, reason: !isAdmin ? "admin_required" : undefined }} replace />;
   }
 
   if (requireSuperAdmin && !isSuperAdmin) {

@@ -265,7 +265,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                       flexShrink: 0,
                     }}
                   >
-                    <Icon name="phone" size={18} />
+                    <Icon name="whatsapp" size={18} />
                   </div>
                   <div>
                     <div style={{ fontSize: "var(--font-size-2xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wide)", color: "var(--color-text-subtle)", fontWeight: 600 }}>

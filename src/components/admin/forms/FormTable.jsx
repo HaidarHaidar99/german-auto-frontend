@@ -721,7 +721,7 @@ export function FormTable({
                         textDecoration: "none",
                       }}
                     >
-                      <Icon name="message-circle" size={14} />
+                      <Icon name="whatsapp" size={14} />
                     </a>
                   )}
                 </div>

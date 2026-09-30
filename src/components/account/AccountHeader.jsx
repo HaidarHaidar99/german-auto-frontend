@@ -1,10 +1,19 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../contexts/AuthContext";
 import Badge from "../ui/Badge";
 import Icon from "../common/Icon";
 
 export function AccountHeader({ user, className = "", style = {} }) {
   const { t, i18n } = useTranslation(["account", "common"]);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   if (!user) return null;
 
@@ -169,6 +178,36 @@ export function AccountHeader({ user, className = "", style = {} }) {
               {t("memberSince")} {formattedDate}
             </div>
           )}
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "6px 14px",
+              borderRadius: "var(--radius-full)",
+              backgroundColor: "rgba(239, 68, 68, 0.1)",
+              border: "1px solid rgba(239, 68, 68, 0.3)",
+              color: "#f87171",
+              fontSize: "var(--font-size-xs)",
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.2)";
+              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.5)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+              e.currentTarget.style.borderColor = "rgba(239, 68, 68, 0.3)";
+            }}
+          >
+            <Icon name="log-out" size={13} />
+            <span>{t("navLogout", { defaultValue: "Abmelden" })}</span>
+          </button>
         </div>
       </div>
     </header>

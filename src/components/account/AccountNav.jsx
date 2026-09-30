@@ -6,17 +6,11 @@ import Icon from "../common/Icon";
 
 export function AccountNav({ className = "", style = {} }) {
   const { t } = useTranslation(["account", "common"]);
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/login");
-  };
 
   const navItems = [
     { to: "/account", end: true, label: t("profile", { ns: "account", defaultValue: "Profile" }), icon: "user" },
-    { to: "/account/favorites", end: false, label: t("navFavorites", { ns: "account" }), icon: "heart" },
+    { to: "/account/favorites", end: false, label: t("navFavorites", { ns: "account", defaultValue: "Favorites" }), icon: "heart" },
+    { to: "/account/security", end: false, label: t("changePasswordLink", { ns: "account", defaultValue: "Passwort ändern" }), icon: "lock" },
   ];
 
   return (
@@ -61,10 +55,10 @@ export function AccountNav({ className = "", style = {} }) {
               fontSize: "var(--font-size-sm)",
               fontWeight: isActive ? 600 : 500,
               textDecoration: "none",
-              color: isActive ? "var(--color-text)" : "var(--color-text-secondary)",
-              backgroundColor: isActive ? "var(--color-surface-hover)" : "var(--color-card)",
-              border: isActive ? "1px solid var(--color-secondary)" : "1px solid var(--color-border)",
-              boxShadow: isActive ? "0 0 12px rgba(255, 255, 255, 0.15)" : "none",
+              color: isActive ? "#ffffff" : "var(--color-text-secondary)",
+              backgroundColor: isActive ? "rgba(255, 255, 255, 0.12)" : "var(--color-card)",
+              border: isActive ? "1px solid rgba(255, 255, 255, 0.4)" : "1px solid var(--color-border)",
+              boxShadow: "none", // Explicitly no outside shadow per user request
               transition: "all var(--transition-fast)",
               whiteSpace: "nowrap",
             })}
@@ -73,39 +67,6 @@ export function AccountNav({ className = "", style = {} }) {
             <span>{item.label}</span>
           </NavLink>
         ))}
-
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="account-nav-logout"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "var(--space-xs)",
-            padding: "10px 18px",
-            borderRadius: "var(--radius-full)",
-            fontSize: "var(--font-size-sm)",
-            fontWeight: 500,
-            color: "var(--color-text-muted)",
-            backgroundColor: "transparent",
-            border: "1px solid var(--color-border-subtle)",
-            cursor: "pointer",
-            transition: "all var(--transition-fast)",
-            marginLeft: "auto",
-            whiteSpace: "nowrap",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = "var(--color-error)";
-            e.currentTarget.style.borderColor = "rgba(220, 38, 38, 0.3)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = "var(--color-text-muted)";
-            e.currentTarget.style.borderColor = "var(--color-border-subtle)";
-          }}
-        >
-          <Icon name="log-out" size={16} />
-          <span>{t("navLogout")}</span>
-        </button>
       </div>
     </nav>
   );

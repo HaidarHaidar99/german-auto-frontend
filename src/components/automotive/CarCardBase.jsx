@@ -7,11 +7,11 @@ import VehicleSpecs from "./VehicleSpecs";
 import { Eyebrow, Price } from "../ui/Typography";
 import Badge from "../ui/Badge";
 import Button from "../ui/Button";
+import Icon from "../common/Icon";
 
 /**
  * German Auto — CarCardBase Component
- * Reusable automotive visual language for inventory cards.
- * Uses neutral dev placeholders by default.
+ * Ultra-premium automotive visual language for inventory cards.
  */
 
 export function CarCardBase({
@@ -39,44 +39,118 @@ export function CarCardBase({
 
   // Status mapping
   const statusBadge = {
-    AVAILABLE: <Badge variant="success">{t("statusAvailable", "Verfügbar")}</Badge>,
-    RESERVED: <Badge variant="warning">{t("statusReserved", "Reserviert")}</Badge>,
-    SOLD: <Badge variant="neutral">{t("statusSold", "Verkauft")}</Badge>,
-    HIDDEN: <Badge variant="neutral">{t("statusHidden", "Nicht öffentlich")}</Badge>,
+    AVAILABLE: (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "5px",
+          padding: "4px 10px",
+          borderRadius: "var(--radius-full, 9999px)",
+          backgroundColor: "rgba(16, 185, 129, 0.18)",
+          color: "#34d399",
+          border: "1px solid rgba(16, 185, 129, 0.35)",
+          fontSize: "11px",
+          fontWeight: 600,
+          backdropFilter: "blur(8px)",
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+        }}
+      >
+        <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#34d399" }} />
+        {t("statusAvailable", "Verfügbar")}
+      </span>
+    ),
+    RESERVED: (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "5px",
+          padding: "4px 10px",
+          borderRadius: "var(--radius-full, 9999px)",
+          backgroundColor: "rgba(245, 158, 11, 0.18)",
+          color: "#fbbf24",
+          border: "1px solid rgba(245, 158, 11, 0.35)",
+          fontSize: "11px",
+          fontWeight: 600,
+          backdropFilter: "blur(8px)",
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+        }}
+      >
+        <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#fbbf24" }} />
+        {t("statusReserved", "Reserviert")}
+      </span>
+    ),
+    SOLD: (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "5px",
+          padding: "4px 10px",
+          borderRadius: "var(--radius-full, 9999px)",
+          backgroundColor: "rgba(255, 255, 255, 0.12)",
+          color: "#94a3b8",
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+          fontSize: "11px",
+          fontWeight: 600,
+          backdropFilter: "blur(8px)",
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+        }}
+      >
+        {t("statusSold", "Verkauft")}
+      </span>
+    ),
+    HIDDEN: (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          padding: "4px 10px",
+          borderRadius: "var(--radius-full, 9999px)",
+          backgroundColor: "rgba(255, 255, 255, 0.08)",
+          color: "#64748b",
+          border: "1px solid rgba(255, 255, 255, 0.15)",
+          fontSize: "11px",
+          fontWeight: 600,
+          backdropFilter: "blur(8px)",
+        }}
+      >
+        {t("statusHidden", "Nicht öffentlich")}
+      </span>
+    ),
   }[status] || (status ? <Badge variant="neutral">{status}</Badge> : null);
-
-  // Directional 3D tilt on desktop hover
-  const handleMouseMove = (e) => {
-    if (!cardRef.current || window.innerWidth < 1024) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -2.5;
-    const rotateY = ((x - centerX) / centerX) * 2.5;
-
-    cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
-  };
-
-  const handleMouseLeave = () => {
-    if (!cardRef.current) return;
-    cardRef.current.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0)";
-  };
 
   return (
     <article
       ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onClick={onSelect}
       className={`car-card-base surface-card surface-card-interactive ${className}`.trim()}
       style={{
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
         position: "relative",
-        transition: "transform var(--duration-normal) var(--ease-smooth), box-shadow var(--duration-normal) var(--ease-smooth), border-color var(--duration-normal) var(--ease-smooth)",
+        borderRadius: "var(--radius-xl, 16px)",
+        background: "linear-gradient(180deg, #131518 0%, #0c0d0f 100%)",
+        border: "1px solid rgba(255, 255, 255, 0.09)",
+        boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 28px -8px rgba(0, 0, 0, 0.6)",
+        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        cursor: onSelect ? "pointer" : "default",
         ...style,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.28)";
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 36px -10px rgba(0, 0, 0, 0.8)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.09)";
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 12px 28px -8px rgba(0, 0, 0, 0.6)";
       }}
     >
       {/* Media Stage */}
@@ -110,15 +184,30 @@ export function CarCardBase({
       >
         {/* Title & Brand Header */}
         <div>
-          <Eyebrow style={{ marginBottom: "2px" }}>{brand}</Eyebrow>
+          <div
+            style={{
+              fontSize: "11px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.14em",
+              color: "#94a3b8",
+              marginBottom: "4px",
+            }}
+          >
+            {brand}
+          </div>
           <h3
             style={{
               margin: 0,
-              fontSize: "var(--font-size-lg)",
-              fontWeight: "var(--font-weight-bold)",
-              lineHeight: "var(--leading-snug)",
-              color: "var(--color-text)",
-              letterSpacing: "var(--tracking-tight)",
+              fontSize: "1.15rem",
+              fontWeight: 700,
+              lineHeight: 1.35,
+              color: "#ffffff",
+              letterSpacing: "-0.01em",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
             }}
           >
             {model}
@@ -126,8 +215,28 @@ export function CarCardBase({
         </div>
 
         {/* Pricing */}
-        <div>
-          <Price value={price} oldPrice={oldPrice} currency={currency} size="md" />
+        <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+          <div
+            style={{
+              fontSize: "1.35rem",
+              fontWeight: 800,
+              color: "#ffffff",
+              letterSpacing: "-0.02em",
+            }}
+          >
+            {currency} {typeof price === "number" ? new Intl.NumberFormat("de-DE").format(price) : price}
+          </div>
+          {oldPrice && (
+            <div
+              style={{
+                fontSize: "0.9rem",
+                color: "#64748b",
+                textDecoration: "line-through",
+              }}
+            >
+              {currency} {typeof oldPrice === "number" ? new Intl.NumberFormat("de-DE").format(oldPrice) : oldPrice}
+            </div>
+          )}
         </div>
 
         {/* Specs Chips */}
@@ -145,8 +254,20 @@ export function CarCardBase({
             variant="outline"
             size="sm"
             iconRight="arrow-right"
-            onClick={onSelect}
-            style={{ width: "100%" }}
+            onClick={(e) => {
+              if (onSelect) {
+                e.stopPropagation();
+                onSelect();
+              }
+            }}
+            style={{
+              width: "100%",
+              borderRadius: "var(--radius-sm, 6px)",
+              borderColor: "rgba(255, 255, 255, 0.2)",
+              color: "#ffffff",
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+            }}
           >
             {ctaLabel}
           </Button>

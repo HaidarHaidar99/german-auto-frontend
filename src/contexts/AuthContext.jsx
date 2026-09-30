@@ -6,11 +6,29 @@ import { onUnauthorized } from "../services/api/client";
 
 const AuthContext = createContext(null);
 const AUTH_STORAGE_EVENT_KEY = "german_auto_auth_event";
+export const GUEST_FAVORITES_STORAGE_KEY = "german_auto_guest_favorites";
+
+export function getGuestFavoritesFromStorage() {
+  try {
+    const raw = localStorage.getItem(GUEST_FAVORITES_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveGuestFavoritesToStorage(favs) {
+  try {
+    localStorage.setItem(GUEST_FAVORITES_STORAGE_KEY, JSON.stringify(favs));
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState("loading"); // 'loading' | 'authenticated' | 'unauthenticated'
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(() => getGuestFavoritesFromStorage());
   const [error, setError] = useState(null);
 
   const navigate = useNavigate();
@@ -37,7 +55,7 @@ export function AuthProvider({ children }) {
       if (res?.data?.user) {
         setUser(res.data.user);
         setStatus("authenticated");
-        // Load user favorites
+        // Load user favorites from backend
         try {
           const favRes = await carsService.getFavorites();
           const favIds = (favRes?.data?.favorite_car_ids || favRes?.data?.cars || []).map((c) =>
@@ -50,13 +68,13 @@ export function AuthProvider({ children }) {
       } else {
         setUser(null);
         setStatus("unauthenticated");
-        setFavorites([]);
+        setFavorites(getGuestFavoritesFromStorage());
       }
       setError(null);
     } catch {
       setUser(null);
       setStatus("unauthenticated");
-      setFavorites([]);
+      setFavorites(getGuestFavoritesFromStorage());
     }
   }, []);
 
@@ -85,6 +103,24 @@ export function AuthProvider({ children }) {
       setUser(res.data.user);
       setStatus("authenticated");
       broadcastAuthEvent("login");
+
+      // Sync any guest favorites saved in localStorage to backend
+      const guestFavs = getGuestFavoritesFromStorage();
+      if (guestFavs && guestFavs.length > 0) {
+        for (const carId of guestFavs) {
+          try {
+            await carsService.addFavorite(carId);
+          } catch {
+            // Ignore duplicate errors
+          }
+        }
+        try {
+          localStorage.removeItem(GUEST_FAVORITES_STORAGE_KEY);
+        } catch {
+          // Ignore
+        }
+      }
+
       refreshUser(false);
     }
     return res;
@@ -248,11 +284,21 @@ export function AuthProvider({ children }) {
   };
 
   const toggleFavorite = async (carId) => {
+    const isFav = isCarFavorite(carId);
+
+    // Guest mode: allow favoriting without login, storing in localStorage
     if (status !== "authenticated") {
-      return { authenticated: false };
+      let nextFavs;
+      if (isFav) {
+        nextFavs = favorites.filter((id) => id !== carId);
+      } else {
+        nextFavs = [...favorites, carId];
+      }
+      setFavorites(nextFavs);
+      saveGuestFavoritesToStorage(nextFavs);
+      return { success: true, isFavorite: !isFav, guest: true };
     }
 
-    const isFav = isCarFavorite(carId);
     try {
       if (isFav) {
         await carsService.removeFavorite(carId);

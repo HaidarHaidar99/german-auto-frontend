@@ -47,10 +47,6 @@ export function FeaturedInventorySection() {
   }, [loadFeaturedCars]);
 
   const handleFavoriteClick = async (carId) => {
-    if (!isAuthenticated) {
-      navigate("/login");
-      return;
-    }
     await toggleFavorite(carId);
   };
 

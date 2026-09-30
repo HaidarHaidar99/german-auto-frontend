@@ -4,8 +4,6 @@ import { useAuth } from "../../contexts/AuthContext";
 import AccountHeader from "../../components/account/AccountHeader";
 import AccountNav from "../../components/account/AccountNav";
 import AccountProfileCard from "../../components/account/AccountProfileCard";
-import AccountFavoritesPreview from "../../components/account/AccountFavoritesPreview";
-import AccountSecurityCard from "../../components/account/AccountSecurityCard";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
 
@@ -35,11 +33,10 @@ export function AccountPage() {
       delay: 0.1,
     });
 
-    gsap.from([".account-profile-card", ".account-favorites-preview", ".account-security-card"], {
+    gsap.from(".account-profile-card", {
       opacity: 0,
       y: 25,
       duration: 0.6,
-      stagger: 0.12,
       ease: "power2.out",
       delay: 0.15,
     });
@@ -58,17 +55,8 @@ export function AccountPage() {
       <AccountHeader user={user} />
       <AccountNav style={{ marginBottom: "var(--space-2xl)" }} />
 
-      <div
-        className="account-content-grid"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--space-2xl)",
-        }}
-      >
+      <div className="account-content-area">
         <AccountProfileCard user={user} />
-        <AccountFavoritesPreview />
-        <AccountSecurityCard />
       </div>
     </main>
   );

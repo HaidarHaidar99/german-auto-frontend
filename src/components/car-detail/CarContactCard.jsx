@@ -264,7 +264,7 @@ export function CarContactCard({ car, className = "", style = {} }) {
                 transition: "all var(--duration-fast) var(--ease-smooth)",
               }}
             >
-              <Icon name="message-square" size={16} color="#25D366" />
+              <Icon name="whatsapp" size={18} color="#25D366" />
               <span style={{ fontWeight: "var(--font-weight-medium)" }}>WhatsApp</span>
             </a>
           )}

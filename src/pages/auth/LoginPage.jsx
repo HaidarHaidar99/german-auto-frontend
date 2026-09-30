@@ -15,7 +15,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function LoginPage() {
   const { t } = useTranslation(["auth", "common"]);
-  const { login } = useAuth();
+  const { login, isAuthenticated, isAdmin, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const pageContainerRef = useRef(null);
@@ -46,6 +46,21 @@ export function LoginPage() {
       ? `${t("adminPortalTitle")} | German Auto`
       : `${t("loginTitle")} | German Auto`;
   }, [t, isAdminTarget]);
+
+  // Redirect logic based on target and auth state
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (!isAdminTarget) {
+        navigate("/account", { replace: true });
+      } else if (isAdmin) {
+        const from = location.state?.from;
+        let fromPath = null;
+        if (typeof from === "string") fromPath = from;
+        else if (from?.pathname) fromPath = from.pathname + (from.search || "");
+        navigate(fromPath || "/admincoresecure", { replace: true });
+      }
+    }
+  }, [isAuthenticated, isAdmin, isAdminTarget, navigate, location.state]);
 
   // Handle Google OAuth redirect errors
   useEffect(() => {
@@ -250,6 +265,49 @@ export function LoginPage() {
                   defaultValue: "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
                 })}
               </span>
+            </div>
+          )}
+
+          {/* Currently logged in as non-admin notice */}
+          {isAdminTarget && isAuthenticated && !isAdmin && (
+            <div
+              style={{
+                padding: "var(--space-sm) var(--space-md)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                border: "1px solid var(--color-border)",
+                borderRadius: "var(--radius-md)",
+                fontSize: "var(--font-size-xs)",
+                marginBottom: "var(--space-md)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "var(--space-sm)",
+              }}
+            >
+              <div>
+                <span style={{ color: "var(--color-text-muted)" }}>
+                  {t("loggedInAs", { defaultValue: "Angemeldet als:" })}
+                </span>{" "}
+                <strong style={{ color: "var(--color-text)" }}>{user?.email}</strong>
+                <div style={{ fontSize: "11px", color: "var(--color-text-secondary)", marginTop: "2px" }}>
+                  {t("adminLoginPrompt", { defaultValue: "Geben Sie Ihre Administrator-Zugangsdaten ein, um fortzufahren." })}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => logout()}
+                style={{
+                  background: "transparent",
+                  border: "1px solid var(--color-border-subtle)",
+                  color: "var(--color-text-secondary)",
+                  borderRadius: "var(--radius-sm)",
+                  padding: "4px 8px",
+                  fontSize: "11px",
+                  cursor: "pointer",
+                }}
+              >
+                {t("logout", { defaultValue: "Abmelden" })}
+              </button>
             </div>
           )}
 

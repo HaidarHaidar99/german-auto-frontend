@@ -172,7 +172,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     flexShrink: 0,
                   }}
                 >
-                  <Icon name="message-square" size={16} />
+                  <Icon name="whatsapp" size={18} />
                 </div>
                 <div style={{ minWidth: 0, overflow: "hidden" }}>
                   <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
