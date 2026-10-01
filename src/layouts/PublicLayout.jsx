@@ -20,6 +20,9 @@ export function PublicLayout() {
       {/* Dynamic Header Primitive */}
       <HeaderNav />
 
+      {/* Fixed Header Spacer */}
+      <div style={{ height: "var(--header-height)", flexShrink: 0 }} aria-hidden="true" />
+
       {/* Main Page Content with Fluid Page-to-Page Entrance Animation */}
       <main
         key={location.pathname}

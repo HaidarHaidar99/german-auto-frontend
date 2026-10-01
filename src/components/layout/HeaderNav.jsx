@@ -45,39 +45,95 @@ export function HeaderNav({
 
   // Dynamic header visibility: disappears on scroll down, reappears even if 1px scroll up
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
+    let ticking = false;
 
-      if (menuOpen || currentScrollY <= 15) {
+    const onScroll = () => {
+      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || document.body?.scrollTop || 0);
+      const diff = currentScrollY - lastScrollY.current;
+
+      if (menuOpen || currentScrollY <= 20) {
         setIsVisible(true);
-      } else if (currentScrollY > lastScrollY.current) {
-        // Scrolling down -> hide header
+      } else if (diff > 2) {
+        // Scrolled down -> disappear
         setIsVisible(false);
-      } else if (currentScrollY < lastScrollY.current) {
-        // Scrolling up even 1px -> immediately show header
+      } else if (diff < -1) {
+        // Scrolled up even 1px -> immediately show header dynamically!
         setIsVisible(true);
       }
 
       setIsScrolled(currentScrollY > 20);
       lastScrollY.current = currentScrollY;
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(onScroll);
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Sync with Lenis smooth scroll engine if active
-    let unsubscribeLenis = null;
-    if (window.__lenis && typeof window.__lenis.on === "function") {
-      window.__lenis.on("scroll", handleScroll);
-      unsubscribeLenis = () => {
-        try {
-          window.__lenis?.off("scroll", handleScroll);
-        } catch {}
-      };
-    }
+    // Desktop mouse wheel listener for instant 1px reaction
+    const handleWheel = (e) => {
+      if (menuOpen) return;
+      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
+      if (e.deltaY < -1) {
+        // Scrolling up even slightly -> show immediately
+        setIsVisible(true);
+      } else if (e.deltaY > 3 && currentScrollY > 30) {
+        // Scrolling down -> hide
+        setIsVisible(false);
+      }
+    };
+    window.addEventListener("wheel", handleWheel, { passive: true });
+
+    // Mobile touch listener for instant gesture detection
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      if (e.touches?.[0]) touchStartY = e.touches[0].clientY;
+    };
+    const handleTouchMove = (e) => {
+      if (menuOpen || !e.touches?.[0]) return;
+      const currentTouchY = e.touches[0].clientY;
+      const touchDiff = currentTouchY - touchStartY;
+      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
+
+      if (currentScrollY <= 20) {
+        setIsVisible(true);
+      } else if (touchDiff > 3) {
+        // Swiping down (scrolling content up) -> show header immediately!
+        setIsVisible(true);
+      } else if (touchDiff < -6) {
+        // Swiping up (scrolling content down) -> hide header!
+        setIsVisible(false);
+      }
+      touchStartY = currentTouchY;
+    };
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+
+    // Dynamic subscription to Lenis smooth scroll engine
+    const lenisInterval = setInterval(() => {
+      if (window.__lenis && typeof window.__lenis.on === "function" && !window.__lenis.__hasHeaderAttached) {
+        window.__lenis.on("scroll", handleScroll);
+        window.__lenis.__hasHeaderAttached = true;
+      }
+    }, 150);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      if (unsubscribeLenis) unsubscribeLenis();
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      clearInterval(lenisInterval);
+      if (window.__lenis && window.__lenis.__hasHeaderAttached) {
+        try {
+          window.__lenis.off("scroll", handleScroll);
+          window.__lenis.__hasHeaderAttached = false;
+        } catch {}
+      }
     };
   }, [menuOpen, location.pathname]);
 
@@ -138,10 +194,11 @@ export function HeaderNav({
       <header
         className={`header-nav ${className}`.trim()}
         style={{
-          position: "sticky",
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
+          width: "100%",
           height: "var(--header-height)",
           zIndex: 9999, // High z-index to stay above everything
           backgroundColor: isTransparent ? "transparent" : "rgba(0, 0, 0, 0.85)",
