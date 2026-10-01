@@ -158,6 +158,51 @@ html.lenis, html.lenis body {
   }
 }
 
+/* ==========================================================================
+   Global Clean Scrollbar (Arrowless, Modern, Minimalist)
+   ========================================================================== */
+
+/* Standard CSS Scrollbar (Firefox & modern browsers) */
+html, body, * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* WebKit / Chromium Custom Scrollbar (Chrome, Edge, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
+  background-clip: padding-box;
+}
+
+/* Completely remove/hide duplicate, unwanted scrollbar stepper buttons and arrows */
+::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* Horizontal Showcase Scroll Track */
 .cars-horizontal-scroll-track {
   scrollbar-width: thin;
@@ -181,3 +226,10 @@ html.lenis, html.lenis body {
 .cars-horizontal-scroll-track::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.35);
 }
+
+.cars-horizontal-scroll-track::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+

@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../common/Icon";
-import IconButton from "../ui/IconButton";
 import VideoMedia from "../media/VideoMedia";
 import { isReducedMotion } from "../../utils/animation";
 
