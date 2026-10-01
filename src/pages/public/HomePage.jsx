@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSettings } from "../../contexts/SettingsContext";
 import TopOfferBar from "../../components/home/TopOfferBar";
 import HeroSection from "../../components/home/HeroSection";
+import WelcomeImpactSection from "../../components/home/WelcomeImpactSection";
 import FeaturedInventorySection from "../../components/home/FeaturedInventorySection";
 import AutomotiveShowcaseSection from "../../components/home/AutomotiveShowcaseSection";
 import SellYourCarSection from "../../components/home/SellYourCarSection";
@@ -98,11 +99,13 @@ export function HomePage() {
       case "hero":
         if (sectionsEnabled.hero === false) return null;
         return (
-          <HeroSection
-            key="hero"
-            heroConfig={settings?.hero}
-            siteConfig={settings?.site}
-          />
+          <React.Fragment key="hero-group">
+            <HeroSection
+              heroConfig={settings?.hero}
+              siteConfig={settings?.site}
+            />
+            <WelcomeImpactSection />
+          </React.Fragment>
         );
 
       case "featured_cars":
