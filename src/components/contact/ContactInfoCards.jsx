@@ -62,7 +62,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "var(--space-xl)",
+        gap: "clamp(1.25rem, 3vw, 2rem)",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
         ...style,
       }}
     >
@@ -74,13 +77,17 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             backgroundColor: "var(--color-card)",
             borderRadius: "var(--radius-xl)",
             border: "1px solid var(--color-border)",
-            padding: "var(--space-xl)",
+            padding: "clamp(16px, 4vw, 28px)",
             boxShadow: "var(--shadow-elevation-1)",
+            width: "100%",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+            overflow: "hidden",
           }}
         >
           <h3
             style={{
-              fontSize: "var(--font-size-base)",
+              fontSize: "clamp(1rem, 2vw, 1.15rem)",
               fontWeight: "var(--font-weight-semibold)",
               letterSpacing: "var(--tracking-tight)",
               margin: "0 0 var(--space-md) 0",
@@ -94,7 +101,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             <span>{t("contactDirectHeading")}</span>
           </h3>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", width: "100%", boxSizing: "border-box" }}>
             {phone && (
               <a
                 href={`tel:${phone}`}
@@ -111,6 +118,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                   textDecoration: "none",
                   fontSize: "var(--font-size-sm)",
                   transition: "all var(--duration-fast) var(--ease-smooth)",
+                  width: "100%",
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                  minWidth: 0,
                 }}
               >
                 <div
@@ -128,7 +139,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 >
                   <Icon name="phone" size={16} />
                 </div>
-                <div style={{ minWidth: 0, overflow: "hidden" }}>
+                <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
                   <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
                     {t("phoneLabel", { defaultValue: "Telefon" })}
                   </div>
@@ -157,6 +168,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                   textDecoration: "none",
                   fontSize: "var(--font-size-sm)",
                   transition: "all var(--duration-fast) var(--ease-smooth)",
+                  width: "100%",
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                  minWidth: 0,
                 }}
               >
                 <div
@@ -174,7 +189,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 >
                   <Icon name="whatsapp" size={18} />
                 </div>
-                <div style={{ minWidth: 0, overflow: "hidden" }}>
+                <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
                   <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
                     WhatsApp
                   </div>
@@ -201,6 +216,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                   textDecoration: "none",
                   fontSize: "var(--font-size-sm)",
                   transition: "all var(--duration-fast) var(--ease-smooth)",
+                  width: "100%",
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                  minWidth: 0,
                 }}
               >
                 <div
@@ -218,7 +237,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 >
                   <Icon name="mail" size={16} />
                 </div>
-                <div style={{ minWidth: 0, overflow: "hidden" }}>
+                <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
                   <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
                     {t("emailLabel", { defaultValue: "E-Mail" })}
                   </div>
@@ -247,6 +266,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                   textDecoration: "none",
                   fontSize: "var(--font-size-sm)",
                   transition: "all var(--duration-fast) var(--ease-smooth)",
+                  width: "100%",
+                  maxWidth: "100%",
+                  boxSizing: "border-box",
+                  minWidth: 0,
                 }}
               >
                 <div
@@ -264,7 +287,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 >
                   <Icon name="external-link" size={16} />
                 </div>
-                <div style={{ minWidth: 0, overflow: "hidden" }}>
+                <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
                   <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
                     Website / Portal
                   </div>
@@ -286,13 +309,17 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             backgroundColor: "var(--color-card)",
             borderRadius: "var(--radius-xl)",
             border: "1px solid var(--color-border)",
-            padding: "var(--space-xl)",
+            padding: "clamp(16px, 4vw, 28px)",
             boxShadow: "var(--shadow-elevation-1)",
+            width: "100%",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+            overflow: "hidden",
           }}
         >
           <h3
             style={{
-              fontSize: "var(--font-size-base)",
+              fontSize: "clamp(1rem, 2vw, 1.15rem)",
               fontWeight: "var(--font-weight-semibold)",
               letterSpacing: "var(--tracking-tight)",
               margin: "0 0 var(--space-md) 0",
@@ -306,7 +333,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             <span>{t("contactHoursHeading")}</span>
           </h3>
 
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", flexDirection: "column", width: "100%", boxSizing: "border-box" }}>
             {DAYS_ORDER.map((dayKey) => {
               const dayConfig = hours[dayKey];
               const isToday = DAY_INDEX_MAP[dayKey] === currentDayIndex;
@@ -320,14 +347,18 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    padding: "var(--space-xs) 0",
+                    flexWrap: "wrap",
+                    gap: "var(--space-2xs)",
+                    padding: "10px 0",
                     borderBottom: "1px solid var(--color-border-subtle)",
                     fontSize: "var(--font-size-sm)",
                     color: isToday ? "var(--color-text)" : "var(--color-text-secondary)",
                     fontWeight: isToday ? "var(--font-weight-semibold)" : "normal",
+                    width: "100%",
+                    boxSizing: "border-box",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", minWidth: 0, flexShrink: 0 }}>
                     <span>{t(`day_${dayKey}`)}</span>
                     {isToday && (
                       <Badge variant="secondary" size="sm">
@@ -335,9 +366,9 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                       </Badge>
                     )}
                   </div>
-                  <div>
+                  <div style={{ marginLeft: "auto", flexShrink: 0 }}>
                     {hasTimes ? (
-                      <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                      <span style={{ fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
                         {dayConfig.open} – {dayConfig.close}
                       </span>
                     ) : (
@@ -361,13 +392,17 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             backgroundColor: "var(--color-card)",
             borderRadius: "var(--radius-xl)",
             border: "1px solid var(--color-border)",
-            padding: "var(--space-xl)",
+            padding: "clamp(16px, 4vw, 28px)",
             boxShadow: "var(--shadow-elevation-1)",
+            width: "100%",
+            maxWidth: "100%",
+            boxSizing: "border-box",
+            overflow: "hidden",
           }}
         >
           <h3
             style={{
-              fontSize: "var(--font-size-base)",
+              fontSize: "clamp(1rem, 2vw, 1.15rem)",
               fontWeight: "var(--font-weight-semibold)",
               letterSpacing: "var(--tracking-tight)",
               margin: "0 0 var(--space-md) 0",

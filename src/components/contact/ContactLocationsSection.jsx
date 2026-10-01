@@ -53,8 +53,11 @@ export function ContactLocationsSection({ locations = [], className = "", style 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
           gap: "var(--space-lg)",
+          width: "100%",
+          maxWidth: "100%",
+          boxSizing: "border-box",
         }}
       >
         {validLocations.map((loc, idx) => {
@@ -70,11 +73,15 @@ export function ContactLocationsSection({ locations = [], className = "", style 
                 backgroundColor: "var(--color-card)",
                 borderRadius: "var(--radius-xl)",
                 border: "1px solid var(--color-border)",
-                padding: "var(--space-xl)",
+                padding: "clamp(16px, 4vw, 28px)",
                 display: "flex",
                 flexDirection: "column",
                 gap: "var(--space-md)",
                 boxShadow: "var(--shadow-elevation-1)",
+                width: "100%",
+                maxWidth: "100%",
+                boxSizing: "border-box",
+                overflow: "hidden",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>

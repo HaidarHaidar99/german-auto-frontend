@@ -77,9 +77,13 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           backgroundColor: "var(--color-card)",
           borderRadius: "var(--radius-xl)",
           border: "1px solid var(--color-border)",
-          padding: "var(--space-2xl)",
+          padding: "clamp(16px, 4vw, 32px)",
           textAlign: "center",
           color: "var(--color-text-secondary)",
+          width: "100%",
+          maxWidth: "100%",
+          boxSizing: "border-box",
+          overflow: "hidden",
           ...style,
         }}
       >
@@ -212,13 +216,17 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           backgroundColor: "var(--color-card)",
           borderRadius: "var(--radius-xl)",
           border: "1px solid var(--color-border)",
-          padding: "var(--space-3xl) var(--space-xl)",
+          padding: "clamp(24px, 5vw, 48px) clamp(16px, 4vw, 32px)",
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: "var(--space-lg)",
           boxShadow: "var(--shadow-elevation-2)",
+          width: "100%",
+          maxWidth: "100%",
+          boxSizing: "border-box",
+          overflow: "hidden",
           ...style,
         }}
       >
@@ -290,15 +298,19 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
         backgroundColor: "var(--color-card)",
         borderRadius: "var(--radius-xl)",
         border: "1px solid var(--color-border)",
-        padding: "clamp(var(--space-md), 4vw, var(--space-xl))",
+        padding: "clamp(16px, 4vw, 32px)",
         boxShadow: "var(--shadow-elevation-1)",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
+        overflow: "hidden",
         ...style,
       }}
     >
       <div style={{ marginBottom: "var(--space-lg)" }}>
         <h2
           style={{
-            fontSize: "var(--font-size-xl)",
+            fontSize: "clamp(1.15rem, 2.5vw, 1.4rem)",
             fontWeight: "var(--font-weight-semibold)",
             letterSpacing: "var(--tracking-tight)",
             margin: "0 0 var(--space-3xs) 0",
@@ -311,7 +323,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           <Icon name="mail" size={20} color="var(--color-secondary)" />
           <span>{contactFormConfig[`title_${currentLang}`] || t("contactFormHeading")}</span>
         </h2>
-        <p style={{ margin: 0, fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)" }}>
+        <p style={{ margin: 0, fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)", lineHeight: 1.5 }}>
           {contactFormConfig[`description_${currentLang}`] || t("contactFormSubtitle")}
         </p>
       </div>
@@ -323,6 +335,8 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "var(--space-xs)",
             padding: "var(--space-xs) var(--space-md)",
             borderRadius: "var(--radius-md)",
             backgroundColor: "rgba(255, 255, 255, 0.12)",
@@ -330,11 +344,13 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             color: "var(--color-secondary)",
             fontSize: "var(--font-size-xs)",
             marginBottom: "var(--space-md)",
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2xs)" }}>
-            <Icon name="car" size={15} />
-            <span>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2xs)", minWidth: 0, flex: 1 }}>
+            <Icon name="car" size={15} style={{ flexShrink: 0 }} />
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
               {t("inquiryRegardingCar")}: <strong>{carQuery}</strong>
             </span>
           </div>
@@ -349,6 +365,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
               fontSize: "var(--font-size-2xs)",
               textDecoration: "underline",
               padding: 0,
+              flexShrink: 0,
             }}
           >
             {t("clearCarFilter")}
@@ -371,19 +388,24 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             alignItems: "center",
             gap: "var(--space-sm)",
             fontSize: "var(--font-size-sm)",
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
-          <Icon name="alert-circle" size={18} />
+          <Icon name="alert-circle" size={18} style={{ flexShrink: 0 }} />
           <span>{submitError}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
+      <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)", width: "100%", boxSizing: "border-box" }}>
         <div
+          className="contact-form-grid-row"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
             gap: "var(--space-md)",
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
           <Input
@@ -395,6 +417,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             onChange={(e) => handleChange("name", e.target.value)}
             error={errors.name}
             required
+            style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}
           />
 
           <Input
@@ -408,14 +431,18 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             error={errors.email}
             startIcon="mail"
             required
+            style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}
           />
         </div>
 
         <div
+          className="contact-form-grid-row"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
             gap: "var(--space-md)",
+            width: "100%",
+            boxSizing: "border-box",
           }}
         >
           <Input
@@ -428,6 +455,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             onChange={(e) => handleChange("phone", e.target.value)}
             error={errors.phone}
             startIcon="phone"
+            style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}
           />
 
           <Select
@@ -440,6 +468,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             error={errors.regarding}
             options={regardingOptions}
             required={!carQuery}
+            style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}
           />
         </div>
 
@@ -453,6 +482,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
             onChange={(e) => handleChange("regarding", e.target.value)}
             error={errors.regarding}
             required
+            style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}
           />
         )}
 
@@ -467,6 +497,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           onChange={(e) => handleChange("message", e.target.value)}
           error={errors.message}
           required
+          style={{ width: "100%", minWidth: 0, boxSizing: "border-box" }}
         />
 
         <Checkbox
@@ -478,7 +509,7 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           error={errors.privacy_consent}
         />
 
-        <div style={{ marginTop: "var(--space-xs)" }}>
+        <div style={{ marginTop: "var(--space-xs)", width: "100%", boxSizing: "border-box" }}>
           <Button
             type="submit"
             variant="primary"
@@ -492,6 +523,15 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           </Button>
         </div>
       </form>
+
+      <style>{`
+        @media (max-width: 639px) {
+          .contact-form-grid-row {
+            grid-template-columns: 1fr !important;
+            gap: 14px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

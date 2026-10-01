@@ -67,13 +67,16 @@ export function ContactPage() {
       ref={pageContainerRef}
       className="contact-page"
       style={{
+        width: "100%",
         maxWidth: "1320px",
         margin: "0 auto",
-        padding: "var(--space-xl) clamp(var(--space-sm), 4vw, var(--space-xl)) var(--space-4xl)",
+        padding: "clamp(1.5rem, 3vw, 2.5rem) clamp(16px, 4vw, 32px) clamp(2.5rem, 5vw, 4rem)",
+        boxSizing: "border-box",
+        overflowX: "hidden",
       }}
     >
       {/* ─── Hero Section ────────────────────────────────────────────── */}
-      <div data-aos="fade-up">
+      <div data-aos="fade-up" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <ContactHero title={customTitle} subtitle={customSubtitle} />
       </div>
 
@@ -83,17 +86,20 @@ export function ContactPage() {
         style={{
           display: "grid",
           gridTemplateColumns: "1fr",
-          gap: "var(--space-2xl)",
+          gap: "clamp(1.5rem, 4vw, 2.5rem)",
           alignItems: "start",
+          width: "100%",
+          maxWidth: "100%",
+          boxSizing: "border-box",
         }}
       >
         {/* Left Column: Contact Form */}
-        <div data-aos="fade-right" style={{ minWidth: 0 }}>
+        <div data-aos="fade-up" style={{ minWidth: 0, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
           <ContactFormSection contactFormConfig={contactFormConfig} />
         </div>
 
         {/* Right Column: Direct Channels, Opening Hours, and Social Media */}
-        <div data-aos="fade-left" data-aos-delay="100">
+        <div data-aos="fade-up" data-aos-delay="100" style={{ minWidth: 0, width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
           <ContactInfoCards
             contact={contactConfig}
             hours={hoursConfig}
@@ -103,7 +109,7 @@ export function ContactPage() {
       </div>
 
       {/* ─── Configured Locations Section ────────────────────────────── */}
-      <div data-aos="fade-up" data-aos-delay="200">
+      <div data-aos="fade-up" data-aos-delay="150" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <ContactLocationsSection locations={locationsConfig} />
       </div>
 
@@ -118,6 +124,12 @@ export function ContactPage() {
           .contact-main-grid {
             grid-template-columns: minmax(0, 1.35fr) 420px !important;
             gap: var(--space-3xl) !important;
+          }
+        }
+        @media (max-width: 639px) {
+          .contact-page {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
           }
         }
       `}</style>

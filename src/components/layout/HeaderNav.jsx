@@ -243,6 +243,18 @@ export function HeaderNav({
     }
   };
 
+  const handleContactClick = (e) => {
+    if (menuOpen) closeMenu();
+    if (location.pathname === "/contact") {
+      e.preventDefault();
+      if (window.__lenis?.instance?.scrollTo) {
+        window.__lenis.instance.scrollTo(0, { immediate: false });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
   const handleMobileNavClick = (item) => {
     closeMenu();
     if (item.isHome && location.pathname === "/") {
@@ -272,6 +284,14 @@ export function HeaderNav({
           }
         }, 150);
       }
+    } else if (item.isContact && location.pathname === "/contact") {
+      setTimeout(() => {
+        if (window.__lenis?.instance?.scrollTo) {
+          window.__lenis.instance.scrollTo(0, { immediate: false });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 150);
     }
   };
 
@@ -378,7 +398,11 @@ export function HeaderNav({
             >
               {t("reviews", { defaultValue: "Bewertungen" })}
             </Link>
-            <Link to="/contact" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+            <Link
+              to="/contact"
+              onClick={handleContactClick}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+            >
               {t("contact", { defaultValue: "Kontakt" })}
             </Link>
           </nav>
@@ -619,7 +643,7 @@ export function HeaderNav({
             { to: "/sell-your-car", label: t("sellYourCar") },
             { to: "/#reviews", label: t("reviews", { defaultValue: "Bewertungen" }), isReviews: true },
             { to: "/about", label: t("about") },
-            { to: "/contact", label: t("contact") }
+            { to: "/contact", label: t("contact"), isContact: true }
           ].map((item, i) => (
             <Link
               key={item.to}
