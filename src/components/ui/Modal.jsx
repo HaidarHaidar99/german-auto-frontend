@@ -14,6 +14,7 @@ export function Modal({
   size = "md",
   className = "",
   showClose = true,
+  closeOnBackdropClick = false,
 }) {
   const modalRef = useRef(null);
 
@@ -51,7 +52,7 @@ export function Modal({
       className="dialog-backdrop"
       role="presentation"
       onClick={(e) => {
-        if (e.target === e.currentTarget && onClose) {
+        if (closeOnBackdropClick && e.target === e.currentTarget && onClose) {
           onClose();
         }
       }}

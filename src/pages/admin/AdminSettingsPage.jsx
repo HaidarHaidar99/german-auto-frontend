@@ -28,11 +28,13 @@ import OffersSettingsEditor from "../../components/admin/settings/sections/Offer
 import SellCarSettingsEditor from "../../components/admin/settings/sections/SellCarSettingsEditor";
 import ContactFormSettingsEditor from "../../components/admin/settings/sections/ContactFormSettingsEditor";
 import GoogleReviewsSettingsEditor from "../../components/admin/settings/sections/GoogleReviewsSettingsEditor";
+import AboutSettingsEditor from "../../components/admin/settings/sections/AboutSettingsEditor";
 
 const SECTIONS = [
   { key: "site", labelKey: "general", icon: "globe" },
   { key: "branding", labelKey: "branding", icon: "image" },
   { key: "languages", labelKey: "languages", icon: "globe" },
+  { key: "about", labelKey: "aboutUs", icon: "info" },
   { key: "contact", labelKey: "contact", icon: "phone" },
   { key: "hours", labelKey: "hours", icon: "clock" },
   { key: "locations", labelKey: "locations", icon: "map-pin" },
@@ -265,6 +267,8 @@ export function AdminSettingsPage() {
         return <ContactFormSettingsEditor {...commonProps} />;
       case "google_reviews":
         return <GoogleReviewsSettingsEditor {...commonProps} />;
+      case "about":
+        return <AboutSettingsEditor {...commonProps} />;
       default:
         return <div>{t("selectSectionToEdit", "Wählen Sie einen Bereich zur Bearbeitung aus.")}</div>;
     }

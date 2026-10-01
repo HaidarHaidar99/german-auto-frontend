@@ -74,23 +74,23 @@ export function CarTable({
           <thead>
             <tr
               style={{
-                borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
-                backgroundColor: "rgba(255, 255, 255, 0.02)",
-                color: "var(--color-admin-muted, var(--color-text-muted))",
+                borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
+                backgroundColor: "var(--color-admin-border-subtle, #f8fafc)",
+                color: "var(--color-admin-muted, #64748b)",
                 textTransform: "uppercase",
                 fontSize: "11px",
                 letterSpacing: "0.06em",
               }}
             >
-              <th style={{ padding: "12px 16px", width: "70px" }}>Vorschau</th>
-              <th style={{ padding: "12px 16px" }}>Fahrzeug / Modell</th>
-              <th style={{ padding: "12px 16px" }}>Preis</th>
-              <th style={{ padding: "12px 16px" }}>Kilometer & Baujahr</th>
-              <th style={{ padding: "12px 16px" }}>Antrieb / Zustand</th>
-              <th style={{ padding: "12px 16px" }}>Status</th>
-              <th style={{ padding: "12px 16px", textAlign: "center" }}>Featured</th>
-              <th style={{ padding: "12px 16px", textAlign: "center" }}>Sichtbar</th>
-              <th style={{ padding: "12px 16px", textAlign: "right" }}>Aktionen</th>
+              <th style={{ padding: "12px 16px", width: "70px" }}>{t("preview", { defaultValue: "Vorschau" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("vehicleModel", { defaultValue: "Fahrzeug / Modell" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("price", { defaultValue: "Preis" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("mileageYear", { defaultValue: "Kilometer & Baujahr" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("driveCondition", { defaultValue: "Antrieb / Zustand" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("status", { defaultValue: "Status" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "center" }}>{t("featured", { defaultValue: "Featured" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "center" }}>{t("visible", { defaultValue: "Sichtbar" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "right" }}>{t("actions", { defaultValue: "Aktionen" })}</th>
             </tr>
           </thead>
           <tbody>
@@ -102,10 +102,10 @@ export function CarTable({
                 <tr
                   key={car.id}
                   style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                    borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
                     transition: "background-color 0.15s ease",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)")}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.04))")}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   {/* Thumbnail */}
@@ -255,7 +255,7 @@ export function CarTable({
                         transition: "color 0.2s",
                       }}
                     >
-                      <Icon name="eye" size={16} />
+                      <Icon name={car.is_visible !== false ? "eye" : "eye-off"} size={16} />
                     </button>
                   </td>
 
@@ -263,16 +263,29 @@ export function CarTable({
                   <td style={{ padding: "10px 16px", textAlign: "right", whiteSpace: "nowrap" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
                       <IconButton
+                        icon="eye"
+                        size="sm"
+                        ariaLabel="Fahrzeugdetails ansehen"
+                        title="Fahrzeugdetails ansehen"
+                        onClick={() => onPreview?.(car)}
+                        style={{ width: "28px", height: "28px" }}
+                      />
+                      <IconButton
                         icon="external-link"
                         size="sm"
                         ariaLabel="Öffentliche Seite öffnen"
-                        onClick={() => window.open(`/cars/${car.slug || car.id}`, "_blank", "noopener,noreferrer")}
+                        title="Öffentliche Seite öffnen"
+                        onClick={() => {
+                          const fullUrl = `${window.location.origin}/cars/${car.slug || car.id}`;
+                          window.open(fullUrl, "_blank", "noopener,noreferrer");
+                        }}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
                         icon="edit"
                         size="sm"
                         ariaLabel="Fahrzeug bearbeiten"
+                        title="Fahrzeug bearbeiten"
                         onClick={() => onEdit?.(car)}
                         style={{ width: "28px", height: "28px" }}
                       />
@@ -280,6 +293,7 @@ export function CarTable({
                         icon="trash"
                         size="sm"
                         ariaLabel="Fahrzeug löschen"
+                        title="Fahrzeug löschen"
                         onClick={() => onDelete?.(car)}
                         style={{ width: "28px", height: "28px", color: "var(--color-error, #ef4444)" }}
                       />
@@ -367,7 +381,7 @@ export function CarTable({
                   alignItems: "center",
                   justifyContent: "space-between",
                   paddingTop: "var(--space-xs)",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderTop: "1px solid var(--color-admin-border, #e2e8f0)",
                 }}
               >
                 <div>

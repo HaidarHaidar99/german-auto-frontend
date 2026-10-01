@@ -22,6 +22,7 @@ export function AboutPage() {
 
   const siteConfig = settings?.site || {};
   const footerConfig = settings?.footer || {};
+  const aboutConfig = settings?.about || {};
   const contactConfig = settings?.contact || {};
   const hoursConfig = settings?.hours || {};
   const locationsConfig = settings?.locations || [];
@@ -30,15 +31,26 @@ export function AboutPage() {
 
   const currentLang = i18n.language || "de";
 
-  // Real CMS description
+  // Real CMS title, subtitle & story description
+  const pageTitle =
+    currentLang === "de"
+      ? aboutConfig.title_de || t("heroTitle")
+      : aboutConfig.title_en || t("heroTitle");
+
+  const pageSubtitle =
+    currentLang === "de"
+      ? aboutConfig.subtitle_de || t("heroSubtitle")
+      : aboutConfig.subtitle_en || t("heroSubtitle");
+
   const storyDescription =
     currentLang === "de"
-      ? footerConfig.description_de || siteConfig.description
-      : footerConfig.description_en || siteConfig.description;
+      ? aboutConfig.story_de || footerConfig.description_de || siteConfig.description
+      : aboutConfig.story_en || footerConfig.description_en || siteConfig.description;
 
   // Real configured CMS media assets
+  const aboutMedia = aboutConfig.media_url ? [{ media_url: aboutConfig.media_url }] : [];
   const sellCarMedia = sellCarConfig.media_url ? [{ media_url: sellCarConfig.media_url }] : [];
-  const allMedia = [...sellCarMedia].filter(
+  const allMedia = [...aboutMedia, ...sellCarMedia].filter(
     (item) => item && (item.media_url || item.url || (typeof item === "string" && item.trim().length > 0))
   );
 
@@ -46,8 +58,7 @@ export function AboutPage() {
 
   // Dynamic SEO metadata
   const siteName = siteConfig.name || "German Auto";
-  const pageTitle = t("heroTitle");
-  const metaDescription = storyDescription || t("heroSubtitle");
+  const metaDescription = storyDescription || pageSubtitle;
 
   useEffect(() => {
     document.title = `${pageTitle} | ${siteName}`;
@@ -102,7 +113,7 @@ export function AboutPage() {
           margin: "0 0 var(--space-md) 0",
           color: "var(--color-text)" 
         }}>
-          {t("heroTitle")}
+          {pageTitle}
         </h1>
         <p style={{
           fontSize: "var(--font-size-xl)",
@@ -111,7 +122,7 @@ export function AboutPage() {
           margin: "0 auto",
           lineHeight: "1.6"
         }}>
-          {t("heroSubtitle")}
+          {pageSubtitle}
         </p>
       </div>
 

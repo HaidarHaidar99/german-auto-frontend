@@ -5,6 +5,8 @@ import SettingsField from "../SettingsField";
 import SettingsToggle from "../SettingsToggle";
 import Input from "../../../forms/Input";
 import Textarea from "../../../forms/Textarea";
+import MediaUploadField from "../MediaUploadField";
+import settingsService from "../../../../services/settings/settings.service";
 
 export function FooterSettingsEditor({
   data = {},
@@ -22,6 +24,15 @@ export function FooterSettingsEditor({
     });
   };
 
+  const handleUploadFooterLogo = async (file) => {
+    const res = await settingsService.uploadBrandingAsset(file, "footer_logo");
+    const uploadedUrl = res?.data?.url || res?.url;
+    if (uploadedUrl) {
+      handleChange("footer_logo_url", uploadedUrl);
+    }
+    return res;
+  };
+
   return (
     <SettingsSection
       title={t("settingsSections.footer", { defaultValue: "Footer & Rechtliches" })}
@@ -33,7 +44,22 @@ export function FooterSettingsEditor({
       resetLoading={resetLoading}
       previewUrl="/"
     >
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
+        {/* Footer Logo Field */}
+        <MediaUploadField
+          label={t("footerLogo", { defaultValue: "Footer-Logo (Unten auf der Website)" })}
+          value={data.footer_logo_url || ""}
+          accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
+          maxSizeMB={5}
+          onChange={(val) => handleChange("footer_logo_url", val)}
+          onUpload={handleUploadFooterLogo}
+          helper={t("footerLogoHelper", {
+            defaultValue: "Optional. Ersetzt das Standard-Hauptlogo im Footer-Bereich. SVG, PNG oder JPEG empfohlen.",
+          })}
+          error={errors["footer.footer_logo_url"]}
+        />
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
         <SettingsField label="Copyright-Hinweis (DE)" locale="de" error={errors["footer.copyright_de"]}>
           <Input
             value={data.copyright_de || ""}
@@ -91,26 +117,27 @@ export function FooterSettingsEditor({
 
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
           <SettingsToggle
-            label="Kontaktdaten im Footer einblenden"
-            description="Zeigt Telefonnummer, E-Mail und WhatsApp im Fußbereich an."
+            label={t("showContactInFooter", { defaultValue: "Kontaktdaten im Footer einblenden" })}
+            description={t("showContactInFooterDesc", { defaultValue: "Zeigt Telefonnummer, E-Mail und WhatsApp im Fußbereich an." })}
             checked={data.show_contact !== false}
             onChange={(checked) => handleChange("show_contact", checked)}
           />
 
           <SettingsToggle
-            label="Social-Media-Icons im Footer einblenden"
-            description="Zeigt aktive Verknüpfungen zu Instagram, YouTube etc. an."
+            label={t("showSocialInFooter", { defaultValue: "Social-Media-Icons im Footer einblenden" })}
+            description={t("showSocialInFooterDesc", { defaultValue: "Zeigt aktive Verknüpfungen zu Instagram, YouTube etc. an." })}
             checked={data.show_social !== false}
             onChange={(checked) => handleChange("show_social", checked)}
           />
 
           <SettingsToggle
-            label="Standort-Schnellübersicht im Footer einblenden"
-            description="Führt die hinterlegten Showroom-Adressen auf."
+            label={t("showLocationsInFooter", { defaultValue: "Standort-Schnellübersicht im Footer einblenden" })}
+            description={t("showLocationsInFooterDesc", { defaultValue: "Führt die hinterlegten Showroom-Adressen auf." })}
             checked={data.show_locations !== false}
             onChange={(checked) => handleChange("show_locations", checked)}
           />
         </div>
+      </div>
       </div>
     </SettingsSection>
   );

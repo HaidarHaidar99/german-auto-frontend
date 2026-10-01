@@ -535,17 +535,17 @@ export function CarEditorModal({
   const currentCover = form.media?.thumbnail || galleryImages[0] || "";
 
   const tabs = [
-    { key: "core", label: "Grunddaten & Pflichtfelder *" },
-    { key: "specs", label: "Weitere Details" },
-    { key: "equipment", label: `Ausstattung (${form.equipment.length})` },
-    { key: "media", label: `Bilder (${galleryImages.length}/20) *` },
+    { key: "core", label: t("coreDataTab", { defaultValue: "Grunddaten & Pflichtfelder *" }) },
+    { key: "specs", label: t("specsTab", { defaultValue: "Weitere Details" }) },
+    { key: "equipment", label: `${t("equipmentTab", { defaultValue: "Ausstattung" })} (${form.equipment.length})` },
+    { key: "media", label: `${t("mediaTab", { defaultValue: "Bilder" })} (${galleryImages.length}/20) *` },
   ];
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={() => !saving && onClose?.()}
-      title={car ? `Fahrzeug bearbeiten: ${car.title || car.model}` : "Neues Fahrzeug anlegen"}
+      title={car ? `${t("editVehicle", { defaultValue: "Fahrzeug bearbeiten" })}: ${car.title || car.model}` : t("createNewVehicle", { defaultValue: "Neues Fahrzeug anlegen" })}
       size="xl"
     >
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
@@ -559,25 +559,25 @@ export function CarEditorModal({
             overflowX: "auto",
           }}
         >
-          {tabs.map((t) => (
+          {tabs.map((tItem) => (
             <button
-              key={t.key}
+              key={tItem.key}
               type="button"
-              onClick={() => setActiveTab(t.key)}
+              onClick={() => setActiveTab(tItem.key)}
               style={{
                 padding: "8px 14px",
                 fontSize: "var(--font-size-xs)",
                 fontWeight: 600,
                 borderRadius: "var(--radius-sm, 6px)",
                 border: "none",
-                backgroundColor: activeTab === t.key ? "rgba(255, 255, 255, 0.15)" : "transparent",
-                color: activeTab === t.key ? "#ffffff" : "var(--color-admin-muted)",
+                backgroundColor: activeTab === tItem.key ? "var(--color-admin-accent, #0284c7)" : "transparent",
+                color: activeTab === tItem.key ? "#ffffff" : "var(--color-admin-muted, #64748b)",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
                 transition: "all 0.15s ease",
               }}
             >
-              {t.label}
+              {tItem.label}
             </button>
           ))}
         </div>
@@ -606,7 +606,7 @@ export function CarEditorModal({
         {activeTab === "core" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
             {/* Row 1: Marke, Modell, Fahrzeugname/Titel */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 2fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Marke / Hersteller" required error={formErrors.brand}>
                 <Input
                   value={form.brand}
@@ -636,7 +636,7 @@ export function CarEditorModal({
             </div>
 
             {/* Row 2: Kaufpreis, Zustand (Neu/Gebraucht), Fahrzeugklasse */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Kaufpreis (€)" required error={formErrors.price}>
                 <Input
                   type="number"
@@ -667,7 +667,7 @@ export function CarEditorModal({
             </div>
 
             {/* Row 3: Kilometerstand, Leistung, Erstzulassung */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Kilometerstand (km)" required error={formErrors.mileage_km}>
                 <Input
                   type="number"
@@ -701,7 +701,7 @@ export function CarEditorModal({
             </div>
 
             {/* Row 4: Kraftstoffart, Getriebe, Bestandsstatus */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Kraftstoffart" required error={formErrors.fuel_type}>
                 <Select
                   value={form.fuel_type}
@@ -730,7 +730,7 @@ export function CarEditorModal({
             </div>
 
             {/* Row 5: Ursprünglicher Preis, URL-Slug */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Ursprünglicher Preis (€)" helper="Optional (für Rabattanzeige)" error={formErrors.old_price}>
                 <Input
                   type="number"
@@ -770,7 +770,7 @@ export function CarEditorModal({
         {/* ── Tab 2: Weitere Details & Beschreibung ──────────────────────── */}
         {activeTab === "specs" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Beschreibung (Deutsch)" locale="de" error={formErrors.description_de}>
                 <Textarea
                   value={form.description_de}
@@ -790,7 +790,7 @@ export function CarEditorModal({
               </SettingsField>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Hubraum (ccm)" error={formErrors.engine_displacement_cc}>
                 <Input
                   type="number"
@@ -822,7 +822,7 @@ export function CarEditorModal({
               </SettingsField>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label="Innenausstattung" error={formErrors.interior_design}>
                 <Select
                   value={form.interior_design}
@@ -1406,7 +1406,7 @@ export function CarEditorModal({
 
           <Button variant="primary" size="sm" type="submit" loading={saving} disabled={isUploading}>
             <Icon name="save" size={14} style={{ marginRight: "6px" }} />
-            {car ? "Änderungen speichern" : "Fahrzeug erstellen"}
+            {car ? t("saveChanges", { defaultValue: "Änderungen speichern" }) : t("createVehicle", { defaultValue: "Fahrzeug erstellen" })}
           </Button>
         </div>
       </form>

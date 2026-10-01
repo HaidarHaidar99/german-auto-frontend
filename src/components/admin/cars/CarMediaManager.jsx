@@ -215,11 +215,11 @@ export function CarMediaManager({ media = {}, onChange }) {
           }}
           onClick={() => fileInputRef.current?.click()}
           style={{
-            border: isDragOver ? "2px dashed #D4AF37" : "2px dashed rgba(255, 255, 255, 0.2)",
+            border: isDragOver ? "2px dashed var(--color-admin-accent, #0284c7)" : "2px dashed var(--color-admin-border, #e2e8f0)",
             borderRadius: "var(--radius-lg, 12px)",
             padding: "24px 16px",
             textAlign: "center",
-            backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "rgba(255, 255, 255, 0.02)",
+            backgroundColor: isDragOver ? "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.08))" : "var(--color-admin-border-subtle, #f8fafc)",
             cursor: "pointer",
             transition: "all 0.2s ease",
             display: "flex",
@@ -229,13 +229,13 @@ export function CarMediaManager({ media = {}, onChange }) {
             gap: "8px",
           }}
         >
-          <Icon name="upload" size={24} style={{ color: "#D4AF37" }} />
+          <Icon name="upload" size={24} style={{ color: "var(--color-admin-accent, #0284c7)" }} />
           <div>
-            <span style={{ fontSize: "13px", fontWeight: 700, color: "#ffffff" }}>
-              Bilder hierher ziehen oder durchsuchen
+            <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
+              {t("dragImagesOrBrowse", { defaultValue: "Bilder hierher ziehen oder durchsuchen" })}
             </span>
-            <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-              JPG, PNG, WEBP oder AVIF direkt von Ihrem Gerät hochladen (max. 20 Bilder)
+            <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted, #64748b)", marginTop: "2px" }}>
+              {t("uploadFormatsHelp", { defaultValue: "JPG, PNG, WEBP oder AVIF direkt von Ihrem Gerät hochladen (max. 20 Bilder)" })}
             </span>
           </div>
         </div>
@@ -364,13 +364,13 @@ export function CarMediaManager({ media = {}, onChange }) {
                         style={{
                           background: "none",
                           border: "none",
-                          color: "#ffffff",
+                          color: "var(--color-admin-text, #0f172a)",
                           cursor: idx === 0 ? "default" : "pointer",
                           opacity: idx === 0 ? 0.2 : 0.8,
                           padding: "2px 4px",
                           fontSize: "12px",
                         }}
-                        title="Nach links verschieben"
+                        title={t("moveLeft", { defaultValue: "Nach links verschieben" })}
                       >
                         &larr;
                       </button>
@@ -381,13 +381,13 @@ export function CarMediaManager({ media = {}, onChange }) {
                         style={{
                           background: "none",
                           border: "none",
-                          color: "#ffffff",
+                          color: "var(--color-admin-text, #0f172a)",
                           cursor: idx === gallery.length - 1 ? "default" : "pointer",
                           opacity: idx === gallery.length - 1 ? 0.2 : 0.8,
                           padding: "2px 4px",
                           fontSize: "12px",
                         }}
-                        title="Nach rechts verschieben"
+                        title={t("moveRight", { defaultValue: "Nach rechts verschieben" })}
                       >
                         &rarr;
                       </button>

@@ -45,7 +45,7 @@ export function AdminMobileNav({ isOpen, onClose }) {
   ];
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} position="left" title="Admin Panel">
+    <Drawer isOpen={isOpen} onClose={onClose} position="left" title="Admin Panel" closeOnBackdropClick={true}>
       <div
         style={{
           display: "flex",

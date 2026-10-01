@@ -15,7 +15,14 @@ export function SettingsPreviewButton({
   const { t } = useTranslation(["admin", "common"]);
 
   const handlePreview = () => {
-    window.open(url, "_blank", "noopener,noreferrer");
+    try {
+      const fullUrl = url.startsWith("http://") || url.startsWith("https://")
+        ? url
+        : `${window.location.origin}${url.startsWith("/") ? "" : "/"}${url}`;
+      window.open(fullUrl, "_blank", "noopener,noreferrer");
+    } catch {
+      window.open(url, "_blank");
+    }
   };
 
   return (

@@ -22,6 +22,7 @@ export function FormImageModal({
       onClose={onClose}
       title={name}
       size="xl"
+      closeOnBackdropClick={true}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)", alignItems: "center" }}>
         <div

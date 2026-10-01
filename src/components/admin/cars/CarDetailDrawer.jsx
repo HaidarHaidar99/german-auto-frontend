@@ -31,7 +31,8 @@ export function CarDetailDrawer({
 
   const handleOpenPublicView = () => {
     const slugOrId = car.slug || car.id;
-    window.open(`/cars/${slugOrId}`, "_blank", "noopener,noreferrer");
+    const fullUrl = `${window.location.origin}/cars/${slugOrId}`;
+    window.open(fullUrl, "_blank", "noopener,noreferrer");
   };
 
   return (

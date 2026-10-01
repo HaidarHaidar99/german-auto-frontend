@@ -261,6 +261,16 @@ export function AdminCarsPage() {
     setEditorOpen(true);
   };
 
+  const handleOpenPreview = async (car) => {
+    try {
+      const res = await carsService.adminGetCar(car.id);
+      setCarToPreview(res?.data?.car || car);
+    } catch {
+      setCarToPreview(car);
+    }
+    setPreviewDrawerOpen(true);
+  };
+
   const handleOpenEdit = async (car) => {
     try {
       const res = await carsService.adminGetCar(car.id);
@@ -272,16 +282,6 @@ export function AdminCarsPage() {
     setEditorOpen(true);
   };
 
-  // Actions: Details
-  const handleOpenPreview = async (car) => {
-    try {
-      const res = await carsService.adminGetCar(car.id);
-      setCarToPreview(res?.data?.car || car);
-    } catch {
-      setCarToPreview(car);
-    }
-    setPreviewDrawerOpen(true);
-  };
 
   // Actions: Status Modal
   const handleOpenStatusModal = (carId, currentOrNextStatus) => {

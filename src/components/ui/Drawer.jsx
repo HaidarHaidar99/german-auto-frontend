@@ -13,6 +13,7 @@ export function Drawer({
   children,
   position = "right",
   className = "",
+  closeOnBackdropClick = false,
 }) {
   useEffect(() => {
     function handleKeyDown(e) {
@@ -43,7 +44,7 @@ export function Drawer({
       className="dialog-backdrop"
       role="presentation"
       onClick={(e) => {
-        if (e.target === e.currentTarget && onClose) {
+        if (closeOnBackdropClick && e.target === e.currentTarget && onClose) {
           onClose();
         }
       }}
