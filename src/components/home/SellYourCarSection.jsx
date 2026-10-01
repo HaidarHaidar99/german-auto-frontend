@@ -35,6 +35,8 @@ export function SellYourCarSection({ sellCarConfig }) {
     <Section spacing="spacious" style={{ position: "relative" }}>
       <Container size="default">
         <div
+          data-aos="zoom-in"
+          data-aos-duration="800"
           className="surface-card"
           style={{
             position: "relative",
@@ -64,7 +66,7 @@ export function SellYourCarSection({ sellCarConfig }) {
           />
 
           {/* Left Text Block */}
-          <div style={{ maxWidth: "600px", position: "relative", zIndex: 1 }}>
+          <div data-aos="fade-right" data-aos-delay="100" style={{ maxWidth: "600px", position: "relative", zIndex: 1 }}>
             <Eyebrow>{t("navigation:sellYourCar", "Ankauf & Vermittlung")}</Eyebrow>
 
             <Heading level={2} style={{ margin: "var(--space-xs) 0 var(--space-md)" }}>
@@ -79,7 +81,7 @@ export function SellYourCarSection({ sellCarConfig }) {
           </div>
 
           {/* Right Action Block */}
-          <div style={{ position: "relative", zIndex: 1 }}>
+          <div data-aos="fade-left" data-aos-delay="200" style={{ position: "relative", zIndex: 1 }}>
             <Button
               as={Link}
               to="/sell-your-car"

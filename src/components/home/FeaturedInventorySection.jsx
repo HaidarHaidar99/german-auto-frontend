@@ -89,6 +89,7 @@ export function FeaturedInventorySection() {
       <Container size="default">
         {/* Section Header */}
         <div
+          data-aos="fade-up"
           style={{
             display: "flex",
             alignItems: "center",
@@ -104,15 +105,17 @@ export function FeaturedInventorySection() {
             </Heading>
           </div>
 
-          <Button
-            as={Link}
-            to="/cars"
-            variant="outline"
-            size="sm"
-            iconRight="arrow-right"
-          >
-            {t("viewAllCars", "Alle ansehen")}
-          </Button>
+          <div data-aos="fade-up" data-aos-delay="100">
+            <Button
+              as={Link}
+              to="/cars"
+              variant="outline"
+              size="sm"
+              iconRight="arrow-right"
+            >
+              {t("viewAllCars", "Alle ansehen")}
+            </Button>
+          </div>
         </div>
 
         {/* Loading State: Skeletons */}
@@ -257,7 +260,7 @@ export function FeaturedInventorySection() {
                 justifyContent: "flex-start",
               }}
             >
-              {cars.map((car) => {
+              {cars.map((car, idx) => {
                 const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
                 const mainImage =
                   car.media?.thumbnail ||
@@ -273,6 +276,8 @@ export function FeaturedInventorySection() {
                 return (
                   <div
                     key={car.id}
+                    data-aos="fade-up"
+                    data-aos-delay={idx * 150}
                     style={{
                       flex: "0 0 clamp(290px, 85vw, 360px)",
                       maxWidth: "360px",

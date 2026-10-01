@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import ScrollToTop from "./components/common/ScrollToTop";
+import AosManager from "./components/common/AosManager";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
@@ -10,6 +11,7 @@ export function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <AosManager />
       <AuthProvider>
         <AdminAuthProvider>
           <SettingsProvider>

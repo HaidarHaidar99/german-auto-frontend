@@ -54,6 +54,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
     <Section spacing="default" style={{ backgroundColor: "var(--color-surface)" }}>
       <Container size="default">
         <div
+          data-aos="fade-up"
           style={{
             display: "flex",
             alignItems: "flex-end",
@@ -71,25 +72,29 @@ export function ReviewsSection({ googleReviewsConfig }) {
           </div>
 
           {isGoogleReviewsEnabled && (
-            <Button
-              as="a"
-              href={googleReviewsConfig.profile_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              variant="outline"
-              size="md"
-              iconRight="external-link"
-            >
-              {googleLabel}
-            </Button>
+            <div data-aos="fade-up" data-aos-delay="100">
+              <Button
+                as="a"
+                href={googleReviewsConfig.profile_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outline"
+                size="md"
+                iconRight="external-link"
+              >
+                {googleLabel}
+              </Button>
+            </div>
           )}
         </div>
 
         {reviews.length > 0 && (
           <Grid cols="responsive" gap="lg">
-            {reviews.map((rev) => (
+            {reviews.map((rev, idx) => (
               <div
                 key={rev.id}
+                data-aos="fade-up"
+                data-aos-delay={idx * 150}
                 className="surface-card"
                 style={{
                   padding: "var(--space-xl)",

@@ -221,23 +221,32 @@ export function HeroSection({ heroConfig, siteConfig }) {
           }}
         >
           {siteConfig?.name && (
-            <Eyebrow>{siteConfig.name}</Eyebrow>
+            <div data-aos="fade-up" data-aos-duration="700">
+              <Eyebrow>{siteConfig.name}</Eyebrow>
+            </div>
           )}
 
           {title && (
-            <Display size="2xl" style={{ margin: 0 }}>
-              {title}
-            </Display>
+            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="100">
+              <Display size="2xl" style={{ margin: 0 }}>
+                {title}
+              </Display>
+            </div>
           )}
 
           {subtitle && (
-            <Text variant="lead" style={{ margin: 0, maxWidth: "620px" }}>
-              {subtitle}
-            </Text>
+            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="200">
+              <Text variant="lead" style={{ margin: 0, maxWidth: "620px" }}>
+                {subtitle}
+              </Text>
+            </div>
           )}
 
           {/* Action Button Group */}
           <div
+            data-aos="fade-up"
+            data-aos-duration="900"
+            data-aos-delay="350"
             style={{
               display: "flex",
               flexWrap: "wrap",

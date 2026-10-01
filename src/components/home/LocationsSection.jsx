@@ -21,7 +21,7 @@ export function LocationsSection({ locations = [] }) {
   return (
     <Section spacing="default" style={{ position: "relative" }}>
       <Container size="default">
-        <div style={{ marginBottom: "var(--space-2xl)" }}>
+        <div data-aos="fade-up" style={{ marginBottom: "var(--space-2xl)" }}>
           <Eyebrow>{t("locations", "Standorte")}</Eyebrow>
           <Heading level={2} style={{ margin: 0 }}>
             Besuchen Sie unsere Standorte
@@ -32,6 +32,8 @@ export function LocationsSection({ locations = [] }) {
           {locations.map((loc, idx) => (
             <div
               key={idx}
+              data-aos="fade-up"
+              data-aos-delay={idx * 150}
               className="surface-card"
               style={{
                 padding: "var(--space-xl)",

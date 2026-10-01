@@ -137,25 +137,31 @@ export function AutomotiveShowcaseSection({ car }) {
             padding: "var(--space-2xl) 0",
           }}
         >
-          <Eyebrow>{car.brand} // Spotlight</Eyebrow>
+          <div data-aos="fade-up">
+            <Eyebrow>{car.brand} // Spotlight</Eyebrow>
+          </div>
 
-          <Display size="xl" style={{ margin: 0 }}>
-            {car.model || car.title}
-          </Display>
+          <div data-aos="fade-up" data-aos-delay="100">
+            <Display size="xl" style={{ margin: 0 }}>
+              {car.model || car.title}
+            </Display>
+          </div>
 
           {car.description_de && (
-            <Text variant="lead" style={{ margin: 0, maxWidth: "540px" }}>
-              {car.description_de}
-            </Text>
+            <div data-aos="fade-up" data-aos-delay="200">
+              <Text variant="lead" style={{ margin: 0, maxWidth: "540px" }}>
+                {car.description_de}
+              </Text>
+            </div>
           )}
 
           {/* Pricing */}
-          <div style={{ marginTop: "var(--space-xs)" }}>
+          <div data-aos="fade-up" data-aos-delay="300" style={{ marginTop: "var(--space-xs)" }}>
             <Price value={car.price} oldPrice={car.old_price} size="lg" />
           </div>
 
           {/* Key Specs Chips */}
-          <div style={{ marginTop: "var(--space-xs)" }}>
+          <div data-aos="fade-up" data-aos-delay="350" style={{ marginTop: "var(--space-xs)" }}>
             <VehicleSpecs
               mileage={car.mileage}
               fuel={car.fuel_type}
@@ -166,7 +172,7 @@ export function AutomotiveShowcaseSection({ car }) {
           </div>
 
           {/* CTA Button */}
-          <div style={{ marginTop: "var(--space-md)" }}>
+          <div data-aos="fade-up" data-aos-delay="400" style={{ marginTop: "var(--space-md)" }}>
             <Button
               as={Link}
               to={`/cars/${identifier}`}

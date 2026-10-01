@@ -94,7 +94,7 @@ export function AboutPage() {
       }}
     >
       {/* 1. Typography Header (No Hero Media) */}
-      <div className="about-header-section" style={{ textAlign: "center", marginBottom: "var(--space-4xl)" }}>
+      <div data-aos="fade-up" className="about-header-section" style={{ textAlign: "center", marginBottom: "var(--space-4xl)" }}>
         <h1 style={{ 
           fontFamily: "var(--font-family-display)", 
           fontSize: "clamp(2.5rem, 5vw, 4.5rem)", 
@@ -116,24 +116,32 @@ export function AboutPage() {
       </div>
 
       {/* 2. Story / Introduction (omits cleanly if no CMS description) */}
-      <AboutStory
-        description={storyDescription}
-        siteName={siteConfig.name}
-      />
+      <div data-aos="fade-up" data-aos-delay="100">
+        <AboutStory
+          description={storyDescription}
+          siteName={siteConfig.name}
+        />
+      </div>
 
       {/* 3. Visual Storytelling (omits cleanly if no CMS media) */}
-      <AboutVisualSection mediaItems={visualMediaItems} />
+      <div data-aos="zoom-in" data-aos-delay="150">
+        <AboutVisualSection mediaItems={visualMediaItems} />
+      </div>
 
       {/* 4. Values / Principles (omitted because no values/principles exist in CMS) */}
 
       {/* 5. Configured Dealership Locations (omits cleanly if no locations in CMS) */}
-      <AboutLocations locations={locationsConfig} />
+      <div data-aos="fade-up" data-aos-delay="200">
+        <AboutLocations locations={locationsConfig} />
+      </div>
 
       {/* 6. Contact CTA (uses real contact channels & opening hours) */}
-      <AboutContactCta
-        contact={contactConfig}
-        hours={hoursConfig}
-      />
+      <div data-aos="fade-up" data-aos-delay="250">
+        <AboutContactCta
+          contact={contactConfig}
+          hours={hoursConfig}
+        />
+      </div>
     </main>
   );
 }

@@ -604,3 +604,47 @@
     transform: rotate(360deg);
   }
 }
+
+/* ==========================================================================
+   7. PAGE & COMPONENT FLUID TRANSITIONS (Autowelt Noris Style)
+   ========================================================================== */
+@keyframes pageFadeSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-transition-enter {
+  animation: pageFadeSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Card hover animation (smooth lift & image zoom) */
+.car-card-base {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.car-card-base:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+.car-card-base:hover .car-media-stage img {
+  transform: scale(1.045);
+}
+
+/* Hover arrow shift */
+.group-hover-shift {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*:hover > .group-hover-shift,
+button:hover .group-hover-shift,
+a:hover .group-hover-shift {
+  transform: translateX(4px);
+}
+

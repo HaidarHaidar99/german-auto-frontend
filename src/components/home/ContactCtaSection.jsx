@@ -24,6 +24,8 @@ export function ContactCtaSection({ contactConfig, hoursConfig }) {
     <Section spacing="spacious" style={{ position: "relative" }}>
       <Container size="default">
         <div
+          data-aos="zoom-in"
+          data-aos-duration="800"
           className="surface-card"
           style={{
             padding: "clamp(var(--space-xl), 5vw, var(--space-3xl))",
@@ -43,27 +45,30 @@ export function ContactCtaSection({ contactConfig, hoursConfig }) {
               gap: "var(--space-md)",
             }}
           >
-            <div>
+            <div data-aos="fade-up">
               <Eyebrow>{t("navigation:contact", "Kontakt & Anfahrt")}</Eyebrow>
               <Heading level={2} style={{ margin: "var(--space-xs) 0 0" }}>
                 {t("contactUs", "Wir freuen uns auf Ihre Anfrage")}
               </Heading>
             </div>
 
-            <Button
-              as={Link}
-              to="/contact"
-              variant="primary"
-              size="lg"
-              iconRight="arrow-right"
-            >
-              {t("contactUs", "Kontakt aufnehmen")}
-            </Button>
+            <div data-aos="fade-up" data-aos-delay="100">
+              <Button
+                as={Link}
+                to="/contact"
+                variant="primary"
+                size="lg"
+                iconRight="arrow-right"
+              >
+                {t("contactUs", "Kontakt aufnehmen")}
+              </Button>
+            </div>
           </div>
 
           {/* Real Contact Channels */}
           {hasAnyContact && (
-            <Grid cols="responsive" gap="md">
+            <div data-aos="fade-up" data-aos-delay="200">
+              <Grid cols="responsive" gap="md">
               {hasPhone && (
                 <div
                   style={{
@@ -219,7 +224,8 @@ export function ContactCtaSection({ contactConfig, hoursConfig }) {
                 </div>
               )}
             </Grid>
-          )}
+          </div>
+        )}
         </div>
       </Container>
     </Section>

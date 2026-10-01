@@ -159,12 +159,14 @@ export function CarsPage() {
       <Section spacing="default" style={{ paddingTop: "var(--space-md)" }}>
         <Container size="default">
           {/* 3. Search & Filter Bar with Mobile Drawer */}
-          <CarsFilterBar
-            filters={filters}
-            onFilterChange={handleFilterChange}
-            onResetFilters={handleResetFilters}
-            totalResults={meta.total}
-          />
+          <div data-aos="fade-up" data-aos-delay="100">
+            <CarsFilterBar
+              filters={filters}
+              onFilterChange={handleFilterChange}
+              onResetFilters={handleResetFilters}
+              totalResults={meta.total}
+            />
+          </div>
 
           {/* 4. Loading Skeleton Grid */}
           {loading && (
@@ -269,7 +271,7 @@ export function CarsPage() {
                   width: "100%",
                 }}
               >
-                {cars.map((car) => {
+                {cars.map((car, idx) => {
                   const identifier = car.slug || car.id;
                   const isFav = isCarFavorite(car.id);
                   const primaryImage =
@@ -281,7 +283,12 @@ export function CarsPage() {
                     car.image_url;
 
                   return (
-                    <div key={car.id} style={{ width: "100%", minWidth: 0 }}>
+                    <div
+                      key={car.id}
+                      data-aos="fade-up"
+                      data-aos-delay={(idx % 6) * 100}
+                      style={{ width: "100%", minWidth: 0 }}
+                    >
                       <CarCardBase
                         brand={car.brand}
                         model={car.model || car.title}

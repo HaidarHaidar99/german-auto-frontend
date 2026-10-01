@@ -73,7 +73,9 @@ export function ContactPage() {
       }}
     >
       {/* ─── Hero Section ────────────────────────────────────────────── */}
-      <ContactHero title={customTitle} subtitle={customSubtitle} />
+      <div data-aos="fade-up">
+        <ContactHero title={customTitle} subtitle={customSubtitle} />
+      </div>
 
       {/* ─── Two-Column Editorial Layout ─────────────────────────────── */}
       <div
@@ -86,12 +88,12 @@ export function ContactPage() {
         }}
       >
         {/* Left Column: Contact Form */}
-        <div style={{ minWidth: 0 }}>
+        <div data-aos="fade-right" style={{ minWidth: 0 }}>
           <ContactFormSection contactFormConfig={contactFormConfig} />
         </div>
 
         {/* Right Column: Direct Channels, Opening Hours, and Social Media */}
-        <div>
+        <div data-aos="fade-left" data-aos-delay="100">
           <ContactInfoCards
             contact={contactConfig}
             hours={hoursConfig}
@@ -101,7 +103,9 @@ export function ContactPage() {
       </div>
 
       {/* ─── Configured Locations Section ────────────────────────────── */}
-      <ContactLocationsSection locations={locationsConfig} />
+      <div data-aos="fade-up" data-aos-delay="200">
+        <ContactLocationsSection locations={locationsConfig} />
+      </div>
 
       {/* Responsive layout styles via embedded CSS */}
       <style>{`

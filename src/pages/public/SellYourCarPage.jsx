@@ -397,11 +397,13 @@ export function SellYourCarPage() {
       }}
     >
       {/* ─── Hero Section with 4-Step Visual ─────────────────────────── */}
-      <SellCarProcessHeader
-        title={customTitle}
-        subtitle={customSubtitle}
-        mediaUrl={mediaUrl}
-      />
+      <div data-aos="fade-up">
+        <SellCarProcessHeader
+          title={customTitle}
+          subtitle={customSubtitle}
+          mediaUrl={mediaUrl}
+        />
+      </div>
 
       {/* ─── Global Submission Error Notice ──────────────────────────── */}
       {submitError && (
@@ -426,7 +428,7 @@ export function SellYourCarPage() {
       )}
 
       {/* ─── Multi-Section Automotive Valuation Form ─────────────────── */}
-      <div style={{ maxWidth: "560px", width: "100%", margin: "0 auto var(--space-2xl)", position: "relative", boxSizing: "border-box" }}>
+      <div data-aos="zoom-in" data-aos-delay="150" style={{ maxWidth: "560px", width: "100%", margin: "0 auto var(--space-2xl)", position: "relative", boxSizing: "border-box" }}>
         {/* Wizard Progress Bar */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative", marginBottom: "var(--space-2xl)", width: "100%" }}>
           {/* Animated Line */}

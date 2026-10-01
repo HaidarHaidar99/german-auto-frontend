@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../contexts/SettingsContext";
 import { useSmoothScroll } from "../hooks/useAnimation";
@@ -12,6 +12,7 @@ export function PublicLayout() {
   // Initialize accessible smooth scrolling
   useSmoothScroll(true);
 
+  const location = useLocation();
   const siteName = settings?.site?.name || "German Auto";
 
   return (
@@ -19,8 +20,12 @@ export function PublicLayout() {
       {/* Dynamic Header Primitive */}
       <HeaderNav />
 
-      {/* Main Page Content */}
-      <main style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      {/* Main Page Content with Fluid Page-to-Page Entrance Animation */}
+      <main
+        key={location.pathname}
+        className="page-transition-enter"
+        style={{ flex: 1, display: "flex", flexDirection: "column" }}
+      >
         <Outlet />
       </main>
 
