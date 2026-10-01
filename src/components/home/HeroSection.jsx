@@ -28,7 +28,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+  const touchStartY = useRef(0);
   const heroRef = useRef(null);
 
   const itemCount = activeItems.length;
@@ -75,16 +75,18 @@ export function HeroSection({ heroConfig, siteConfig }) {
     };
   }, [nextSlide, prevSlide]);
 
-  // Touch swipe handling
+  // Touch swipe handling: strictly horizontal swipes advance slides, never interfering with vertical page scrolling
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   };
 
   const handleTouchEnd = (e) => {
-    touchEndX.current = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+    // Only advance slide if gesture was distinctly horizontal and significantly larger than vertical movement
+    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY) * 1.8) {
+      if (diffX > 0) {
         nextSlide();
       } else {
         prevSlide();
@@ -120,6 +122,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
       role="region"
       aria-roledescription="Karussell"
       aria-label="Hauptbühne"
+      className="hero-section"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -133,10 +136,11 @@ export function HeroSection({ heroConfig, siteConfig }) {
         overflow: "hidden",
         backgroundColor: "var(--color-background)",
         outline: "none",
+        touchAction: "pan-y",
       }}
     >
-      {/* Background Media Slides Layer */}
-      <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
+      {/* Background Media Slides Layer - pointerEvents none ensures natural page touch scrolling */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none" }}>
         {activeItems.map((item, idx) => {
           const isActive = idx === currentIndex;
           const isItemVideo = item.type === "VIDEO" || item.media_type === "video" || item.media_url?.match(/\.(mp4|webm)$/i);
@@ -151,7 +155,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
                 opacity: isActive ? 1 : 0,
                 transition: "opacity 1.2s var(--ease-smooth)",
                 zIndex: isActive ? 1 : 0,
-                pointerEvents: isActive ? "auto" : "none",
+                pointerEvents: "none",
               }}
             >
               {isItemVideo && item.media_url ? (
@@ -211,6 +215,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
       <Container size="default" style={{ position: "relative", zIndex: 3, width: "100%" }}>
         <div
           key={currentIndex}
+          className="hero-content-wrapper"
           style={{
             maxWidth: "760px",
             display: "flex",
@@ -353,6 +358,17 @@ export function HeroSection({ heroConfig, siteConfig }) {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .hero-section {
+            min-height: calc(100svh - var(--header-height, 70px)) !important;
+            height: calc(100svh - var(--header-height, 70px)) !important;
+          }
+          .hero-content-wrapper {
+            padding: clamp(18px, 3vh, 32px) 0 !important;
+            gap: var(--space-sm) !important;
           }
         }
       `}</style>

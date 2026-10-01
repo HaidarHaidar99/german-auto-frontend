@@ -32,7 +32,10 @@ export function isMobileViewport() {
  * Initializes accessible Lenis smooth scrolling
  */
 export function initSmoothScroll(options = {}) {
-  if (typeof window === "undefined" || isReducedMotion()) {
+  // Respect reduced motion, server-side rendering, and mobile viewports.
+  // Mobile touch screens have native 120Hz hardware momentum scrolling;
+  // virtual smooth scrolling on touch screens intercepts touch events and causes unnatural catching.
+  if (typeof window === "undefined" || isReducedMotion() || isMobileViewport()) {
     return null;
   }
 

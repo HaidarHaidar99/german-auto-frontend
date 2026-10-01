@@ -12,13 +12,14 @@ export function AosManager() {
   const { pathname, search } = useLocation();
 
   useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     AOS.init({
-      duration: 800,
+      duration: isMobile ? 600 : 800,
       easing: "ease-out-cubic",
-      once: false,
-      mirror: true,
-      offset: 50,
-      delay: 50,
+      once: isMobile ? true : false,
+      mirror: isMobile ? false : true,
+      offset: isMobile ? 30 : 50,
+      delay: isMobile ? 0 : 50,
       disableMutationObserver: false,
     });
   }, []);

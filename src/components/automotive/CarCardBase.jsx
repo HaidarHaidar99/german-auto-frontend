@@ -151,14 +151,17 @@ export function CarCardBase({
         boxShadow: "none",
         transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
         cursor: onSelect ? "pointer" : "default",
+        touchAction: "pan-y pan-x",
         ...style,
       }}
       onMouseEnter={(e) => {
+        if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
         e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
         e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
         e.currentTarget.style.boxShadow = "0 14px 34px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15)";
       }}
       onMouseLeave={(e) => {
+        if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
         e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.09)";
         e.currentTarget.style.transform = "translateY(0) scale(1)";
         e.currentTarget.style.boxShadow = "none";

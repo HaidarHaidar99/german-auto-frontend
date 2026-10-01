@@ -249,8 +249,7 @@ export function FeaturedInventorySection() {
                 flexDirection: "row",
                 gap: "24px",
                 overflowX: "auto",
-                scrollSnapType: "x mandatory",
-                scrollBehavior: "smooth",
+                scrollSnapType: "none",
                 padding: "8px 0 20px 0",
                 WebkitOverflowScrolling: "touch",
                 scrollbarWidth: "none",
@@ -258,6 +257,9 @@ export function FeaturedInventorySection() {
                 width: "100%",
                 boxSizing: "border-box",
                 justifyContent: "flex-start",
+                touchAction: "pan-y pan-x",
+                overscrollBehaviorX: "contain",
+                overscrollBehaviorY: "auto",
               }}
             >
               {cars.map((car, idx) => {
@@ -276,15 +278,13 @@ export function FeaturedInventorySection() {
                 return (
                   <div
                     key={car.id}
-                    data-aos="fade-up"
-                    data-aos-delay={idx * 120}
-                    data-aos-duration="750"
+                    className="featured-car-item"
                     style={{
                       flex: "0 0 clamp(290px, 85vw, 360px)",
                       maxWidth: "360px",
                       margin: "0",
-                      scrollSnapAlign: "start",
                       boxSizing: "border-box",
+                      touchAction: "pan-y pan-x",
                     }}
                   >
                     <CarCardBase

@@ -43,16 +43,18 @@ export function LocationsSection({ locations = [] }) {
                 flexDirection: "column",
                 gap: "var(--space-md)",
                 borderRadius: "var(--radius-xl, 16px)",
-                border: "1px solid var(--color-border)",
                 background: "linear-gradient(135deg, var(--color-card) 0%, var(--color-surface) 100%)",
                 transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
+                touchAction: "pan-y",
               }}
               onMouseEnter={(e) => {
+                if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
                 e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
                 e.currentTarget.style.transform = "translateY(-4px)";
                 e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.12)";
               }}
               onMouseLeave={(e) => {
+                if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
                 e.currentTarget.style.borderColor = "var(--color-border)";
                 e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow = "none";

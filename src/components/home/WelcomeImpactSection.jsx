@@ -79,6 +79,7 @@ export function WelcomeImpactSection() {
         padding: "clamp(30px, 5vw, 60px) 0",
         backgroundColor: "transparent",
         overflow: "hidden",
+        touchAction: "pan-y",
       }}
     >
       <Container size="default">
@@ -91,6 +92,7 @@ export function WelcomeImpactSection() {
             minHeight: "clamp(340px, 48vh, 480px)",
             borderRadius: "var(--radius-xl, 24px)",
             border: "1px solid rgba(212, 175, 55, 0.28)",
+            touchAction: "pan-y",
             boxShadow:
               stage >= 2
                 ? "0 20px 50px rgba(0, 0, 0, 0.75), 0 0 35px rgba(212, 175, 55, 0.22)"
