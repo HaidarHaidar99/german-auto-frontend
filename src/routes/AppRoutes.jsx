@@ -40,7 +40,7 @@ const DesignSystemPage       = lazy(() => import("../pages/dev/DesignSystemPage"
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<LoadingState minHeight="80vh" />}>
+    <Suspense fallback={<div style={{ minHeight: "60vh" }} />}>
       <Routes>
         {/* Public Website Routes */}
         <Route element={<PublicLayout />}>

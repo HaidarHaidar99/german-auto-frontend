@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSettings, DEFAULT_LOGO_URL, DEFAULT_BRAND_NAME } from "../../contexts/SettingsContext";
 
-export function LoadingState({ message = null, minHeight = "240px", showBrand = true }) {
+export function LoadingState({ message = null, minHeight = "240px", showBrand = false }) {
   const { t } = useTranslation("common");
   const { settings } = useSettings?.() || {};
 
