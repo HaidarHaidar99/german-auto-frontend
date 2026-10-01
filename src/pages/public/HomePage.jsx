@@ -13,6 +13,7 @@ import ContactCtaSection from "../../components/home/ContactCtaSection";
 import { Container, Section } from "../../components/ui/Layout";
 import { Eyebrow, Heading, Text } from "../../components/ui/Typography";
 import carsService from "../../services/cars/cars.service";
+import { ScrollTrigger } from "../../utils/animation";
 
 /**
  * German Auto — Production Homepage
@@ -61,6 +62,14 @@ export function HomePage() {
       document.title = siteTitle;
     }
   }, [settings]);
+
+  // Synchronize ScrollTrigger calculations when dynamic CMS data alters page layout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+    return () => clearTimeout(timer);
+  }, [settings, topCar]);
 
   const homepageConfig = settings?.homepage || {};
   const sectionsEnabled = homepageConfig.sections_enabled || {
