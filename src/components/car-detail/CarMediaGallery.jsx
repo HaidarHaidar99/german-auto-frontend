@@ -70,14 +70,98 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
   }, []);
 
   const handlePrevPhoto = useCallback(() => {
-    setDriveDirection("left");
-    setActivePhotoIdx((prev) => (prev === 0 ? uniquePhotos.length - 1 : prev - 1));
-  }, [uniquePhotos.length]);
+    setActivePhotoIdx((prev) => {
+      if (prev <= 0) return 0; // Stop cleanly at first image
+      setDriveDirection("left");
+      return prev - 1;
+    });
+  }, []);
 
   const handleNextPhoto = useCallback(() => {
-    setDriveDirection("right");
-    setActivePhotoIdx((prev) => (prev === uniquePhotos.length - 1 ? 0 : prev + 1));
+    setActivePhotoIdx((prev) => {
+      if (prev >= uniquePhotos.length - 1) return prev; // Stop cleanly at last image
+      setDriveDirection("right");
+      return prev + 1;
+    });
   }, [uniquePhotos.length]);
+
+  // Touch swipe support on the large car image
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchDeltaX = useRef(0);
+  const touchDeltaY = useRef(0);
+  const isHorizontalSwipe = useRef(false);
+  const isVerticalScroll = useRef(false);
+
+  const handleTouchStart = (e) => {
+    if (!e.touches || e.touches.length !== 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaX.current = 0;
+    touchDeltaY.current = 0;
+    isHorizontalSwipe.current = false;
+    isVerticalScroll.current = false;
+  };
+
+  const handleTouchMove = (e) => {
+    if (!e.touches || e.touches.length !== 1 || isVerticalScroll.current) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = currentX - touchStartX.current;
+    const diffY = currentY - touchStartY.current;
+    touchDeltaX.current = diffX;
+    touchDeltaY.current = diffY;
+
+    const absX = Math.abs(diffX);
+    const absY = Math.abs(diffY);
+
+    // Identify direction intent early (threshold of 8px)
+    if (!isHorizontalSwipe.current && !isVerticalScroll.current) {
+      if (absY > 8 && absY > absX) {
+        // Vertical gesture -> let the page scroll naturally
+        isVerticalScroll.current = true;
+        return;
+      }
+      if (absX > 8 && absX >= absY) {
+        // Horizontal gesture -> gallery swipe
+        isHorizontalSwipe.current = true;
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isVerticalScroll.current) {
+      isVerticalScroll.current = false;
+      isHorizontalSwipe.current = false;
+      return;
+    }
+
+    const absX = Math.abs(touchDeltaX.current);
+    const absY = Math.abs(touchDeltaY.current);
+
+    // Natural, reliable swipe threshold: 35px horizontal movement
+    if (absX >= 35 && absX > absY * 1.2) {
+      if (touchDeltaX.current < 0) {
+        // Swipe LEFT -> next image
+        handleNextPhoto();
+      } else {
+        // Swipe RIGHT -> previous image
+        handlePrevPhoto();
+      }
+    }
+
+    touchDeltaX.current = 0;
+    touchDeltaY.current = 0;
+    isHorizontalSwipe.current = false;
+    isVerticalScroll.current = false;
+  };
+
+  const handleTouchCancel = () => {
+    touchDeltaX.current = 0;
+    touchDeltaY.current = 0;
+    isHorizontalSwipe.current = false;
+    isVerticalScroll.current = false;
+  };
 
   const handleSelectPhoto = useCallback((idx) => {
     setActivePhotoIdx((prev) => {
@@ -392,12 +476,17 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
         {/* TAB: PHOTOS */}
         {activeTab === "photos" && hasPhotos && (
           <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchCancel}
             style={{
               width: "100%",
               height: "100%",
               position: "relative",
               touchAction: "pan-y",
               overscrollBehaviorX: "none",
+              overflow: "hidden",
             }}
           >
             <img
@@ -405,12 +494,14 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
               src={currentPhotoSrc}
               alt={`${vehicleAlt} — Ansicht ${activePhotoIdx + 1}`}
               loading={activePhotoIdx === 0 ? "eager" : "lazy"}
+              draggable={false}
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
                 display: "block",
                 cursor: "default",
+                userSelect: "none",
                 transition: isReducedMotion() ? "none" : "opacity var(--duration-fast) var(--ease-smooth)",
               }}
             />
@@ -425,17 +516,21 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
               }}
             />
 
-            {/* Navigation Overlay Controls (Always active anytime anywhere) */}
+            {/* Navigation Overlay Controls (Positioned INSIDE the large image) */}
             {uniquePhotos.length > 1 && (
               <>
+                {/* Left Arrow: Previous Photo (stops cleanly at first image) */}
                 <button
                   type="button"
                   aria-label={t("lightboxPrev", "Vorheriges Bild")}
+                  disabled={activePhotoIdx === 0}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     handlePrevPhoto();
                   }}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
                   style={{
                     position: "absolute",
                     left: "14px",
@@ -444,41 +539,50 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                     width: "44px",
                     height: "44px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(12, 14, 18, 0.85)",
+                    backgroundColor: activePhotoIdx === 0 ? "rgba(12, 14, 18, 0.45)" : "rgba(12, 14, 18, 0.85)",
                     backdropFilter: "blur(12px)",
-                    border: "1.5px solid rgba(212, 175, 55, 0.4)",
-                    color: "#D4AF37",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1.5px solid",
+                    borderColor: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.45)",
+                    color: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.3)" : "#D4AF37",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    cursor: "pointer",
+                    cursor: activePhotoIdx === 0 ? "not-allowed" : "pointer",
+                    opacity: activePhotoIdx === 0 ? 0.35 : 1,
+                    pointerEvents: activePhotoIdx === 0 ? "none" : "auto",
                     zIndex: 20,
-                    pointerEvents: "auto",
                     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.5)",
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
+                    if (activePhotoIdx === 0) return;
                     e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
                     e.currentTarget.style.borderColor = "#D4AF37";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
                   }}
                   onMouseLeave={(e) => {
+                    if (activePhotoIdx === 0) return;
                     e.currentTarget.style.backgroundColor = "rgba(12, 14, 18, 0.85)";
-                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.4)";
+                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1)";
                   }}
                 >
                   <Icon name="chevron-left" size={22} />
                 </button>
 
+                {/* Right Arrow: Next Photo (stops cleanly at last image) */}
                 <button
                   type="button"
                   aria-label={t("lightboxNext", "Nächstes Bild")}
+                  disabled={activePhotoIdx === uniquePhotos.length - 1}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     handleNextPhoto();
                   }}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                  onPointerDown={(e) => e.stopPropagation()}
                   style={{
                     position: "absolute",
                     right: "14px",
@@ -487,27 +591,32 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                     width: "44px",
                     height: "44px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(12, 14, 18, 0.85)",
+                    backgroundColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(12, 14, 18, 0.45)" : "rgba(12, 14, 18, 0.85)",
                     backdropFilter: "blur(12px)",
-                    border: "1.5px solid rgba(212, 175, 55, 0.4)",
-                    color: "#D4AF37",
+                    WebkitBackdropFilter: "blur(12px)",
+                    border: "1.5px solid",
+                    borderColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.45)",
+                    color: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.3)" : "#D4AF37",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    cursor: "pointer",
+                    cursor: activePhotoIdx === uniquePhotos.length - 1 ? "not-allowed" : "pointer",
+                    opacity: activePhotoIdx === uniquePhotos.length - 1 ? 0.35 : 1,
+                    pointerEvents: activePhotoIdx === uniquePhotos.length - 1 ? "none" : "auto",
                     zIndex: 20,
-                    pointerEvents: "auto",
                     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.5)",
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
+                    if (activePhotoIdx === uniquePhotos.length - 1) return;
                     e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
                     e.currentTarget.style.borderColor = "#D4AF37";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
                   }}
                   onMouseLeave={(e) => {
+                    if (activePhotoIdx === uniquePhotos.length - 1) return;
                     e.currentTarget.style.backgroundColor = "rgba(12, 14, 18, 0.85)";
-                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.4)";
+                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1)";
                   }}
                 >
@@ -835,70 +944,6 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                 </svg>
               </div>
             </div>
-          </div>
-
-          {/* Quick Step Buttons */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <button
-              type="button"
-              onClick={handlePrevPhoto}
-              aria-label="Previous photo"
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 255, 255, 0.06)",
-                border: "1px solid rgba(212, 175, 55, 0.3)",
-                color: "#D4AF37",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
-                e.currentTarget.style.borderColor = "#D4AF37";
-                e.currentTarget.style.transform = "scale(1.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.06)";
-                e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.3)";
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            >
-              <Icon name="chevron-left" size={16} />
-            </button>
-            <button
-              type="button"
-              onClick={handleNextPhoto}
-              aria-label="Next photo"
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(255, 255, 255, 0.06)",
-                border: "1px solid rgba(212, 175, 55, 0.3)",
-                color: "#D4AF37",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
-                e.currentTarget.style.borderColor = "#D4AF37";
-                e.currentTarget.style.transform = "scale(1.08)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.06)";
-                e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.3)";
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            >
-              <Icon name="chevron-right" size={16} />
-            </button>
           </div>
         </div>
       )}
