@@ -64,7 +64,7 @@ export function CarDetailPage() {
   // Dynamic SEO metadata updates
   useEffect(() => {
     if (!car) return;
-    const siteName = settings?.site?.name || "German Auto";
+    const siteName = settings?.site?.name || "König Automobile Rheinberg";
     const carTitle = `${car.brand || ""} ${car.model || ""} ${car.title || ""}`.trim();
     document.title = `${carTitle} | ${siteName}`;
 

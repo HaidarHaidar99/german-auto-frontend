@@ -57,7 +57,7 @@ export function AboutPage() {
   const visualMediaItems = allMedia;
 
   // Dynamic SEO metadata
-  const siteName = siteConfig.name || "German Auto";
+  const siteName = siteConfig.name || "König Automobile Rheinberg";
   const metaDescription = storyDescription || pageSubtitle;
 
   useEffect(() => {

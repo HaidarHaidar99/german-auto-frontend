@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useSettings, DEFAULT_BRAND_NAME, DEFAULT_LOGO_URL } from "../../contexts/SettingsContext";
 import Icon from "../common/Icon";
 
 export function Footer() {
@@ -16,13 +16,13 @@ export function Footer() {
   const socialConfig = settings?.social || {};
   const locationsConfig = settings?.locations || [];
 
-  const siteName = siteConfig.name || "German Auto";
+  const siteName = siteConfig.name || DEFAULT_BRAND_NAME;
 
   // Footer Logo priority: footer_logo_url -> logo_dark_url -> logo_url -> default fallback
   const footerLogo =
     footerConfig.footer_logo_url ||
     brandingConfig.logo_url ||
-    "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
+    DEFAULT_LOGO_URL;
 
   // Description
   const description =

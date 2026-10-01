@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
+import { useSettings, DEFAULT_LOGO_URL, DEFAULT_BRAND_NAME } from "../../contexts/SettingsContext";
 import notificationsService from "../../services/notifications/notifications.service";
 import AdminNavItem from "./AdminNavItem";
 import Badge from "../ui/Badge";
@@ -10,9 +11,13 @@ import Icon from "../common/Icon";
 export function AdminSidebar({ className = "", style = {} }) {
   const { t } = useTranslation(["admin", "common"]);
   const { user, role, logout } = useAdminAuth();
+  const { settings } = useSettings?.() || {};
   const isSuperAdmin = role === "SUPER_ADMIN";
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
+
+  const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
+  const logoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
 
   useEffect(() => {
     let isMounted = true;
@@ -97,45 +102,74 @@ export function AdminSidebar({ className = "", style = {} }) {
         }}
       >
         {/* Brand Header */}
-        <div
+        <Link
+          to="/admincoresecure"
           style={{
-            padding: "24px 20px 20px 20px",
+            padding: "18px 16px",
             display: "flex",
-            flexDirection: "column",
-            gap: "8px",
+            alignItems: "center",
+            gap: "12px",
             borderBottom: "1px solid var(--color-admin-border)",
+            textDecoration: "none",
           }}
         >
-          <span
-            style={{
-              fontSize: "1.25rem",
-              fontWeight: 800,
-              letterSpacing: "-0.3px",
-              color: "var(--color-admin-text)",
-              lineHeight: 1.2,
-            }}
-          >
-            Admin Panel
-          </span>
-          <div>
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt={brandName}
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "8px",
+                objectFit: "contain",
+                backgroundColor: "#000000",
+                padding: "2px",
+                border: "1px solid var(--color-admin-border)",
+                flexShrink: 0,
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
+          <div style={{ display: "flex", flexDirection: "column", gap: "3px", minWidth: 0 }}>
             <span
               style={{
-                display: "inline-block",
-                padding: "2px 8px",
-                borderRadius: "4px",
-                border: "1px solid #3b82f6",
-                backgroundColor: "var(--color-admin-accent-subtle)",
-                color: "var(--color-admin-accent)",
-                fontSize: "10px",
+                fontSize: "13px",
                 fontWeight: 800,
-                letterSpacing: "0.8px",
-                textTransform: "uppercase",
+                letterSpacing: "-0.2px",
+                color: "var(--color-admin-text)",
+                lineHeight: 1.25,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
+              title={brandName}
             >
-              {isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}
+              {brandName}
             </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "1px 6px",
+                  borderRadius: "4px",
+                  backgroundColor: "var(--color-admin-accent-subtle)",
+                  color: "var(--color-admin-accent)",
+                  fontSize: "9px",
+                  fontWeight: 800,
+                  letterSpacing: "0.5px",
+                  textTransform: "uppercase",
+                }}
+              >
+                {isSuperAdmin ? "SUPER ADMIN" : "ADMIN"}
+              </span>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
+                Portal
+              </span>
+            </div>
           </div>
-        </div>
+        </Link>
 
         {/* Navigation Sections */}
         <nav

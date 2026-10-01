@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import settingsService from "../services/settings/settings.service";
 
 export const DEFAULT_LOGO_URL = "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
+export const DEFAULT_BRAND_NAME = "König Automobile Rheinberg";
 const SETTINGS_STORAGE_KEY = "german_auto_cached_settings";
 
 const SettingsContext = createContext(null);
@@ -10,7 +11,13 @@ export function SettingsProvider({ children }) {
   const [settings, setSettings] = useState(() => {
     try {
       const cached = localStorage.getItem(SETTINGS_STORAGE_KEY);
-      if (cached) return JSON.parse(cached);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (!parsed.site?.name || parsed.site?.name === "German Auto") {
+          parsed.site = { ...(parsed.site || {}), name: DEFAULT_BRAND_NAME };
+        }
+        return parsed;
+      }
     } catch {
       // Ignore parse error
     }
@@ -19,7 +26,8 @@ export function SettingsProvider({ children }) {
         logo_url: DEFAULT_LOGO_URL,
       },
       site: {
-        name: "German Auto",
+        name: DEFAULT_BRAND_NAME,
+        seo_title: DEFAULT_BRAND_NAME,
       },
     };
   });
@@ -42,6 +50,9 @@ export function SettingsProvider({ children }) {
     try {
       const res = await settingsService.getSettings();
       const data = res?.data?.settings || {};
+      if (!data.site?.name || data.site.name === "German Auto") {
+        data.site = { ...(data.site || {}), name: DEFAULT_BRAND_NAME };
+      }
       setSettings(data);
       try {
         localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(data));
@@ -51,9 +62,7 @@ export function SettingsProvider({ children }) {
       if (data.theme) {
         applyThemeVariables(data.theme);
       }
-      if (data.site?.name) {
-        document.title = data.site.seo_title || data.site.name;
-      }
+      document.title = data.site?.seo_title || data.site?.name || DEFAULT_BRAND_NAME;
       if (data.branding?.favicon_url) {
         let link = document.querySelector("link[rel~='icon']");
         if (!link) {

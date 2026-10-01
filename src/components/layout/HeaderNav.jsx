@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
-import { useSettings } from "../../contexts/SettingsContext";
+import { useSettings, DEFAULT_BRAND_NAME, DEFAULT_LOGO_URL } from "../../contexts/SettingsContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
 import IconButton from "../ui/IconButton";
 import Button from "../ui/Button";
@@ -232,8 +232,8 @@ export function HeaderNav({
     }
   };
 
-  const siteName = settings?.site?.name || "German Auto";
-  const activeLogoUrl = settings?.branding?.logo_url || "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
+  const siteName = settings?.site?.name || DEFAULT_BRAND_NAME;
+  const activeLogoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
 
   const isTransparent = transparent && !isScrolled && !menuOpen;
 

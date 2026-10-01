@@ -109,7 +109,7 @@ export function CarsPage() {
 
   // Set document title dynamically
   useEffect(() => {
-    const siteName = settings?.site?.name || "German Auto";
+    const siteName = settings?.site?.name || "König Automobile Rheinberg";
     document.title = `${t("title", "Fahrzeugbestand")} | ${siteName}`;
   }, [settings, t]);
 

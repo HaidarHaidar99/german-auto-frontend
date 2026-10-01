@@ -45,8 +45,8 @@ export function LoginPage() {
   // SEO Title
   useEffect(() => {
     document.title = isAdminTarget
-      ? `${t("adminPortalTitle")} | German Auto`
-      : `${t("loginTitle")} | German Auto`;
+      ? `${t("adminPortalTitle")} | König Automobile Rheinberg`
+      : `${t("loginTitle")} | König Automobile Rheinberg`;
   }, [t, isAdminTarget]);
 
   // Dedicated, completely isolated redirect logic

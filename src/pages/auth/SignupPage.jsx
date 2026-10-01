@@ -29,7 +29,7 @@ export function SignupPage() {
   const [resendSuccess, setResendSuccess] = useState(false);
 
   useEffect(() => {
-    document.title = `${t("signupTitle")} | German Auto`;
+    document.title = `${t("signupTitle")} | König Automobile Rheinberg`;
   }, [t]);
 
   useGsapContext(pageContainerRef, () => {

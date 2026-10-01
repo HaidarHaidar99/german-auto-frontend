@@ -30,7 +30,7 @@ export function ContactPage() {
 
   // Dynamic SEO metadata
   useEffect(() => {
-    const siteName = settings?.site?.name || "German Auto";
+    const siteName = settings?.site?.name || "König Automobile Rheinberg";
     document.title = `${customTitle} | ${siteName}`;
 
     let metaTag = document.querySelector('meta[name="description"]');

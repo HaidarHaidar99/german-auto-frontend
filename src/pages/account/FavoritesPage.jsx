@@ -27,7 +27,7 @@ export function FavoritesPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    document.title = `${t("favoritesPageTitle")} | German Auto`;
+    document.title = `${t("favoritesPageTitle")} | König Automobile Rheinberg`;
   }, [t]);
 
   const loadFavorites = React.useCallback(async (silent = false) => {

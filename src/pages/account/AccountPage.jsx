@@ -13,7 +13,7 @@ export function AccountPage() {
   const pageContainerRef = useRef(null);
 
   useEffect(() => {
-    document.title = `${t("navOverview")} | German Auto`;
+    document.title = `${t("navOverview")} | König Automobile Rheinberg`;
   }, [t]);
 
   useGsapContext(pageContainerRef, () => {

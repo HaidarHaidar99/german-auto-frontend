@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
+import { useSettings, DEFAULT_LOGO_URL, DEFAULT_BRAND_NAME } from "../../contexts/SettingsContext";
 import Drawer from "../ui/Drawer";
 import AdminNavItem from "./AdminNavItem";
 import LanguageSwitcher from "../common/LanguageSwitcher";
@@ -10,7 +11,11 @@ import Icon from "../common/Icon";
 export function AdminMobileNav({ isOpen, onClose }) {
   const { t } = useTranslation(["admin", "common"]);
   const { user, role, logout, isSuperAdmin } = useAdminAuth();
+  const { settings } = useSettings?.() || {};
   const navigate = useNavigate();
+
+  const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
+  const logoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
 
   const handleLogout = async () => {
     onClose();
@@ -45,7 +50,33 @@ export function AdminMobileNav({ isOpen, onClose }) {
   ];
 
   return (
-    <Drawer isOpen={isOpen} onClose={onClose} position="left" title="Admin Panel" closeOnBackdropClick={true}>
+    <Drawer
+      isOpen={isOpen}
+      onClose={onClose}
+      position="left"
+      title={
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt={brandName}
+              style={{
+                width: "28px",
+                height: "28px",
+                objectFit: "contain",
+                borderRadius: "4px",
+                backgroundColor: "#000",
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
+          <span style={{ fontSize: "14px", fontWeight: 800 }}>{brandName}</span>
+        </div>
+      }
+      closeOnBackdropClick={true}
+    >
       <div
         style={{
           display: "flex",

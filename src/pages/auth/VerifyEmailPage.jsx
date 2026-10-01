@@ -25,7 +25,7 @@ export function VerifyEmailPage() {
   const [resendSuccess, setResendSuccess] = useState(false);
 
   useEffect(() => {
-    document.title = `${t("verifyEmailTitle")} | German Auto`;
+    document.title = `${t("verifyEmailTitle")} | König Automobile Rheinberg`;
   }, [t]);
 
   useGsapContext(pageContainerRef, () => {
@@ -129,7 +129,7 @@ export function VerifyEmailPage() {
 
         <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
           <Badge variant="outline" size="sm">
-            German Auto
+            König Automobile Rheinberg
           </Badge>
         </div>
 

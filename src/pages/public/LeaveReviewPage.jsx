@@ -27,8 +27,8 @@ export function LeaveReviewPage() {
 
   useEffect(() => {
     document.title = currentLang === "en"
-      ? "Leave a Review | German Auto"
-      : "Bewertung abgeben | German Auto";
+      ? "Leave a Review | König Automobile Rheinberg"
+      : "Bewertung abgeben | König Automobile Rheinberg";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentLang]);
 

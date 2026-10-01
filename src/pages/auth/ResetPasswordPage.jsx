@@ -25,7 +25,7 @@ export function ResetPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    document.title = `${t("resetPassword")} | German Auto`;
+    document.title = `${t("resetPassword")} | König Automobile Rheinberg`;
   }, [t]);
 
   useGsapContext(pageContainerRef, () => {
@@ -118,7 +118,7 @@ export function ResetPasswordPage() {
         <div style={{ textAlign: "center", marginBottom: "var(--space-xl)" }}>
           <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
             <Badge variant={isAdminTarget ? "primary" : "outline"} size="sm">
-              {isAdminTarget ? "ADMIN CORE" : "German Auto"}
+              {isAdminTarget ? "ADMIN CORE" : "König Automobile Rheinberg"}
             </Badge>
           </div>
           <h1

@@ -35,7 +35,7 @@ export function SecurityPage() {
   const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
-    document.title = `${t("securityPageTitle")} | German Auto`;
+    document.title = `${t("securityPageTitle")} | König Automobile Rheinberg`;
   }, [t]);
 
   useGsapContext(pageContainerRef, () => {

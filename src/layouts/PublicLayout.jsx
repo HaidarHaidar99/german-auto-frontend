@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSettings } from "../contexts/SettingsContext";
+import { useSettings, DEFAULT_BRAND_NAME } from "../contexts/SettingsContext";
 import { useSmoothScroll } from "../hooks/useAnimation";
 import HeaderNav from "../components/layout/HeaderNav";
 import Footer from "../components/layout/Footer";
@@ -14,7 +14,7 @@ export function PublicLayout() {
   useSmoothScroll(true);
 
   const location = useLocation();
-  const siteName = settings?.site?.name || "German Auto";
+  const siteName = settings?.site?.name || DEFAULT_BRAND_NAME;
 
   // Handle URL hash anchor scrolling (e.g. /#reviews)
   useEffect(() => {

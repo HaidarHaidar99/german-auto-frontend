@@ -46,7 +46,7 @@ export function AccountReviewsPage() {
   }, []);
 
   useEffect(() => {
-    document.title = currentLang === "en" ? "My Reviews | German Auto" : "Meine Bewertungen | German Auto";
+    document.title = currentLang === "en" ? "My Reviews | König Automobile Rheinberg" : "Meine Bewertungen | König Automobile Rheinberg";
     fetchMyReviews();
   }, [currentLang, fetchMyReviews]);
 
@@ -201,7 +201,7 @@ export function AccountReviewsPage() {
             <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", maxWidth: "420px", margin: "0 auto var(--space-xl)", lineHeight: 1.5 }}>
               {currentLang === "en"
                 ? "You haven't submitted any reviews yet. Share your experience with our vehicles and team."
-                : "Sie haben bisher noch keine Bewertung abgegeben. Teilen Sie Ihre Erfahrungen mit German Auto."}
+                : "Sie haben bisher noch keine Bewertung abgegeben. Teilen Sie Ihre Erfahrungen mit König Automobile Rheinberg."}
             </p>
             <Button as={Link} to="/leave-review" variant="secondary" size="md" style={{ borderRadius: "0px" }}>
               {currentLang === "en" ? "Leave a Review Now →" : "Jetzt Bewertung abgeben →"}

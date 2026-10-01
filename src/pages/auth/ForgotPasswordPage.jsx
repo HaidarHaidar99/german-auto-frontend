@@ -31,8 +31,8 @@ export function ForgotPasswordPage() {
 
   useEffect(() => {
     document.title = isAdminTarget
-      ? `Admin Core | ${t("forgotPassword")} | German Auto`
-      : `${t("forgotPassword")} | German Auto`;
+      ? `Admin Core | ${t("forgotPassword")} | König Automobile Rheinberg`
+      : `${t("forgotPassword")} | König Automobile Rheinberg`;
   }, [t, isAdminTarget]);
 
   useGsapContext(pageContainerRef, () => {

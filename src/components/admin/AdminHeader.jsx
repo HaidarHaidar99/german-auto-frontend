@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAdminAuth } from "../../contexts/AdminAuthContext";
+import { useSettings, DEFAULT_LOGO_URL, DEFAULT_BRAND_NAME } from "../../contexts/SettingsContext";
 import notificationsService from "../../services/notifications/notifications.service";
 import IconButton from "../ui/IconButton";
 import Icon from "../common/Icon";
@@ -14,9 +15,13 @@ export function AdminHeader({
   style = {},
 }) {
   const { user, role } = useAdminAuth();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
+
+  const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
+  const brandLogo = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
 
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
@@ -160,17 +165,48 @@ export function AdminHeader({
             onClick={onOpenMobileNav}
           />
 
-          {/* Middle: Admin Panel Text */}
-          <span
+          {/* Middle: Brand Logo & Name */}
+          <Link
+            to="/admincoresecure"
             style={{
-              fontWeight: 800,
-              fontSize: "16px",
-              color: "var(--color-admin-text)",
-              letterSpacing: "-0.3px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              textDecoration: "none",
+              minWidth: 0,
+              flex: 1,
             }}
           >
-            Admin Panel
-          </span>
+            <img
+              src={brandLogo}
+              alt={brandName}
+              style={{
+                width: "28px",
+                height: "28px",
+                borderRadius: "6px",
+                objectFit: "contain",
+                backgroundColor: "#0d0f12",
+                flexShrink: 0,
+              }}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = DEFAULT_LOGO_URL;
+              }}
+            />
+            <span
+              style={{
+                fontWeight: 800,
+                fontSize: "14px",
+                color: "var(--color-admin-text)",
+                letterSpacing: "-0.3px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {brandName}
+            </span>
+          </Link>
 
           {/* Right: Theme Toggle + Language Switcher */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -259,6 +295,38 @@ export function AdminHeader({
         >
           {/* Left: Welcome & Role */}
           <div>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                fontSize: "11px",
+                fontWeight: 700,
+                letterSpacing: "0.8px",
+                textTransform: "uppercase",
+                color: "var(--color-admin-muted)",
+                marginBottom: "4px",
+              }}
+            >
+              <img
+                src={brandLogo}
+                alt={brandName}
+                style={{
+                  width: "18px",
+                  height: "18px",
+                  borderRadius: "4px",
+                  objectFit: "contain",
+                  backgroundColor: "#0d0f12",
+                }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = DEFAULT_LOGO_URL;
+                }}
+              />
+              <span>{brandName}</span>
+              <span style={{ opacity: 0.5 }}>•</span>
+              <span style={{ color: "var(--color-admin-accent)" }}>Admin Portal</span>
+            </div>
             <h1
               style={{
                 fontSize: "clamp(1.25rem, 2vw, 1.5rem)",
