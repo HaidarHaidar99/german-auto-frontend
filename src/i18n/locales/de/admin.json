@@ -472,7 +472,7 @@
   "logoDark": "Alternatives Logo (Dunkel)",
   "logoDarkHelper": "Wird für dunkle Hintergründe oder Dark Mode genutzt.",
   "favicon": "Favicon URL",
-  "faviconHelper": "Icon für Browser-Tabs (ICO, PNG oder SVG).",
+  "faviconHelper": "Icon für Browser-Tabs (ICO, PNG, JPG/JPEG oder SVG).",
   "contactSubtitle": "Verwalten Sie Ihre offiziellen Kontaktdaten, Rufnummern und Adressen.",
   "phone": "Telefonnummer",
   "phoneHelper": "Im internationalen Format (z. B. +49 89 12345678).",

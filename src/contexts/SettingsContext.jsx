@@ -62,6 +62,18 @@ export function SettingsProvider({ children }) {
           document.head.appendChild(link);
         }
         link.href = data.branding.favicon_url;
+        const cleanUrl = (data.branding.favicon_url || "").split("?")[0].toLowerCase();
+        if (cleanUrl.endsWith(".jpg") || cleanUrl.endsWith(".jpeg")) {
+          link.type = "image/jpeg";
+        } else if (cleanUrl.endsWith(".png")) {
+          link.type = "image/png";
+        } else if (cleanUrl.endsWith(".svg")) {
+          link.type = "image/svg+xml";
+        } else if (cleanUrl.endsWith(".ico")) {
+          link.type = "image/x-icon";
+        } else if (cleanUrl.endsWith(".webp")) {
+          link.type = "image/webp";
+        }
       }
       setError(null);
     } catch (err) {

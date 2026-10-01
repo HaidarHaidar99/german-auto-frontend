@@ -472,7 +472,7 @@
   "logoDark": "Dark Variant Logo",
   "logoDarkHelper": "Used for dark backgrounds or dark mode.",
   "favicon": "Favicon URL",
-  "faviconHelper": "Icon for browser tabs (ICO, PNG, or SVG).",
+  "faviconHelper": "Icon for browser tabs (ICO, PNG, JPG/JPEG, or SVG).",
   "contactSubtitle": "Manage your official contact details, phone numbers, and addresses.",
   "phone": "Phone Number",
   "phoneHelper": "In international format (e.g. +49 89 12345678).",

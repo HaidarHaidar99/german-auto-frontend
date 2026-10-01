@@ -49,12 +49,12 @@ export function BrandingSettingsEditor({
         <MediaUploadField
           label={t("primaryLogo", { defaultValue: "Hauptlogo (Hell / Standard)" })}
           value={data.logo_url || ""}
-          accept="image/png, image/jpeg, image/webp, image/svg+xml"
+          accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
           maxSizeMB={5}
           onChange={(val) => onChange?.({ ...data, logo_url: val })}
           onUpload={(file) => handleUploadAsset(file, "logo")}
           helper={t("primaryLogoHelper", {
-            defaultValue: "Wird in der Navigation auf dunklen Hintergründen gerendert. SVG oder transparentes PNG empfohlen.",
+            defaultValue: "Wird in der Navigation auf dunklen Hintergründen gerendert. SVG, PNG oder JPEG empfohlen.",
           })}
           error={errors["branding.logo_url"]}
         />
@@ -62,12 +62,12 @@ export function BrandingSettingsEditor({
         <MediaUploadField
           label={t("logoDark", { defaultValue: "Alternatives Logo (Dunkel / Kontrast)" })}
           value={data.logo_dark_url || ""}
-          accept="image/png, image/jpeg, image/webp, image/svg+xml"
+          accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
           maxSizeMB={5}
           onChange={(val) => onChange?.({ ...data, logo_dark_url: val })}
           onUpload={(file) => handleUploadAsset(file, "logo_dark")}
           helper={t("logoDarkHelper", {
-            defaultValue: "Optional. Wird für helle Hintergründe oder Druckansichten verwendet.",
+            defaultValue: "Optional. Wird für helle Hintergründe oder Druckansichten verwendet. SVG, PNG oder JPEG empfohlen.",
           })}
           error={errors["branding.logo_dark_url"]}
         />
@@ -75,12 +75,12 @@ export function BrandingSettingsEditor({
         <MediaUploadField
           label={t("favicon", { defaultValue: "Browser-Favicon" })}
           value={data.favicon_url || ""}
-          accept="image/x-icon, image/png, image/svg+xml"
+          accept="image/x-icon, image/png, image/jpeg, image/webp, image/svg+xml, .ico, .png, .jpg, .jpeg, .svg"
           maxSizeMB={2}
           onChange={(val) => onChange?.({ ...data, favicon_url: val })}
           onUpload={(file) => handleUploadAsset(file, "favicon")}
           helper={t("faviconHelper", {
-            defaultValue: "Wird im Browser-Tab angezeigt. Quadratisches Format (32x32px oder 64x64px, .ico / .png / .svg).",
+            defaultValue: "Wird im Browser-Tab angezeigt. Quadratisches Format (32x32px oder 64x64px, .ico / .png / .jpg / .jpeg / .svg).",
           })}
           error={errors["branding.favicon_url"]}
         />
