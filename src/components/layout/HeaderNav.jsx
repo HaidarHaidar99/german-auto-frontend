@@ -33,48 +33,88 @@ export function HeaderNav({
   const menuBgRef = useRef(null);
   const menuItemsRef = useRef([]);
 
+  const accumulatedDown = useRef(0);
+  const accumulatedUp = useRef(0);
+  const currentVisibility = useRef(true);
+
   // Always ensure header is visible, close mobile menu, and reset scroll tracking on route change
   useEffect(() => {
     if (menuOpen) {
       closeMenu();
     }
     setIsVisible(true);
+    currentVisibility.current = true;
     setIsScrolled(false);
     lastScrollY.current = 0;
+    accumulatedDown.current = 0;
+    accumulatedUp.current = 0;
   }, [location.pathname, location.search]);
 
-  const upScrollAccumulator = useRef(0);
-  const downScrollAccumulator = useRef(0);
-
-  // Dynamic header visibility: smooth and deliberate scrolling/touch response
+  // Dynamic header visibility with a proper threshold / dead zone:
+  // - Tiny movements (few pixels) are completely ignored (dead zone).
+  // - Navbar stays exactly where it is until a meaningful distance is scrolled.
+  // - Meaningful continuous downward scroll (> 75px) smoothly slides the navbar upward to hide it.
+  // - Meaningful continuous upward scroll (> 60px) smoothly slides the navbar downward to reveal it.
+  // - Near the top of the page (scrollY <= 70px) or with mobile menu open, navbar is always visible.
   useEffect(() => {
     let ticking = false;
+    const DOWN_THRESHOLD = 75; // Pixels of meaningful continuous downward scroll to hide
+    const UP_THRESHOLD = 60;   // Pixels of meaningful continuous upward scroll to reveal
+    const TOP_ZONE = 70;       // Near top of page where navbar is always visible
 
     const onScroll = () => {
       const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || document.body?.scrollTop || 0);
-      const diff = currentScrollY - lastScrollY.current;
+      const delta = currentScrollY - lastScrollY.current;
 
-      if (menuOpen || currentScrollY <= 60) {
-        setIsVisible(true);
-        upScrollAccumulator.current = 0;
-        downScrollAccumulator.current = 0;
-      } else if (diff > 0) {
-        // Scrolling down
-        downScrollAccumulator.current += diff;
-        upScrollAccumulator.current = 0;
-        if (downScrollAccumulator.current > 20 && currentScrollY > 80) {
-          setIsVisible(false);
-        }
-      } else if (diff < 0) {
-        // Scrolling up - require deliberate smooth upward scroll (~25px)
-        upScrollAccumulator.current += Math.abs(diff);
-        downScrollAccumulator.current = 0;
-        if (upScrollAccumulator.current > 25) {
+      // Sub-pixel jitter filter: ignore movements less than 2px
+      if (Math.abs(delta) < 2) {
+        ticking = false;
+        return;
+      }
+
+      // 1. Top of page or menu open: always visible and reset accumulators
+      if (menuOpen || currentScrollY <= TOP_ZONE) {
+        if (!currentVisibility.current) {
+          currentVisibility.current = true;
           setIsVisible(true);
+        }
+        accumulatedDown.current = 0;
+        accumulatedUp.current = 0;
+      } else if (delta > 0) {
+        // Scrolling DOWN
+        accumulatedDown.current += delta;
+        // Direction change dead-zone: only clear upward accumulator on deliberate downward movement (> 4px)
+        if (delta > 4) {
+          accumulatedUp.current = 0;
+        }
+
+        // Dead zone: small downward movements are completely ignored
+        if (accumulatedDown.current >= DOWN_THRESHOLD && currentScrollY > TOP_ZONE) {
+          if (currentVisibility.current) {
+            currentVisibility.current = false;
+            setIsVisible(false);
+          }
+          accumulatedDown.current = 0; // Reset after triggering
+        }
+      } else if (delta < 0) {
+        // Scrolling UP
+        accumulatedUp.current += Math.abs(delta);
+        // Direction change dead-zone: only clear downward accumulator on deliberate upward movement (> 4px)
+        if (Math.abs(delta) > 4) {
+          accumulatedDown.current = 0;
+        }
+
+        // Dead zone: small upward movements are completely ignored
+        if (accumulatedUp.current >= UP_THRESHOLD) {
+          if (!currentVisibility.current) {
+            currentVisibility.current = true;
+            setIsVisible(true);
+          }
+          accumulatedUp.current = 0; // Reset after triggering
         }
       }
 
-      setIsScrolled(currentScrollY > 20);
+      setIsScrolled(currentScrollY > 25);
       lastScrollY.current = currentScrollY;
       ticking = false;
     };
@@ -88,58 +128,7 @@ export function HeaderNav({
 
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Desktop mouse wheel listener for smooth natural scroll
-    let wheelDeltaAccumulator = 0;
-    let wheelTimer = null;
-    const handleWheel = (e) => {
-      if (menuOpen) return;
-      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
-      if (currentScrollY <= 60) {
-        setIsVisible(true);
-        return;
-      }
-
-      wheelDeltaAccumulator += e.deltaY;
-      clearTimeout(wheelTimer);
-      wheelTimer = setTimeout(() => {
-        wheelDeltaAccumulator = 0;
-      }, 200);
-
-      if (wheelDeltaAccumulator < -40) {
-        // Smooth intentional upward movement
-        setIsVisible(true);
-      } else if (wheelDeltaAccumulator > 30 && currentScrollY > 80) {
-        // Smooth downward movement
-        setIsVisible(false);
-      }
-    };
-    window.addEventListener("wheel", handleWheel, { passive: true });
-
-    // Mobile touch listener for smooth, natural gestures
-    let touchStartY = 0;
-    const handleTouchStart = (e) => {
-      if (e.touches?.[0]) touchStartY = e.touches[0].clientY;
-    };
-    const handleTouchMove = (e) => {
-      if (menuOpen || !e.touches?.[0]) return;
-      const currentTouchY = e.touches[0].clientY;
-      const touchDiff = currentTouchY - touchStartY;
-      const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
-
-      if (currentScrollY <= 60) {
-        setIsVisible(true);
-      } else if (touchDiff > 25) {
-        // Smooth deliberate touch swipe down (scroll content up)
-        setIsVisible(true);
-      } else if (touchDiff < -25) {
-        // Smooth deliberate touch swipe up (scroll content down)
-        setIsVisible(false);
-      }
-    };
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
-
-    // Dynamic subscription to Lenis smooth scroll engine
+    // Dynamic subscription to Lenis smooth scroll engine (desktop)
     const lenisInterval = setInterval(() => {
       if (window.__lenis && typeof window.__lenis.on === "function" && !window.__lenis.__hasHeaderAttached) {
         window.__lenis.on("scroll", handleScroll);
@@ -149,11 +138,7 @@ export function HeaderNav({
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
       clearInterval(lenisInterval);
-      clearTimeout(wheelTimer);
       if (window.__lenis && window.__lenis.__hasHeaderAttached) {
         try {
           window.__lenis.off("scroll", handleScroll);
