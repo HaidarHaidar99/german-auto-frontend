@@ -22,7 +22,7 @@ import { gsap, isReducedMotion } from "../../utils/animation";
 export function CarDetailPage() {
   const { identifier } = useParams();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(["cars", "common"]);
+  const { t, i18n } = useTranslation(["cars", "common", "navigation"]);
   const { settings } = useSettings();
 
   const [car, setCar] = useState(null);
@@ -197,36 +197,63 @@ export function CarDetailPage() {
         padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
       }}
     >
-      {/* ─── Breadcrumb & Navigation Bar ───────────────────────────────── */}
+      {/* ─── Breadcrumb & Navigation Trail (Home / Cars / Car Model + Name) ─ */}
       <nav
         aria-label="Breadcrumb"
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "var(--space-xs)",
+          flexWrap: "wrap",
+          gap: "8px",
           marginBottom: "var(--space-lg)",
           fontSize: "var(--font-size-sm)",
         }}
       >
         <Link
-          to="/cars"
+          to="/"
           style={{
             display: "inline-flex",
             alignItems: "center",
-            gap: "var(--space-2xs)",
-            color: "var(--color-secondary)",
+            gap: "5px",
+            color: "var(--color-text-muted)",
             textDecoration: "none",
             transition: "color var(--duration-fast) var(--ease-smooth)",
           }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
         >
-          <Icon name="arrow-left" size={16} />
-          <span>{t("backToInventory")}</span>
+          <Icon name="home" size={14} />
+          <span>{t("navigation:home", "Startseite")}</span>
         </Link>
-        <span style={{ color: "var(--color-text-subtle)" }}>/</span>
-        <span style={{ color: "var(--color-text-muted)" }}>{car.brand}</span>
-        <span style={{ color: "var(--color-text-subtle)" }}>/</span>
-        <span style={{ color: "var(--color-text)", fontWeight: "var(--font-weight-medium)" }}>
-          {car.model || car.title}
+
+        <span style={{ color: "rgba(255, 255, 255, 0.25)" }}>/</span>
+
+        <Link
+          to="/cars"
+          style={{
+            color: "var(--color-text-muted)",
+            textDecoration: "none",
+            transition: "color var(--duration-fast) var(--ease-smooth)",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted)")}
+        >
+          <span>{t("navigation:cars", t("cars:title", "Fahrzeuge"))}</span>
+        </Link>
+
+        <span style={{ color: "rgba(255, 255, 255, 0.25)" }}>/</span>
+
+        <span
+          style={{
+            color: "#D4AF37",
+            fontWeight: 600,
+          }}
+        >
+          {`${car.brand || ""} ${car.model || ""} ${
+            car.title && car.title !== car.model && !car.title.toLowerCase().includes(car.model?.toLowerCase() || "")
+              ? car.title
+              : ""
+          }`.trim()}
         </span>
       </nav>
 
