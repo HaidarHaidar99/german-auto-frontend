@@ -599,8 +599,8 @@ export function HeaderNav({
           flexDirection: "column",
           justifyContent: "flex-start",
           alignItems: "center",
-          paddingTop: "calc(var(--header-height, 70px) + 3rem)",
-          paddingBottom: "3rem",
+          paddingTop: "clamp(64px, 11vh, 80px)",
+          paddingBottom: "2rem",
           paddingLeft: "var(--space-xl)",
           paddingRight: "var(--space-xl)",
           overflowY: "auto",
@@ -608,21 +608,18 @@ export function HeaderNav({
           transform: "translateY(-100%)", // Initial state for GSAP
         }}
       >
-        {/* Mobile Menu Top Bar: Language & Close Button */}
+        {/* Mobile Menu Top Bar: Close Button Only (No Language Switcher) */}
         <div
           style={{
             position: "absolute",
-            top: "20px",
-            left: "20px",
+            top: "16px",
             right: "20px",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             zIndex: 10001,
           }}
         >
-          <LanguageSwitcher />
-
           <button
             type="button"
             onClick={closeMenu}
@@ -655,7 +652,7 @@ export function HeaderNav({
         <nav style={{ 
           display: "flex", 
           flexDirection: "column", 
-          gap: "1.25rem", 
+          gap: "clamp(0.65rem, 1.8vh, 1rem)", 
           textAlign: "center",
           width: "100%",
           maxWidth: "480px",
@@ -675,7 +672,7 @@ export function HeaderNav({
               onClick={() => handleMobileNavClick(item)}
               ref={el => menuItemsRef.current[i] = el}
               style={{ 
-                fontSize: "clamp(1.5rem, 5vw, 2.15rem)", 
+                fontSize: "clamp(1.4rem, 4.5vw, 1.95rem)", 
                 fontWeight: 700, 
                 color: "#ffffff", 
                 textDecoration: "none",
@@ -683,7 +680,7 @@ export function HeaderNav({
                 textTransform: "uppercase",
                 opacity: 0, // Initial state for GSAP
                 display: "block",
-                padding: "12px 20px",
+                padding: "clamp(6px, 1.2vh, 10px) 16px",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid transparent",
                 backgroundColor: "transparent",
@@ -708,7 +705,7 @@ export function HeaderNav({
           <div 
             ref={el => menuItemsRef.current[6] = el} 
             style={{ 
-              marginTop: "2.5rem", 
+              marginTop: "clamp(1.25rem, 3vh, 1.85rem)", 
               opacity: 0, 
               display: "flex", 
               flexDirection: "row", 
