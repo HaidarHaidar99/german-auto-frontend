@@ -63,6 +63,53 @@ export function ReviewsSection({ googleReviewsConfig }) {
   const itemsPerPage = isMobile ? 1 : 3;
   const maxIndex = Math.max(0, reviews.length - itemsPerPage);
 
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
+  }, [maxIndex]);
+
+  // Touch Swipe Handling for mobile & touchscreens
+  const touchStartXRef = useRef(null);
+  const touchStartYRef = useRef(null);
+  const touchDiffXRef = useRef(0);
+
+  const handleTouchStart = (e) => {
+    setIsPaused(true);
+    if (!e.touches || e.touches.length === 0) return;
+    touchStartXRef.current = e.touches[0].clientX;
+    touchStartYRef.current = e.touches[0].clientY;
+    touchDiffXRef.current = 0;
+  };
+
+  const handleTouchMove = (e) => {
+    if (touchStartXRef.current === null || !e.touches || e.touches.length === 0) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = touchStartXRef.current - currentX;
+    const diffY = touchStartYRef.current - currentY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      touchDiffXRef.current = diffX;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsPaused(false);
+    if (touchStartXRef.current === null) return;
+    const threshold = 40; // 40px swipe threshold
+    if (touchDiffXRef.current > threshold) {
+      handleNext();
+    } else if (touchDiffXRef.current < -threshold) {
+      handlePrev();
+    }
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    touchDiffXRef.current = 0;
+  };
+
   // Auto-play Carousel Timer (every 5 seconds)
   useEffect(() => {
     if (reviews.length <= itemsPerPage || isPaused) return;
@@ -73,14 +120,6 @@ export function ReviewsSection({ googleReviewsConfig }) {
 
     return () => clearInterval(timer);
   }, [reviews.length, itemsPerPage, maxIndex, isPaused]);
-
-  const handlePrev = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-  };
 
   // Relative Time Formatter matching "vor einem Jahr" in autoweltnoris
   const formatReviewTime = (dateStr) => {
@@ -154,14 +193,17 @@ export function ReviewsSection({ googleReviewsConfig }) {
           <div
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
-            onTouchStart={() => setIsPaused(true)}
-            onTouchEnd={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
             style={{
               position: "relative",
-              maxWidth: isMobile ? "360px" : "1140px",
+              maxWidth: isMobile ? "min(360px, calc(100vw - 32px))" : "1140px",
               margin: "0 auto var(--space-xl)",
-              padding: isMobile ? "0 34px" : "0 46px",
+              padding: isMobile ? "0 28px" : "0 46px",
               boxSizing: "border-box",
+              touchAction: "pan-y",
             }}
           >
             {/* Carousel Track Wrapper */}
@@ -175,25 +217,29 @@ export function ReviewsSection({ googleReviewsConfig }) {
               >
                 {reviews.map((rev) => {
                   const initial = (rev.name ? rev.name.trim()[0].toUpperCase() : "U");
+                  const nameLen = (rev.name || "").trim().length;
+                  const nameFontSize = nameLen > 24 ? "0.82rem" : nameLen > 16 ? "0.9rem" : "1rem";
+
                   return (
                     <div
                       key={rev.id}
                       style={{
                         flex: `0 0 ${100 / itemsPerPage}%`,
-                        padding: "0 10px",
+                        padding: isMobile ? "0 8px" : "0 12px",
                         boxSizing: "border-box",
                         display: "flex",
                         justifyContent: "center",
+                        minWidth: 0,
                       }}
                     >
-                      {/* Exact Uniform Review Card */}
+                      {/* Exact Uniform Review Card - Taller Height for full text */}
                       <div
                         style={{
                           width: "100%",
                           maxWidth: "340px",
-                          height: "360px",
-                          minHeight: "360px",
-                          maxHeight: "360px",
+                          height: "440px",
+                          minHeight: "440px",
+                          maxHeight: "440px",
                           backgroundColor: "#0d0d0d",
                           border: "1px solid rgba(255, 255, 255, 0.1)",
                           borderRadius: "16px",
@@ -212,17 +258,17 @@ export function ReviewsSection({ googleReviewsConfig }) {
                           e.currentTarget.style.transform = "translateY(0)";
                         }}
                       >
-                        {/* 1. Top Header Row: Avatar + Name & Relative Date + Google 'G' Icon */}
+                        {/* 1. Top Header Row: Avatar + Name & Relative Date */}
                         <div
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            justifyContent: "space-between",
                             marginBottom: "16px",
                             flexShrink: 0,
+                            minWidth: 0,
                           }}
                         >
-                          <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0, width: "100%" }}>
                             {/* Circle Avatar with Initial */}
                             <div
                               style={{
@@ -244,17 +290,18 @@ export function ReviewsSection({ googleReviewsConfig }) {
                             </div>
 
                             {/* Name & Time */}
-                            <div style={{ minWidth: 0 }}>
+                            <div style={{ minWidth: 0, flex: 1, overflow: "hidden" }}>
                               <div
                                 style={{
-                                  fontSize: "1rem",
+                                  fontSize: nameFontSize,
                                   fontWeight: 700,
                                   color: "#ffffff",
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
-                                  lineHeight: 1.2,
+                                  lineHeight: 1.25,
                                 }}
+                                title={rev.name}
                               >
                                 {rev.name}
                               </div>
@@ -264,43 +311,14 @@ export function ReviewsSection({ googleReviewsConfig }) {
                                   color: "rgba(255, 255, 255, 0.45)",
                                   marginTop: "3px",
                                   fontWeight: 500,
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
                                 }}
                               >
                                 {formatReviewTime(rev.created_at)}
                               </div>
                             </div>
-                          </div>
-
-                          {/* Subtle Google 'G' Icon matching autoweltnoris */}
-                          <div
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              opacity: 0.45,
-                              flexShrink: 0,
-                              marginLeft: "8px",
-                            }}
-                            title="Google Review"
-                          >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                              <path
-                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                fill="#ffffff"
-                              />
-                              <path
-                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                fill="#ffffff"
-                              />
-                              <path
-                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
-                                fill="#ffffff"
-                              />
-                              <path
-                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
-                                fill="#ffffff"
-                              />
-                            </svg>
                           </div>
                         </div>
 
@@ -322,26 +340,25 @@ export function ReviewsSection({ googleReviewsConfig }) {
                           ))}
                         </div>
 
-                        {/* 3. Review Text - Strictly limited to prevent overflow */}
+                        {/* 3. Review Text - Taller height with smooth overflow so full text appears */}
                         <div
                           style={{
                             flex: 1,
-                            overflow: "hidden",
+                            overflowY: "auto",
                             display: "flex",
+                            flexDirection: "column",
                             alignItems: "flex-start",
+                            paddingRight: "4px",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "rgba(212, 175, 55, 0.3) transparent",
                           }}
                         >
                           <p
                             style={{
                               margin: 0,
-                              color: "rgba(255, 255, 255, 0.88)",
-                              fontSize: "0.885rem",
-                              lineHeight: 1.6,
-                              display: "-webkit-box",
-                              WebkitLineClamp: 8,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
+                              color: "rgba(255, 255, 255, 0.9)",
+                              fontSize: "0.92rem",
+                              lineHeight: 1.65,
                               wordBreak: "break-word",
                             }}
                           >
@@ -355,8 +372,8 @@ export function ReviewsSection({ googleReviewsConfig }) {
               </div>
             </div>
 
-            {/* Left Carousel Arrow */}
-            {reviews.length > itemsPerPage && (
+            {/* Left Carousel Arrow: not shown on the first card */}
+            {reviews.length > itemsPerPage && currentIndex > 0 && (
               <button
                 type="button"
                 onClick={handlePrev}
@@ -395,8 +412,8 @@ export function ReviewsSection({ googleReviewsConfig }) {
               </button>
             )}
 
-            {/* Right Carousel Arrow */}
-            {reviews.length > itemsPerPage && (
+            {/* Right Carousel Arrow: not shown at the end */}
+            {reviews.length > itemsPerPage && currentIndex < maxIndex && (
               <button
                 type="button"
                 onClick={handleNext}
