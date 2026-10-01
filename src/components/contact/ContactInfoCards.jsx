@@ -101,7 +101,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             <span>{t("contactDirectHeading")}</span>
           </h3>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-xs)", width: "100%", boxSizing: "border-box" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", boxSizing: "border-box" }}>
             {phone && (
               <a
                 href={`tel:${phone}`}
@@ -109,8 +109,8 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "var(--space-sm)",
-                  padding: "var(--space-sm) var(--space-md)",
+                  gap: "14px",
+                  padding: "12px 14px",
                   borderRadius: "var(--radius-md)",
                   backgroundColor: "var(--color-surface)",
                   border: "1px solid var(--color-border-subtle)",
@@ -126,10 +126,12 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
               >
                 <div
                   style={{
-                    width: "36px",
-                    height: "36px",
+                    width: "40px",
+                    height: "40px",
+                    minWidth: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.12)",
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -137,10 +139,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     flexShrink: 0,
                   }}
                 >
-                  <Icon name="phone" size={16} />
+                  <Icon name="phone" size={18} />
                 </div>
                 <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
-                  <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     {t("phoneLabel", { defaultValue: "Telefon" })}
                   </div>
                   <div style={{ fontWeight: "var(--font-weight-medium)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
@@ -159,8 +161,8 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "var(--space-sm)",
-                  padding: "var(--space-sm) var(--space-md)",
+                  gap: "14px",
+                  padding: "12px 14px",
                   borderRadius: "var(--radius-md)",
                   backgroundColor: "var(--color-surface)",
                   border: "1px solid var(--color-border-subtle)",
@@ -176,10 +178,12 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
               >
                 <div
                   style={{
-                    width: "36px",
-                    height: "36px",
+                    width: "40px",
+                    height: "40px",
+                    minWidth: "40px",
                     borderRadius: "50%",
                     backgroundColor: "rgba(37, 211, 102, 0.12)",
+                    border: "1px solid rgba(37, 211, 102, 0.25)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -190,7 +194,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                   <Icon name="whatsapp" size={18} />
                 </div>
                 <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
-                  <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     WhatsApp
                   </div>
                   <div style={{ fontWeight: "var(--font-weight-medium)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
@@ -207,8 +211,8 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "var(--space-sm)",
-                  padding: "var(--space-sm) var(--space-md)",
+                  gap: "14px",
+                  padding: "12px 14px",
                   borderRadius: "var(--radius-md)",
                   backgroundColor: "var(--color-surface)",
                   border: "1px solid var(--color-border-subtle)",
@@ -224,10 +228,12 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
               >
                 <div
                   style={{
-                    width: "36px",
-                    height: "36px",
+                    width: "40px",
+                    height: "40px",
+                    minWidth: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.12)",
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -235,10 +241,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     flexShrink: 0,
                   }}
                 >
-                  <Icon name="mail" size={16} />
+                  <Icon name="mail" size={18} />
                 </div>
                 <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
-                  <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     {t("emailLabel", { defaultValue: "E-Mail" })}
                   </div>
                   <div style={{ fontWeight: "var(--font-weight-medium)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
@@ -257,8 +263,8 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "var(--space-sm)",
-                  padding: "var(--space-sm) var(--space-md)",
+                  gap: "14px",
+                  padding: "12px 14px",
                   borderRadius: "var(--radius-md)",
                   backgroundColor: "var(--color-surface)",
                   border: "1px solid var(--color-border-subtle)",
@@ -274,10 +280,12 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
               >
                 <div
                   style={{
-                    width: "36px",
-                    height: "36px",
+                    width: "40px",
+                    height: "40px",
+                    minWidth: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.12)",
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -285,10 +293,10 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     flexShrink: 0,
                   }}
                 >
-                  <Icon name="external-link" size={16} />
+                  <Icon name="external-link" size={18} />
                 </div>
                 <div style={{ minWidth: 0, overflow: "hidden", flex: 1 }}>
-                  <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "var(--tracking-wider)" }}>
+                  <div style={{ fontSize: "11px", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     Website / Portal
                   </div>
                   <div style={{ fontWeight: "var(--font-weight-medium)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
@@ -416,31 +424,21 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
             <span>{t("socialHeading")}</span>
           </h3>
 
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-xs)" }}>
-            {socialList.map((item) => (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", alignItems: "center" }}>
+            {socialList.map((item, idx) => (
               <a
                 key={item.platform}
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="social-pill-link"
+                aria-label={item.label}
+                title={item.label}
+                className="animated-social-icon-btn"
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "var(--space-2xs)",
-                  padding: "var(--space-xs) var(--space-md)",
-                  borderRadius: "var(--radius-full)",
-                  backgroundColor: "var(--color-surface)",
-                  border: "1px solid var(--color-border-subtle)",
-                  color: "var(--color-text)",
-                  textDecoration: "none",
-                  fontSize: "var(--font-size-xs)",
-                  fontWeight: "var(--font-weight-medium)",
-                  transition: "all var(--duration-fast) var(--ease-smooth)",
+                  animationDelay: `${idx * 0.28}s`,
                 }}
               >
-                <span>{item.label}</span>
-                <Icon name="external-link" size={12} color="var(--color-secondary)" />
+                <Icon name={item.platform} size={20} />
               </a>
             ))}
           </div>
@@ -452,12 +450,47 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
         .contact-direct-link:hover {
           background-color: var(--color-surface-hover) !important;
           border-color: var(--color-secondary) !important;
-          transform: translateY(-1px);
+          transform: translateY(-2px);
         }
-        .social-pill-link:hover {
-          border-color: var(--color-secondary) !important;
-          background-color: var(--color-accent-subtle) !important;
-          color: var(--color-secondary) !important;
+        .animated-social-icon-btn {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background-color: var(--color-surface, #15181e);
+          border: 1.5px solid rgba(212, 175, 55, 0.35);
+          color: var(--color-text, #ffffff);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+          animation: socialPulseFloat 3.4s ease-in-out infinite;
+          flex-shrink: 0;
+        }
+        @keyframes socialPulseFloat {
+          0%, 100% {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 rgba(212, 175, 55, 0);
+            border-color: rgba(212, 175, 55, 0.35);
+          }
+          50% {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5), 0 0 14px rgba(212, 175, 55, 0.35);
+            border-color: rgba(212, 175, 55, 0.7);
+          }
+        }
+        .animated-social-icon-btn:hover {
+          transform: translateY(-6px) scale(1.14);
+          border-color: #D4AF37 !important;
+          color: #000000 !important;
+          background: linear-gradient(135deg, #D4AF37, #F5D77F) !important;
+          box-shadow: 0 10px 24px rgba(212, 175, 55, 0.55), 0 0 18px rgba(212, 175, 55, 0.45);
+        }
+        .animated-social-icon-btn:active {
+          transform: translateY(-2px) scale(0.96);
         }
       `}</style>
     </div>
