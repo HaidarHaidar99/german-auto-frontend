@@ -88,9 +88,9 @@ async function request(endpoint, options = {}) {
     )) ||
     endpoint.includes("/admin");
 
-  if (isAdminScope && !headers["Authorization"] && typeof window !== "undefined") {
+  if (!headers["Authorization"] && typeof window !== "undefined") {
     const adminToken = window.localStorage.getItem("german_auto_admin_token");
-    if (adminToken) {
+    if (adminToken && (isAdminScope || endpoint.includes("/notifications"))) {
       headers["Authorization"] = `Bearer ${adminToken}`;
     }
   }

@@ -148,6 +148,7 @@ export function LoginPage() {
             localStorage.setItem("german_auto_admin_token", loggedToken);
           }
           localStorage.setItem("german_auto_admin_user", JSON.stringify(loggedUser));
+          localStorage.setItem("german_auto_admin_login_time", Date.now().toString());
           if (adminAuth?.refreshAdmin) {
             try { await adminAuth.refreshAdmin(); } catch {}
           }
