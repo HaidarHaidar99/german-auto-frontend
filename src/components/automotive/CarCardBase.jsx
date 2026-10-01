@@ -149,62 +149,107 @@ export function CarCardBase({
         background: "linear-gradient(180deg, #131518 0%, #0c0d0f 100%)",
         border: "1px solid rgba(255, 255, 255, 0.09)",
         boxShadow: "none",
-        transition: "border-color 0.25s ease, transform 0.25s ease",
+        transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
         cursor: onSelect ? "pointer" : "default",
         ...style,
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.22)";
-        e.currentTarget.style.transform = "translateY(-3px)";
+        e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.12)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.09)";
         e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "none";
       }}
     >
-      {/* Media Stage */}
-      <CarMediaFrame
-        aspectRatio="16-9"
-        badge={statusBadge}
-        action={
-          <div
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            onMouseDown={(e) => {
-              e.stopPropagation();
-            }}
-            onTouchStart={(e) => {
-              e.stopPropagation();
-            }}
-            onTouchEnd={(e) => {
-              e.stopPropagation();
-            }}
-            onPointerDown={(e) => {
-              e.stopPropagation();
-            }}
-            onPointerUp={(e) => {
-              e.stopPropagation();
-            }}
-            onMouseEnter={(e) => {
-              e.stopPropagation();
+      {/* Falling Automotive Sparkles & Diamonds Background Animation */}
+      <div
+        className="car-card-rain-container"
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          overflow: "hidden",
+          pointerEvents: "none",
+          userSelect: "none",
+          zIndex: 0,
+        }}
+      >
+        {[
+          { symbol: "✦", left: "8%", size: "16px", dur: "5.5s", delay: "-1.8s", opacity: 0.24 },
+          { symbol: "◈", left: "24%", size: "18px", dur: "6.2s", delay: "-4.0s", opacity: 0.22 },
+          { symbol: "✧", left: "42%", size: "15px", dur: "4.9s", delay: "-0.5s", opacity: 0.26 },
+          { symbol: "⚡", left: "58%", size: "14px", dur: "5.8s", delay: "-3.2s", opacity: 0.20 },
+          { symbol: "✦", left: "74%", size: "19px", dur: "4.7s", delay: "-2.3s", opacity: 0.25 },
+          { symbol: "◈", left: "88%", size: "17px", dur: "6.4s", delay: "-4.8s", opacity: 0.22 },
+        ].map((item, idx) => (
+          <span
+            key={idx}
+            style={{
+              position: "absolute",
+              top: "-30px",
+              left: item.left,
+              fontSize: item.size,
+              color: "#D4AF37",
+              opacity: item.opacity,
+              textShadow: "0 0 8px rgba(212, 175, 55, 0.35)",
+              animation: `carParticleFall ${item.dur} linear infinite`,
+              animationDelay: item.delay,
+              willChange: "transform, opacity",
             }}
           >
-            <FavoriteButton
-              isFavorite={isFavorite}
-              onToggle={onFavoriteToggle}
-              ariaLabel={`${brand} ${model} zu Favoriten hinzufügen`}
-            />
-          </div>
-        }
-      >
-        <CinematicImage
-          src={displayImage}
-          alt={`${brand} ${model}`}
-          zoomOnHover
-        />
-      </CarMediaFrame>
+            {item.symbol}
+          </span>
+        ))}
+      </div>
+
+      {/* Media Stage */}
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <CarMediaFrame
+          aspectRatio="16-9"
+          badge={statusBadge}
+          action={
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+              }}
+              onTouchStart={(e) => {
+                e.stopPropagation();
+              }}
+              onTouchEnd={(e) => {
+                e.stopPropagation();
+              }}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
+              onPointerUp={(e) => {
+                e.stopPropagation();
+              }}
+              onMouseEnter={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <FavoriteButton
+                isFavorite={isFavorite}
+                onToggle={onFavoriteToggle}
+                ariaLabel={`${brand} ${model} zu Favoriten hinzufügen`}
+              />
+            </div>
+          }
+        >
+          <CinematicImage
+            src={displayImage}
+            alt={`${brand} ${model}`}
+            zoomOnHover
+          />
+        </CarMediaFrame>
+      </div>
 
       {/* Card Body */}
       <div
@@ -214,6 +259,8 @@ export function CarCardBase({
           flexDirection: "column",
           gap: "var(--space-md)",
           flex: 1,
+          position: "relative",
+          zIndex: 1,
         }}
       >
         {/* Title & Brand Header */}
@@ -307,6 +354,25 @@ export function CarCardBase({
           </Button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes carParticleFall {
+          0% {
+            transform: translateY(0) rotate(0deg) scale(0.9);
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.3;
+          }
+          85% {
+            opacity: 0.24;
+          }
+          100% {
+            transform: translateY(520px) rotate(360deg) scale(1.1);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </article>
   );
 }

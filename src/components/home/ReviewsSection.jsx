@@ -247,22 +247,71 @@ export function ReviewsSection({ googleReviewsConfig }) {
                           display: "flex",
                           flexDirection: "column",
                           boxSizing: "border-box",
-                          transition: "border-color 0.25s ease, transform 0.25s ease",
+                          transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
+                          position: "relative",
+                          overflow: "hidden",
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
+                          e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.5)";
                           e.currentTarget.style.transform = "translateY(-4px)";
+                          e.currentTarget.style.boxShadow = "0 8px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15)";
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
                           e.currentTarget.style.transform = "translateY(0)";
+                          e.currentTarget.style.boxShadow = "none";
                         }}
                       >
+                        {/* Falling Stars & Sparkles Background Animation */}
+                        <div
+                          className="reviews-stars-rain"
+                          aria-hidden="true"
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            overflow: "hidden",
+                            pointerEvents: "none",
+                            userSelect: "none",
+                            zIndex: 0,
+                          }}
+                        >
+                          {[
+                            { symbol: "★", left: "6%", size: "18px", dur: "5.5s", delay: "-1.5s", opacity: 0.24 },
+                            { symbol: "✦", left: "18%", size: "14px", dur: "6.2s", delay: "-3.8s", opacity: 0.28 },
+                            { symbol: "★", left: "32%", size: "22px", dur: "4.8s", delay: "-0.6s", opacity: 0.3 },
+                            { symbol: "✧", left: "46%", size: "16px", dur: "5.8s", delay: "-4.2s", opacity: 0.22 },
+                            { symbol: "★", left: "58%", size: "19px", dur: "5.2s", delay: "-2.1s", opacity: 0.26 },
+                            { symbol: "◈", left: "72%", size: "15px", dur: "6.5s", delay: "-4.9s", opacity: 0.2 },
+                            { symbol: "★", left: "84%", size: "20px", dur: "4.6s", delay: "-1.2s", opacity: 0.28 },
+                            { symbol: "✦", left: "94%", size: "16px", dur: "5.9s", delay: "-3.1s", opacity: 0.25 },
+                          ].map((item, pIdx) => (
+                            <span
+                              key={pIdx}
+                              style={{
+                                position: "absolute",
+                                top: "-30px",
+                                left: item.left,
+                                fontSize: item.size,
+                                color: "#D4AF37",
+                                opacity: item.opacity,
+                                textShadow: "0 0 8px rgba(212, 175, 55, 0.4)",
+                                animation: `reviewStarFall ${item.dur} linear infinite`,
+                                animationDelay: item.delay,
+                                willChange: "transform, opacity",
+                              }}
+                            >
+                              {item.symbol}
+                            </span>
+                          ))}
+                        </div>
+
                         {/* 1. Top Header Row: Avatar + Name & Relative Date */}
                         <div
                           style={{
                             display: "flex",
                             alignItems: "center",
+                            position: "relative",
+                            zIndex: 1,
                             marginBottom: "16px",
                             flexShrink: 0,
                             minWidth: 0,
@@ -331,6 +380,8 @@ export function ReviewsSection({ googleReviewsConfig }) {
                             fontSize: "1.15rem",
                             marginBottom: "14px",
                             flexShrink: 0,
+                            position: "relative",
+                            zIndex: 1,
                           }}
                         >
                           {Array.from({ length: 5 }).map((_, i) => (
@@ -351,6 +402,8 @@ export function ReviewsSection({ googleReviewsConfig }) {
                             paddingRight: "4px",
                             scrollbarWidth: "thin",
                             scrollbarColor: "rgba(212, 175, 55, 0.3) transparent",
+                            position: "relative",
+                            zIndex: 1,
                           }}
                         >
                           <p
@@ -371,6 +424,25 @@ export function ReviewsSection({ googleReviewsConfig }) {
                 })}
               </div>
             </div>
+
+            <style>{`
+              @keyframes reviewStarFall {
+                0% {
+                  transform: translateY(0) rotate(0deg) scale(0.9);
+                  opacity: 0;
+                }
+                15% {
+                  opacity: 0.32;
+                }
+                85% {
+                  opacity: 0.26;
+                }
+                100% {
+                  transform: translateY(480px) rotate(360deg) scale(1.1);
+                  opacity: 0;
+                }
+              }
+            `}</style>
 
             {/* Left Carousel Arrow: not shown on the first card */}
             {reviews.length > itemsPerPage && currentIndex > 0 && (
