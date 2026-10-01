@@ -195,6 +195,9 @@ export function CarDetailPage() {
         maxWidth: "1440px",
         margin: "0 auto",
         padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        width: "100%",
+        overflowX: "hidden",
+        overscrollBehaviorX: "none",
       }}
     >
       {/* ─── Breadcrumb & Navigation Trail (Home / Cars / Car Model + Name) ─ */}

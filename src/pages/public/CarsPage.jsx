@@ -149,7 +149,7 @@ export function CarsPage() {
   };
 
   return (
-    <div className="cars-page" style={{ width: "100%", minHeight: "100vh" }}>
+    <div className="cars-page" style={{ width: "100%", minHeight: "100vh", overflowX: "hidden", overscrollBehaviorX: "none" }}>
       {/* 1. Page Intro / Cinematic Header */}
       <CarsHeader totalCars={meta.total} />
 

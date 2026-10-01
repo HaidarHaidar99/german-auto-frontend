@@ -47,14 +47,27 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [driveDirection, setDriveDirection] = useState("right");
 
-  // 360 scrubber state
-  const [frame360Idx, setFrame360Idx] = useState(0);
-  const isDragging360 = useRef(false);
-  const startX360 = useRef(0);
+  // Gallery container ref to isolate scrolling and keep page completely still
+  const galleryRef = useRef(null);
 
-  // Touch swipe support for photos
-  const touchStartX = useRef(null);
-  const touchEndX = useRef(null);
+  // Prevent horizontal scroll gestures from moving or shifting the outer page
+  useEffect(() => {
+    const el = galleryRef.current;
+    if (!el) return;
+
+    const handleWheel = (e) => {
+      // If user scrolls horizontally on trackpad or mouse, consume it so the page never moves
+      if (Math.abs(e.deltaX) > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   const handlePrevPhoto = useCallback(() => {
     setDriveDirection("left");
@@ -165,28 +178,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeTab, handlePrevPhoto, handleNextPhoto]);
 
-  // Touch handlers for mobile photo swipe
-  const handleTouchStart = (e) => {
-    touchStartX.current = e.targetTouches[0].clientX;
-  };
 
-  const handleTouchMove = (e) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const diff = touchStartX.current - touchEndX.current;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        handleNextPhoto();
-      } else {
-        handlePrevPhoto();
-      }
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
 
   // 360 Mouse / Touch Scrubber
   const handle360MouseDown = (e) => {
@@ -244,7 +236,18 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
   const vehicleAlt = `${car.brand || ""} ${car.model || ""} ${car.title || ""}`.trim() || t("details");
 
   return (
-    <div className={`car-media-gallery ${className}`.trim()} style={{ width: "100%", ...style }}>
+    <div
+      ref={galleryRef}
+      className={`car-media-gallery ${className}`.trim()}
+      style={{
+        width: "100%",
+        maxWidth: "100%",
+        overflowX: "hidden",
+        overscrollBehaviorX: "none",
+        touchAction: "pan-y",
+        ...style,
+      }}
+    >
       {/* Media Type Tabs (when multiple media modalities exist) */}
       {availableTabs.length > 1 && (
         <div
@@ -381,15 +384,21 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
           border: "1px solid var(--color-border-subtle)",
           overflow: "hidden",
           boxShadow: "var(--shadow-elevation-2)",
+          touchAction: "pan-y",
+          overscrollBehaviorX: "none",
+          userSelect: "none",
         }}
       >
         {/* TAB: PHOTOS */}
         {activeTab === "photos" && hasPhotos && (
           <div
-            style={{ width: "100%", height: "100%", position: "relative" }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            style={{
+              width: "100%",
+              height: "100%",
+              position: "relative",
+              touchAction: "pan-y",
+              overscrollBehaviorX: "none",
+            }}
           >
             <img
               key={currentPhotoSrc}
@@ -422,7 +431,11 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                 <button
                   type="button"
                   aria-label={t("lightboxPrev", "Vorheriges Bild")}
-                  onClick={handlePrevPhoto}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handlePrevPhoto();
+                  }}
                   style={{
                     position: "absolute",
                     left: "14px",
@@ -461,7 +474,11 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                 <button
                   type="button"
                   aria-label={t("lightboxNext", "Nächstes Bild")}
-                  onClick={handleNextPhoto}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleNextPhoto();
+                  }}
                   style={{
                     position: "absolute",
                     right: "14px",
@@ -652,6 +669,8 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             gap: "var(--space-xs)",
             marginTop: "12px",
             overflowX: "auto",
+            overscrollBehaviorX: "contain",
+            touchAction: "pan-x pan-y",
             paddingBottom: "4px",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
