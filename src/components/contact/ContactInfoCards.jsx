@@ -25,7 +25,7 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
   const { t } = useTranslation(["forms", "common"]);
 
   const phone = contact?.phone ? String(contact.phone).trim() : null;
-  const email = contact?.email ? String(contact.email).trim() : null;
+  const email = contact?.email ? String(contact.email).trim() : "konigautomobilerheinberg@gmail.com";
   const whatsapp = contact?.whatsapp ? String(contact.whatsapp).trim() : null;
   const contactUrl = contact?.contact_url ? String(contact.contact_url).trim() : null;
 

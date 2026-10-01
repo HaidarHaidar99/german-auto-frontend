@@ -243,6 +243,18 @@ export function HeaderNav({
     }
   };
 
+  const handleAboutClick = (e) => {
+    if (menuOpen) closeMenu();
+    if (location.pathname === "/about") {
+      e.preventDefault();
+      if (window.__lenis?.instance?.scrollTo) {
+        window.__lenis.instance.scrollTo(0, { immediate: false });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
   const handleContactClick = (e) => {
     if (menuOpen) closeMenu();
     if (location.pathname === "/contact") {
@@ -284,6 +296,14 @@ export function HeaderNav({
           }
         }, 150);
       }
+    } else if (item.isAbout && location.pathname === "/about") {
+      setTimeout(() => {
+        if (window.__lenis?.instance?.scrollTo) {
+          window.__lenis.instance.scrollTo(0, { immediate: false });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 150);
     } else if (item.isContact && location.pathname === "/contact") {
       setTimeout(() => {
         if (window.__lenis?.instance?.scrollTo) {
@@ -388,7 +408,11 @@ export function HeaderNav({
             <Link to="/sell-your-car" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
               {t("sellYourCar")}
             </Link>
-            <Link to="/about" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+            <Link
+              to="/about"
+              onClick={handleAboutClick}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+            >
               {t("about")}
             </Link>
             <Link
@@ -642,7 +666,7 @@ export function HeaderNav({
             { to: "/cars", label: t("inventory") },
             { to: "/sell-your-car", label: t("sellYourCar") },
             { to: "/#reviews", label: t("reviews", { defaultValue: "Bewertungen" }), isReviews: true },
-            { to: "/about", label: t("about") },
+            { to: "/about", label: t("about"), isAbout: true },
             { to: "/contact", label: t("contact"), isContact: true }
           ].map((item, i) => (
             <Link

@@ -14,7 +14,8 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
   const { t } = useTranslation(["about", "common"]);
 
   const hasPhone = Boolean(contact?.phone);
-  const hasEmail = Boolean(contact?.email);
+  const contactEmail = contact?.email || "konigautomobilerheinberg@gmail.com";
+  const hasEmail = true;
   const hasWhatsapp = Boolean(contact?.whatsapp);
 
   // Format hours if configured in CMS
@@ -107,7 +108,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
               </p>
             </div>
 
-            {/* CTAs */}
+            {/* CTAs: Only View Inventory */}
             <div
               style={{
                 display: "flex",
@@ -118,20 +119,12 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
             >
               <Button
                 as={Link}
-                to="/contact"
+                to="/cars"
                 variant="primary"
                 size="lg"
                 iconRight="arrow-right"
               >
-                {t("contactCtaButton")}
-              </Button>
-              <Button
-                as={Link}
-                to="/cars"
-                variant="outline"
-                size="lg"
-              >
-                {t("viewInventoryButton")}
+                {t("viewInventoryButton", { defaultValue: t("viewCarsButton", { defaultValue: "Fahrzeugbestand ansehen" }) })}
               </Button>
             </div>
           </div>
@@ -192,7 +185,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
 
               {hasEmail && (
                 <a
-                  href={`mailto:${contact.email}`}
+                  href={`mailto:${contactEmail}`}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -227,7 +220,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                       {t("emailLabel")}
                     </div>
                     <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)", marginTop: "2px" }}>
-                      {contact.email}
+                      {contactEmail}
                     </div>
                   </div>
                 </a>

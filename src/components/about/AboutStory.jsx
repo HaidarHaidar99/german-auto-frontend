@@ -7,21 +7,27 @@ import Badge from "../ui/Badge";
  * Editorial introduction presenting the authentic site/dealership description from CMS.
  * If no description exists in CMS, the section is cleanly omitted.
  */
-export function AboutStory({ description, siteName, className = "", style = {} }) {
+export function AboutStory({ title, subtitle, description, siteName, className = "", style = {} }) {
   const { t } = useTranslation(["about", "common"]);
 
   const cleanDescription = description ? String(description).trim() : "";
 
-  if (!cleanDescription) {
+  if (!cleanDescription && !title) {
     return null;
   }
+
+  const headingText = title || (siteName ? `${siteName} — ${t("storyHeading")}` : t("storyHeading"));
 
   return (
     <section
       className={`about-story-section ${className}`.trim()}
       aria-labelledby="story-heading"
       style={{
-        marginBottom: "var(--space-4xl)",
+        marginTop: 0,
+        marginBottom: "clamp(2rem, 4vw, 3.5rem)",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
         ...style,
       }}
     >
@@ -30,10 +36,13 @@ export function AboutStory({ description, siteName, className = "", style = {} }
           backgroundColor: "var(--color-card)",
           borderRadius: "var(--radius-2xl)",
           border: "1px solid var(--color-border)",
-          padding: "clamp(var(--space-xl), 5vw, var(--space-3xl))",
+          padding: "clamp(20px, 5vw, 48px)",
           boxShadow: "var(--shadow-elevation-1)",
           position: "relative",
           overflow: "hidden",
+          width: "100%",
+          maxWidth: "100%",
+          boxSizing: "border-box",
         }}
       >
         {/* Subtle Decorative Accent */}
@@ -49,37 +58,53 @@ export function AboutStory({ description, siteName, className = "", style = {} }
           }}
         />
 
-        <div style={{ maxWidth: "800px" }}>
-          <div style={{ display: "inline-block", marginBottom: "var(--space-sm)" }}>
+        <div style={{ maxWidth: "860px" }}>
+          <div style={{ display: "inline-block", marginBottom: "var(--space-xs)" }}>
             <Badge variant="outline" size="sm">
-              {t("storyBadge")}
+              {t("heroBadge", { defaultValue: t("storyBadge") })}
             </Badge>
           </div>
 
-          <h2
+          <h1
             id="story-heading"
             style={{
-              fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
               fontWeight: "var(--font-weight-bold)",
               letterSpacing: "var(--tracking-tight)",
               lineHeight: 1.2,
               color: "var(--color-text)",
-              margin: "0 0 var(--space-lg) 0",
+              margin: "0 0 var(--space-sm) 0",
             }}
           >
-            {siteName ? `${siteName} — ${t("storyHeading")}` : t("storyHeading")}
-          </h2>
+            {headingText}
+          </h1>
 
-          <div
-            style={{
-              fontSize: "clamp(1.05rem, 1.8vw, 1.25rem)",
-              lineHeight: "var(--line-height-relaxed)",
-              color: "var(--color-text-secondary)",
-              whiteSpace: "pre-line",
-            }}
-          >
-            {cleanDescription}
-          </div>
+          {subtitle && (
+            <p
+              style={{
+                fontSize: "clamp(1rem, 1.8vw, 1.2rem)",
+                color: "var(--color-secondary)",
+                fontWeight: 500,
+                lineHeight: 1.5,
+                margin: "0 0 var(--space-md) 0",
+              }}
+            >
+              {subtitle}
+            </p>
+          )}
+
+          {cleanDescription && (
+            <div
+              style={{
+                fontSize: "clamp(1rem, 1.6vw, 1.15rem)",
+                lineHeight: "var(--line-height-relaxed)",
+                color: "var(--color-text-secondary)",
+                whiteSpace: "pre-line",
+              }}
+            >
+              {cleanDescription}
+            </div>
+          )}
         </div>
       </div>
     </section>

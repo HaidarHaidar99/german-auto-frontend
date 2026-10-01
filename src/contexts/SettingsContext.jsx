@@ -3,6 +3,7 @@ import settingsService from "../services/settings/settings.service";
 
 export const DEFAULT_LOGO_URL = "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
 export const DEFAULT_BRAND_NAME = "König Automobile Rheinberg";
+export const DEFAULT_CONTACT_EMAIL = "konigautomobilerheinberg@gmail.com";
 const SETTINGS_STORAGE_KEY = "german_auto_cached_settings";
 
 const SettingsContext = createContext(null);
@@ -16,6 +17,9 @@ export function SettingsProvider({ children }) {
         if (!parsed.site?.name || parsed.site?.name === "German Auto") {
           parsed.site = { ...(parsed.site || {}), name: DEFAULT_BRAND_NAME };
         }
+        if (!parsed.contact?.email) {
+          parsed.contact = { ...(parsed.contact || {}), email: DEFAULT_CONTACT_EMAIL };
+        }
         return parsed;
       }
     } catch {
@@ -28,6 +32,9 @@ export function SettingsProvider({ children }) {
       site: {
         name: DEFAULT_BRAND_NAME,
         seo_title: DEFAULT_BRAND_NAME,
+      },
+      contact: {
+        email: DEFAULT_CONTACT_EMAIL,
       },
     };
   });
@@ -52,6 +59,9 @@ export function SettingsProvider({ children }) {
       const data = res?.data?.settings || {};
       if (!data.site?.name || data.site.name === "German Auto") {
         data.site = { ...(data.site || {}), name: DEFAULT_BRAND_NAME };
+      }
+      if (!data.contact?.email) {
+        data.contact = { ...(data.contact || {}), email: DEFAULT_CONTACT_EMAIL };
       }
       setSettings(data);
       try {

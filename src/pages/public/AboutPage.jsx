@@ -77,7 +77,6 @@ export function AboutPage() {
     if (isReducedMotion()) return;
 
     const animatedSections = [
-      ".about-header-section",
       ".about-story-section",
       ".about-visual-section",
       ".about-locations-section",
@@ -99,60 +98,52 @@ export function AboutPage() {
       ref={pageContainerRef}
       className="about-page"
       style={{
+        width: "100%",
         maxWidth: "1320px",
         margin: "0 auto",
-        padding: "var(--space-4xl) var(--space-md) var(--space-4xl)",
+        padding: "0 clamp(16px, 4vw, 32px) clamp(2.5rem, 5vw, 4rem)",
+        boxSizing: "border-box",
+        overflowX: "hidden",
       }}
     >
-      {/* 1. Typography Header (No Hero Media) */}
-      <div data-aos="fade-up" className="about-header-section" style={{ textAlign: "center", marginBottom: "var(--space-4xl)" }}>
-        <h1 style={{ 
-          fontFamily: "var(--font-family-display)", 
-          fontSize: "clamp(2.5rem, 5vw, 4.5rem)", 
-          lineHeight: "1.1", 
-          margin: "0 0 var(--space-md) 0",
-          color: "var(--color-text)" 
-        }}>
-          {pageTitle}
-        </h1>
-        <p style={{
-          fontSize: "var(--font-size-xl)",
-          color: "var(--color-text-muted)",
-          maxWidth: "800px",
-          margin: "0 auto",
-          lineHeight: "1.6"
-        }}>
-          {pageSubtitle}
-        </p>
-      </div>
-
-      {/* 2. Story / Introduction (omits cleanly if no CMS description) */}
-      <div data-aos="fade-up" data-aos-delay="100">
+      {/* 1. Main About Story Card (Starts at top of page with 0 space) */}
+      <div data-aos="fade-up" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", marginTop: 0 }}>
         <AboutStory
+          title={pageTitle}
+          subtitle={pageSubtitle}
           description={storyDescription}
           siteName={siteConfig.name}
+          style={{ marginTop: 0 }}
         />
       </div>
 
-      {/* 3. Visual Storytelling (omits cleanly if no CMS media) */}
-      <div data-aos="zoom-in" data-aos-delay="150">
+      {/* 2. Visual Storytelling (omits cleanly if no CMS media) */}
+      <div data-aos="zoom-in" data-aos-delay="100" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <AboutVisualSection mediaItems={visualMediaItems} />
       </div>
 
-      {/* 4. Values / Principles (omitted because no values/principles exist in CMS) */}
-
-      {/* 5. Configured Dealership Locations (omits cleanly if no locations in CMS) */}
-      <div data-aos="fade-up" data-aos-delay="200">
+      {/* 3. Configured Dealership Locations (omits cleanly if no locations in CMS) */}
+      <div data-aos="fade-up" data-aos-delay="150" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <AboutLocations locations={locationsConfig} />
       </div>
 
-      {/* 6. Contact CTA (uses real contact channels & opening hours) */}
-      <div data-aos="fade-up" data-aos-delay="250">
+      {/* 4. Contact CTA (uses real contact channels & opening hours) */}
+      <div data-aos="fade-up" data-aos-delay="200" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <AboutContactCta
           contact={contactConfig}
           hours={hoursConfig}
         />
       </div>
+
+      <style>{`
+        @media (max-width: 639px) {
+          .about-page {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            padding-top: 0 !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }

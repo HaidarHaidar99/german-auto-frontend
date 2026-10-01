@@ -291,10 +291,10 @@ export function Footer() {
                   </li>
                 )}
 
-                {contactConfig.email && (
+                {(contactConfig.email || "konigautomobilerheinberg@gmail.com") && (
                   <li>
                     <a
-                      href={`mailto:${contactConfig.email}`}
+                      href={`mailto:${contactConfig.email || "konigautomobilerheinberg@gmail.com"}`}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -308,7 +308,7 @@ export function Footer() {
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
                       <Icon name="mail" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
-                      <span>{contactConfig.email}</span>
+                      <span>{contactConfig.email || "konigautomobilerheinberg@gmail.com"}</span>
                     </a>
                   </li>
                 )}
