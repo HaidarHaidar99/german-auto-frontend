@@ -26,13 +26,9 @@ export function AccountReviewsPage() {
   const [editingReview, setEditingReview] = useState(null);
   const [editRating, setEditRating] = useState(5);
   const [editText, setEditText] = useState("");
-  const [editImageFile, setEditImageFile] = useState(null);
-  const [editImagePreview, setEditImagePreview] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const [editError, setEditError] = useState("");
   const [editSuccessMsg, setEditSuccessMsg] = useState("");
-
-  const editFileInputRef = useRef(null);
 
   const fetchMyReviews = useCallback(() => {
     setLoading(true);
@@ -58,32 +54,14 @@ export function AccountReviewsPage() {
     setEditingReview(review);
     setEditRating(review.rating || 5);
     setEditText(review.text || "");
-    setEditImageFile(null);
-    setEditImagePreview(review.image_url || null);
     setEditError("");
     setEditSuccessMsg("");
   };
 
   const handleCloseEdit = () => {
     setEditingReview(null);
-    setEditImageFile(null);
-    setEditImagePreview(null);
     setEditError("");
     setEditSuccessMsg("");
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      setEditError(currentLang === "en" ? "Max 5 MB file size allowed." : "Maximal 5 MB erlaubt.");
-      return;
-    }
-
-    setEditImageFile(file);
-    setEditImagePreview(URL.createObjectURL(file));
-    setEditError("");
   };
 
   const handleSaveEdit = async (e) => {
@@ -100,22 +78,23 @@ export function AccountReviewsPage() {
       return;
     }
 
+    if (trimmed.length > 300) {
+      setEditError(
+        currentLang === "en"
+          ? "Review text must not exceed 300 characters."
+          : "Der Text darf maximal 300 Zeichen lang sein."
+      );
+      return;
+    }
+
     setIsUpdating(true);
     setEditError("");
 
     try {
-      if (editImageFile) {
-        const formData = new FormData();
-        formData.append("rating", String(editRating));
-        formData.append("text", trimmed);
-        formData.append("image", editImageFile);
-        await reviewsService.updateMyReview(editingReview.id, formData);
-      } else {
-        await reviewsService.updateMyReview(editingReview.id, {
-          rating: editRating,
-          text: trimmed,
-        });
-      }
+      await reviewsService.updateMyReview(editingReview.id, {
+        rating: editRating,
+        text: trimmed,
+      });
 
       setEditSuccessMsg(
         currentLang === "en"
@@ -304,23 +283,6 @@ export function AccountReviewsPage() {
                   <p style={{ margin: 0, color: "rgba(255, 255, 255, 0.9)", fontSize: "0.95rem", lineHeight: 1.6, fontStyle: "italic" }}>
                     "{rev.text}"
                   </p>
-
-                  {/* Attached Image Thumbnail */}
-                  {rev.image_url && (
-                    <div style={{ marginTop: "var(--space-xs)" }}>
-                      <img
-                        src={rev.image_url}
-                        alt="Vehicle attachment"
-                        style={{
-                          width: "100px",
-                          height: "70px",
-                          objectFit: "cover",
-                          borderRadius: "var(--radius-sm)",
-                          border: "1px solid rgba(212, 175, 55, 0.4)",
-                        }}
-                      />
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -372,9 +334,14 @@ export function AccountReviewsPage() {
 
               {/* Review Text */}
               <div>
-                <label htmlFor="edit-review-text" style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
-                  {currentLang === "en" ? "Review Text" : "Rezensionstext"}
-                </label>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
+                  <label htmlFor="edit-review-text" style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
+                    {currentLang === "en" ? "Review Text" : "Rezensionstext"}
+                  </label>
+                  <span style={{ fontSize: "0.8rem", color: editText.length > 300 ? "#ef4444" : "var(--color-text-muted)" }}>
+                    {editText.length} / 300
+                  </span>
+                </div>
                 <textarea
                   id="edit-review-text"
                   rows={5}
@@ -382,7 +349,7 @@ export function AccountReviewsPage() {
                   onChange={(e) => setEditText(e.target.value)}
                   required
                   minLength={5}
-                  maxLength={5000}
+                  maxLength={300}
                   style={{
                     width: "100%",
                     padding: "12px 14px",
@@ -392,69 +359,13 @@ export function AccountReviewsPage() {
                     color: "#ffffff",
                     fontSize: "0.95rem",
                     lineHeight: 1.5,
-                    resize: "vertical",
+                    resize: "none",
                     outline: "none",
                     boxSizing: "border-box",
                   }}
                   onFocus={(e) => (e.target.style.borderColor = "#D4AF37")}
                   onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.2)")}
                 />
-              </div>
-
-              {/* Photo Attachment */}
-              <div>
-                <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
-                  {currentLang === "en" ? "Photo Attachment" : "Foto anhängen"}
-                </label>
-                {editImagePreview ? (
-                  <div style={{ position: "relative", width: "120px", height: "80px", borderRadius: "var(--radius-sm)", overflow: "hidden", border: "1px solid #D4AF37" }}>
-                    <img src={editImagePreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setEditImageFile(null);
-                        setEditImagePreview(null);
-                        if (editFileInputRef.current) editFileInputRef.current.value = "";
-                      }}
-                      style={{
-                        position: "absolute",
-                        top: "4px",
-                        right: "4px",
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        backgroundColor: "rgba(0, 0, 0, 0.8)",
-                        color: "#ffffff",
-                        border: "none",
-                        cursor: "pointer",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    <input
-                      type="file"
-                      ref={editFileInputRef}
-                      accept="image/jpeg,image/png,image/webp,image/avif"
-                      onChange={handleFileChange}
-                      style={{ display: "none" }}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => editFileInputRef.current?.click()}
-                    >
-                      📷 {currentLang === "en" ? "Change / Upload Photo" : "Foto ändern / hinzufügen"}
-                    </Button>
-                  </div>
-                )}
               </div>
 
               {/* Error Alert */}

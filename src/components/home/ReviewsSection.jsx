@@ -7,12 +7,14 @@ import Button from "../ui/Button";
 import reviewsService from "../../services/reviews/reviews.service";
 
 /**
- * German Auto — Dynamic Reviews Section & Carousel
- * - Desktop: 3 cards per view, automated carousel with pause on hover
- * - Mobile: 1 card per view, horizontal swipable/navigable
- * - Card order: 1. Name -> 2. d/m/y -> 3. Stars -> 4. Message -> 5. Images
- * - "Leave a Review →" button placed UNDER the cards without shadow
- * - Fullscreen centered lightbox with left/right arrows for multiple images
+ * German Auto — Luxury Uniform Reviews Section & Carousel
+ * - All review cards have the EXACT same height (360px) and width (max 340px).
+ * - Text-only presentation (images in reviews completely removed).
+ * - Matches the autoweltnoris layout:
+ *   1. Avatar circle + Name + relative time ("vor einem Jahr") + Google 'G' icon
+ *   2. 5 Gold stars rating
+ *   3. Review text (strictly limited so it never overflows or stretches the card)
+ * - Navigation: Side arrows < >, indicator dots, and "Leave a Review →" button without shadow.
  */
 export function ReviewsSection({ googleReviewsConfig }) {
   const { t, i18n } = useTranslation(["common", "navigation"]);
@@ -25,9 +27,6 @@ export function ReviewsSection({ googleReviewsConfig }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-
-  // Lightbox State
-  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   const isGoogleReviewsEnabled = Boolean(googleReviewsConfig?.enabled && googleReviewsConfig?.profile_url);
 
@@ -64,16 +63,16 @@ export function ReviewsSection({ googleReviewsConfig }) {
   const itemsPerPage = isMobile ? 1 : 3;
   const maxIndex = Math.max(0, reviews.length - itemsPerPage);
 
-  // Auto-play Carousel Timer (every 4.5 seconds)
+  // Auto-play Carousel Timer (every 5 seconds)
   useEffect(() => {
-    if (reviews.length <= itemsPerPage || isPaused || lightboxIndex !== null) return;
+    if (reviews.length <= itemsPerPage || isPaused) return;
 
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
-    }, 4500);
+    }, 5000);
 
     return () => clearInterval(timer);
-  }, [reviews.length, itemsPerPage, maxIndex, isPaused, lightboxIndex]);
+  }, [reviews.length, itemsPerPage, maxIndex, isPaused]);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
@@ -83,53 +82,39 @@ export function ReviewsSection({ googleReviewsConfig }) {
     setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
 
-  // Collect all images from reviews for Lightbox navigation
-  const allImages = reviews
-    .filter((r) => Boolean(r.image_url))
-    .map((r) => ({
-      url: r.image_url,
-      reviewerName: r.name,
-    }));
-
-  const openLightboxByUrl = (url) => {
-    const idx = allImages.findIndex((img) => img.url === url);
-    if (idx !== -1) {
-      setLightboxIndex(idx);
-    } else if (url) {
-      setLightboxIndex(0);
-    }
-  };
-
-  const closeLightbox = () => {
-    setLightboxIndex(null);
-  };
-
-  // Lightbox keyboard navigation (ESC, ArrowLeft, ArrowRight)
-  useEffect(() => {
-    if (lightboxIndex === null) return;
-
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        closeLightbox();
-      } else if (e.key === "ArrowLeft") {
-        setLightboxIndex((prev) => (prev > 0 ? prev - 1 : allImages.length - 1));
-      } else if (e.key === "ArrowRight") {
-        setLightboxIndex((prev) => (prev < allImages.length - 1 ? prev + 1 : 0));
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [lightboxIndex, allImages.length]);
-
-  // Format Date in d/m/y (e.g. 01.10.2026)
-  const formatDateDMY = (dateStr) => {
+  // Relative Time Formatter matching "vor einem Jahr" in autoweltnoris
+  const formatReviewTime = (dateStr) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}.${month}.${year}`;
+    const now = new Date();
+    const diffMs = now - d;
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 1) {
+      return currentLang === "en" ? "Today" : "Heute";
+    }
+    if (diffDays === 1) {
+      return currentLang === "en" ? "Yesterday" : "Gestern";
+    }
+    if (diffDays < 7) {
+      return currentLang === "en" ? `${diffDays} days ago` : `vor ${diffDays} Tagen`;
+    }
+    if (diffDays < 30) {
+      const weeks = Math.max(1, Math.floor(diffDays / 7));
+      return currentLang === "en"
+        ? (weeks === 1 ? "1 week ago" : `${weeks} weeks ago`)
+        : (weeks === 1 ? "vor einer Woche" : `vor ${weeks} Wochen`);
+    }
+    if (diffDays < 365) {
+      const months = Math.max(1, Math.floor(diffDays / 30));
+      return currentLang === "en"
+        ? (months === 1 ? "1 month ago" : `${months} months ago`)
+        : (months === 1 ? "vor einem Monat" : `vor ${months} Monaten`);
+    }
+    const years = Math.max(1, Math.floor(diffDays / 365));
+    return currentLang === "en"
+      ? (years === 1 ? "1 year ago" : `${years} years ago`)
+      : (years === 1 ? "vor einem Jahr" : `vor ${years} Jahren`);
   };
 
   const googleLabel = currentLang === "en"
@@ -164,16 +149,22 @@ export function ReviewsSection({ googleReviewsConfig }) {
           </Heading>
         </div>
 
-        {/* ── Case 1: Reviews Carousel ─────────────────────────────── */}
+        {/* ── Reviews Carousel ─────────────────────────────────────── */}
         {reviews.length > 0 && (
           <div
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
             onTouchStart={() => setIsPaused(true)}
             onTouchEnd={() => setIsPaused(false)}
-            style={{ position: "relative", marginBottom: "var(--space-2xl)" }}
+            style={{
+              position: "relative",
+              maxWidth: isMobile ? "360px" : "1140px",
+              margin: "0 auto var(--space-xl)",
+              padding: isMobile ? "0 34px" : "0 46px",
+              boxSizing: "border-box",
+            }}
           >
-            {/* Carousel Container */}
+            {/* Carousel Track Wrapper */}
             <div style={{ overflow: "hidden", width: "100%" }}>
               <div
                 style={{
@@ -182,215 +173,266 @@ export function ReviewsSection({ googleReviewsConfig }) {
                   transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)`,
                 }}
               >
-                {reviews.map((rev) => (
-                  <div
-                    key={rev.id}
-                    style={{
-                      flex: `0 0 ${100 / itemsPerPage}%`,
-                      padding: "0 10px",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    {/* Review Card */}
+                {reviews.map((rev) => {
+                  const initial = (rev.name ? rev.name.trim()[0].toUpperCase() : "U");
+                  return (
                     <div
+                      key={rev.id}
                       style={{
-                        backgroundColor: "#0d0d0d",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
-                        borderRadius: "var(--radius-lg)",
-                        padding: "clamp(var(--space-lg), 4vw, var(--space-xl))",
-                        display: "flex",
-                        flexDirection: "column",
-                        minHeight: "280px",
+                        flex: `0 0 ${100 / itemsPerPage}%`,
+                        padding: "0 10px",
                         boxSizing: "border-box",
-                        transition: "border-color 0.25s ease, transform 0.25s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.4)";
-                        e.currentTarget.style.transform = "translateY(-4px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
-                        e.currentTarget.style.transform = "translateY(0)";
+                        display: "flex",
+                        justifyContent: "center",
                       }}
                     >
-                      {/* 1. Name at first as top */}
+                      {/* Exact Uniform Review Card */}
                       <div
                         style={{
-                          fontSize: "1.1rem",
-                          fontWeight: 700,
-                          color: "#ffffff",
-                          marginBottom: "2px",
-                          letterSpacing: "0.02em",
-                        }}
-                      >
-                        {rev.name}
-                      </div>
-
-                      {/* 2. Under it: d/m/y date */}
-                      <div
-                        style={{
-                          fontSize: "0.8rem",
-                          color: "var(--color-text-muted, #a1a1aa)",
-                          marginBottom: "10px",
-                          fontWeight: 500,
-                        }}
-                      >
-                        {formatDateDMY(rev.created_at)}
-                      </div>
-
-                      {/* 3. Under it: stars rating */}
-                      <div
-                        style={{
+                          width: "100%",
+                          maxWidth: "340px",
+                          height: "360px",
+                          minHeight: "360px",
+                          maxHeight: "360px",
+                          backgroundColor: "#0d0d0d",
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          borderRadius: "16px",
+                          padding: "24px",
                           display: "flex",
-                          gap: "3px",
-                          color: "#D4AF37",
-                          fontSize: "1.15rem",
-                          marginBottom: "14px",
+                          flexDirection: "column",
+                          boxSizing: "border-box",
+                          transition: "border-color 0.25s ease, transform 0.25s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
+                          e.currentTarget.style.transform = "translateY(-4px)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                          e.currentTarget.style.transform = "translateY(0)";
                         }}
                       >
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <span key={i} style={{ opacity: i < (rev.rating || 5) ? 1 : 0.2 }}>
-                            ★
-                          </span>
-                        ))}
-                      </div>
+                        {/* 1. Top Header Row: Avatar + Name & Relative Date + Google 'G' Icon */}
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            marginBottom: "16px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+                            {/* Circle Avatar with Initial */}
+                            <div
+                              style={{
+                                width: "42px",
+                                height: "42px",
+                                borderRadius: "50%",
+                                backgroundColor: "#221d18",
+                                border: "1px solid rgba(212, 175, 55, 0.35)",
+                                color: "#D4AF37",
+                                fontWeight: 700,
+                                fontSize: "1.1rem",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexShrink: 0,
+                              }}
+                            >
+                              {initial}
+                            </div>
 
-                      {/* 4. Then: the message */}
-                      <p
-                        style={{
-                          margin: 0,
-                          color: "rgba(255, 255, 255, 0.88)",
-                          fontSize: "0.925rem",
-                          lineHeight: 1.6,
-                          fontStyle: "italic",
-                          flex: 1,
-                        }}
-                      >
-                        "{rev.text}"
-                      </p>
+                            {/* Name & Time */}
+                            <div style={{ minWidth: 0 }}>
+                              <div
+                                style={{
+                                  fontSize: "1rem",
+                                  fontWeight: 700,
+                                  color: "#ffffff",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  lineHeight: 1.2,
+                                }}
+                              >
+                                {rev.name}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "0.8rem",
+                                  color: "rgba(255, 255, 255, 0.45)",
+                                  marginTop: "3px",
+                                  fontWeight: 500,
+                                }}
+                              >
+                                {formatReviewTime(rev.created_at)}
+                              </div>
+                            </div>
+                          </div>
 
-                      {/* 5. After that: the images */}
-                      {rev.image_url && (
-                        <div style={{ marginTop: "16px" }}>
-                          <button
-                            type="button"
-                            onClick={() => openLightboxByUrl(rev.image_url)}
-                            title={currentLang === "en" ? "Click to enlarge photo" : "Klicken zum Vergrößern"}
+                          {/* Subtle Google 'G' Icon matching autoweltnoris */}
+                          <div
                             style={{
-                              padding: 0,
-                              border: "1px solid rgba(212, 175, 55, 0.4)",
-                              borderRadius: "var(--radius-sm)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              opacity: 0.45,
+                              flexShrink: 0,
+                              marginLeft: "8px",
+                            }}
+                            title="Google Review"
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                              <path
+                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                fill="#ffffff"
+                              />
+                              <path
+                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                fill="#ffffff"
+                              />
+                              <path
+                                d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                                fill="#ffffff"
+                              />
+                              <path
+                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+                                fill="#ffffff"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* 2. Stars Rating */}
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "3px",
+                            color: "#D4AF37",
+                            fontSize: "1.15rem",
+                            marginBottom: "14px",
+                            flexShrink: 0,
+                          }}
+                        >
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <span key={i} style={{ opacity: i < (rev.rating || 5) ? 1 : 0.2 }}>
+                              ★
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* 3. Review Text - Strictly limited to prevent overflow */}
+                        <div
+                          style={{
+                            flex: 1,
+                            overflow: "hidden",
+                            display: "flex",
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <p
+                            style={{
+                              margin: 0,
+                              color: "rgba(255, 255, 255, 0.88)",
+                              fontSize: "0.885rem",
+                              lineHeight: 1.6,
+                              display: "-webkit-box",
+                              WebkitLineClamp: 8,
+                              WebkitBoxOrient: "vertical",
                               overflow: "hidden",
-                              cursor: "pointer",
-                              background: "none",
-                              display: "inline-block",
-                              transition: "transform 0.2s ease, border-color 0.2s ease",
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.transform = "scale(1.04)";
-                              e.currentTarget.style.borderColor = "#D4AF37";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.transform = "scale(1)";
-                              e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.4)";
+                              textOverflow: "ellipsis",
+                              wordBreak: "break-word",
                             }}
                           >
-                            <img
-                              src={rev.image_url}
-                              alt={`Vehicle from ${rev.name}`}
-                              style={{
-                                width: "95px",
-                                height: "65px",
-                                objectFit: "cover",
-                                display: "block",
-                              }}
-                            />
-                          </button>
+                            {rev.text}
+                          </p>
                         </div>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
-            {/* Carousel Navigation Arrows */}
+            {/* Left Carousel Arrow */}
             {reviews.length > itemsPerPage && (
-              <>
-                <button
-                  type="button"
-                  onClick={handlePrev}
-                  aria-label="Previous review"
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "-16px",
-                    transform: "translateY(-50%)",
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(10, 10, 10, 0.9)",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    color: "#ffffff",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 10,
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#D4AF37";
-                    e.currentTarget.style.color = "#000000";
-                    e.currentTarget.style.borderColor = "#D4AF37";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(10, 10, 10, 0.9)";
-                    e.currentTarget.style.color = "#ffffff";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                  }}
-                >
-                  ‹
-                </button>
+              <button
+                type="button"
+                onClick={handlePrev}
+                aria-label="Previous review"
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: isMobile ? "0px" : "4px",
+                  transform: "translateY(-50%)",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(10, 10, 10, 0.9)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "#ffffff",
+                  fontSize: "18px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 10,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#D4AF37";
+                  e.currentTarget.style.color = "#000000";
+                  e.currentTarget.style.borderColor = "#D4AF37";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(10, 10, 10, 0.9)";
+                  e.currentTarget.style.color = "#ffffff";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                ‹
+              </button>
+            )}
 
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  aria-label="Next review"
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    right: "-16px",
-                    transform: "translateY(-50%)",
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(10, 10, 10, 0.9)",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    color: "#ffffff",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    zIndex: 10,
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#D4AF37";
-                    e.currentTarget.style.color = "#000000";
-                    e.currentTarget.style.borderColor = "#D4AF37";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(10, 10, 10, 0.9)";
-                    e.currentTarget.style.color = "#ffffff";
-                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
-                  }}
-                >
-                  ›
-                </button>
-              </>
+            {/* Right Carousel Arrow */}
+            {reviews.length > itemsPerPage && (
+              <button
+                type="button"
+                onClick={handleNext}
+                aria-label="Next review"
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  right: isMobile ? "0px" : "4px",
+                  transform: "translateY(-50%)",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(10, 10, 10, 0.9)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "#ffffff",
+                  fontSize: "18px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 10,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "#D4AF37";
+                  e.currentTarget.style.color = "#000000";
+                  e.currentTarget.style.borderColor = "#D4AF37";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(10, 10, 10, 0.9)";
+                  e.currentTarget.style.color = "#ffffff";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                }}
+              >
+                ›
+              </button>
             )}
 
             {/* Dot Indicators */}
@@ -419,7 +461,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
           </div>
         )}
 
-        {/* ── Case 2: Empty State ──────────────────────────────────── */}
+        {/* ── Empty State ─────────────────────────────────────────── */}
         {!loading && reviews.length === 0 && (
           <div
             data-aos="fade-up"
@@ -451,7 +493,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
           </div>
         )}
 
-        {/* ── Button UNDER the cards without shadow, with arrow text ── */}
+        {/* ── Action Buttons under the cards without shadow ────────── */}
         <div
           data-aos="fade-up"
           style={{
@@ -469,7 +511,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
             variant="secondary"
             size="lg"
             style={{
-              boxShadow: "none", // Explicitly no shadow as requested
+              boxShadow: "none",
               borderRadius: "0px",
               fontWeight: 700,
               fontSize: "0.95rem",
@@ -497,199 +539,6 @@ export function ReviewsSection({ googleReviewsConfig }) {
           )}
         </div>
       </Container>
-
-      {/* ── Lightbox Image Viewer (Centered, never exceeds screen) ─── */}
-      {lightboxIndex !== null && allImages[lightboxIndex] && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Image preview"
-          onClick={closeLightbox}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            backgroundColor: "rgba(0, 0, 0, 0.94)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            zIndex: 999999, // Stays above everything
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-            boxSizing: "border-box",
-          }}
-        >
-          {/* Close 'X' Button at Top-Right */}
-          <button
-            type="button"
-            onClick={closeLightbox}
-            aria-label="Close image preview"
-            style={{
-              position: "fixed",
-              top: "24px",
-              right: "24px",
-              width: "46px",
-              height: "46px",
-              borderRadius: "50%",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              color: "#ffffff",
-              fontSize: "20px",
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              zIndex: 1000000,
-              transition: "background-color 0.2s ease, transform 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.8)";
-              e.currentTarget.style.color = "#000000";
-              e.currentTarget.style.transform = "scale(1.08)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
-              e.currentTarget.style.color = "#ffffff";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            ✕
-          </button>
-
-          {/* Previous Arrow Button */}
-          {allImages.length > 1 && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setLightboxIndex((prev) => (prev > 0 ? prev - 1 : allImages.length - 1));
-              }}
-              aria-label="Previous image"
-              style={{
-                position: "fixed",
-                left: "24px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "52px",
-                height: "52px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(20, 20, 20, 0.8)",
-                border: "1px solid rgba(255, 255, 255, 0.3)",
-                color: "#ffffff",
-                fontSize: "28px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000000,
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#D4AF37";
-                e.currentTarget.style.color = "#000000";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(20, 20, 20, 0.8)";
-                e.currentTarget.style.color = "#ffffff";
-              }}
-            >
-              ‹
-            </button>
-          )}
-
-          {/* Centered Image Container - Fits completely inside page */}
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: "relative",
-              maxWidth: "min(90vw, 1000px)",
-              maxHeight: "82vh",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={allImages[lightboxIndex].url}
-              alt={`Review image by ${allImages[lightboxIndex].reviewerName}`}
-              style={{
-                maxWidth: "100%",
-                maxHeight: "78vh",
-                objectFit: "contain",
-                borderRadius: "var(--radius-md)",
-                border: "1px solid rgba(212, 175, 55, 0.4)",
-                boxShadow: "0 25px 50px rgba(0, 0, 0, 0.9)",
-                display: "block",
-              }}
-            />
-
-            {/* Bottom Details & Image Counter */}
-            <div
-              style={{
-                marginTop: "12px",
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                color: "rgba(255, 255, 255, 0.8)",
-                fontSize: "0.875rem",
-              }}
-            >
-              <span>{allImages[lightboxIndex].reviewerName}</span>
-              {allImages.length > 1 && (
-                <span>
-                  {lightboxIndex + 1} / {allImages.length}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Next Arrow Button */}
-          {allImages.length > 1 && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setLightboxIndex((prev) => (prev < allImages.length - 1 ? prev + 1 : 0));
-              }}
-              aria-label="Next image"
-              style={{
-                position: "fixed",
-                right: "24px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "52px",
-                height: "52px",
-                borderRadius: "50%",
-                backgroundColor: "rgba(20, 20, 20, 0.8)",
-                border: "1px solid rgba(255, 255, 255, 0.3)",
-                color: "#ffffff",
-                fontSize: "28px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 1000000,
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#D4AF37";
-                e.currentTarget.style.color = "#000000";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(20, 20, 20, 0.8)";
-                e.currentTarget.style.color = "#ffffff";
-              }}
-            >
-              ›
-            </button>
-          )}
-        </div>
-      )}
     </Section>
   );
 }

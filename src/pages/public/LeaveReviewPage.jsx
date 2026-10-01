@@ -21,13 +21,9 @@ export function LeaveReviewPage() {
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [text, setText] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const fileInputRef = useRef(null);
 
   useEffect(() => {
     document.title = currentLang === "en"
@@ -35,45 +31,6 @@ export function LeaveReviewPage() {
       : "Bewertung abgeben | German Auto";
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentLang]);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage(
-        currentLang === "en"
-          ? "The photo must not exceed 5 MB."
-          : "Das Foto darf maximal 5 MB groß sein."
-      );
-      return;
-    }
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"];
-    if (!allowedTypes.includes(file.type)) {
-      setErrorMessage(
-        currentLang === "en"
-          ? "Allowed formats: JPG, PNG, WEBP, AVIF."
-          : "Erlaubte Formate: JPG, PNG, WEBP, AVIF."
-      );
-      return;
-    }
-
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-    setErrorMessage("");
-  };
-
-  const handleRemoveImage = () => {
-    setImageFile(null);
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
-      setImagePreview(null);
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,11 +46,11 @@ export function LeaveReviewPage() {
       return;
     }
 
-    if (trimmed.length > 5000) {
+    if (trimmed.length > 300) {
       setErrorMessage(
         currentLang === "en"
-          ? "Review text must not exceed 5,000 characters."
-          : "Der Text darf maximal 5.000 Zeichen lang sein."
+          ? "Review text must not exceed 300 characters."
+          : "Der Text darf maximal 300 Zeichen lang sein."
       );
       return;
     }
@@ -102,18 +59,10 @@ export function LeaveReviewPage() {
     setErrorMessage("");
 
     try {
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("rating", String(rating));
-        formData.append("text", trimmed);
-        formData.append("image", imageFile);
-        await reviewsService.submitReview(formData);
-      } else {
-        await reviewsService.submitReview({
-          rating,
-          text: trimmed,
-        });
-      }
+      await reviewsService.submitReview({
+        rating,
+        text: trimmed,
+      });
 
       setIsSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -396,13 +345,13 @@ export function LeaveReviewPage() {
                     <label htmlFor="leave-review-text" className="form-label" style={{ margin: 0, color: "#ffffff", fontWeight: 600 }}>
                       {currentLang === "en" ? "Your Review *" : "Ihre Rezension *"}
                     </label>
-                    <span style={{ fontSize: "0.8rem", color: text.length > 5000 ? "#ef4444" : "var(--color-text-muted)" }}>
-                      {text.length} / 5.000
+                    <span style={{ fontSize: "0.8rem", color: text.length > 300 ? "#ef4444" : "var(--color-text-muted)" }}>
+                      {text.length} / 300
                     </span>
                   </div>
                   <textarea
                     id="leave-review-text"
-                    rows={6}
+                    rows={5}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     placeholder={
@@ -412,7 +361,7 @@ export function LeaveReviewPage() {
                     }
                     required
                     minLength={5}
-                    maxLength={5000}
+                    maxLength={300}
                     style={{
                       width: "100%",
                       padding: "14px 16px",
@@ -422,7 +371,7 @@ export function LeaveReviewPage() {
                       color: "#ffffff",
                       fontSize: "0.95rem",
                       lineHeight: 1.6,
-                      resize: "vertical",
+                      resize: "none",
                       outline: "none",
                       boxSizing: "border-box",
                       transition: "border-color 0.2s ease",
@@ -430,76 +379,11 @@ export function LeaveReviewPage() {
                     onFocus={(e) => (e.target.style.borderColor = "#D4AF37")}
                     onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.2)")}
                   />
-                </div>
-
-                {/* Optional Photo Attachment */}
-                <div>
-                  <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
-                    {currentLang === "en" ? "Attach Photo (Optional)" : "Foto beifügen (optional)"}
-                  </label>
-
-                  {imagePreview ? (
-                    <div
-                      style={{
-                        position: "relative",
-                        width: "160px",
-                        height: "110px",
-                        borderRadius: "var(--radius-sm)",
-                        overflow: "hidden",
-                        border: "1px solid #D4AF37",
-                      }}
-                    >
-                      <img src={imagePreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      <button
-                        type="button"
-                        onClick={handleRemoveImage}
-                        title={currentLang === "en" ? "Remove" : "Entfernen"}
-                        style={{
-                          position: "absolute",
-                          top: "6px",
-                          right: "6px",
-                          width: "26px",
-                          height: "26px",
-                          borderRadius: "50%",
-                          backgroundColor: "rgba(0, 0, 0, 0.8)",
-                          color: "#ffffff",
-                          border: "none",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "14px",
-                        }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        accept="image/jpeg,image/png,image/webp,image/avif"
-                        onChange={handleFileChange}
-                        style={{ display: "none" }}
-                        id="review-image-file"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="md"
-                        onClick={() => fileInputRef.current?.click()}
-                        style={{ borderRadius: "0px" }}
-                      >
-                        📷 {currentLang === "en" ? "Choose Vehicle Photo" : "Fahrzeugfoto auswählen"}
-                      </Button>
-                      <div style={{ marginTop: "6px", fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
-                        {currentLang === "en"
-                          ? "Supported formats: JPG, PNG, WEBP up to 5 MB"
-                          : "Unterstützte Formate: JPG, PNG, WEBP bis 5 MB"}
-                      </div>
-                    </div>
-                  )}
+                  <div style={{ marginTop: "4px", fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                    {currentLang === "en"
+                      ? "Max. 300 characters to ensure consistent presentation."
+                      : "Max. 300 Zeichen für eine einheitliche Kartengröße."}
+                  </div>
                 </div>
 
                 {/* Error Banner */}

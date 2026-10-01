@@ -19,20 +19,14 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [text, setText] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const fileInputRef = useRef(null);
 
   const resetForm = () => {
     setRating(5);
     setHoverRating(0);
     setText("");
-    setImageFile(null);
-    setImagePreview(null);
     setErrorMessage("");
     setIsSuccess(false);
   };
@@ -40,38 +34,6 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
   const handleModalClose = () => {
     resetForm();
     onClose();
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setErrorMessage(t("reviews.imageTooLarge", "Das Bild darf maximal 5 MB groß sein."));
-      return;
-    }
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"];
-    if (!allowedTypes.includes(file.type)) {
-      setErrorMessage(t("reviews.imageInvalidType", "Erlaubte Bildformate sind JPG, PNG, WEBP und AVIF."));
-      return;
-    }
-
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-    setErrorMessage("");
-  };
-
-  const handleRemoveImage = () => {
-    setImageFile(null);
-    if (imagePreview) {
-      URL.revokeObjectURL(imagePreview);
-      setImagePreview(null);
-    }
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -83,8 +45,8 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
       setErrorMessage(t("reviews.textTooShort", "Der Text muss mindestens 5 Zeichen enthalten."));
       return;
     }
-    if (trimmed.length > 5000) {
-      setErrorMessage(t("reviews.textTooLong", "Der Text darf maximal 5.000 Zeichen lang sein."));
+    if (trimmed.length > 300) {
+      setErrorMessage(t("reviews.textTooLong", "Der Text darf maximal 300 Zeichen lang sein."));
       return;
     }
 
@@ -92,18 +54,10 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
     setErrorMessage("");
 
     try {
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("rating", String(rating));
-        formData.append("text", trimmed);
-        formData.append("image", imageFile);
-        await reviewsService.submitReview(formData);
-      } else {
-        await reviewsService.submitReview({
-          rating,
-          text: trimmed,
-        });
-      }
+      await reviewsService.submitReview({
+        rating,
+        text: trimmed,
+      });
 
       setIsSuccess(true);
       if (onSuccess) {
@@ -308,8 +262,8 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
               <label htmlFor="review-text" style={{ fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                 {t("reviews.yourReview", "Ihre Rezension")} *
               </label>
-              <span style={{ fontSize: "0.75rem", color: text.length > 5000 ? "#ef4444" : "var(--color-text-muted)" }}>
-                {text.length} / 5.000
+              <span style={{ fontSize: "0.75rem", color: text.length > 300 ? "#ef4444" : "var(--color-text-muted)" }}>
+                {text.length} / 300
               </span>
             </div>
             <textarea
@@ -323,7 +277,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
               )}
               required
               minLength={5}
-              maxLength={5000}
+              maxLength={300}
               style={{
                 width: "100%",
                 padding: "var(--space-md)",
@@ -333,72 +287,13 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
                 color: "#ffffff",
                 fontSize: "0.925rem",
                 lineHeight: 1.5,
-                resize: "vertical",
+                resize: "none",
                 outline: "none",
                 transition: "border-color 0.2s ease",
               }}
               onFocus={(e) => (e.target.style.borderColor = "#D4AF37")}
               onBlur={(e) => (e.target.style.borderColor = "var(--color-border)")}
             />
-          </div>
-
-          {/* Optional Photo Attachment */}
-          <div>
-            <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
-              {t("reviews.addPhoto", "Foto beifügen (optional)")}
-            </label>
-
-            {imagePreview ? (
-              <div style={{ position: "relative", width: "120px", height: "90px", borderRadius: "var(--radius-sm)", overflow: "hidden", border: "1px solid #D4AF37" }}>
-                <img src={imagePreview} alt="Preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  title={t("common:remove", "Entfernen")}
-                  style={{
-                    position: "absolute",
-                    top: "4px",
-                    right: "4px",
-                    width: "22px",
-                    height: "22px",
-                    borderRadius: "50%",
-                    backgroundColor: "rgba(0, 0, 0, 0.75)",
-                    color: "#ffffff",
-                    border: "none",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "12px",
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-            ) : (
-              <div>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/jpeg,image/png,image/webp,image/avif"
-                  onChange={handleFileChange}
-                  style={{ display: "none" }}
-                  id="review-image-input"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  iconLeft="camera"
-                >
-                  {t("reviews.uploadPhoto", "Foto auswählen")}
-                </Button>
-                <span style={{ marginLeft: "var(--space-sm)", fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
-                  (JPG, PNG, WEBP bis 5 MB)
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Error Message */}
