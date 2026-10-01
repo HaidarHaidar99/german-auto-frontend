@@ -15,13 +15,13 @@ export function CarDetailDrawer({
 
   if (!car) return null;
 
-  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || "Fahrzeug";
+  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || t("colCar", { defaultValue: "Fahrzeug" });
   const formattedPrice = car.price != null
-    ? new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(car.price)
-    : "Auf Anfrage";
+    ? new Intl.NumberFormat(i18n.language === "en" ? "en-US" : "de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(car.price)
+    : t("priceOnRequest", { defaultValue: "Auf Anfrage" });
 
   const formattedMileage = car.mileage_km != null
-    ? `${new Intl.NumberFormat("de-DE").format(car.mileage_km)} km`
+    ? `${new Intl.NumberFormat(i18n.language === "en" ? "en-US" : "de-DE").format(car.mileage_km)} km`
     : null;
 
   const media = car.media || {};
@@ -60,7 +60,7 @@ export function CarDetailDrawer({
             )}
             {!car.is_visible && (
               <Badge variant="outline" size="sm" style={{ borderColor: "#ef4444", color: "#ef4444" }}>
-                Versteckt
+                {t("statHidden", { defaultValue: "Versteckt" })}
               </Badge>
             )}
           </div>
@@ -111,36 +111,36 @@ export function CarDetailDrawer({
           }}
         >
           <div>
-            <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Preis</span>
+            <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("price", { defaultValue: "Preis" })}</span>
             <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-primary, var(--color-text))" }}>{formattedPrice}</strong>
           </div>
           {formattedMileage && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Kilometerstand</span>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("mileage", { defaultValue: "Kilometerstand" })}</span>
               <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{formattedMileage}</strong>
             </div>
           )}
           {car.performance_hp && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Leistung</span>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("powerHp", { defaultValue: "Leistung" })}</span>
               <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.performance_hp} PS</strong>
             </div>
           )}
           {car.fuel_type && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Kraftstoff</span>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("fuelType", { defaultValue: "Kraftstoff" })}</span>
               <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.fuel_type}</strong>
             </div>
           )}
           {car.transmission && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Getriebe</span>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("transmission", { defaultValue: "Getriebe" })}</span>
               <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.transmission}</strong>
             </div>
           )}
           {car.first_registration && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>Erstzulassung</span>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("firstRegistration", { defaultValue: "Erstzulassung" })}</span>
               <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.first_registration}</strong>
             </div>
           )}
@@ -176,7 +176,7 @@ export function CarDetailDrawer({
         {equipment.length > 0 && (
           <div>
             <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-              Ausstattung ({equipment.length})
+              {t("equipmentTab", { defaultValue: "Ausstattung" })} ({equipment.length})
             </h4>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
               {equipment.map((item, idx) => (
@@ -192,7 +192,7 @@ export function CarDetailDrawer({
         {Object.keys(customFields).length > 0 && (
           <div>
             <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-              Benutzerdefinierte Felder
+              {t("customFields", { defaultValue: "Benutzerdefinierte Felder" })}
             </h4>
             <div
               style={{
@@ -219,7 +219,7 @@ export function CarDetailDrawer({
         {gallery.length > 0 && (
           <div>
             <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-              Galeriebilder ({gallery.length})
+              {t("galleryImages", { defaultValue: "Galeriebilder" })} ({gallery.length})
             </h4>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: "var(--space-xs)" }}>
               {gallery.map((imgUrl, idx) => (

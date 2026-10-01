@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Modal from "../../ui/Modal";
 import Button from "../../ui/Button";
@@ -534,6 +534,56 @@ export function CarEditorModal({
   const galleryImages = form.media?.gallery || [];
   const currentCover = form.media?.thumbnail || galleryImages[0] || "";
 
+  const categoryOptions = useMemo(() => [
+    { value: "SEDAN", label: `${t("catSedan", { defaultValue: "Limousine" })} (SEDAN)` },
+    { value: "SUV", label: `${t("catSuv", { defaultValue: "SUV / Geländewagen" })} (SUV)` },
+    { value: "COUPE", label: `${t("catCoupe", { defaultValue: "Coupé" })} (COUPE)` },
+    { value: "CONVERTIBLE", label: `${t("catConvertible", { defaultValue: "Cabriolet" })} (CONVERTIBLE)` },
+    { value: "WAGON", label: `${t("catWagon", { defaultValue: "Kombi" })} (WAGON)` },
+    { value: "HATCHBACK", label: `${t("catHatchback", { defaultValue: "Schrägheck" })} (HATCHBACK)` },
+    { value: "VAN", label: `${t("catVan", { defaultValue: "Van / Kleinbus" })} (VAN)` },
+    { value: "TRUCK", label: `${t("catTruck", { defaultValue: "Nutzfahrzeug" })} (TRUCK)` },
+    { value: "MOTORCYCLE", label: `${t("catMotorcycle", { defaultValue: "Motorrad" })} (MOTORCYCLE)` },
+    { value: "OTHER", label: `${t("catOther", { defaultValue: "Sonstige" })} (OTHER)` },
+  ], [t]);
+
+  const conditionOptions = useMemo(() => [
+    { value: "USED", label: `${t("conditionUsed", { defaultValue: "Gebrauchtfahrzeug" })} (USED)` },
+    { value: "NEW", label: `${t("conditionNew", { defaultValue: "Neufahrzeug" })} (NEW)` },
+  ], [t]);
+
+  const statusOptions = useMemo(() => [
+    { value: "AVAILABLE", label: `${t("statusAvailable", { defaultValue: "Verfügbar" })} (AVAILABLE)` },
+    { value: "RESERVED", label: `${t("statusReserved", { defaultValue: "Reserviert" })} (RESERVED)` },
+    { value: "SOLD", label: `${t("statusSold", { defaultValue: "Verkauft" })} (SOLD)` },
+    { value: "HIDDEN", label: `${t("statusHidden", { defaultValue: "Ausgeblendet" })} (HIDDEN)` },
+  ], [t]);
+
+  const fuelOptions = useMemo(() => [
+    { value: "PETROL", label: `${t("fuelPetrol", { defaultValue: "Benzin" })} (PETROL)` },
+    { value: "DIESEL", label: `${t("fuelDiesel", { defaultValue: "Diesel" })} (DIESEL)` },
+    { value: "ELECTRIC", label: `${t("fuelElectric", { defaultValue: "Elektro" })} (ELECTRIC)` },
+    { value: "HYBRID", label: `${t("fuelHybrid", { defaultValue: "Hybrid" })} (HYBRID)` },
+    { value: "PLUGIN_HYBRID", label: `${t("fuelPluginHybrid", { defaultValue: "Plug-in Hybrid" })} (PLUGIN_HYBRID)` },
+    { value: "LPG", label: `${t("fuelLpg", { defaultValue: "Autogas" })} (LPG)` },
+    { value: "HYDROGEN", label: `${t("fuelHydrogen", { defaultValue: "Wasserstoff" })} (HYDROGEN)` },
+    { value: "OTHER", label: `${t("catOther", { defaultValue: "Sonstige" })} (OTHER)` },
+  ], [t]);
+
+  const transmissionOptions = useMemo(() => [
+    { value: "AUTOMATIC", label: `${t("transmissionAutomatic", { defaultValue: "Automatik" })} (AUTOMATIC)` },
+    { value: "MANUAL", label: `${t("transmissionManual", { defaultValue: "Schaltgetriebe" })} (MANUAL)` },
+    { value: "SEMI_AUTOMATIC", label: `${t("transmissionSemiAutomatic", { defaultValue: "Halbautomatik" })} (SEMI_AUTOMATIC)` },
+  ], [t]);
+
+  const interiorOptions = useMemo(() => [
+    { value: "LEATHER", label: `${t("interLeather", { defaultValue: "Vollleder" })} (LEATHER)` },
+    { value: "ALCANTARA", label: `${t("interAlcantara", { defaultValue: "Alcantara" })} (ALCANTARA)` },
+    { value: "FABRIC", label: `${t("interFabric", { defaultValue: "Stoff" })} (FABRIC)` },
+    { value: "MIXED", label: `${t("interMixed", { defaultValue: "Teilleder / Mix" })} (MIXED)` },
+    { value: "OTHER", label: `${t("catOther", { defaultValue: "Sonstige" })} (OTHER)` },
+  ], [t]);
+
   const tabs = [
     { key: "core", label: t("coreDataTab", { defaultValue: "Grunddaten & Pflichtfelder *" }) },
     { key: "specs", label: t("specsTab", { defaultValue: "Weitere Details" }) },
@@ -598,7 +648,7 @@ export function CarEditorModal({
             }}
           >
             <Icon name="alert-triangle" size={16} />
-            <span>Bitte füllen Sie alle erforderlichen Pflichtfelder aus (siehe rot markierte Felder).</span>
+            <span>{t("fillRequiredFields", { defaultValue: "Bitte füllen Sie alle erforderlichen Pflichtfelder aus (siehe rot markierte Felder)." })}</span>
           </div>
         )}
 
@@ -607,7 +657,7 @@ export function CarEditorModal({
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
             {/* Row 1: Marke, Modell, Fahrzeugname/Titel */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Marke / Hersteller" required error={formErrors.brand}>
+              <SettingsField label={t("brandManufacturer", { defaultValue: "Marke / Hersteller" })} required error={formErrors.brand}>
                 <Input
                   value={form.brand}
                   onChange={(e) => handleChange("brand", e.target.value)}
@@ -616,7 +666,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Modell" required error={formErrors.model}>
+              <SettingsField label={t("model", { defaultValue: "Modell" })} required error={formErrors.model}>
                 <Input
                   value={form.model}
                   onChange={(e) => handleChange("model", e.target.value)}
@@ -625,7 +675,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Fahrzeugname / Titel" required error={formErrors.title}>
+              <SettingsField label={t("carTitle", { defaultValue: "Fahrzeugname / Titel" })} required error={formErrors.title}>
                 <Input
                   value={form.title}
                   onChange={(e) => handleChange("title", e.target.value)}
@@ -637,7 +687,7 @@ export function CarEditorModal({
 
             {/* Row 2: Kaufpreis, Zustand (Neu/Gebraucht), Fahrzeugklasse */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Kaufpreis (€)" required error={formErrors.price}>
+              <SettingsField label={t("purchasePrice", { defaultValue: "Kaufpreis (€)" })} required error={formErrors.price}>
                 <Input
                   type="number"
                   min="0"
@@ -648,27 +698,27 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Fahrzeugzustand (Neu / Gebraucht)" required error={formErrors.condition}>
+              <SettingsField label={t("condition", { defaultValue: "Fahrzeugzustand (Neu / Gebraucht)" })} required error={formErrors.condition}>
                 <Select
                   value={form.condition}
                   onChange={(e) => handleChange("condition", e.target.value)}
-                  options={CONDITIONS}
+                  options={conditionOptions}
                   required
                 />
               </SettingsField>
 
-              <SettingsField label="Fahrzeugklasse" error={formErrors.category}>
+              <SettingsField label={t("category", { defaultValue: "Fahrzeugklasse" })} error={formErrors.category}>
                 <Select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
-                  options={CATEGORIES}
+                  options={categoryOptions}
                 />
               </SettingsField>
             </div>
 
             {/* Row 3: Kilometerstand, Leistung, Erstzulassung */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Kilometerstand (km)" required error={formErrors.mileage_km}>
+              <SettingsField label={t("mileageKm", { defaultValue: "Kilometerstand (km)" })} required error={formErrors.mileage_km}>
                 <Input
                   type="number"
                   min="0"
@@ -679,7 +729,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Leistung (PS)" required error={formErrors.performance_hp}>
+              <SettingsField label={t("performanceHp", { defaultValue: "Leistung (PS)" })} required error={formErrors.performance_hp}>
                 <Input
                   type="number"
                   min="1"
@@ -690,7 +740,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Erstzulassung (Datum/Jahr)" required error={formErrors.first_registration}>
+              <SettingsField label={t("firstRegistrationDate", { defaultValue: "Erstzulassung (Datum/Jahr)" })} required error={formErrors.first_registration}>
                 <Input
                   type="date"
                   value={form.first_registration}
@@ -702,36 +752,36 @@ export function CarEditorModal({
 
             {/* Row 4: Kraftstoffart, Getriebe, Bestandsstatus */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Kraftstoffart" required error={formErrors.fuel_type}>
+              <SettingsField label={t("fuelType", { defaultValue: "Kraftstoffart" })} required error={formErrors.fuel_type}>
                 <Select
                   value={form.fuel_type}
                   onChange={(e) => handleChange("fuel_type", e.target.value)}
-                  options={FUELS}
+                  options={fuelOptions}
                   required
                 />
               </SettingsField>
 
-              <SettingsField label="Getriebe" required error={formErrors.transmission}>
+              <SettingsField label={t("transmission", { defaultValue: "Getriebe" })} required error={formErrors.transmission}>
                 <Select
                   value={form.transmission}
                   onChange={(e) => handleChange("transmission", e.target.value)}
-                  options={TRANSMISSIONS}
+                  options={transmissionOptions}
                   required
                 />
               </SettingsField>
 
-              <SettingsField label="Bestands-Status" error={formErrors.status}>
+              <SettingsField label={t("inventoryStatus", { defaultValue: "Bestands-Status" })} error={formErrors.status}>
                 <Select
                   value={form.status}
                   onChange={(e) => handleChange("status", e.target.value)}
-                  options={STATUSES}
+                  options={statusOptions}
                 />
               </SettingsField>
             </div>
 
             {/* Row 5: Ursprünglicher Preis, URL-Slug */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Ursprünglicher Preis (€)" helper="Optional (für Rabattanzeige)" error={formErrors.old_price}>
+              <SettingsField label={t("originalPrice", { defaultValue: "Ursprünglicher Preis (€)" })} helper={t("originalPriceHelper", { defaultValue: "Optional (für Rabattanzeige)" })} error={formErrors.old_price}>
                 <Input
                   type="number"
                   min="0"
@@ -741,7 +791,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="URL-Slug" helper="Optional (wird sonst automatisch erzeugt)" error={formErrors.slug}>
+              <SettingsField label={t("urlSlug", { defaultValue: "URL-Slug" })} helper={t("urlSlugHelper", { defaultValue: "Optional (wird sonst automatisch erzeugt)" })} error={formErrors.slug}>
                 <Input
                   value={form.slug}
                   onChange={(e) => handleChange("slug", e.target.value)}
@@ -753,13 +803,13 @@ export function CarEditorModal({
             {/* Row 6: Toggles */}
             <div style={{ display: "flex", gap: "var(--space-xl)", marginTop: "var(--space-xs)" }}>
               <SettingsToggle
-                label="Featured (Auf Startseite hervorheben)"
+                label={t("featuredHome", { defaultValue: "Featured (Auf Startseite hervorheben)" })}
                 checked={form.is_featured}
                 onChange={(checked) => handleChange("is_featured", checked)}
               />
 
               <SettingsToggle
-                label="Öffentlich sichtbar"
+                label={t("publiclyVisible", { defaultValue: "Öffentlich sichtbar" })}
                 checked={form.is_visible}
                 onChange={(checked) => handleChange("is_visible", checked)}
               />
@@ -771,7 +821,7 @@ export function CarEditorModal({
         {activeTab === "specs" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Beschreibung (Deutsch)" locale="de" error={formErrors.description_de}>
+              <SettingsField label={t("descriptionDe", { defaultValue: "Beschreibung (Deutsch)" })} locale="de" error={formErrors.description_de}>
                 <Textarea
                   value={form.description_de}
                   onChange={(e) => handleChange("description_de", e.target.value)}
@@ -780,7 +830,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Description (English)" locale="en" error={formErrors.description_en}>
+              <SettingsField label={t("descriptionEn", { defaultValue: "Description (English)" })} locale="en" error={formErrors.description_en}>
                 <Textarea
                   value={form.description_en}
                   onChange={(e) => handleChange("description_en", e.target.value)}
@@ -791,7 +841,7 @@ export function CarEditorModal({
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Hubraum (ccm)" error={formErrors.engine_displacement_cc}>
+              <SettingsField label={t("displacementCc", { defaultValue: "Hubraum (ccm)" })} error={formErrors.engine_displacement_cc}>
                 <Input
                   type="number"
                   min="0"
@@ -801,7 +851,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Sitze" error={formErrors.seats}>
+              <SettingsField label={t("seats", { defaultValue: "Sitze" })} error={formErrors.seats}>
                 <Input
                   type="number"
                   min="1"
@@ -811,7 +861,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label="Vorbesitzer (Fahrzeughalter)" error={formErrors.vehicle_owners}>
+              <SettingsField label={t("previousOwners", { defaultValue: "Vorbesitzer (Fahrzeughalter)" })} error={formErrors.vehicle_owners}>
                 <Input
                   type="number"
                   min="0"
@@ -823,15 +873,15 @@ export function CarEditorModal({
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label="Innenausstattung" error={formErrors.interior_design}>
+              <SettingsField label={t("interiorDesign", { defaultValue: "Innenausstattung" })} error={formErrors.interior_design}>
                 <Select
                   value={form.interior_design}
                   onChange={(e) => handleChange("interior_design", e.target.value)}
-                  options={INTERIORS}
+                  options={interiorOptions}
                 />
               </SettingsField>
 
-              <SettingsField label="Innenfarbe" error={formErrors.interior_color}>
+              <SettingsField label={t("interiorColor", { defaultValue: "Innenfarbe" })} error={formErrors.interior_color}>
                 <Input
                   value={form.interior_color}
                   onChange={(e) => handleChange("interior_color", e.target.value)}
@@ -841,7 +891,7 @@ export function CarEditorModal({
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label="Zustandsbeschreibung (z. B. Unfallfrei)" error={formErrors.vehicle_condition}>
+              <SettingsField label={t("conditionNotes", { defaultValue: "Zustandsbeschreibung (z. B. Unfallfrei)" })} error={formErrors.vehicle_condition}>
                 <Input
                   value={form.vehicle_condition}
                   onChange={(e) => handleChange("vehicle_condition", e.target.value)}
@@ -852,13 +902,13 @@ export function CarEditorModal({
 
             <div style={{ display: "flex", gap: "var(--space-xl)", marginTop: "var(--space-xs)" }}>
               <SettingsToggle
-                label="Klimaanlage / Klimaautomatik vorhanden"
+                label={t("acAvailable", { defaultValue: "Klimaanlage / Klimaautomatik vorhanden" })}
                 checked={form.air_conditioning}
                 onChange={(checked) => handleChange("air_conditioning", checked)}
               />
 
               <SettingsToggle
-                label="Rückfahrkamera / 360° Kamera vorhanden"
+                label={t("cameraAvailable", { defaultValue: "Rückfahrkamera / 360° Kamera vorhanden" })}
                 checked={form.camera}
                 onChange={(checked) => handleChange("camera", checked)}
               />
@@ -867,25 +917,25 @@ export function CarEditorModal({
             {/* Custom Attributes / Fields */}
             <div style={{ borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))", paddingTop: "var(--space-sm)" }}>
               <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 700, color: "var(--color-admin-text)", display: "block", marginBottom: "8px" }}>
-                Benutzerdefinierte Merkmale (Key-Value)
+                {t("customAttributes", { defaultValue: "Benutzerdefinierte Merkmale (Key-Value)" })}
               </label>
 
               <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-xs)" }}>
                 <Input
                   value={newCustomKey}
                   onChange={(e) => setNewCustomKey(e.target.value)}
-                  placeholder="Eigenschaft (z. B. Garantie)"
+                  placeholder={t("attributeKeyPlaceholder", { defaultValue: "Eigenschaft (z. B. Garantie)" })}
                   style={{ flex: 1 }}
                 />
                 <Input
                   value={newCustomVal}
                   onChange={(e) => setNewCustomVal(e.target.value)}
-                  placeholder="Wert (z. B. 24 Monate Porsche Approved)"
+                  placeholder={t("attributeValPlaceholder", { defaultValue: "Wert (z. B. 24 Monate Porsche Approved)" })}
                   style={{ flex: 2 }}
                 />
                 <Button type="button" variant="outline" size="sm" onClick={handleAddCustomField}>
                   <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                  Hinzufügen
+                  {t("add", { defaultValue: "Hinzufügen" })}
                 </Button>
               </div>
 
@@ -929,7 +979,7 @@ export function CarEditorModal({
               <Input
                 value={newEquipmentItem}
                 onChange={(e) => setNewEquipmentItem(e.target.value)}
-                placeholder="Ausstattungsmerkmal hinzufügen (z. B. Keramikbremsen, Panoramadach)..."
+                placeholder={t("addEquipmentPlaceholder", { defaultValue: "Ausstattungsmerkmal hinzufügen (z. B. Keramikbremsen, Panoramadach)..." })}
                 style={{ flex: 1 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -940,7 +990,7 @@ export function CarEditorModal({
               />
               <Button type="button" variant="outline" size="sm" onClick={handleAddEquipment}>
                 <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                Hinzufügen
+                {t("add", { defaultValue: "Hinzufügen" })}
               </Button>
             </div>
 
@@ -1004,7 +1054,7 @@ export function CarEditorModal({
                   fontSize: "var(--font-size-xs)",
                 }}
               >
-                Noch keine Ausstattungsmerkmale hinzugefügt. Geben Sie oben Merkmale ein und drücken Sie Enter.
+                {t("noEquipmentAdded", { defaultValue: "Noch keine Ausstattungsmerkmale hinzugefügt. Geben Sie oben Merkmale ein und drücken Sie Enter." })}
               </div>
             )}
           </div>
@@ -1017,10 +1067,10 @@ export function CarEditorModal({
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
               <div>
                 <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#ffffff" }}>
-                  Fahrzeugbilder ({galleryImages.length} von max. 20)
+                  {t("vehicleMediaTitle", { count: galleryImages.length, defaultValue: `Fahrzeugbilder (${galleryImages.length} von max. 20)` })}
                 </h4>
                 <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--color-admin-muted)" }}>
-                  Laden Sie bis zu 20 Bilder direkt von Ihrem Gerät hoch. Das erste Bild wird automatisch als Cover verwendet, Sie können aber jedes Bild als Cover festlegen.
+                  {t("vehicleMediaDesc", { defaultValue: "Laden Sie bis zu 20 Bilder direkt von Ihrem Gerät hoch. Das erste Bild wird automatisch als Cover verwendet, Sie können aber jedes Bild als Cover festlegen." })}
                 </p>
               </div>
 
@@ -1033,7 +1083,7 @@ export function CarEditorModal({
                   disabled={isUploading}
                 >
                   <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                  Bilder vom Gerät hochladen
+                  {t("uploadFromDevice", { defaultValue: "Bilder vom Gerät hochladen" })}
                 </Button>
               )}
             </div>
@@ -1381,7 +1431,7 @@ export function CarEditorModal({
                   fontSize: "var(--font-size-xs)",
                 }}
               >
-                Noch keine Bilder hochgeladen. Klicken Sie oben auf "Bilder vom Gerät hochladen", um Fahrzeugbilder von Ihrem Computer oder Smartphone hinzuzufügen.
+                {t("noImagesUploaded", { defaultValue: "Noch keine Bilder hochgeladen. Klicken Sie oben auf \"Bilder vom Gerät hochladen\", um Fahrzeugbilder von Ihrem Computer oder Smartphone hinzuzufügen." })}
               </div>
             )}
           </div>

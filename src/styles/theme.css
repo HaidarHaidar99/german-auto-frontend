@@ -206,8 +206,40 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   --duration-slow: 700ms;
 }
 
+/* High-Contrast Accessible Switch Toggles */
+.settings-toggle button[role="switch"],
+button[role="switch"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+}
 
+[data-admin-theme="light"] .settings-toggle button[role="switch"][aria-checked="false"],
+.theme-light .settings-toggle button[role="switch"][aria-checked="false"] {
+  background-color: #cbd5e1 !important;
+  border: 1px solid #94a3b8 !important;
+}
 
+[data-admin-theme="dark"] .settings-toggle button[role="switch"][aria-checked="false"],
+.theme-dark .settings-toggle button[role="switch"][aria-checked="false"] {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+}
+
+.settings-toggle button[role="switch"][aria-checked="true"],
+button[role="switch"][aria-checked="true"] {
+  background-color: #2563eb !important;
+  border: 1px solid #1d4ed8 !important;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4) !important;
+}
+
+.settings-toggle button[role="switch"] span,
+button[role="switch"] div {
+  background-color: #ffffff !important;
+}
 /* ==========================================================================
    6. GLOBAL INPUT AUTOFILL FIX (Theme-Aware)
    ========================================================================== */

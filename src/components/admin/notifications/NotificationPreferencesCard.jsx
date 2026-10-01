@@ -272,14 +272,17 @@ export function NotificationPreferencesCard({
               disabled={isSaving}
               onClick={() => handleToggle(item.key)}
               style={{
-                width: "44px",
-                height: "24px",
-                borderRadius: "12px",
-                border: "none",
-                backgroundColor: item.value ? "var(--color-admin-accent, #2563eb)" : "rgba(100, 116, 139, 0.25)",
+                width: "46px",
+                height: "26px",
+                borderRadius: "9999px",
+                border: item.value
+                  ? "1px solid var(--color-admin-accent, #2563eb)"
+                  : "1px solid var(--color-admin-border, rgba(148, 163, 184, 0.4))",
+                backgroundColor: item.value ? "var(--color-admin-accent, #2563eb)" : "var(--color-admin-surface-muted, rgba(148, 163, 184, 0.3))",
+                boxShadow: item.value ? "0 0 10px rgba(37, 99, 235, 0.35)" : "none",
                 cursor: isSaving ? "not-allowed" : "pointer",
                 position: "relative",
-                transition: "background-color 0.2s ease",
+                transition: "background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
                 padding: "2px",
                 outline: "none",
                 flexShrink: 0,

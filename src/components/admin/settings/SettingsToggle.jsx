@@ -84,18 +84,23 @@ export function SettingsToggle({
         aria-label={label}
         style={{
           position: "relative",
-          width: "44px",
-          height: "24px",
+          width: "46px",
+          height: "26px",
           borderRadius: "9999px",
           backgroundColor: checked
-            ? "var(--color-primary, var(--color-text))"
-            : "rgba(255, 255, 255, 0.12)",
-          border: "1px solid rgba(255, 255, 255, 0.15)",
+            ? "var(--color-admin-accent, #2563eb)"
+            : "var(--color-admin-surface-muted, rgba(148, 163, 184, 0.3))",
+          border: checked
+            ? "1px solid var(--color-admin-accent, #2563eb)"
+            : "1px solid var(--color-admin-border, rgba(148, 163, 184, 0.4))",
           cursor: disabled ? "not-allowed" : "pointer",
-          transition: "background-color 0.2s var(--ease-smooth)",
+          transition: "background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
           padding: 0,
           outline: "none",
           flexShrink: 0,
+          boxShadow: checked
+            ? "0 0 10px rgba(37, 99, 235, 0.35)"
+            : "none",
         }}
       >
         <span
@@ -103,12 +108,12 @@ export function SettingsToggle({
             position: "absolute",
             top: "2px",
             left: checked ? "22px" : "2px",
-            width: "18px",
-            height: "18px",
+            width: "20px",
+            height: "20px",
             borderRadius: "50%",
-            backgroundColor: checked ? "#000" : "#fff",
-            boxShadow: "0 1px 3px rgba(0, 0, 0, 0.4)",
-            transition: "left 0.2s var(--ease-smooth), background-color 0.2s var(--ease-smooth)",
+            backgroundColor: "#ffffff",
+            boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
+            transition: "left 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         />
       </button>

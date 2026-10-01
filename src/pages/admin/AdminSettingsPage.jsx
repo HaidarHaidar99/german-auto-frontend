@@ -299,7 +299,7 @@ export function AdminSettingsPage() {
       />
 
       {loading ? (
-        <AdminLoadingState message="Lade CMS-Einstellungen aus der Datenbank..." />
+        <AdminLoadingState message={t("loadingSettings", { defaultValue: "Lade CMS-Einstellungen aus der Datenbank..." })} />
       ) : error && !serverSettings ? (
         <ErrorState message={error} onRetry={fetchSettings} />
       ) : (
@@ -321,7 +321,7 @@ export function AdminSettingsPage() {
                 marginBottom: "var(--space-xs)",
               }}
             >
-              Bereich auswählen:
+              {t("selectSection", { defaultValue: "Bereich auswählen:" })}
             </label>
             <select
               id="mobile-section-select"
@@ -386,7 +386,7 @@ export function AdminSettingsPage() {
                   marginBottom: "6px",
                 }}
               >
-                CMS Sektionen ({SECTIONS.length})
+                {t("cmsSections", { defaultValue: "CMS Sektionen" })} ({SECTIONS.length})
               </div>
 
               {SECTIONS.map((sec) => {
@@ -437,7 +437,7 @@ export function AdminSettingsPage() {
 
                     {isDirty && (
                       <span
-                        title="Ungespeicherte Änderungen"
+                        title={t("unsavedChangesPresent", { defaultValue: "Ungespeicherte Änderungen" })}
                         style={{
                           width: "7px",
                           height: "7px",

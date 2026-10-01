@@ -227,7 +227,7 @@ export function CarTable({
                   <td style={{ padding: "10px 16px", textAlign: "center" }}>
                     <button
                       type="button"
-                      title={car.is_featured ? "Hervorgehoben — Klicken zum Deaktivieren" : "Nicht hervorgehoben — Klicken zum Aktivieren"}
+                      title={car.is_featured ? t("featuredActivated", { defaultValue: "Hervorgehoben" }) : t("featuredDeactivated", { defaultValue: "Nicht hervorgehoben" })}
                       onClick={() => onToggleFeatured?.(car.id, !car.is_featured)}
                       style={{
                         background: "none",
@@ -245,7 +245,7 @@ export function CarTable({
                   <td style={{ padding: "10px 16px", textAlign: "center" }}>
                     <button
                       type="button"
-                      title={car.is_visible !== false ? "Sichtbar — Klicken zum Ausblenden" : "Ausgeblendet — Klicken zum Einblenden"}
+                      title={car.is_visible !== false ? t("visibilityVisible", { defaultValue: "Sichtbar" }) : t("visibilityHidden", { defaultValue: "Ausgeblendet" })}
                       onClick={() => onToggleVisibility?.(car.id, car.is_visible === false ? true : false)}
                       style={{
                         background: "none",
@@ -265,16 +265,16 @@ export function CarTable({
                       <IconButton
                         icon="eye"
                         size="sm"
-                        ariaLabel="Fahrzeugdetails ansehen"
-                        title="Fahrzeugdetails ansehen"
+                        ariaLabel={t("previewVehicle", { defaultValue: "Fahrzeugdetails ansehen" })}
+                        title={t("previewVehicle", { defaultValue: "Fahrzeugdetails ansehen" })}
                         onClick={() => onPreview?.(car)}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
                         icon="external-link"
                         size="sm"
-                        ariaLabel="Öffentliche Seite öffnen"
-                        title="Öffentliche Seite öffnen"
+                        ariaLabel={t("openPublicPage", { defaultValue: "Öffentliche Seite öffnen" })}
+                        title={t("openPublicPage", { defaultValue: "Öffentliche Seite öffnen" })}
                         onClick={() => {
                           const fullUrl = `${window.location.origin}/cars/${car.slug || car.id}`;
                           window.open(fullUrl, "_blank", "noopener,noreferrer");
@@ -284,16 +284,16 @@ export function CarTable({
                       <IconButton
                         icon="edit"
                         size="sm"
-                        ariaLabel="Fahrzeug bearbeiten"
-                        title="Fahrzeug bearbeiten"
+                        ariaLabel={t("editVehicle", { defaultValue: "Fahrzeug bearbeiten" })}
+                        title={t("editVehicle", { defaultValue: "Fahrzeug bearbeiten" })}
                         onClick={() => onEdit?.(car)}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
                         icon="trash"
                         size="sm"
-                        ariaLabel="Fahrzeug löschen"
-                        title="Fahrzeug löschen"
+                        ariaLabel={t("deleteVehicle", { defaultValue: "Fahrzeug löschen" })}
+                        title={t("deleteVehicle", { defaultValue: "Fahrzeug löschen" })}
                         onClick={() => onDelete?.(car)}
                         style={{ width: "28px", height: "28px", color: "var(--color-error, #ef4444)" }}
                       />
@@ -353,7 +353,7 @@ export function CarTable({
                     {car.is_featured && <Badge variant="secondary" size="sm">Featured</Badge>}
                     {car.is_visible === false && (
                       <Badge variant="outline" size="sm" style={{ borderColor: "#ef4444", color: "#ef4444" }}>
-                        Versteckt
+                        {t("statHidden", { defaultValue: "Versteckt" })}
                       </Badge>
                     )}
                   </div>
@@ -397,19 +397,19 @@ export function CarTable({
                   <IconButton
                     icon="eye"
                     size="sm"
-                    ariaLabel="Details"
+                    ariaLabel={t("previewVehicle", { defaultValue: "Details" })}
                     onClick={() => onPreview?.(car)}
                   />
                   <IconButton
                     icon="edit"
                     size="sm"
-                    ariaLabel="Bearbeiten"
+                    ariaLabel={t("editVehicle", { defaultValue: "Bearbeiten" })}
                     onClick={() => onEdit?.(car)}
                   />
                   <IconButton
                     icon="trash"
                     size="sm"
-                    ariaLabel="Löschen"
+                    ariaLabel={t("deleteVehicle", { defaultValue: "Löschen" })}
                     onClick={() => onDelete?.(car)}
                     style={{ color: "var(--color-error, #ef4444)" }}
                   />
