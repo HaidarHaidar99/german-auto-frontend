@@ -68,28 +68,28 @@ export function Footer() {
       <div
         className="container"
         style={{
-          paddingTop: "clamp(3rem, 6vw, 4.5rem)",
-          paddingBottom: "clamp(2rem, 4vw, 3rem)",
+          paddingTop: "clamp(3.5rem, 6vw, 5rem)",
+          paddingBottom: "clamp(2.5rem, 4vw, 3.5rem)",
         }}
       >
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
             gap: "clamp(2rem, 4vw, 3.5rem)",
-            marginBottom: "3rem",
+            marginBottom: "3.5rem",
           }}
         >
           {/* Column 1: Brand & Logo & Description */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-            <Link to="/" style={{ display: "inline-block", maxWidth: "320px", textDecoration: "none" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.35rem" }}>
+            <Link to="/" style={{ display: "inline-block", maxWidth: "380px", textDecoration: "none" }}>
               {footerLogo ? (
                 <img
                   src={footerLogo}
                   alt={siteName}
                   style={{
-                    maxHeight: "90px",
-                    maxWidth: "300px",
+                    maxHeight: "115px",
+                    maxWidth: "340px",
                     width: "auto",
                     height: "auto",
                     objectFit: "contain",
@@ -100,7 +100,7 @@ export function Footer() {
                 <span
                   style={{
                     fontFamily: "var(--font-family-display)",
-                    fontSize: "1.75rem",
+                    fontSize: "2rem",
                     fontWeight: 800,
                     letterSpacing: "0.08em",
                     color: "#D4AF37",
@@ -113,11 +113,11 @@ export function Footer() {
 
             <p
               style={{
-                fontSize: "0.875rem",
-                lineHeight: 1.65,
+                fontSize: "0.975rem",
+                lineHeight: 1.7,
                 color: "var(--color-text-muted, #94a3b8)",
                 margin: 0,
-                maxWidth: "340px",
+                maxWidth: "380px",
               }}
             >
               {description}
@@ -125,7 +125,7 @@ export function Footer() {
 
             {/* Social Icons */}
             {showSocial && socialPlatforms.length > 0 && (
-              <div style={{ display: "flex", gap: "10px", marginTop: "0.5rem", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "12px", marginTop: "0.5rem", flexWrap: "wrap" }}>
                 {socialPlatforms.map((social) => (
                   <a
                     key={social.key}
@@ -135,8 +135,8 @@ export function Footer() {
                     aria-label={social.label}
                     title={social.label}
                     style={{
-                      width: "36px",
-                      height: "36px",
+                      width: "42px",
+                      height: "42px",
                       borderRadius: "50%",
                       backgroundColor: "rgba(255, 255, 255, 0.05)",
                       border: "1px solid rgba(255, 255, 255, 0.12)",
@@ -160,7 +160,7 @@ export function Footer() {
                       e.currentTarget.style.transform = "translateY(0)";
                     }}
                   >
-                    <Icon name={social.icon} size={16} />
+                    <Icon name={social.icon} size={18} />
                   </a>
                 ))}
               </div>
@@ -171,84 +171,81 @@ export function Footer() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <h4
               style={{
-                fontSize: "0.875rem",
+                fontSize: "1.05rem",
                 fontWeight: 800,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
                 color: "#D4AF37",
-                marginBottom: "1.25rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
+                marginBottom: "1.35rem",
+                display: "block",
               }}
             >
-              <Icon name="layers" size={16} style={{ color: "#D4AF37" }} />
               <span>{currentLang === "de" ? "Navigation" : "Explore"}</span>
             </h4>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.95rem" }}>
               <li>
                 <Link
                   to="/"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
                   <span>{t("home", { defaultValue: "Startseite" })}</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/cars"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
                   <span>{t("inventory", { defaultValue: "Fahrzeugbestand" })}</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/sell-your-car"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
                   <span>{t("sellCar", { defaultValue: "Fahrzeug verkaufen" })}</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/#reviews"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
                   <span>{t("reviews", { defaultValue: "Kundenbewertungen" })}</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/about"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
                   <span>{t("about", { defaultValue: "Über uns" })}</span>
                 </Link>
               </li>
               <li>
                 <Link
                   to="/contact"
-                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
                   <span>{t("contact", { defaultValue: "Kontakt" })}</span>
                 </Link>
               </li>
@@ -260,21 +257,18 @@ export function Footer() {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <h4
                 style={{
-                  fontSize: "0.875rem",
+                  fontSize: "1.05rem",
                   fontWeight: 800,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: "#D4AF37",
-                  marginBottom: "1.25rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
+                  marginBottom: "1.35rem",
+                  display: "block",
                 }}
               >
-                <Icon name="phone" size={16} style={{ color: "#D4AF37" }} />
                 <span>{currentLang === "de" ? "Kontakt & Services" : "Contact & Services"}</span>
               </h4>
-              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.95rem" }}>
                 {contactConfig.phone && (
                   <li>
                     <a
@@ -285,13 +279,13 @@ export function Footer() {
                         gap: "10px",
                         color: "var(--color-text-muted, #94a3b8)",
                         textDecoration: "none",
-                        fontSize: "0.875rem",
+                        fontSize: "0.975rem",
                         transition: "color 0.15s ease",
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
-                      <Icon name="phone" size={15} style={{ color: "#D4AF37", flexShrink: 0 }} />
+                      <Icon name="phone" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{contactConfig.phone}</span>
                     </a>
                   </li>
@@ -307,13 +301,13 @@ export function Footer() {
                         gap: "10px",
                         color: "var(--color-text-muted, #94a3b8)",
                         textDecoration: "none",
-                        fontSize: "0.875rem",
+                        fontSize: "0.975rem",
                         transition: "color 0.15s ease",
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
-                      <Icon name="mail" size={15} style={{ color: "#D4AF37", flexShrink: 0 }} />
+                      <Icon name="mail" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{contactConfig.email}</span>
                     </a>
                   </li>
@@ -331,13 +325,13 @@ export function Footer() {
                         gap: "10px",
                         color: "var(--color-text-muted, #94a3b8)",
                         textDecoration: "none",
-                        fontSize: "0.875rem",
+                        fontSize: "0.975rem",
                         transition: "color 0.15s ease",
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "#22c55e")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
-                      <Icon name="whatsapp" size={15} style={{ color: "#22c55e", flexShrink: 0 }} />
+                      <Icon name="whatsapp" size={18} style={{ color: "#22c55e", flexShrink: 0 }} />
                       <span>WhatsApp Chat</span>
                     </a>
                   </li>
@@ -351,29 +345,26 @@ export function Footer() {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <h4
                 style={{
-                  fontSize: "0.875rem",
+                  fontSize: "1.05rem",
                   fontWeight: 800,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
                   color: "#D4AF37",
-                  marginBottom: "1.25rem",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
+                  marginBottom: "1.35rem",
+                  display: "block",
                 }}
               >
-                <Icon name="map-pin" size={16} style={{ color: "#D4AF37" }} />
                 <span>{currentLang === "de" ? "Standorte" : "Locations"}</span>
               </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.15rem" }}>
                 {locationsConfig.slice(0, 3).map((loc, idx) => (
-                  <div key={idx} style={{ fontSize: "0.875rem", color: "var(--color-text-muted, #94a3b8)", lineHeight: 1.5, display: "flex", flexDirection: "column", gap: "3px" }}>
+                  <div key={idx} style={{ fontSize: "0.975rem", color: "var(--color-text-muted, #94a3b8)", lineHeight: 1.5, display: "flex", flexDirection: "column", gap: "4px" }}>
                     <div style={{ fontWeight: 600, color: "#ffffff", display: "flex", alignItems: "center", gap: "8px" }}>
-                      <Icon name="map-pin" size={15} style={{ color: "#D4AF37", flexShrink: 0 }} />
+                      <Icon name="map-pin" size={17} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{loc.city || loc.name}</span>
                     </div>
-                    {loc.street && <div style={{ fontSize: "0.8125rem", paddingLeft: "23px" }}>{loc.street}</div>}
-                    {loc.postal_code && <div style={{ fontSize: "0.8125rem", paddingLeft: "23px" }}>{loc.postal_code} {loc.city}</div>}
+                    {loc.street && <div style={{ fontSize: "0.925rem", paddingLeft: "25px" }}>{loc.street}</div>}
+                    {loc.postal_code && <div style={{ fontSize: "0.925rem", paddingLeft: "25px" }}>{loc.postal_code} {loc.city}</div>}
                   </div>
                 ))}
               </div>
@@ -385,12 +376,12 @@ export function Footer() {
         <div
           style={{
             borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-            paddingTop: "1.75rem",
+            paddingTop: "1.85rem",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
-            fontSize: "0.85rem",
+            fontSize: "0.95rem",
             color: "var(--color-text-muted, #94a3b8)",
             letterSpacing: "0.02em",
           }}
