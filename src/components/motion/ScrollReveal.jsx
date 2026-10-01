@@ -41,7 +41,7 @@ export function ScrollReveal({
           scrollTrigger: {
             trigger: el,
             start,
-            toggleActions: "play none none none",
+            toggleActions: "play none none reverse",
           },
         }
       );
@@ -54,7 +54,7 @@ export function ScrollReveal({
     <div
       ref={containerRef}
       className={`scroll-reveal ${className}`.trim()}
-      style={{ willChange: "transform, opacity", ...style }}
+      style={style}
     >
       {children}
     </div>

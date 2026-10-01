@@ -65,7 +65,7 @@ export function WelcomeImpactSection() {
           start: "top 85%",
           end: "top 18%",
           scrub: 0.6,
-          invalidateOnRefresh: true,
+          fastScrollEnd: true,
         },
       });
 

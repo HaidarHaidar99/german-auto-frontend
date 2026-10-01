@@ -10,6 +10,12 @@ import Lenis from "lenis";
 // Register GSAP plugins safely in browser environments
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+
+  // Prevent mobile address bar show/hide from triggering expensive ScrollTrigger
+  // recalculations — this is the primary cause of heavy/laggy mobile scrolling
+  ScrollTrigger.config({
+    ignoreMobileResize: true,
+  });
 }
 
 /**
