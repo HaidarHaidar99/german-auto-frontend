@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../contexts/SettingsContext";
@@ -14,6 +14,20 @@ export function PublicLayout() {
 
   const location = useLocation();
   const siteName = settings?.site?.name || "German Auto";
+
+  // Handle URL hash anchor scrolling (e.g. /#reviews)
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      const timer = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, location.hash]);
 
   return (
     <div className="public-layout" style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>

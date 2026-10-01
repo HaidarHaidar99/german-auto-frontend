@@ -91,6 +91,8 @@ export function HomePage() {
     ? homepageConfig.sections_order
     : defaultOrder;
 
+  let reviewsRendered = false;
+
   // Render individual sections conditionally based on CMS configuration
   const renderSection = (sectionKey) => {
     switch (sectionKey) {
@@ -124,10 +126,12 @@ export function HomePage() {
 
       case "google_reviews":
       case "testimonials":
+        if (reviewsRendered) return null;
         if (sectionsEnabled.google_reviews === false && sectionsEnabled.testimonials === false) return null;
+        reviewsRendered = true;
         return (
           <ReviewsSection
-            key={sectionKey}
+            key="reviews"
             googleReviewsConfig={settings?.google_reviews}
           />
         );

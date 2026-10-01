@@ -184,6 +184,28 @@ export function HeaderNav({
     }, "-=0.05");
   };
 
+  const handleReviewsClick = (e) => {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      const el = document.getElementById("reviews");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  const handleMobileNavClick = (item) => {
+    closeMenu();
+    if (item.isReviews && location.pathname === "/") {
+      setTimeout(() => {
+        const el = document.getElementById("reviews");
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 350);
+    }
+  };
+
   const siteName = settings?.site?.name || "German Auto";
   const activeLogoUrl = settings?.branding?.logo_url || "https://ylmahjqspbudmtewjhcg.supabase.co/storage/v1/object/public/german-auto-media/site/branding/1790760237272-so6ety.jpg";
 
@@ -275,6 +297,16 @@ export function HeaderNav({
             </Link>
             <Link to="/about" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
               {t("about")}
+            </Link>
+            <Link
+              to="/#reviews"
+              onClick={handleReviewsClick}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+            >
+              {t("reviews", { defaultValue: "Bewertungen" })}
+            </Link>
+            <Link to="/contact" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+              {t("contact", { defaultValue: "Kontakt" })}
             </Link>
           </nav>
 
@@ -468,13 +500,14 @@ export function HeaderNav({
             { to: "/", label: t("home", { defaultValue: "Home" }) },
             { to: "/cars", label: t("inventory") },
             { to: "/sell-your-car", label: t("sellYourCar") },
+            { to: "/#reviews", label: t("reviews", { defaultValue: "Bewertungen" }), isReviews: true },
             { to: "/about", label: t("about") },
             { to: "/contact", label: t("contact") }
           ].map((item, i) => (
             <Link
               key={item.to}
               to={item.to}
-              onClick={closeMenu}
+              onClick={() => handleMobileNavClick(item)}
               ref={el => menuItemsRef.current[i] = el}
               style={{ 
                 fontSize: "clamp(1.5rem, 5vw, 2.15rem)", 
@@ -508,7 +541,7 @@ export function HeaderNav({
           
           {/* Mobile Menu Bottom: Exactly 3 Centered Circular Icons with White Border */}
           <div 
-            ref={el => menuItemsRef.current[5] = el} 
+            ref={el => menuItemsRef.current[6] = el} 
             style={{ 
               marginTop: "2.5rem", 
               opacity: 0, 
