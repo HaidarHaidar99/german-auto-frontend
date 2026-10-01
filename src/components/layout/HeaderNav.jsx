@@ -43,7 +43,10 @@ export function HeaderNav({
     lastScrollY.current = 0;
   }, [location.pathname, location.search]);
 
-  // Dynamic header visibility: disappears on scroll down, reappears even if 1px scroll up
+  const upScrollAccumulator = useRef(0);
+  const downScrollAccumulator = useRef(0);
+
+  // Dynamic header visibility: smooth and deliberate scrolling/touch response
   useEffect(() => {
     let ticking = false;
 
@@ -51,14 +54,24 @@ export function HeaderNav({
       const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || document.body?.scrollTop || 0);
       const diff = currentScrollY - lastScrollY.current;
 
-      if (menuOpen || currentScrollY <= 20) {
+      if (menuOpen || currentScrollY <= 60) {
         setIsVisible(true);
-      } else if (diff > 2) {
-        // Scrolled down -> disappear
-        setIsVisible(false);
-      } else if (diff < -1) {
-        // Scrolled up even 1px -> immediately show header dynamically!
-        setIsVisible(true);
+        upScrollAccumulator.current = 0;
+        downScrollAccumulator.current = 0;
+      } else if (diff > 0) {
+        // Scrolling down
+        downScrollAccumulator.current += diff;
+        upScrollAccumulator.current = 0;
+        if (downScrollAccumulator.current > 20 && currentScrollY > 80) {
+          setIsVisible(false);
+        }
+      } else if (diff < 0) {
+        // Scrolling up - require deliberate smooth upward scroll (~25px)
+        upScrollAccumulator.current += Math.abs(diff);
+        downScrollAccumulator.current = 0;
+        if (upScrollAccumulator.current > 25) {
+          setIsVisible(true);
+        }
       }
 
       setIsScrolled(currentScrollY > 20);
@@ -75,21 +88,34 @@ export function HeaderNav({
 
     window.addEventListener("scroll", handleScroll, { passive: true });
 
-    // Desktop mouse wheel listener for instant 1px reaction
+    // Desktop mouse wheel listener for smooth natural scroll
+    let wheelDeltaAccumulator = 0;
+    let wheelTimer = null;
     const handleWheel = (e) => {
       if (menuOpen) return;
       const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
-      if (e.deltaY < -1) {
-        // Scrolling up even slightly -> show immediately
+      if (currentScrollY <= 60) {
         setIsVisible(true);
-      } else if (e.deltaY > 3 && currentScrollY > 30) {
-        // Scrolling down -> hide
+        return;
+      }
+
+      wheelDeltaAccumulator += e.deltaY;
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => {
+        wheelDeltaAccumulator = 0;
+      }, 200);
+
+      if (wheelDeltaAccumulator < -40) {
+        // Smooth intentional upward movement
+        setIsVisible(true);
+      } else if (wheelDeltaAccumulator > 30 && currentScrollY > 80) {
+        // Smooth downward movement
         setIsVisible(false);
       }
     };
     window.addEventListener("wheel", handleWheel, { passive: true });
 
-    // Mobile touch listener for instant gesture detection
+    // Mobile touch listener for smooth, natural gestures
     let touchStartY = 0;
     const handleTouchStart = (e) => {
       if (e.touches?.[0]) touchStartY = e.touches[0].clientY;
@@ -100,16 +126,15 @@ export function HeaderNav({
       const touchDiff = currentTouchY - touchStartY;
       const currentScrollY = Math.max(0, window.scrollY || document.documentElement?.scrollTop || 0);
 
-      if (currentScrollY <= 20) {
+      if (currentScrollY <= 60) {
         setIsVisible(true);
-      } else if (touchDiff > 3) {
-        // Swiping down (scrolling content up) -> show header immediately!
+      } else if (touchDiff > 25) {
+        // Smooth deliberate touch swipe down (scroll content up)
         setIsVisible(true);
-      } else if (touchDiff < -6) {
-        // Swiping up (scrolling content down) -> hide header!
+      } else if (touchDiff < -25) {
+        // Smooth deliberate touch swipe up (scroll content down)
         setIsVisible(false);
       }
-      touchStartY = currentTouchY;
     };
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchmove", handleTouchMove, { passive: true });
@@ -128,6 +153,7 @@ export function HeaderNav({
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchmove", handleTouchMove);
       clearInterval(lenisInterval);
+      clearTimeout(wheelTimer);
       if (window.__lenis && window.__lenis.__hasHeaderAttached) {
         try {
           window.__lenis.off("scroll", handleScroll);

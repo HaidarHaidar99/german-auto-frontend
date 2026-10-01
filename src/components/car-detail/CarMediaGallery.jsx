@@ -74,10 +74,34 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
     });
   }, []);
 
+  // Thumbnail strip synchronization with gallery navigation & highway bar
+  const thumbnailStripRef = useRef(null);
+  const thumbnailRefs = useRef([]);
+
   // Highway line & car touch/pointer scrubbing logic
   const [isScrubbing, setIsScrubbing] = useState(false);
   const highwayTrackRef = useRef(null);
   const isPointerDownRef = useRef(false);
+
+  // Auto-scroll thumbnail strip whenever active photo changes (via arrows, keyboard, click, or bar)
+  useEffect(() => {
+    if (thumbnailRefs.current[activePhotoIdx]) {
+      thumbnailRefs.current[activePhotoIdx].scrollIntoView({
+        behavior: isScrubbing ? "auto" : "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+    } else if (thumbnailStripRef.current && uniquePhotos.length > 1) {
+      const maxScroll = thumbnailStripRef.current.scrollWidth - thumbnailStripRef.current.clientWidth;
+      if (maxScroll > 0) {
+        const targetScroll = (activePhotoIdx / (uniquePhotos.length - 1)) * maxScroll;
+        thumbnailStripRef.current.scrollTo({
+          left: targetScroll,
+          behavior: isScrubbing ? "auto" : "smooth",
+        });
+      }
+    }
+  }, [activePhotoIdx, uniquePhotos.length, isScrubbing]);
 
   const updateScrub = useCallback((clientX) => {
     if (!highwayTrackRef.current || uniquePhotos.length <= 1) return;
@@ -87,6 +111,14 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
     const pct = Math.max(0, Math.min(1, clickX / rect.width));
     const targetIdx = Math.round(pct * (uniquePhotos.length - 1));
     handleSelectPhoto(targetIdx);
+
+    // Synchronize thumbnail strip in real time while moving the bar
+    if (thumbnailStripRef.current) {
+      const maxScroll = thumbnailStripRef.current.scrollWidth - thumbnailStripRef.current.clientWidth;
+      if (maxScroll > 0) {
+        thumbnailStripRef.current.scrollLeft = pct * maxScroll;
+      }
+    }
   }, [uniquePhotos.length, handleSelectPhoto]);
 
   const handlePointerDown = (e) => {
@@ -611,6 +643,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
       {/* ─── 1. Gallery View / Thumbnail Strip (ABOVE the gold line) ─── */}
       {activeTab === "photos" && uniquePhotos.length > 1 && (
         <div
+          ref={thumbnailStripRef}
           className="thumbnail-strip"
           style={{
             display: "grid",
@@ -622,6 +655,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             paddingBottom: "4px",
             scrollbarWidth: "none",
             msOverflowStyle: "none",
+            scrollBehavior: "smooth",
           }}
         >
           {uniquePhotos.map((photo, idx) => {
@@ -629,6 +663,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             return (
               <button
                 key={photo + idx}
+                ref={(el) => (thumbnailRefs.current[idx] = el)}
                 type="button"
                 aria-label={`Bild ${idx + 1} auswählen`}
                 onClick={() => handleSelectPhoto(idx)}
