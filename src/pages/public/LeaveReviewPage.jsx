@@ -32,6 +32,26 @@ export function LeaveReviewPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentLang]);
 
+  const handleBackToReviews = (e) => {
+    e.preventDefault();
+    navigate("/#reviews");
+    let count = 0;
+    const interval = setInterval(() => {
+      count++;
+      const el = document.getElementById("reviews");
+      if (el) {
+        if (window.__lenis?.instance?.scrollTo) {
+          window.__lenis.instance.scrollTo(el, { offset: -70, immediate: false });
+        } else {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+      if (count >= 8) {
+        clearInterval(interval);
+      }
+    }, 120);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) return;
@@ -117,6 +137,7 @@ export function LeaveReviewPage() {
         {/* Back Link */}
         <Link
           to="/#reviews"
+          onClick={handleBackToReviews}
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -164,7 +185,7 @@ export function LeaveReviewPage() {
             </p>
 
             <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-md)", flexWrap: "wrap" }}>
-              <Button as={Link} to="/#reviews" variant="secondary" size="lg" style={{ borderRadius: "0px" }}>
+              <Button as={Link} to="/#reviews" onClick={handleBackToReviews} variant="secondary" size="lg" style={{ borderRadius: "0px" }}>
                 {currentLang === "en" ? "View Reviews →" : "Zu den Bewertungen →"}
               </Button>
               {isAuthenticated && (

@@ -210,25 +210,68 @@ export function HeaderNav({
     }, "-=0.05");
   };
 
-  const handleReviewsClick = (e) => {
+  const handleHomeClick = (e) => {
+    if (menuOpen) closeMenu();
     if (location.pathname === "/") {
       e.preventDefault();
+      if (location.hash) {
+        window.history.replaceState(null, "", "/");
+      }
+      if (window.__lenis?.instance?.scrollTo) {
+        window.__lenis.instance.scrollTo(0, { immediate: false });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
+  const handleReviewsClick = (e) => {
+    if (menuOpen) closeMenu();
+    if (location.pathname === "/") {
+      e.preventDefault();
+      if (location.hash !== "#reviews") {
+        window.history.pushState(null, "", "/#reviews");
+      }
       const el = document.getElementById("reviews");
       if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
+        if (window.__lenis?.instance?.scrollTo) {
+          window.__lenis.instance.scrollTo(el, { offset: -70, immediate: false });
+        } else {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
       }
     }
   };
 
   const handleMobileNavClick = (item) => {
     closeMenu();
-    if (item.isReviews && location.pathname === "/") {
+    if (item.isHome && location.pathname === "/") {
+      if (location.hash) {
+        window.history.replaceState(null, "", "/");
+      }
       setTimeout(() => {
-        const el = document.getElementById("reviews");
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
+        if (window.__lenis?.instance?.scrollTo) {
+          window.__lenis.instance.scrollTo(0, { immediate: false });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }
-      }, 350);
+      }, 150);
+    } else if (item.isReviews) {
+      if (location.pathname === "/") {
+        if (location.hash !== "#reviews") {
+          window.history.pushState(null, "", "/#reviews");
+        }
+        setTimeout(() => {
+          const el = document.getElementById("reviews");
+          if (el) {
+            if (window.__lenis?.instance?.scrollTo) {
+              window.__lenis.instance.scrollTo(el, { offset: -70, immediate: false });
+            } else {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }
+        }, 150);
+      }
     }
   };
 
@@ -271,7 +314,7 @@ export function HeaderNav({
           {/* Logo / Brand Name - completely stable with no shadow or action on nav click */}
           <Link
             to="/"
-            onClick={() => menuOpen && closeMenu()}
+            onClick={handleHomeClick}
             style={{
               display: "flex",
               alignItems: "center",
@@ -312,7 +355,11 @@ export function HeaderNav({
               transition: "opacity 0.3s ease"
             }}
           >
-            <Link to="/" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+            <Link
+              to="/"
+              onClick={handleHomeClick}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+            >
               {t("home", { defaultValue: "Home" })}
             </Link>
             <Link to="/cars" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
@@ -567,7 +614,7 @@ export function HeaderNav({
           margin: "0 auto",
         }}>
           {[
-            { to: "/", label: t("home", { defaultValue: "Home" }) },
+            { to: "/", label: t("home", { defaultValue: "Home" }), isHome: true },
             { to: "/cars", label: t("inventory") },
             { to: "/sell-your-car", label: t("sellYourCar") },
             { to: "/#reviews", label: t("reviews", { defaultValue: "Bewertungen" }), isReviews: true },

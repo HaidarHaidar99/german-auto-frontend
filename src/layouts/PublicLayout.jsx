@@ -16,17 +16,41 @@ export function PublicLayout() {
   const location = useLocation();
   const siteName = settings?.site?.name || DEFAULT_BRAND_NAME;
 
-  // Handle URL hash anchor scrolling (e.g. /#reviews)
+  // Handle URL hash anchor scrolling (e.g. /#reviews) and home top scroll
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace("#", "");
-      const timer = setTimeout(() => {
+      let cancelled = false;
+      let count = 0;
+
+      const performScroll = () => {
+        if (cancelled) return;
         const el = document.getElementById(id);
         if (el) {
-          el.scrollIntoView({ behavior: "smooth" });
+          if (window.__lenis?.instance?.scrollTo) {
+            window.__lenis.instance.scrollTo(el, { offset: -70, immediate: count === 0 ? false : true });
+          } else {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
         }
-      }, 200);
-      return () => clearTimeout(timer);
+        if (count < 6) {
+          count++;
+          setTimeout(performScroll, count * 150);
+        }
+      };
+
+      performScroll();
+
+      return () => {
+        cancelled = true;
+      };
+    } else if (location.pathname === "/" && !location.hash) {
+      // Direct navigation to home with no hash: ensure scroll to top
+      if (window.__lenis?.instance?.scrollTo) {
+        window.__lenis.instance.scrollTo(0, { immediate: false });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   }, [location.pathname, location.hash]);
 

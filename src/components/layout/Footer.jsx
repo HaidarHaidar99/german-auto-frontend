@@ -221,7 +221,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/leave-review"
+                  to="/#reviews"
                   style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
