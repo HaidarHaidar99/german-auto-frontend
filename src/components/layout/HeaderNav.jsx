@@ -227,7 +227,7 @@ export function HeaderNav({
           backdropFilter: isTransparent ? "none" : "blur(16px)",
           WebkitBackdropFilter: isTransparent ? "none" : "blur(16px)",
           borderBottom: isTransparent ? "none" : "1px solid var(--color-border)",
-          display: "flex",
+          display: menuOpen ? "none" : "flex",
           alignItems: "center",
           transform: isVisible ? "translateY(0)" : "translateY(-100%)",
           transition: "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease",
@@ -487,6 +487,50 @@ export function HeaderNav({
           transform: "translateY(-100%)", // Initial state for GSAP
         }}
       >
+        {/* Mobile Menu Top Bar: Language & Close Button */}
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            left: "20px",
+            right: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            zIndex: 10001,
+          }}
+        >
+          <LanguageSwitcher />
+
+          <button
+            type="button"
+            onClick={closeMenu}
+            aria-label="Close menu"
+            style={{
+              width: "42px",
+              height: "42px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgba(255, 255, 255, 0.25)",
+              color: "#ffffff",
+              fontSize: "18px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+            }}
+          >
+            ✕
+          </button>
+        </div>
+
         <nav style={{ 
           display: "flex", 
           flexDirection: "column", 
@@ -674,7 +718,7 @@ export function HeaderNav({
                   e.currentTarget.style.backgroundColor = "transparent";
                 }}
               >
-                <Icon name="key" size={20} color="#ffffff" />
+                <Icon name="log-in" size={20} color="#ffffff" />
               </Link>
             )}
           </div>

@@ -19,6 +19,13 @@ export const reviewsService = {
     }
     return apiClient.post("/reviews", payloadOrFormData);
   },
+  getMyReviews: () => apiClient.get("/reviews/my"),
+  updateMyReview: (id, payloadOrFormData) => {
+    if (typeof FormData !== "undefined" && payloadOrFormData instanceof FormData) {
+      return apiClient.upload(`/reviews/my/${id}`, payloadOrFormData, { method: "PATCH" });
+    }
+    return apiClient.patch(`/reviews/my/${id}`, payloadOrFormData);
+  },
   adminGetReviews: (params) => apiClient.get(`/reviews/admin${buildQuery(params)}`),
   adminGetReview: (id) => apiClient.get(`/reviews/admin/${id}`),
   adminUpdateReview: (id, data) => apiClient.patch(`/reviews/admin/${id}`, data),

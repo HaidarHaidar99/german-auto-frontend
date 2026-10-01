@@ -14,6 +14,7 @@ const CarDetailPage      = lazy(() => import("../pages/public/CarDetailPage"));
 const AboutPage          = lazy(() => import("../pages/public/AboutPage"));
 const ContactPage        = lazy(() => import("../pages/public/ContactPage"));
 const SellYourCarPage    = lazy(() => import("../pages/public/SellYourCarPage"));
+const LeaveReviewPage    = lazy(() => import("../pages/public/LeaveReviewPage"));
 const NotFoundPage       = lazy(() => import("../pages/public/NotFoundPage"));
 
 const LoginPage          = lazy(() => import("../pages/auth/LoginPage"));
@@ -25,6 +26,7 @@ const ResetPasswordPage  = lazy(() => import("../pages/auth/ResetPasswordPage"))
 import AccountPage from "../pages/account/AccountPage";
 import FavoritesPage from "../pages/account/FavoritesPage";
 import SecurityPage from "../pages/account/SecurityPage";
+import AccountReviewsPage from "../pages/account/AccountReviewsPage";
 
 const AdminDashboardPage     = lazy(() => import("../pages/admin/AdminDashboardPage"));
 const AdminSettingsPage      = lazy(() => import("../pages/admin/AdminSettingsPage"));
@@ -48,6 +50,8 @@ export function AppRoutes() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/sell-your-car" element={<SellYourCarPage />} />
+          <Route path="/leave-review" element={<LeaveReviewPage />} />
+          <Route path="/reviews/new" element={<LeaveReviewPage />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
 
           {/* Customer Account Routes (Protected for authenticated users only) */}
@@ -62,6 +66,14 @@ export function AppRoutes() {
           <Route
             path="/account/favorites"
             element={<FavoritesPage />}
+          />
+          <Route
+            path="/account/reviews"
+            element={
+              <ProtectedRoute>
+                <AccountReviewsPage />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/account/security"

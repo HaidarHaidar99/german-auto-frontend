@@ -10,6 +10,7 @@ export function AccountNav({ className = "", style = {} }) {
   const navItems = [
     { to: "/account", end: true, label: t("profile", { ns: "account", defaultValue: "Profile" }), icon: "user" },
     { to: "/account/favorites", end: false, label: t("navFavorites", { ns: "account", defaultValue: "Favorites" }), icon: "heart" },
+    { to: "/account/reviews", end: false, label: t("myReviews", { ns: "account", defaultValue: "Meine Bewertungen" }), icon: "star" },
     { to: "/account/security", end: false, label: t("changePasswordLink", { ns: "account", defaultValue: "Passwort ändern" }), icon: "lock" },
   ];
 
@@ -27,7 +28,7 @@ export function AccountNav({ className = "", style = {} }) {
         className="account-nav-list"
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateColumns: "repeat(4, 1fr)",
           gap: "6px",
           width: "100%",
           boxSizing: "border-box",

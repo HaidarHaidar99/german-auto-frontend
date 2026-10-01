@@ -139,7 +139,7 @@ export const apiClient = {
   post: (endpoint, body, options = {}) => request(endpoint, { ...options, method: "POST", body }),
   patch: (endpoint, body, options = {}) => request(endpoint, { ...options, method: "PATCH", body }),
   delete: (endpoint, body, options = {}) => request(endpoint, { ...options, method: "DELETE", body }),
-  upload: (endpoint, formData, options = {}) => request(endpoint, { ...options, method: "POST", body: formData }),
+  upload: (endpoint, formData, options = {}) => request(endpoint, { method: "POST", ...options, body: formData }),
 };
 
 export default apiClient;

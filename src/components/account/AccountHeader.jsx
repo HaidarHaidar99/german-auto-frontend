@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import Badge from "../ui/Badge";
@@ -178,6 +178,36 @@ export function AccountHeader({ user, className = "", style = {} }) {
               {t("memberSince")} {formattedDate}
             </div>
           )}
+
+          <Link
+            to="/account/reviews"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              padding: "6px 14px",
+              borderRadius: "var(--radius-full)",
+              backgroundColor: "rgba(212, 175, 55, 0.12)",
+              border: "1px solid rgba(212, 175, 55, 0.35)",
+              color: "#D4AF37",
+              fontSize: "var(--font-size-xs)",
+              fontWeight: 600,
+              textDecoration: "none",
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.22)";
+              e.currentTarget.style.borderColor = "#D4AF37";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.12)";
+              e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.35)";
+            }}
+          >
+            <Icon name="star" size={13} color="#D4AF37" />
+            <span>{t("myReviews", { ns: "account", defaultValue: "Meine Bewertungen" })}</span>
+          </Link>
 
           <button
             type="button"
