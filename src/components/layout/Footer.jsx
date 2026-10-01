@@ -81,15 +81,17 @@ export function Footer() {
           }}
         >
           {/* Column 1: Brand & Logo & Description */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <Link to="/" style={{ display: "inline-block", maxWidth: "180px", textDecoration: "none" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <Link to="/" style={{ display: "inline-block", maxWidth: "320px", textDecoration: "none" }}>
               {footerLogo ? (
                 <img
                   src={footerLogo}
                   alt={siteName}
                   style={{
-                    maxHeight: "46px",
-                    maxWidth: "180px",
+                    maxHeight: "90px",
+                    maxWidth: "300px",
+                    width: "auto",
+                    height: "auto",
                     objectFit: "contain",
                     display: "block",
                   }}
@@ -98,10 +100,10 @@ export function Footer() {
                 <span
                   style={{
                     fontFamily: "var(--font-family-display)",
-                    fontSize: "1.5rem",
+                    fontSize: "1.75rem",
                     fontWeight: 800,
                     letterSpacing: "0.08em",
-                    color: "var(--color-primary, #ffffff)",
+                    color: "#D4AF37",
                   }}
                 >
                   {siteName}
@@ -146,9 +148,9 @@ export function Footer() {
                       transition: "all 0.2s ease",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--color-primary, #ffffff)";
+                      e.currentTarget.style.backgroundColor = "#D4AF37";
                       e.currentTarget.style.color = "#000000";
-                      e.currentTarget.style.borderColor = "var(--color-primary, #ffffff)";
+                      e.currentTarget.style.borderColor = "#D4AF37";
                       e.currentTarget.style.transform = "translateY(-2px)";
                     }}
                     onMouseLeave={(e) => {
@@ -165,88 +167,114 @@ export function Footer() {
             )}
           </div>
 
-          {/* Column 2: Navigation Links */}
-          <div>
+          {/* Column 2: Explore Navigation Links */}
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <h4
               style={{
-                fontSize: "0.8125rem",
-                fontWeight: 700,
+                fontSize: "0.875rem",
+                fontWeight: 800,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "#ffffff",
+                color: "#D4AF37",
                 marginBottom: "1.25rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
               }}
             >
-              {currentLang === "de" ? "Navigation" : "Explore"}
+              <Icon name="layers" size={16} style={{ color: "#D4AF37" }} />
+              <span>{currentLang === "de" ? "Navigation" : "Explore"}</span>
             </h4>
-            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.85rem" }}>
               <li>
-                <Link to="/" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
-                  onMouseLeave={(e) => (e.target.style.color = "var(--color-text-muted, #94a3b8)")}
+                <Link
+                  to="/"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  {t("home", { defaultValue: "Startseite" })}
+                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <span>{t("home", { defaultValue: "Startseite" })}</span>
                 </Link>
               </li>
               <li>
-                <Link to="/cars" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
-                  onMouseLeave={(e) => (e.target.style.color = "var(--color-text-muted, #94a3b8)")}
+                <Link
+                  to="/cars"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  {t("inventory", { defaultValue: "Fahrzeugbestand" })}
+                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <span>{t("inventory", { defaultValue: "Fahrzeugbestand" })}</span>
                 </Link>
               </li>
               <li>
-                <Link to="/sell-your-car" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
-                  onMouseLeave={(e) => (e.target.style.color = "var(--color-text-muted, #94a3b8)")}
+                <Link
+                  to="/sell-your-car"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  {t("sellCar", { defaultValue: "Fahrzeug verkaufen" })}
+                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <span>{t("sellCar", { defaultValue: "Fahrzeug verkaufen" })}</span>
                 </Link>
               </li>
               <li>
-                <Link to="/leave-review" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
-                  onMouseLeave={(e) => (e.target.style.color = "var(--color-text-muted, #94a3b8)")}
+                <Link
+                  to="/leave-review"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  {t("reviews", { defaultValue: "Kundenbewertungen" })}
+                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <span>{t("reviews", { defaultValue: "Kundenbewertungen" })}</span>
                 </Link>
               </li>
               <li>
-                <Link to="/about" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
-                  onMouseLeave={(e) => (e.target.style.color = "var(--color-text-muted, #94a3b8)")}
+                <Link
+                  to="/about"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  {t("about", { defaultValue: "Über uns" })}
+                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <span>{t("about", { defaultValue: "Über uns" })}</span>
                 </Link>
               </li>
               <li>
-                <Link to="/contact" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.target.style.color = "#ffffff")}
-                  onMouseLeave={(e) => (e.target.style.color = "var(--color-text-muted, #94a3b8)")}
+                <Link
+                  to="/contact"
+                  style={{ display: "inline-flex", alignItems: "center", gap: "7px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.875rem", transition: "color 0.15s ease" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
-                  {t("contact", { defaultValue: "Kontakt" })}
+                  <Icon name="chevron-right" size={13} style={{ color: "rgba(212, 175, 55, 0.7)" }} />
+                  <span>{t("contact", { defaultValue: "Kontakt" })}</span>
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: Contact & Concierge */}
+          {/* Column 3: Contact & Services */}
           {showContact && (
-            <div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               <h4
                 style={{
-                  fontSize: "0.8125rem",
-                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  fontWeight: 800,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
-                  color: "#ffffff",
+                  color: "#D4AF37",
                   marginBottom: "1.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
-                {currentLang === "de" ? "Kontakt & Service" : "Contact & Service"}
+                <Icon name="phone" size={16} style={{ color: "#D4AF37" }} />
+                <span>{currentLang === "de" ? "Kontakt & Services" : "Contact & Services"}</span>
               </h4>
-              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+              <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: "0.85rem" }}>
                 {contactConfig.phone && (
                   <li>
                     <a
@@ -254,7 +282,7 @@ export function Footer() {
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "8px",
+                        gap: "10px",
                         color: "var(--color-text-muted, #94a3b8)",
                         textDecoration: "none",
                         fontSize: "0.875rem",
@@ -263,7 +291,7 @@ export function Footer() {
                       onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
-                      <Icon name="phone" size={14} style={{ color: "var(--color-primary, #ffffff)" }} />
+                      <Icon name="phone" size={15} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{contactConfig.phone}</span>
                     </a>
                   </li>
@@ -276,7 +304,7 @@ export function Footer() {
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "8px",
+                        gap: "10px",
                         color: "var(--color-text-muted, #94a3b8)",
                         textDecoration: "none",
                         fontSize: "0.875rem",
@@ -285,7 +313,7 @@ export function Footer() {
                       onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
-                      <Icon name="mail" size={14} style={{ color: "var(--color-primary, #ffffff)" }} />
+                      <Icon name="mail" size={15} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{contactConfig.email}</span>
                     </a>
                   </li>
@@ -300,7 +328,7 @@ export function Footer() {
                       style={{
                         display: "flex",
                         alignItems: "center",
-                        gap: "8px",
+                        gap: "10px",
                         color: "var(--color-text-muted, #94a3b8)",
                         textDecoration: "none",
                         fontSize: "0.875rem",
@@ -309,7 +337,7 @@ export function Footer() {
                       onMouseEnter={(e) => (e.currentTarget.style.color = "#22c55e")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
-                      <Icon name="message-circle" size={14} style={{ color: "#22c55e" }} />
+                      <Icon name="whatsapp" size={15} style={{ color: "#22c55e", flexShrink: 0 }} />
                       <span>WhatsApp Chat</span>
                     </a>
                   </li>
@@ -318,30 +346,34 @@ export function Footer() {
             </div>
           )}
 
-          {/* Column 4: Showrooms / Locations Summary */}
+          {/* Column 4: Locations */}
           {showLocations && locationsConfig.length > 0 && (
-            <div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
               <h4
                 style={{
-                  fontSize: "0.8125rem",
-                  fontWeight: 700,
+                  fontSize: "0.875rem",
+                  fontWeight: 800,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
-                  color: "#ffffff",
+                  color: "#D4AF37",
                   marginBottom: "1.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
-                {currentLang === "de" ? "Standorte" : "Locations"}
+                <Icon name="map-pin" size={16} style={{ color: "#D4AF37" }} />
+                <span>{currentLang === "de" ? "Standorte" : "Locations"}</span>
               </h4>
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                {locationsConfig.slice(0, 2).map((loc, idx) => (
-                  <div key={idx} style={{ fontSize: "0.875rem", color: "var(--color-text-muted, #94a3b8)", lineHeight: 1.5 }}>
-                    <div style={{ fontWeight: 600, color: "#ffffff", display: "flex", alignItems: "center", gap: "6px" }}>
-                      <Icon name="map-pin" size={13} style={{ color: "var(--color-primary, #ffffff)" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                {locationsConfig.slice(0, 3).map((loc, idx) => (
+                  <div key={idx} style={{ fontSize: "0.875rem", color: "var(--color-text-muted, #94a3b8)", lineHeight: 1.5, display: "flex", flexDirection: "column", gap: "3px" }}>
+                    <div style={{ fontWeight: 600, color: "#ffffff", display: "flex", alignItems: "center", gap: "8px" }}>
+                      <Icon name="map-pin" size={15} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{loc.city || loc.name}</span>
                     </div>
-                    {loc.street && <div style={{ fontSize: "0.8125rem" }}>{loc.street}</div>}
-                    {loc.postal_code && <div style={{ fontSize: "0.8125rem" }}>{loc.postal_code} {loc.city}</div>}
+                    {loc.street && <div style={{ fontSize: "0.8125rem", paddingLeft: "23px" }}>{loc.street}</div>}
+                    {loc.postal_code && <div style={{ fontSize: "0.8125rem", paddingLeft: "23px" }}>{loc.postal_code} {loc.city}</div>}
                   </div>
                 ))}
               </div>
@@ -349,50 +381,21 @@ export function Footer() {
           )}
         </div>
 
-        {/* Bottom Bar: Copyright & Back to Top */}
+        {/* Bottom Bar: Copyright Only — absolutely nothing below it */}
         <div
           style={{
             borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-            paddingTop: "1.5rem",
+            paddingTop: "1.75rem",
             display: "flex",
-            flexWrap: "wrap",
             alignItems: "center",
-            justifyContent: "space-between",
-            gap: "1rem",
-            fontSize: "0.8125rem",
+            justifyContent: "center",
+            textAlign: "center",
+            fontSize: "0.85rem",
             color: "var(--color-text-muted, #94a3b8)",
+            letterSpacing: "0.02em",
           }}
         >
           <div>{copyright}</div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-            <Link to="/about" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none" }}>
-              {t("about", { defaultValue: "Über uns" })}
-            </Link>
-            <Link to="/contact" style={{ color: "var(--color-text-muted, #94a3b8)", textDecoration: "none" }}>
-              {t("contact", { defaultValue: "Kontakt" })}
-            </Link>
-            <button
-              type="button"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              style={{
-                background: "none",
-                border: "none",
-                color: "var(--color-text-muted, #94a3b8)",
-                cursor: "pointer",
-                padding: 0,
-                fontSize: "0.8125rem",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "4px",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
-            >
-              <span>{currentLang === "de" ? "Nach oben" : "Back to top"}</span>
-              &uarr;
-            </button>
-          </div>
         </div>
       </div>
     </footer>
