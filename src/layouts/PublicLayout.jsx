@@ -10,47 +10,32 @@ export function PublicLayout() {
   const { t } = useTranslation(["navigation", "common"]);
   const { settings } = useSettings();
 
-  // Initialize accessible smooth scrolling
-  useSmoothScroll(true);
+  // Use native high-performance hardware scrolling (disables Lenis JS interceptor lag)
+  useSmoothScroll(false);
 
   const location = useLocation();
   const siteName = settings?.site?.name || DEFAULT_BRAND_NAME;
 
-  // Handle URL hash anchor scrolling (e.g. /#reviews) and home top scroll
+  // Handle URL hash anchor scrolling (e.g. /#reviews)
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace("#", "");
       let cancelled = false;
-      let count = 0;
 
       const performScroll = () => {
         if (cancelled) return;
         const el = document.getElementById(id);
         if (el) {
-          if (window.__lenis?.instance?.scrollTo) {
-            window.__lenis.instance.scrollTo(el, { offset: -70, immediate: count === 0 ? false : true });
-          } else {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        }
-        if (count < 6) {
-          count++;
-          setTimeout(performScroll, count * 150);
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       };
 
-      performScroll();
+      const timer = setTimeout(performScroll, 100);
 
       return () => {
         cancelled = true;
+        clearTimeout(timer);
       };
-    } else if (location.pathname === "/" && !location.hash) {
-      // Direct navigation to home with no hash: ensure scroll to top
-      if (window.__lenis?.instance?.scrollTo) {
-        window.__lenis.instance.scrollTo(0, { immediate: false });
-      } else {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
     }
   }, [location.pathname, location.hash]);
 

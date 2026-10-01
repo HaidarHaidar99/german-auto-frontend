@@ -191,7 +191,7 @@ export function HomePage() {
   };
 
   return (
-    <div className="homepage-root" style={{ width: "100%", overflowX: "hidden", backgroundColor: "var(--color-background)" }}>
+    <div className="homepage-root" style={{ width: "100%", backgroundColor: "var(--color-background)" }}>
       {/* Top Animated Offer Bar (Controlled by settings.offers) */}
       <TopOfferBar offersConfig={settings?.offers} />
 

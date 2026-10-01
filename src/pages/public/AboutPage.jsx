@@ -103,7 +103,6 @@ export function AboutPage() {
         margin: "0 auto",
         padding: "0 clamp(16px, 4vw, 32px) clamp(2.5rem, 5vw, 4rem)",
         boxSizing: "border-box",
-        overflowX: "hidden",
       }}
     >
       {/* 1. Main About Story Card (Starts at top of page with 0 space) */}

@@ -45,27 +45,9 @@ export function ScrollToTop() {
   const { pathname, search } = useLocation();
 
   useEffect(() => {
-    // Immediate synchronous reset
+    // Immediate synchronous reset only when route changes
     forceScrollTop();
-
-    // requestAnimationFrame tick reset
-    const rafId = requestAnimationFrame(() => {
-      forceScrollTop();
-    });
-
-    // Staggered intervals to ensure React.lazy loaded pages and mounting images
-    // are strictly kept at the very top (0, 0)
-    const t1 = setTimeout(forceScrollTop, 30);
-    const t2 = setTimeout(forceScrollTop, 100);
-    const t3 = setTimeout(forceScrollTop, 250);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-    };
-  }, [pathname, search]);
+  }, [pathname]);
 
   return null;
 }

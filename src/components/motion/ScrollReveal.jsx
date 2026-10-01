@@ -41,7 +41,8 @@ export function ScrollReveal({
           scrollTrigger: {
             trigger: el,
             start,
-            toggleActions: "play none none reverse",
+            toggleActions: "play none none none",
+            once: true,
           },
         }
       );

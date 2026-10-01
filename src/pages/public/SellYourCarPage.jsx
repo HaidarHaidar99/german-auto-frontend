@@ -393,7 +393,6 @@ export function SellYourCarPage() {
         padding: "var(--space-xl) clamp(10px, 3.5vw, var(--space-md)) var(--space-4xl)",
         width: "100%",
         boxSizing: "border-box",
-        overflowX: "hidden",
       }}
     >
       {/* ─── Hero Section with 4-Step Visual ─────────────────────────── */}

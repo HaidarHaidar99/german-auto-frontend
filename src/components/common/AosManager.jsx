@@ -14,13 +14,13 @@ export function AosManager() {
   useEffect(() => {
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     AOS.init({
-      duration: isMobile ? 600 : 800,
+      duration: isMobile ? 600 : 750,
       easing: "ease-out-cubic",
-      once: isMobile ? true : false,
-      mirror: isMobile ? false : true,
+      once: true, // Animates on scroll down and stays visible permanently
+      mirror: false, // Never hide/disappear when scrolling past
       offset: isMobile ? 30 : 50,
-      delay: isMobile ? 0 : 50,
-      disableMutationObserver: false,
+      delay: 0,
+      disableMutationObserver: true,
     });
   }, []);
 

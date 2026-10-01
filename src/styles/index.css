@@ -30,7 +30,6 @@ html {
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   width: 100%;
   min-height: 100vh;
   display: flex;
@@ -162,30 +161,30 @@ html.lenis, html.lenis body {
    Global Clean Scrollbar (Arrowless, Modern, Minimalist)
    ========================================================================== */
 
-/* Standard CSS Scrollbar (Firefox & modern browsers) */
-html, body, * {
+/* Standard CSS Scrollbar (Firefox & modern browsers) - applied strictly to html */
+html {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 /* WebKit / Chromium Custom Scrollbar (Chrome, Edge, Safari, Opera) */
-::-webkit-scrollbar {
+html::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
-::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.35);
   background-clip: padding-box;
 }

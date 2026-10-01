@@ -72,7 +72,6 @@ export function ContactPage() {
         margin: "0 auto",
         padding: "clamp(1.5rem, 3vw, 2.5rem) clamp(16px, 4vw, 32px) clamp(2.5rem, 5vw, 4rem)",
         boxSizing: "border-box",
-        overflowX: "hidden",
       }}
     >
       {/* ─── Hero Section ────────────────────────────────────────────── */}

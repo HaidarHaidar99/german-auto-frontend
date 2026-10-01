@@ -12,12 +12,12 @@ import img5 from "../../assets/4images/5.jpeg";
  * WelcomeImpactSection
  * Positioned directly under the Home Page hero.
  * Fully scroll-driven transition:
- * - Single showcase image (1.jpeg) smoothly transforms as the user scrolls.
+ * - Single showcase image (1.jpeg) smoothly transforms as the user scrolls down.
  * - 4 equal pictures (2, 3, 4, 5.jpeg) progressively appear and expand into their final positions.
- * - The entire card participates in the animation (subtle scale, elevation, border glow).
+ * - The entire card participates in the animation (scale, elevation, border glow).
  * - 4 images seamlessly fill the card area with zero unwanted empty spaces or gaps.
  * - Gold phrase below ("You are in the right place" / "Hier sind Sie genau richtig") reveals naturally.
- * - Fully reversible when scrolling up, and re-triggers on every scroll without requiring a refresh.
+ * - One-way scroll-down animation that locks in place and does not disappear when scrolling up.
  */
 export function WelcomeImpactSection() {
   const { t, i18n } = useTranslation(["common"]);
@@ -59,128 +59,59 @@ export function WelcomeImpactSection() {
     }
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 85%",
-          end: "top 18%",
-          scrub: 0.6,
-          fastScrollEnd: true,
-        },
+      // Fires ONLY when scrolling down into view, locks in final state, never reverses on scroll-up
+      const st = {
+        trigger: sectionRef.current,
+        start: "top 82%",
+        toggleActions: "play none none none",
+        once: true,
+      };
+
+      // 1. Entire card: rise up, scale in, luxury glow border
+      gsap.fromTo(
+        cardRef.current,
+        { scale: 0.92, y: 40, opacity: 0, boxShadow: "0 10px 30px rgba(0,0,0,0.5)", borderColor: "rgba(212,175,55,0.15)" },
+        { scale: 1, y: 0, opacity: 1, boxShadow: "0 22px 55px rgba(0,0,0,0.75), 0 0 35px rgba(212,175,55,0.22)", borderColor: "rgba(212,175,55,0.45)", duration: 0.75, ease: "power3.out", scrollTrigger: st }
+      );
+
+      // 2. Single image dissolves out smoothly after card snaps into view
+      gsap.fromTo(
+        singleImgRef.current,
+        { opacity: 1, scale: 1 },
+        { opacity: 0, scale: 1.05, duration: 0.6, ease: "power2.inOut", delay: 0.2, scrollTrigger: st }
+      );
+
+      // 3. Four images: reveal and expand from their quadrants
+      const quadrantFroms = [
+        { xPercent: 8, yPercent: 8 },  // TL
+        { xPercent: -8, yPercent: 8 },  // TR
+        { xPercent: 8, yPercent: -8 }, // BL
+        { xPercent: -8, yPercent: -8 }, // BR
+      ];
+      imgRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.fromTo(
+          el,
+          { opacity: 0, scale: 0.85, xPercent: quadrantFroms[i].xPercent, yPercent: quadrantFroms[i].yPercent },
+          { opacity: 1, scale: 1, xPercent: 0, yPercent: 0, duration: 0.65, ease: "power3.out", delay: 0.3 + i * 0.06, scrollTrigger: st }
+        );
       });
 
-      // Refresh measurements once DOM and styles settle
-      const refreshTimer = setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 300);
-
-      // 1. Entire card container moves and transforms
-      tl.fromTo(
-        cardRef.current,
-        {
-          scale: 0.94,
-          y: 35,
-          boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
-          borderColor: "rgba(212, 175, 55, 0.2)",
-        },
-        {
-          scale: 1,
-          y: 0,
-          boxShadow: "0 22px 55px rgba(0, 0, 0, 0.75), 0 0 35px rgba(212, 175, 55, 0.22)",
-          borderColor: "rgba(212, 175, 55, 0.45)",
-          ease: "none",
-          duration: 1,
-        },
-        0
-      );
-
-      // 2. Single image layer dissolves and slightly expands
-      tl.fromTo(
-        singleImgRef.current,
-        {
-          opacity: 1,
-          scale: 1,
-        },
-        {
-          opacity: 0,
-          scale: 1.06,
-          ease: "none",
-          duration: 0.65,
-        },
-        0.05
-      );
-
-      // 3. Four images progressively appear and expand into their final quadrant positions
-      // Top-Left (0): expands outward from center
-      if (imgRefs.current[0]) {
-        tl.fromTo(
-          imgRefs.current[0],
-          { opacity: 0, scale: 0.78, xPercent: 12, yPercent: 12 },
-          { opacity: 1, scale: 1, xPercent: 0, yPercent: 0, ease: "none", duration: 0.6 },
-          0.15
-        );
-      }
-      // Top-Right (1): expands outward from center
-      if (imgRefs.current[1]) {
-        tl.fromTo(
-          imgRefs.current[1],
-          { opacity: 0, scale: 0.78, xPercent: -12, yPercent: 12 },
-          { opacity: 1, scale: 1, xPercent: 0, yPercent: 0, ease: "none", duration: 0.6 },
-          0.18
-        );
-      }
-      // Bottom-Left (2): expands outward from center
-      if (imgRefs.current[2]) {
-        tl.fromTo(
-          imgRefs.current[2],
-          { opacity: 0, scale: 0.78, xPercent: 12, yPercent: -12 },
-          { opacity: 1, scale: 1, xPercent: 0, yPercent: 0, ease: "none", duration: 0.6 },
-          0.21
-        );
-      }
-      // Bottom-Right (3): expands outward from center
-      if (imgRefs.current[3]) {
-        tl.fromTo(
-          imgRefs.current[3],
-          { opacity: 0, scale: 0.78, xPercent: -12, yPercent: -12 },
-          { opacity: 1, scale: 1, xPercent: 0, yPercent: 0, ease: "none", duration: 0.6 },
-          0.24
-        );
-      }
-
-      // 4. Gold phrase flows in smoothly after images reach final positions
+      // 4. Gold phrase fades up after images appear
       if (phraseContentRef.current) {
-        tl.fromTo(
+        gsap.fromTo(
           phraseContentRef.current,
-          {
-            opacity: 0,
-            y: 28,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            ease: "none",
-            duration: 0.35,
-          },
-          0.65
+          { opacity: 0, y: 24 },
+          { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", delay: 0.7, scrollTrigger: st }
         );
       }
 
-      // 5. Expand decorative gold accent lines
+      // 5. Accent lines expand
       if (accentLinesRef.current) {
-        tl.fromTo(
+        gsap.fromTo(
           accentLinesRef.current,
-          {
-            scaleX: 0,
-            opacity: 0,
-          },
-          {
-            scaleX: 1,
-            opacity: 1,
-            ease: "none",
-            duration: 0.25,
-          },
-          0.75
+          { scaleX: 0, opacity: 0 },
+          { scaleX: 1, opacity: 1, duration: 0.4, ease: "power2.out", delay: 0.85, scrollTrigger: st }
         );
       }
     }, sectionRef);
@@ -239,7 +170,7 @@ export function WelcomeImpactSection() {
             style={{
               position: "absolute",
               inset: 0,
-              zIndex: 2,
+              zIndex: 3, // On top of the 4 images so it shows initially and dissolves out
               width: "100%",
               height: "100%",
               overflow: "hidden",
@@ -274,7 +205,7 @@ export function WelcomeImpactSection() {
             style={{
               position: "absolute",
               inset: 0,
-              zIndex: 3,
+              zIndex: 2, // Beneath the single image layer
               width: "100%",
               height: "100%",
               display: "grid",
@@ -303,7 +234,7 @@ export function WelcomeImpactSection() {
                     width: "100%",
                     height: "100%",
                     overflow: "hidden",
-                    backgroundColor: "#0d0f12",
+                    backgroundColor: "transparent",
                     boxSizing: "border-box",
                     ...borderStyles,
                   }}
