@@ -285,8 +285,6 @@ export function CarsPage() {
                   return (
                     <div
                       key={car.id}
-                      data-aos="fade-up"
-                      data-aos-delay={(idx % 6) * 100}
                       style={{ width: "100%", minWidth: 0 }}
                     >
                       <CarCardBase

@@ -199,7 +199,6 @@ export function CarDetailPage() {
     >
       {/* ─── Breadcrumb & Navigation Bar ───────────────────────────────── */}
       <nav
-        data-aos="fade-down"
         aria-label="Breadcrumb"
         style={{
           display: "flex",
@@ -232,7 +231,7 @@ export function CarDetailPage() {
       </nav>
 
       {/* ─── Vehicle Header ────────────────────────────────────────────── */}
-      <header data-aos="fade-up" data-aos-delay="50" className="car-header-animate" style={{ marginBottom: "var(--space-xl)" }}>
+      <header className="car-header-animate" style={{ marginBottom: "var(--space-xl)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", marginBottom: "var(--space-2xs)" }}>
           <span
             style={{
@@ -276,25 +275,19 @@ export function CarDetailPage() {
         {/* Left Column: Media Stage, Specs, Description & Equipment */}
         <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
           {/* Cinematic Media Area */}
-          <div data-aos="fade-up" data-aos-delay="100" className="car-media-animate" style={{ marginBottom: "var(--space-2xl)" }}>
+          <div className="car-media-animate" style={{ marginBottom: "var(--space-2xl)" }}>
             <CarMediaGallery car={car} />
           </div>
 
           {/* Key Specifications & Technical Table */}
-          <div data-aos="fade-up" data-aos-delay="150">
-            <CarTechnicalSpecs car={car} />
-          </div>
+          <CarTechnicalSpecs car={car} />
 
           {/* Real Equipment Features Grid */}
-          <div data-aos="fade-up" data-aos-delay="200">
-            <CarEquipment equipment={car.equipment} />
-          </div>
+          <CarEquipment equipment={car.equipment} />
 
           {/* Editorial Vehicle Description */}
           {description ? (
             <section
-              data-aos="fade-up"
-              data-aos-delay="250"
               className="car-description-section"
               aria-labelledby="description-heading"
               style={{
@@ -334,8 +327,6 @@ export function CarDetailPage() {
             </section>
           ) : (
             <section
-              data-aos="fade-up"
-              data-aos-delay="250"
               className="car-description-section"
               style={{
                 backgroundColor: "var(--color-card)",
@@ -363,7 +354,7 @@ export function CarDetailPage() {
         </div>
 
         {/* Right Column: Pricing, Primary CTA & Real CMS Contact Card */}
-        <div data-aos="fade-left" data-aos-delay="150" className="car-sidebar-animate">
+        <div className="car-sidebar-animate">
           <CarContactCard car={car} />
         </div>
       </div>
