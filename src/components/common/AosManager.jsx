@@ -15,7 +15,8 @@ export function AosManager() {
     AOS.init({
       duration: 800,
       easing: "ease-out-cubic",
-      once: true,
+      once: false,
+      mirror: true,
       offset: 50,
       delay: 50,
       disableMutationObserver: false,

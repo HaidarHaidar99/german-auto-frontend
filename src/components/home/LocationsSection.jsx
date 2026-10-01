@@ -58,47 +58,7 @@ export function LocationsSection({ locations = [] }) {
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
-              {/* Falling Navigation / Location Sparkles Animation */}
-              <div
-                className="locations-rain-container"
-                aria-hidden="true"
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  overflow: "hidden",
-                  pointerEvents: "none",
-                  userSelect: "none",
-                  zIndex: 0,
-                }}
-              >
-                {[
-                  { symbol: "✦", left: "6%", size: "18px", dur: "5.4s", delay: "-1.8s", opacity: 0.25 },
-                  { symbol: "📍", left: "18%", size: "16px", dur: "6.3s", delay: "-3.9s", opacity: 0.22 },
-                  { symbol: "◈", left: "34%", size: "20px", dur: "4.8s", delay: "-0.6s", opacity: 0.28 },
-                  { symbol: "✧", left: "50%", size: "22px", dur: "5.8s", delay: "-4.2s", opacity: 0.24 },
-                  { symbol: "◆", left: "66%", size: "16px", dur: "5.1s", delay: "-2.1s", opacity: 0.26 },
-                  { symbol: "📍", left: "82%", size: "17px", dur: "6.5s", delay: "-4.8s", opacity: 0.20 },
-                  { symbol: "✦", left: "94%", size: "19px", dur: "4.6s", delay: "-1.3s", opacity: 0.27 },
-                ].map((item, pIdx) => (
-                  <span
-                    key={pIdx}
-                    style={{
-                      position: "absolute",
-                      top: "-30px",
-                      left: item.left,
-                      fontSize: item.size,
-                      color: "#D4AF37",
-                      opacity: item.opacity,
-                      textShadow: "0 0 8px rgba(212, 175, 55, 0.4)",
-                      animation: `locationFall ${item.dur} linear infinite`,
-                      animationDelay: item.delay,
-                      willChange: "transform, opacity",
-                    }}
-                  >
-                    {item.symbol}
-                  </span>
-                ))}
-              </div>
+
 
               <div style={{ position: "relative", zIndex: 1 }}>
                 <h3
@@ -175,24 +135,7 @@ export function LocationsSection({ locations = [] }) {
         </Grid>
       </Container>
 
-      <style>{`
-        @keyframes locationFall {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(0.9);
-            opacity: 0;
-          }
-          15% {
-            opacity: 0.32;
-          }
-          85% {
-            opacity: 0.26;
-          }
-          100% {
-            transform: translateY(460px) rotate(360deg) scale(1.1);
-            opacity: 0;
-          }
-        }
-      `}</style>
+
     </Section>
   );
 }

@@ -59,8 +59,8 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
     <Section spacing="spacious" style={{ position: "relative" }}>
       <Container size="default">
         <div
-          data-aos="zoom-in"
-          data-aos-duration="800"
+          data-aos="fade-up"
+          data-aos-duration="850"
           className="surface-card contact-cta-card-interactive"
           style={{
             position: "relative",
@@ -87,54 +87,6 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
               pointerEvents: "none",
             }}
           />
-
-          {/* Falling Contact / Communication Particle Animation */}
-          <div
-            className="contact-rain-container"
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              inset: 0,
-              overflow: "hidden",
-              pointerEvents: "none",
-              userSelect: "none",
-              zIndex: 0,
-            }}
-          >
-            {[
-              { symbol: "✦", left: "4%", size: "20px", dur: "5.4s", delay: "-1.8s", opacity: 0.26 },
-              { symbol: "✉", left: "12%", size: "17px", dur: "6.2s", delay: "-4.0s", opacity: 0.22 },
-              { symbol: "✧", left: "21%", size: "22px", dur: "4.9s", delay: "-0.5s", opacity: 0.28 },
-              { symbol: "☎", left: "30%", size: "16px", dur: "5.9s", delay: "-3.2s", opacity: 0.20 },
-              { symbol: "◈", left: "39%", size: "23px", dur: "4.7s", delay: "-2.3s", opacity: 0.27 },
-              { symbol: "✦", left: "48%", size: "19px", dur: "6.6s", delay: "-5.0s", opacity: 0.24 },
-              { symbol: "💬", left: "57%", size: "18px", dur: "5.1s", delay: "-1.2s", opacity: 0.20 },
-              { symbol: "✧", left: "66%", size: "24px", dur: "4.8s", delay: "-3.7s", opacity: 0.28 },
-              { symbol: "✉", left: "75%", size: "18px", dur: "6.4s", delay: "-0.8s", opacity: 0.23 },
-              { symbol: "✦", left: "84%", size: "21px", dur: "5.3s", delay: "-4.5s", opacity: 0.27 },
-              { symbol: "◈", left: "93%", size: "17px", dur: "6.0s", delay: "-2.6s", opacity: 0.22 },
-            ].map((item, idx) => (
-              <span
-                key={idx}
-                style={{
-                  position: "absolute",
-                  top: "-40px",
-                  left: item.left,
-                  fontSize: item.size,
-                  color: "#D4AF37",
-                  fontFamily: "'DM Serif Display', Georgia, serif",
-                  fontWeight: 700,
-                  opacity: item.opacity,
-                  textShadow: "0 0 10px rgba(212, 175, 55, 0.4), 0 0 20px rgba(245, 215, 127, 0.2)",
-                  animation: `contactFall ${item.dur} linear infinite`,
-                  animationDelay: item.delay,
-                  willChange: "transform, opacity",
-                }}
-              >
-                {item.symbol}
-              </span>
-            ))}
-          </div>
 
           <div
             style={{
@@ -410,22 +362,6 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
           flex-shrink: 0;
         }
 
-        @keyframes contactFall {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(0.9);
-            opacity: 0;
-          }
-          12% {
-            opacity: 0.32;
-          }
-          85% {
-            opacity: 0.28;
-          }
-          100% {
-            transform: translateY(520px) rotate(360deg) scale(1.1);
-            opacity: 0;
-          }
-        }
 
         @keyframes socialPulseFloat {
           0%, 100% {

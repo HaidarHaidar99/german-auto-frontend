@@ -276,6 +276,9 @@ export function FeaturedInventorySection() {
                 return (
                   <div
                     key={car.id}
+                    data-aos="fade-up"
+                    data-aos-delay={idx * 120}
+                    data-aos-duration="750"
                     style={{
                       flex: "0 0 clamp(290px, 85vw, 360px)",
                       maxWidth: "360px",

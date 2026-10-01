@@ -155,58 +155,17 @@ export function CarCardBase({
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
-        e.currentTarget.style.transform = "translateY(-4px)";
-        e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.12)";
+        e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
+        e.currentTarget.style.boxShadow = "0 14px 34px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15)";
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.09)";
-        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.transform = "translateY(0) scale(1)";
         e.currentTarget.style.boxShadow = "none";
       }}
     >
-      {/* Falling Automotive Sparkles & Diamonds Background Animation */}
-      <div
-        className="car-card-rain-container"
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          overflow: "hidden",
-          pointerEvents: "none",
-          userSelect: "none",
-          zIndex: 0,
-        }}
-      >
-        {[
-          { symbol: "✦", left: "8%", size: "16px", dur: "5.5s", delay: "-1.8s", opacity: 0.24 },
-          { symbol: "◈", left: "24%", size: "18px", dur: "6.2s", delay: "-4.0s", opacity: 0.22 },
-          { symbol: "✧", left: "42%", size: "15px", dur: "4.9s", delay: "-0.5s", opacity: 0.26 },
-          { symbol: "⚡", left: "58%", size: "14px", dur: "5.8s", delay: "-3.2s", opacity: 0.20 },
-          { symbol: "✦", left: "74%", size: "19px", dur: "4.7s", delay: "-2.3s", opacity: 0.25 },
-          { symbol: "◈", left: "88%", size: "17px", dur: "6.4s", delay: "-4.8s", opacity: 0.22 },
-        ].map((item, idx) => (
-          <span
-            key={idx}
-            style={{
-              position: "absolute",
-              top: "-30px",
-              left: item.left,
-              fontSize: item.size,
-              color: "#D4AF37",
-              opacity: item.opacity,
-              textShadow: "0 0 8px rgba(212, 175, 55, 0.35)",
-              animation: `carParticleFall ${item.dur} linear infinite`,
-              animationDelay: item.delay,
-              willChange: "transform, opacity",
-            }}
-          >
-            {item.symbol}
-          </span>
-        ))}
-      </div>
-
       {/* Media Stage */}
-      <div style={{ position: "relative", zIndex: 1 }}>
+      <div>
         <CarMediaFrame
           aspectRatio="16-9"
           badge={statusBadge}
@@ -259,8 +218,6 @@ export function CarCardBase({
           flexDirection: "column",
           gap: "var(--space-md)",
           flex: 1,
-          position: "relative",
-          zIndex: 1,
         }}
       >
         {/* Title & Brand Header */}
@@ -354,25 +311,6 @@ export function CarCardBase({
           </Button>
         </div>
       </div>
-
-      <style>{`
-        @keyframes carParticleFall {
-          0% {
-            transform: translateY(0) rotate(0deg) scale(0.9);
-            opacity: 0;
-          }
-          15% {
-            opacity: 0.3;
-          }
-          85% {
-            opacity: 0.24;
-          }
-          100% {
-            transform: translateY(520px) rotate(360deg) scale(1.1);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </article>
   );
 }
