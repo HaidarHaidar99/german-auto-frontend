@@ -14,29 +14,35 @@ export function AosManager() {
   useEffect(() => {
     const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
     AOS.init({
-      duration: isMobile ? 600 : 750,
+      duration: isMobile ? 550 : 700,
       easing: "ease-out-cubic",
       once: true, // Animates on scroll down and stays visible permanently
       mirror: false, // Never hide/disappear when scrolling past
-      offset: isMobile ? 30 : 50,
+      offset: 30,
       delay: 0,
-      disableMutationObserver: true,
+      disableMutationObserver: false, // Must be false so React dynamically mounted components are detected!
     });
+
+    // Staggered refreshes to catch async React tree mounts & CMS data arrivals
+    const t1 = setTimeout(() => AOS.refresh(), 100);
+    const t2 = setTimeout(() => AOS.refresh(), 400);
+    const t3 = setTimeout(() => AOS.refresh(), 1000);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
   }, []);
 
   useEffect(() => {
     // Refresh AOS whenever route changes to bind newly mounted elements
     const timer = setTimeout(() => {
-      AOS.refreshHard();
-    }, 120);
-
-    const timer2 = setTimeout(() => {
       AOS.refresh();
-    }, 350);
+    }, 150);
 
     return () => {
       clearTimeout(timer);
-      clearTimeout(timer2);
     };
   }, [pathname, search]);
 

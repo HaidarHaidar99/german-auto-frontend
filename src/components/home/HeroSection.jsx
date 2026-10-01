@@ -226,13 +226,13 @@ export function HeroSection({ heroConfig, siteConfig }) {
           }}
         >
           {siteConfig?.name && (
-            <div data-aos="fade-up" data-aos-duration="700">
+            <div>
               <Eyebrow>{siteConfig.name}</Eyebrow>
             </div>
           )}
 
           {title && (
-            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="100">
+            <div>
               <Display size="2xl" style={{ margin: 0 }}>
                 {title}
               </Display>
@@ -240,7 +240,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
           )}
 
           {subtitle && (
-            <div data-aos="fade-up" data-aos-duration="900" data-aos-delay="200">
+            <div>
               <Text variant="lead" style={{ margin: 0, maxWidth: "620px" }}>
                 {subtitle}
               </Text>
@@ -249,9 +249,6 @@ export function HeroSection({ heroConfig, siteConfig }) {
 
           {/* Action Button Group */}
           <div
-            data-aos="fade-up"
-            data-aos-duration="900"
-            data-aos-delay="350"
             style={{
               display: "flex",
               flexWrap: "wrap",

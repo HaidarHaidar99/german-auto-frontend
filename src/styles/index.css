@@ -157,6 +157,20 @@ html.lenis, html.lenis body {
   }
 }
 
+/* Guard: Hero typography & buttons are always immediately visible */
+.hero-content-wrapper,
+.hero-content-wrapper * {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Guarantee all AOS animated elements smoothly show and lock at 100% opacity */
+[data-aos].aos-animate {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
 /* ==========================================================================
    Global Clean Scrollbar (Arrowless, Modern, Minimalist)
    ========================================================================== */
