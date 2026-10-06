@@ -56,9 +56,9 @@ export function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: "#07080a",
-        borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-        color: "#ffffff",
+        backgroundColor: "var(--color-footer-bg, var(--color-background))",
+        borderTop: "1px solid var(--color-border)",
+        color: "var(--color-text)",
         marginTop: "auto",
         position: "relative",
         zIndex: 10,
@@ -138,12 +138,12 @@ export function Footer() {
                       width: "42px",
                       height: "42px",
                       borderRadius: "50%",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255, 255, 255, 0.12)",
+                      backgroundColor: "var(--color-accent-subtle)",
+                      border: "1px solid var(--color-border)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#cbd5e1",
+                      color: "var(--color-text-muted)",
                       textDecoration: "none",
                       transition: "all 0.2s ease",
                     }}
@@ -154,9 +154,9 @@ export function Footer() {
                       e.currentTarget.style.transform = "translateY(-2px)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.05)";
-                      e.currentTarget.style.color = "#cbd5e1";
-                      e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.12)";
+                      e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                      e.currentTarget.style.color = "var(--color-text-muted)";
+                      e.currentTarget.style.borderColor = "var(--color-border)";
                       e.currentTarget.style.transform = "translateY(0)";
                     }}
                   >
@@ -187,7 +187,7 @@ export function Footer() {
                 <Link
                   to="/"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
                   <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
@@ -198,7 +198,7 @@ export function Footer() {
                 <Link
                   to="/cars"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
                   <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
@@ -209,7 +209,7 @@ export function Footer() {
                 <Link
                   to="/sell-your-car"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
                   <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
@@ -220,7 +220,7 @@ export function Footer() {
                 <Link
                   to="/#reviews"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
                   <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
@@ -231,7 +231,7 @@ export function Footer() {
                 <Link
                   to="/about"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
                   <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
@@ -242,7 +242,7 @@ export function Footer() {
                 <Link
                   to="/contact"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                 >
                   <Icon name="chevron-right" size={14} style={{ color: "rgba(212, 175, 55, 0.8)" }} />
@@ -282,7 +282,7 @@ export function Footer() {
                         fontSize: "0.975rem",
                         transition: "color 0.15s ease",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
                       <Icon name="phone" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
@@ -304,7 +304,7 @@ export function Footer() {
                         fontSize: "0.975rem",
                         transition: "color 0.15s ease",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
                       <Icon name="mail" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
@@ -359,7 +359,7 @@ export function Footer() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1.15rem" }}>
                 {locationsConfig.slice(0, 3).map((loc, idx) => (
                   <div key={idx} style={{ fontSize: "0.975rem", color: "var(--color-text-muted, #94a3b8)", lineHeight: 1.5, display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <div style={{ fontWeight: 600, color: "#ffffff", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div style={{ fontWeight: 600, color: "var(--color-text)", display: "flex", alignItems: "center", gap: "8px" }}>
                       <Icon name="map-pin" size={17} style={{ color: "#D4AF37", flexShrink: 0 }} />
                       <span>{loc.city || loc.name}</span>
                     </div>
@@ -375,7 +375,7 @@ export function Footer() {
         {/* Bottom Bar: Copyright Only — absolutely nothing below it */}
         <div
           style={{
-            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            borderTop: "1px solid var(--color-border)",
             paddingTop: "1.85rem",
             display: "flex",
             alignItems: "center",

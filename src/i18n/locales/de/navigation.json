@@ -9,5 +9,10 @@
   "signup": "Registrieren",
   "logout": "Abmelden",
   "account": "Mein Konto",
-  "admin": "Administration"
+  "admin": "Administration",
+  "themeToggle": "Design umschalten",
+  "switchToLight": "Zu hellem Design wechseln",
+  "switchToDark": "Zu dunklem Design wechseln",
+  "lightTheme": "Helles Design",
+  "darkTheme": "Dunkles Design"
 }

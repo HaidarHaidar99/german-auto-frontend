@@ -9,5 +9,10 @@
   "signup": "Register",
   "logout": "Logout",
   "account": "My Account",
-  "admin": "Admin"
+  "admin": "Admin",
+  "themeToggle": "Toggle theme",
+  "switchToLight": "Switch to light theme",
+  "switchToDark": "Switch to dark theme",
+  "lightTheme": "Light theme",
+  "darkTheme": "Dark theme"
 }

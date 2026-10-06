@@ -2,22 +2,29 @@
  * German Auto — Premium Automotive Design System
  * CSS Custom Properties & Design Tokens
  * 
+ * Supports Dark (Default Luxury Monochrome + Gold) and Light (Crisp White + Black + Gold) themes.
  * Dynamic CMS overrides are supported at runtime via SettingsContext.
- * Development defaults provide a high-end, editorial, restrained luxury atmosphere.
  */
 
-:root {
+:root,
+[data-theme="dark"],
+.theme-dark {
   /* ==========================================================================
-     1. COLOR SYSTEM (Strict Monochrome B&W with Gold Accents)
+     1. COLOR SYSTEM — DARK THEME (Monochrome Black & White with Gold Accents)
      ========================================================================== */
   --color-primary: #000000;            /* Pure black */
-  --color-secondary: #d4af37;          /* Gold accent for subtitles */
+  --color-secondary: #d4af37;          /* Gold accent for subtitles and highlights */
   --color-background: #000000;         /* Pure black */
-  --color-surface: #000000;            /* Pure black */
-  --color-card: #000000;               /* Pure black */
-  --color-card-elevated: #111111;      /* Elevated card on hover/active */
+  --color-surface: #0a0a0c;            /* Dark surface */
+  --color-card: #0d0e12;               /* Card background */
+  --color-card-elevated: #15181f;      /* Elevated card on hover/active */
+  --card-gradient: linear-gradient(180deg, #131518 0%, #0c0d0f 100%);
+  --color-footer-bg: #07080a;          /* Footer dark tone */
+  --color-input-bg: #000000;           /* Form input background */
+  --header-bg: rgba(0, 0, 0, 0.85);    /* Navbar backdrop */
   
   --color-text: #ffffff;               /* Pure white text */
+  --color-text-secondary: #a1a1aa;     /* Secondary copy */
   --color-text-muted: #a1a1aa;         /* Elegant cool slate for secondary copy */
   --color-text-subtle: #71717a;        /* Tertiary/caption text */
   --color-text-inverse: #000000;       /* Inverted text on light backgrounds */
@@ -28,9 +35,9 @@
   --color-border-active: #ffffff;      /* Focused / active element highlight (White) */
 
   --color-accent: #ffffff;             /* White accent */
-  --color-accent-subtle: rgba(255, 255, 255, 0.12); /* Atmospheric tinted glow */
+  --color-accent-subtle: rgba(255, 255, 255, 0.1); /* Atmospheric tinted glow */
   
-  /* Semantic Status Colors (Kept muted/monochrome where possible, or extremely subtle) */
+  /* Semantic Status Colors */
   --color-success: #10b981;
   --color-success-subtle: rgba(16, 185, 129, 0.15);
   --color-warning: #f59e0b;
@@ -53,61 +60,46 @@
   --glass-blur: blur(16px);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 
-  /* ==========================================================================
-     ADMIN CMS DESIGN SYSTEM (Replicating Screenshot Layout & Palette)
-     ========================================================================== */
-  --color-admin-bg: #f0f4f8;           /* Clean soft light-grey background as in screenshots */
-  --color-admin-sidebar: #ffffff;      /* Pure white sidebar */
-  --color-admin-card: #ffffff;         /* Pure white card surface */
-  --color-admin-border: #e2e8f0;       /* Hairline grey border */
-  --color-admin-border-subtle: #f8fafc;/* Table header and inner background */
-  --color-admin-text: #0f172a;         /* High-contrast dark slate / black text */
-  --color-admin-text-secondary: #334155;
-  --color-admin-muted: #64748b;        /* Cool slate grey for labels & subtitles */
-  --color-admin-accent: #0284c7;       /* Vibrant cyan/blue button accent as in screenshot */
-  --color-admin-accent-hover: #0369a1;
-  --color-admin-accent-subtle: #eff6ff;/* Soft blue tint for active nav items & badges */
-  --color-admin-nav-active-border: #2563eb; /* 3px left indicator bar */
-  --color-admin-pill-bg: #f1f5f9;      /* Right top header pill background */
-  --color-admin-logout-bg: #fef2f2;    /* Soft red background for logout */
-  --color-admin-logout-text: #ef4444;  /* Red logout text */
-  --color-admin-stat-icon-bg-1: #2563eb; /* Blue squircle */
-  --color-admin-stat-icon-bg-2: #10b981; /* Green squircle */
-  --color-admin-stat-icon-bg-3: #0284c7; /* Ocean blue squircle */
-  --color-admin-stat-icon-bg-4: #059669; /* Teal/emerald squircle */
-  --admin-sidebar-width: 260px;
+  /* Elevation Shadows */
+  --shadow-flat: none;
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  --shadow-card-hover: 0 12px 36px -4px rgba(0, 0, 0, 0.8), 0 0 20px -2px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-modal: 0 24px 60px -8px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-drawer: -12px 0 36px rgba(0, 0, 0, 0.9);
 
-  /* ==========================================================================
-     2. TYPOGRAPHY TOKENS
-     ========================================================================== */
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);
+
+  /* Typography Tokens */
   --font-family-display: "DM Serif Display", serif;
   --font-family-heading: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-family-body: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Font Sizes */
-  --font-size-2xs: 0.6875rem; /* 11px */
-  --font-size-xs: 0.75rem;    /* 12px */
-  --font-size-sm: 0.875rem;   /* 14px */
-  --font-size-base: 1rem;     /* 16px */
-  --font-size-lg: 1.125rem;   /* 18px */
-  --font-size-xl: 1.25rem;    /* 20px */
-  --font-size-2xl: 1.5rem;    /* 24px */
-  --font-size-3xl: 1.875rem;  /* 30px */
-  --font-size-4xl: 2.25rem;   /* 36px */
-  --font-size-5xl: 3rem;      /* 48px */
-  --font-size-6xl: 3.75rem;   /* 60px */
-  --font-size-7xl: 4.5rem;    /* 72px */
+  --font-size-2xs: 0.6875rem;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  --font-size-6xl: 3.75rem;
+  --font-size-7xl: 4.5rem;
 
-  /* Letter Spacing (Tracking) */
+  /* Letter Spacing */
   --tracking-tighter: -0.04em;
   --tracking-tight: -0.02em;
   --tracking-normal: 0em;
   --tracking-wide: 0.05em;
   --tracking-wider: 0.12em;
-  --tracking-widest: 0.22em; /* For luxury eyebrows */
+  --tracking-widest: 0.22em;
 
-  /* Line Heights (Leading) */
+  /* Line Heights */
   --leading-none: 1;
   --leading-tight: 1.15;
   --leading-snug: 1.3;
@@ -120,26 +112,22 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
-
-  /* Numerical / Automotive Price Typography */
   --font-numeric: tabular-nums;
 
-  /* ==========================================================================
-     3. SPACING SCALE
-     ========================================================================== */
-  --space-3xs: 0.125rem; /* 2px */
-  --space-2xs: 0.25rem;  /* 4px */
-  --space-xs: 0.375rem;  /* 6px */
-  --space-sm: 0.5rem;    /* 8px */
-  --space-md: 1rem;      /* 16px */
-  --space-lg: 1.5rem;    /* 24px */
-  --space-xl: 2rem;      /* 32px */
-  --space-2xl: 3rem;     /* 48px */
-  --space-3xl: 4.5rem;   /* 72px */
-  --space-4xl: 6rem;     /* 96px */
-  --space-5xl: 8rem;     /* 128px */
+  /* Spacing Scale */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.375rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+  --space-4xl: 6rem;
+  --space-5xl: 8rem;
 
-  /* Section Spacing (Adaptive) */
+  /* Section Spacing */
   --section-spacing-compact: var(--space-2xl);
   --section-spacing-default: var(--space-3xl);
   --section-spacing-spacious: var(--space-4xl);
@@ -161,24 +149,9 @@
   --control-height-md: 46px;
   --control-height-lg: 54px;
   --touch-target-min: 44px;
-}
 
-input[type="date"] {
-  color-scheme: dark !important;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
-  cursor: pointer;
-  opacity: 0.9;
-}
-
-:root {
-
-  /* ==========================================================================
-     4. RADIUS & SHADOW ELEVATION (Restrained Luxury Depth)
-     ========================================================================== */
-  --radius-xs: 0px; /* Sharper luxury feel */
+  /* Radius Scale */
+  --radius-xs: 0px;
   --radius-sm: 2px;
   --radius-md: 4px;
   --radius-lg: 8px;
@@ -186,16 +159,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   --radius-2xl: 16px;
   --radius-full: 9999px;
 
-  /* Elevation Shadows with Micro Highlight Borders */
-  --shadow-flat: none;
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  --shadow-card-hover: 0 12px 36px -4px rgba(0, 0, 0, 0.8), 0 0 20px -2px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --shadow-modal: 0 24px 60px -8px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  --shadow-drawer: -12px 0 36px rgba(0, 0, 0, 0.9);
-
-  /* ==========================================================================
-     5. TRANSITIONS & TIMING
-     ========================================================================== */
+  /* Transitions & Timing */
   --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -206,7 +170,110 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   --duration-slow: 700ms;
 }
 
-/* High-Contrast Accessible Switch Toggles */
+/* ==========================================================================
+   2. LIGHT THEME OVERRIDES (Swapping Black & White UI Colors, Preserving Gold & Images)
+   ========================================================================== */
+[data-theme="light"],
+.theme-light {
+  --color-primary: #ffffff;            /* White */
+  --color-secondary: #d4af37;          /* Gold accent strictly preserved */
+  --color-background: #ffffff;         /* Pure white background */
+  --color-surface: #f9fafb;            /* Soft clean white surface */
+  --color-card: #ffffff;               /* Pure white card surface */
+  --color-card-elevated: #f4f4f5;      /* Elevated card */
+  --card-gradient: #ffffff;            /* Clean solid card gradient */
+  --color-footer-bg: #f8fafc;          /* Light crisp footer */
+  --color-input-bg: #ffffff;           /* Crisp white form inputs */
+  --header-bg: rgba(255, 255, 255, 0.88); /* Translucent white navbar */
+
+  --color-text: #000000;               /* Pure black text */
+  --color-text-secondary: #52525b;     /* High-readability secondary dark slate */
+  --color-text-muted: #52525b;         /* Neutral slate */
+  --color-text-subtle: #71717a;        /* Tertiary caption text */
+  --color-text-inverse: #ffffff;       /* Pure white on dark contrast */
+
+  --color-border: #e4e4e7;             /* Crisp hairline grey border */
+  --color-border-subtle: #f4f4f5;      /* Subtle separator */
+  --color-border-hover: #a1a1aa;       /* Interactive border */
+  --color-border-active: #000000;      /* Focused black border */
+
+  --color-accent: #000000;             /* Black accent */
+  --color-accent-subtle: rgba(0, 0, 0, 0.05); /* Atmospheric soft tint */
+
+  --color-overlay: rgba(0, 0, 0, 0.45);
+  --color-overlay-heavy: rgba(0, 0, 0, 0.75);
+  --color-overlay-light: rgba(0, 0, 0, 0.15);
+  --gradient-cinematic-mask: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 75%, rgba(255, 255, 255, 1) 100%);
+  --gradient-car-stage: radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+
+  --glass-background: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(16px);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.06);
+
+  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 12px 36px -4px rgba(0, 0, 0, 0.12), 0 0 20px -2px rgba(212, 175, 55, 0.25);
+  --shadow-modal: 0 24px 60px -8px rgba(0, 0, 0, 0.2);
+  --shadow-drawer: -12px 0 36px rgba(0, 0, 0, 0.18);
+
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+}
+
+/* ==========================================================================
+   3. DATE PICKER & AUTOFILL (THEME-AWARE)
+   ========================================================================== */
+input[type="date"] {
+  color-scheme: dark !important;
+}
+
+[data-theme="light"] input[type="date"],
+.theme-light input[type="date"] {
+  color-scheme: light !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8) sepia(1) saturate(5) hue-rotate(5deg);
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+[data-theme="light"] input[type="date"]::-webkit-calendar-picker-indicator,
+.theme-light input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+/* Dark Theme Autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #000000 inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #ffffff !important;
+}
+
+/* Light Theme Autofill */
+[data-theme="light"] input:-webkit-autofill,
+[data-theme="light"] input:-webkit-autofill:hover,
+[data-theme="light"] input:-webkit-autofill:focus,
+[data-theme="light"] input:-webkit-autofill:active,
+.theme-light input:-webkit-autofill,
+.theme-light input:-webkit-autofill:hover,
+.theme-light input:-webkit-autofill:focus,
+.theme-light input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #000000 !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: #000000 !important;
+}
+
+/* ==========================================================================
+   4. HIGH-CONTRAST SWITCH TOGGLES
+   ========================================================================== */
 .settings-toggle button[role="switch"],
 button[role="switch"] {
   appearance: none !important;
@@ -217,14 +284,12 @@ button[role="switch"] {
   cursor: pointer !important;
 }
 
-[data-admin-theme="light"] .settings-toggle button[role="switch"][aria-checked="false"],
-.theme-light .settings-toggle button[role="switch"][aria-checked="false"] {
+[data-admin-theme="light"] .settings-toggle button[role="switch"][aria-checked="false"] {
   background-color: #cbd5e1 !important;
   border: 1px solid #94a3b8 !important;
 }
 
-[data-admin-theme="dark"] .settings-toggle button[role="switch"][aria-checked="false"],
-.theme-dark .settings-toggle button[role="switch"][aria-checked="false"] {
+[data-admin-theme="dark"] .settings-toggle button[role="switch"][aria-checked="false"] {
   background-color: rgba(255, 255, 255, 0.18) !important;
   border: 1px solid rgba(255, 255, 255, 0.28) !important;
 }
@@ -240,26 +305,36 @@ button[role="switch"][aria-checked="true"] {
 button[role="switch"] div {
   background-color: #ffffff !important;
 }
-/* ==========================================================================
-   6. GLOBAL INPUT AUTOFILL FIX (Theme-Aware)
-   ========================================================================== */
-/* Dark Theme Autofill */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #000000 inset !important;
-  -webkit-text-fill-color: #ffffff !important;
-  transition: background-color 5000s ease-in-out 0s;
-  caret-color: #ffffff !important;
-}
 
 /* ==========================================================================
-   ADMIN PANEL DARK MODE (Full Black/Blue/White Theme)
+   5. ADMIN CMS DESIGN SYSTEM (Replicating Screenshot Layout & Palette)
    ========================================================================== */
+.admin-layout {
+  --color-admin-bg: #f0f4f8;           /* Clean soft light-grey background */
+  --color-admin-sidebar: #ffffff;      /* Pure white sidebar */
+  --color-admin-card: #ffffff;         /* Pure white card surface */
+  --color-admin-border: #e2e8f0;       /* Hairline grey border */
+  --color-admin-border-subtle: #f8fafc;/* Table header and inner background */
+  --color-admin-text: #0f172a;         /* High-contrast dark slate / black text */
+  --color-admin-text-secondary: #334155;
+  --color-admin-muted: #64748b;        /* Cool slate grey for labels & subtitles */
+  --color-admin-accent: #0284c7;       /* Vibrant cyan/blue button accent */
+  --color-admin-accent-hover: #0369a1;
+  --color-admin-accent-subtle: #eff6ff;/* Soft blue tint for active nav items & badges */
+  --color-admin-nav-active-border: #2563eb;
+  --color-admin-pill-bg: #f1f5f9;
+  --color-admin-logout-bg: #fef2f2;
+  --color-admin-logout-text: #ef4444;
+  --color-admin-stat-icon-bg-1: #2563eb;
+  --color-admin-stat-icon-bg-2: #10b981;
+  --color-admin-stat-icon-bg-3: #0284c7;
+  --color-admin-stat-icon-bg-4: #059669;
+  --admin-sidebar-width: 260px;
+}
+
+/* Admin Panel Dark Mode (Driven strictly by data-admin-theme="dark") */
 .admin-layout[data-admin-theme="dark"],
-[data-admin-theme="dark"] .admin-layout,
-[data-theme="dark"] .admin-layout {
+[data-admin-theme="dark"] .admin-layout {
   --color-admin-bg: #090d16;
   --color-admin-sidebar: #111827;
   --color-admin-card: #111827;
@@ -345,5 +420,3 @@ input:-webkit-autofill:active {
   outline: none !important;
   box-shadow: 0 0 0 3px var(--color-admin-accent-subtle) !important;
 }
-
-

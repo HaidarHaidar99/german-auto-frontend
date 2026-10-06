@@ -44,11 +44,11 @@ export function SettingsProvider({ children }) {
   const applyThemeVariables = useCallback((theme) => {
     if (!theme || typeof theme !== "object") return;
     const root = document.documentElement;
-    // Forcing pure black monochrome theme, ignoring CMS color overrides
-    root.style.setProperty("--color-background", "#000000");
-    root.style.setProperty("--color-card", "#000000");
-    root.style.setProperty("--color-surface", "#000000");
-    root.style.setProperty("--color-text", "#ffffff");
+    // Remove any hardcoded inline color variables to let theme tokens control colors cleanly
+    root.style.removeProperty("--color-background");
+    root.style.removeProperty("--color-card");
+    root.style.removeProperty("--color-surface");
+    root.style.removeProperty("--color-text");
     if (theme.secondary_color) root.style.setProperty("--color-secondary", theme.secondary_color); // Keep gold
     if (theme.accent_color) root.style.setProperty("--color-accent", theme.accent_color);
   }, []);

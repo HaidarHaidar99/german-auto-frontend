@@ -115,7 +115,7 @@ export function LeaveReviewPage() {
   return (
     <div
       style={{
-        backgroundColor: "#000000",
+        backgroundColor: "var(--color-background)",
         minHeight: "85vh",
         padding: "clamp(var(--space-2xl), 6vw, var(--space-4xl)) var(--space-md)",
         display: "flex",
@@ -127,11 +127,11 @@ export function LeaveReviewPage() {
         style={{
           width: "100%",
           maxWidth: "620px",
-          backgroundColor: "#0a0a0a",
-          border: "1px solid rgba(255, 255, 255, 0.12)",
+          backgroundColor: "var(--color-card)",
+          border: "1px solid var(--color-border)",
           borderRadius: "var(--radius-lg)",
           padding: "clamp(var(--space-xl), 5vw, var(--space-3xl))",
-          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.8)",
+          boxShadow: "var(--shadow-card)",
         }}
       >
         {/* Back Link */}
@@ -174,7 +174,7 @@ export function LeaveReviewPage() {
               <Icon name="check" size={32} />
             </div>
 
-            <h2 style={{ fontSize: "1.75rem", fontWeight: 700, color: "#ffffff", margin: "0 0 var(--space-sm)" }}>
+            <h2 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text)", margin: "0 0 var(--space-sm)" }}>
               {currentLang === "en" ? "Review Submitted Successfully!" : "Bewertung erfolgreich übermittelt!"}
             </h2>
 
@@ -212,7 +212,7 @@ export function LeaveReviewPage() {
               >
                 {currentLang === "en" ? "Client Feedback" : "Kundenstimmen"}
               </span>
-              <h1 style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)", fontWeight: 800, color: "#ffffff", margin: "0 0 var(--space-xs)" }}>
+              <h1 style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)", fontWeight: 800, color: "var(--color-text)", margin: "0 0 var(--space-xs)" }}>
                 {currentLang === "en" ? "Share Your Experience" : "Ihre Bewertung abgeben"}
               </h1>
               <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem", lineHeight: 1.6, margin: 0 }}>
@@ -250,7 +250,7 @@ export function LeaveReviewPage() {
                   <Icon name="user" size={22} />
                 </div>
 
-                <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff", margin: "0 0 var(--space-xs)" }}>
+                <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text)", margin: "0 0 var(--space-xs)" }}>
                   {currentLang === "en" ? "Sign in to Leave a Review" : "Anmeldung erforderlich"}
                 </h3>
                 <p style={{ color: "var(--color-text-muted)", fontSize: "0.925rem", lineHeight: 1.5, margin: "0 auto var(--space-xl)", maxWidth: "420px" }}>
@@ -290,9 +290,9 @@ export function LeaveReviewPage() {
                     alignItems: "center",
                     gap: "var(--space-md)",
                     padding: "var(--space-md)",
-                    backgroundColor: "#000000",
+                    backgroundColor: "var(--color-surface)",
                     borderRadius: "var(--radius-md)",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    border: "1px solid var(--color-border)",
                   }}
                 >
                   <div
@@ -313,7 +313,7 @@ export function LeaveReviewPage() {
                     {(user?.full_name || user?.email || "U")[0].toUpperCase()}
                   </div>
                   <div>
-                    <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "#ffffff" }}>
+                    <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--color-text)" }}>
                       {user?.full_name || user?.email}
                     </div>
                     <div style={{ fontSize: "0.8rem", color: "#D4AF37", fontWeight: 600 }}>
@@ -324,7 +324,7 @@ export function LeaveReviewPage() {
 
                 {/* Rating Stars Selector */}
                 <div>
-                  <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
+                  <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                     {currentLang === "en" ? "Overall Rating *" : "Gesamtbewertung *"}
                   </label>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
@@ -345,7 +345,7 @@ export function LeaveReviewPage() {
                             cursor: "pointer",
                             fontSize: "2.2rem",
                             lineHeight: 1,
-                            color: active ? "#D4AF37" : "rgba(255, 255, 255, 0.2)",
+                            color: active ? "#D4AF37" : "var(--color-border)",
                             transition: "transform 0.15s ease, color 0.15s ease",
                             transform: active ? "scale(1.15)" : "scale(1)",
                           }}
@@ -363,7 +363,7 @@ export function LeaveReviewPage() {
                 {/* Review Text Area - Black Field matching Login */}
                 <div className="form-field">
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
-                    <label htmlFor="leave-review-text" className="form-label" style={{ margin: 0, color: "#ffffff", fontWeight: 600 }}>
+                    <label htmlFor="leave-review-text" className="form-label" style={{ margin: 0, color: "var(--color-text)", fontWeight: 600 }}>
                       {currentLang === "en" ? "Your Review *" : "Ihre Rezension *"}
                     </label>
                     <span style={{ fontSize: "0.8rem", color: text.length > 300 ? "#ef4444" : "var(--color-text-muted)" }}>
@@ -386,10 +386,10 @@ export function LeaveReviewPage() {
                     style={{
                       width: "100%",
                       padding: "14px 16px",
-                      backgroundColor: "#000000",
-                      border: "1px solid rgba(255, 255, 255, 0.2)",
+                      backgroundColor: "var(--color-input-bg, var(--color-surface))",
+                      border: "1px solid var(--color-border)",
                       borderRadius: "var(--radius-sm)",
-                      color: "#ffffff",
+                      color: "var(--color-text)",
                       fontSize: "0.95rem",
                       lineHeight: 1.6,
                       resize: "none",
@@ -398,7 +398,7 @@ export function LeaveReviewPage() {
                       transition: "border-color 0.2s ease",
                     }}
                     onFocus={(e) => (e.target.style.borderColor = "#D4AF37")}
-                    onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.2)")}
+                    onBlur={(e) => (e.target.style.borderColor = "var(--color-border)")}
                   />
                   <div style={{ marginTop: "4px", fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
                     {currentLang === "en"

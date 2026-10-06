@@ -224,8 +224,8 @@ export function CarsPage() {
                   gap: "var(--space-sm)",
                   padding: "10px 14px",
                   borderRadius: "var(--radius-lg, 12px)",
-                  backgroundColor: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  backgroundColor: "var(--color-surface)",
+                  border: "1px solid var(--color-border)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -233,7 +233,7 @@ export function CarsPage() {
                     style={{
                       fontSize: "12px",
                       fontWeight: 700,
-                      color: "#ffffff",
+                      color: "var(--color-text)",
                       textTransform: "uppercase",
                       letterSpacing: "0.08em",
                     }}

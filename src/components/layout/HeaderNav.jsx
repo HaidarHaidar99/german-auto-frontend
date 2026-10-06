@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSettings, DEFAULT_BRAND_NAME, DEFAULT_LOGO_URL } from "../../contexts/SettingsContext";
 import LanguageSwitcher from "../common/LanguageSwitcher";
+import ThemeToggle from "../common/ThemeToggle";
+import { useTheme } from "../../contexts/ThemeContext";
 import IconButton from "../ui/IconButton";
 import Button from "../ui/Button";
 import Icon from "../common/Icon";
@@ -21,6 +23,7 @@ export function HeaderNav({
 }) {
   const { t } = useTranslation(["navigation", "common"]);
   const { isAuthenticated, logout, isAdmin, favorites = [], user } = useAuth();
+  const { isDark } = useTheme();
   const isUserLoggedIn = Boolean(isAuthenticated && user);
   const { settings } = useSettings();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -317,7 +320,7 @@ export function HeaderNav({
           width: "100%",
           height: "var(--header-height)",
           zIndex: 9999, // High z-index to stay above everything
-          backgroundColor: isTransparent ? "transparent" : "rgba(0, 0, 0, 0.85)",
+          backgroundColor: isTransparent ? "transparent" : (isDark ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.9)"),
           backdropFilter: isTransparent ? "none" : "blur(16px)",
           WebkitBackdropFilter: isTransparent ? "none" : "blur(16px)",
           borderBottom: isTransparent ? "none" : "1px solid var(--color-border)",
@@ -383,34 +386,34 @@ export function HeaderNav({
             <Link
               to="/"
               onClick={handleHomeClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
             >
               {t("home", { defaultValue: "Home" })}
             </Link>
-            <Link to="/cars" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+            <Link to="/cars" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}>
               {t("cars", { defaultValue: "Cars" })}
             </Link>
-            <Link to="/sell-your-car" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}>
+            <Link to="/sell-your-car" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}>
               {t("sellYourCar")}
             </Link>
             <Link
               to="/about"
               onClick={handleAboutClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
             >
               {t("about")}
             </Link>
             <Link
               to="/#reviews"
               onClick={handleReviewsClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
             >
               {t("reviews", { defaultValue: "Bewertungen" })}
             </Link>
             <Link
               to="/contact"
               onClick={handleContactClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "#ffffff", transition: "color 0.3s ease" }}
+              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
             >
               {t("contact", { defaultValue: "Kontakt" })}
             </Link>
@@ -431,23 +434,23 @@ export function HeaderNav({
                   width: "38px",
                   height: "38px",
                   borderRadius: "50%",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  backgroundColor: "var(--color-accent-subtle)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  color: favorites.length > 0 ? "#ef4444" : "#ffffff",
-                  border: favorites.length > 0 ? "1px solid rgba(239, 68, 68, 0.5)" : "1px solid rgba(255, 255, 255, 0.2)",
+                  color: favorites.length > 0 ? "#ef4444" : "var(--color-text)",
+                  border: favorites.length > 0 ? "1px solid rgba(239, 68, 68, 0.5)" : "1px solid var(--color-border)",
                   transition: "all 0.25s ease",
                   textDecoration: "none",
                   flexShrink: 0,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.18)";
-                  e.currentTarget.style.borderColor = "#D4AF37";
+                  e.currentTarget.style.backgroundColor = "var(--color-surface)";
+                  e.currentTarget.style.borderColor = "var(--color-secondary)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                  e.currentTarget.style.borderColor = favorites.length > 0 ? "rgba(239, 68, 68, 0.5)" : "rgba(255, 255, 255, 0.2)";
+                  e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                  e.currentTarget.style.borderColor = favorites.length > 0 ? "rgba(239, 68, 68, 0.5)" : "var(--color-border)";
                 }}
               >
                 <Icon name={favorites.length > 0 ? "heart-filled" : "heart"} size={18} color={favorites.length > 0 ? "#ef4444" : "currentColor"} />
@@ -486,33 +489,36 @@ export function HeaderNav({
                       width: "36px",
                       height: "36px",
                       borderRadius: "50%",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "var(--color-accent-subtle)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "#ffffff",
+                      color: "var(--color-text)",
                       transition: "all 0.3s ease",
-                      border: "1px solid rgba(255, 255, 255, 0.2)"
+                      border: "1px solid var(--color-border)"
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "#ffffff";
-                      e.currentTarget.style.color = "#000000";
+                      e.currentTarget.style.backgroundColor = "var(--color-text)";
+                      e.currentTarget.style.color = "var(--color-background)";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
-                      e.currentTarget.style.color = "#ffffff";
+                      e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                      e.currentTarget.style.color = "var(--color-text)";
                     }}
                   >
                     <Icon name="user" size={18} />
                   </Link>
-                  <Button variant="ghost" size="sm" onClick={() => logout()}>
-                    {t("logout")}
-                  </Button>
+                  {/* Theme Switcher replaces Logout button on desktop */}
+                  <ThemeToggle size="desktop" />
                 </div>
               ) : (
-                <Button as={Link} to="/login" variant="secondary" size="sm" style={{ borderRadius: "0px" }}> {/* Sharper edges for premium feel */}
-                  {t("login")}
-                </Button>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
+                  <Button as={Link} to="/login" variant="secondary" size="sm" style={{ borderRadius: "0px" }}> {/* Sharper edges for premium feel */}
+                    {t("login")}
+                  </Button>
+                  {/* Theme Switcher replaces Logout button spot on desktop */}
+                  <ThemeToggle size="desktop" />
+                </div>
               )}
             </div>
 
@@ -578,7 +584,7 @@ export function HeaderNav({
           left: 0,
           width: "100%",
           height: "100dvh",
-          backgroundColor: "#000000", // Strictly Black
+          backgroundColor: "var(--color-background)",
           zIndex: 9998,
           display: menuOpen ? "flex" : "none", // Avoid rendering when closed to prevent interaction
           flexDirection: "column",
@@ -613,9 +619,9 @@ export function HeaderNav({
               width: "42px",
               height: "42px",
               borderRadius: "50%",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              border: "1px solid rgba(255, 255, 255, 0.25)",
-              color: "#ffffff",
+              backgroundColor: "var(--color-accent-subtle)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-text)",
               fontSize: "18px",
               display: "flex",
               alignItems: "center",
@@ -624,10 +630,14 @@ export function HeaderNav({
               transition: "all 0.2s ease",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.2)";
+              e.currentTarget.style.backgroundColor = "var(--color-surface)";
+              e.currentTarget.style.borderColor = "var(--color-secondary)";
+              e.currentTarget.style.color = "var(--color-secondary)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
+              e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+              e.currentTarget.style.borderColor = "var(--color-border)";
+              e.currentTarget.style.color = "var(--color-text)";
             }}
           >
             ✕
@@ -659,7 +669,7 @@ export function HeaderNav({
               style={{ 
                 fontSize: "clamp(1.4rem, 4.5vw, 1.95rem)", 
                 fontWeight: 700, 
-                color: "#ffffff", 
+                color: "var(--color-text)", 
                 textDecoration: "none",
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
@@ -672,12 +682,12 @@ export function HeaderNav({
                 transition: "color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = "#ffffff";
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
-                e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                e.currentTarget.style.color = "var(--color-secondary)";
+                e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                e.currentTarget.style.borderColor = "var(--color-border)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = "#ffffff";
+                e.currentTarget.style.color = "var(--color-text)";
                 e.currentTarget.style.backgroundColor = "transparent";
                 e.currentTarget.style.borderColor = "transparent";
               }}
@@ -710,9 +720,9 @@ export function HeaderNav({
                 width: "48px",
                 height: "48px",
                 borderRadius: "50%",
-                border: "1.5px solid #ffffff",
+                border: "1.5px solid var(--color-text)",
                 backgroundColor: "transparent",
-                color: "#ffffff",
+                color: "var(--color-text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -722,13 +732,17 @@ export function HeaderNav({
                 flexShrink: 0,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                e.currentTarget.style.borderColor = "var(--color-secondary)";
+                e.currentTarget.style.color = "var(--color-secondary)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "var(--color-text)";
+                e.currentTarget.style.color = "var(--color-text)";
               }}
             >
-              <Icon name="heart" size={20} color="#ffffff" />
+              <Icon name="heart" size={20} color="currentColor" />
             </Link>
 
             {/* 2. Profile Icon */}
@@ -741,89 +755,33 @@ export function HeaderNav({
                 width: "48px",
                 height: "48px",
                 borderRadius: "50%",
-                border: "1.5px solid #ffffff",
+                border: "1.5px solid var(--color-text)",
                 backgroundColor: "transparent",
-                color: "#ffffff",
+                color: "var(--color-text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 cursor: "pointer",
-                transition: "background-color 0.2s ease",
+                transition: "all 0.2s ease",
                 textDecoration: "none",
                 flexShrink: 0,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+                e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                e.currentTarget.style.borderColor = "var(--color-secondary)";
+                e.currentTarget.style.color = "var(--color-secondary)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.borderColor = "var(--color-text)";
+                e.currentTarget.style.color = "var(--color-text)";
               }}
             >
-              <Icon name="user" size={20} color="#ffffff" />
+              <Icon name="user" size={20} color="currentColor" />
             </Link>
 
-            {/* 3. Login or Logout Icon */}
-            {isUserLoggedIn ? (
-              <button
-                type="button"
-                onClick={() => { closeMenu(); logout(); }}
-                aria-label={t("logout", { defaultValue: "Abmelden" })}
-                title={t("logout", { defaultValue: "Abmelden" })}
-                style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "50%",
-                  border: "1.5px solid #ffffff",
-                  backgroundColor: "transparent",
-                  color: "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  transition: "background-color 0.2s ease",
-                  flexShrink: 0,
-                  padding: 0,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                <Icon name="log-out" size={20} color="#ffffff" />
-              </button>
-            ) : (
-              <Link
-                to="/login"
-                onClick={closeMenu}
-                aria-label={t("login", { defaultValue: "Anmelden" })}
-                title={t("login", { defaultValue: "Anmelden" })}
-                style={{
-                  width: "48px",
-                  height: "48px",
-                  borderRadius: "50%",
-                  border: "1.5px solid #ffffff",
-                  backgroundColor: "transparent",
-                  color: "#ffffff",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  transition: "background-color 0.2s ease",
-                  textDecoration: "none",
-                  flexShrink: 0,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                <Icon name="log-in" size={20} color="#ffffff" />
-              </Link>
-            )}
+            {/* 3. Theme Toggle Switch (replaces Logout in mobile menu) */}
+            <ThemeToggle size="mobile" />
           </div>
         </nav>
       </div>

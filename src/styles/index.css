@@ -178,7 +178,7 @@ html.lenis, html.lenis body {
 /* Standard CSS Scrollbar (Firefox & modern browsers) - applied strictly to html */
 html {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2)) transparent;
 }
 
 /* WebKit / Chromium Custom Scrollbar (Chrome, Edge, Safari, Opera) */
@@ -192,14 +192,14 @@ html::-webkit-scrollbar-track {
 }
 
 html::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--scrollbar-thumb, rgba(255, 255, 255, 0.2));
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
 html::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: var(--scrollbar-thumb-hover, rgba(255, 255, 255, 0.35));
   background-clip: padding-box;
 }
 

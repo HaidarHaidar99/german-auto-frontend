@@ -4,6 +4,7 @@ import ScrollToTop from "./components/common/ScrollToTop";
 import AosManager from "./components/common/AosManager";
 import { AuthProvider } from "./contexts/AuthContext";
 import { AdminAuthProvider } from "./contexts/AdminAuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import { SettingsProvider } from "./contexts/SettingsContext";
 import AppRoutes from "./routes/AppRoutes";
 
@@ -14,9 +15,11 @@ export function App() {
       <AosManager />
       <AuthProvider>
         <AdminAuthProvider>
-          <SettingsProvider>
-            <AppRoutes />
-          </SettingsProvider>
+          <ThemeProvider>
+            <SettingsProvider>
+              <AppRoutes />
+            </SettingsProvider>
+          </ThemeProvider>
         </AdminAuthProvider>
       </AuthProvider>
     </BrowserRouter>

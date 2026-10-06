@@ -146,9 +146,9 @@ export function CarCardBase({
         overflow: "hidden",
         position: "relative",
         borderRadius: "var(--radius-xl, 16px)",
-        background: "linear-gradient(180deg, #131518 0%, #0c0d0f 100%)",
-        border: "1px solid rgba(255, 255, 255, 0.09)",
-        boxShadow: "none",
+        background: "var(--card-gradient, var(--color-card))",
+        border: "1px solid var(--color-border)",
+        boxShadow: "var(--shadow-card)",
         transition: "border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease",
         cursor: onSelect ? "pointer" : "default",
         touchAction: "pan-y pan-x",
@@ -158,13 +158,13 @@ export function CarCardBase({
         if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
         e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
         e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
-        e.currentTarget.style.boxShadow = "0 14px 34px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15)";
+        e.currentTarget.style.boxShadow = "var(--shadow-card-hover)";
       }}
       onMouseLeave={(e) => {
         if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
-        e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.09)";
+        e.currentTarget.style.borderColor = "var(--color-border)";
         e.currentTarget.style.transform = "translateY(0) scale(1)";
-        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.boxShadow = "var(--shadow-card)";
       }}
     >
       {/* Media Stage */}
@@ -231,7 +231,7 @@ export function CarCardBase({
               fontWeight: 700,
               textTransform: "uppercase",
               letterSpacing: "0.14em",
-              color: "#94a3b8",
+              color: "var(--color-text-muted)",
               marginBottom: "4px",
             }}
           >
@@ -243,7 +243,7 @@ export function CarCardBase({
               fontSize: "1.15rem",
               fontWeight: 700,
               lineHeight: 1.35,
-              color: "#ffffff",
+              color: "var(--color-text)",
               letterSpacing: "-0.01em",
               display: "-webkit-box",
               WebkitLineClamp: 2,
@@ -261,7 +261,7 @@ export function CarCardBase({
             style={{
               fontSize: "1.35rem",
               fontWeight: 800,
-              color: "#ffffff",
+              color: "var(--color-text)",
               letterSpacing: "-0.02em",
             }}
           >
@@ -271,7 +271,7 @@ export function CarCardBase({
             <div
               style={{
                 fontSize: "0.9rem",
-                color: "#64748b",
+                color: "var(--color-text-subtle)",
                 textDecoration: "line-through",
               }}
             >
@@ -304,8 +304,8 @@ export function CarCardBase({
             style={{
               width: "100%",
               borderRadius: "var(--radius-sm, 6px)",
-              borderColor: "rgba(255, 255, 255, 0.2)",
-              color: "#ffffff",
+              borderColor: "var(--color-border)",
+              color: "var(--color-text)",
               fontWeight: 600,
               letterSpacing: "0.04em",
             }}

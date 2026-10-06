@@ -212,11 +212,11 @@ export function LoginPage() {
         style={{
           width: "100%",
           maxWidth: "440px",
-          backgroundColor: "#0d0e12",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          backgroundColor: "var(--color-card)",
+          border: "1px solid var(--color-border)",
           borderRadius: "14px",
           padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
-          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
+          boxShadow: "var(--shadow-card)",
         }}
       >
           {isAdminTarget && (
@@ -317,8 +317,8 @@ export function LoginPage() {
             <div
               style={{
                 padding: "var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                border: "1px solid rgba(255, 255, 255, 0.3)",
+                backgroundColor: "var(--color-surface)",
+                border: "1px solid var(--color-border)",
                 borderRadius: "var(--radius-md)",
                 marginBottom: "var(--space-md)",
               }}
@@ -510,10 +510,10 @@ export function LoginPage() {
                   justifyContent: "center",
                   gap: "12px",
                   padding: "12px 16px",
-                  backgroundColor: "#000000",
-                  border: "1px solid #ffffff",
+                  backgroundColor: "var(--color-card)",
+                  border: "1px solid var(--color-border)",
                   borderRadius: "0px",
-                  color: "#ffffff",
+                  color: "var(--color-text)",
                   fontSize: "11px",
                   fontFamily: "var(--font-family-sans)",
                   fontWeight: "700",

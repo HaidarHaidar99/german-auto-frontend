@@ -115,11 +115,11 @@ export function SignupPage() {
         style={{
           width: "100%",
           maxWidth: "460px",
-          backgroundColor: "#0d0e12",
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          backgroundColor: "var(--color-card)",
+          border: "1px solid var(--color-border)",
           borderRadius: "14px",
           padding: "clamp(var(--space-xl), 5vw, var(--space-2xl))",
-          boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
+          boxShadow: "var(--shadow-card)",
         }}
       >
         {isSuccess ? (

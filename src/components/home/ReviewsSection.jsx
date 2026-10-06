@@ -242,26 +242,27 @@ export function ReviewsSection({ googleReviewsConfig }) {
                           height: "440px",
                           minHeight: "440px",
                           maxHeight: "440px",
-                          backgroundColor: "#0d0d0d",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          backgroundColor: "var(--color-card)",
+                          border: "1px solid var(--color-border)",
                           borderRadius: "16px",
                           padding: "24px",
                           display: "flex",
                           flexDirection: "column",
                           boxSizing: "border-box",
                           touchAction: "pan-y",
+                          boxShadow: "var(--shadow-card)",
                         }}
                         onMouseEnter={(e) => {
                           if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
                           e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
                           e.currentTarget.style.transform = "translateY(-6px) scale(1.01)";
-                          e.currentTarget.style.boxShadow = "0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(212, 175, 55, 0.15)";
+                          e.currentTarget.style.boxShadow = "var(--shadow-card-hover)";
                         }}
                         onMouseLeave={(e) => {
                           if (typeof window !== "undefined" && window.matchMedia && !window.matchMedia("(hover: hover)").matches) return;
-                          e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                          e.currentTarget.style.borderColor = "var(--color-border)";
                           e.currentTarget.style.transform = "translateY(0) scale(1)";
-                          e.currentTarget.style.boxShadow = "none";
+                          e.currentTarget.style.boxShadow = "var(--shadow-card)";
                         }}
                       >
                         {/* 1. Top Header Row: Avatar + Name & Relative Date */}
@@ -281,14 +282,14 @@ export function ReviewsSection({ googleReviewsConfig }) {
                                 width: "42px",
                                 height: "42px",
                                 borderRadius: "50%",
-                                backgroundColor: "#221d18",
+                                backgroundColor: "rgba(212, 175, 55, 0.12)",
                                 border: "1px solid rgba(212, 175, 55, 0.35)",
                                 color: "#D4AF37",
                                 fontWeight: 700,
                                 fontSize: "1.1rem",
                                 display: "flex",
                                 alignItems: "center",
-                                justifyContent: "center",
+                                justifyCenter: "center",
                                 flexShrink: 0,
                               }}
                             >
@@ -301,7 +302,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
                                 style={{
                                   fontSize: nameFontSize,
                                   fontWeight: 700,
-                                  color: "#ffffff",
+                                  color: "var(--color-text)",
                                   whiteSpace: "nowrap",
                                   overflow: "hidden",
                                   textOverflow: "ellipsis",
@@ -314,7 +315,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
                               <div
                                 style={{
                                   fontSize: "0.8rem",
-                                  color: "rgba(255, 255, 255, 0.45)",
+                                  color: "var(--color-text-subtle)",
                                   marginTop: "3px",
                                   fontWeight: 500,
                                   whiteSpace: "nowrap",
@@ -364,7 +365,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
                           <p
                             style={{
                               margin: 0,
-                              color: "rgba(255, 255, 255, 0.9)",
+                              color: "var(--color-text-muted)",
                               fontSize: "0.92rem",
                               lineHeight: 1.65,
                               wordBreak: "break-word",
@@ -394,9 +395,9 @@ export function ReviewsSection({ googleReviewsConfig }) {
                   width: "36px",
                   height: "36px",
                   borderRadius: "50%",
-                  backgroundColor: "rgba(10, 10, 10, 0.9)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  color: "#ffffff",
+                  backgroundColor: "var(--color-card)",
+                  border: "1px solid var(--color-border)",
+                  color: "var(--color-text)",
                   fontSize: "18px",
                   cursor: "pointer",
                   display: "flex",
@@ -411,9 +412,9 @@ export function ReviewsSection({ googleReviewsConfig }) {
                   e.currentTarget.style.borderColor = "#D4AF37";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(10, 10, 10, 0.9)";
-                  e.currentTarget.style.color = "#ffffff";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                  e.currentTarget.style.backgroundColor = "var(--color-card)";
+                  e.currentTarget.style.color = "var(--color-text)";
+                  e.currentTarget.style.borderColor = "var(--color-border)";
                 }}
               >
                 ‹
@@ -434,9 +435,9 @@ export function ReviewsSection({ googleReviewsConfig }) {
                   width: "36px",
                   height: "36px",
                   borderRadius: "50%",
-                  backgroundColor: "rgba(10, 10, 10, 0.9)",
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                  color: "#ffffff",
+                  backgroundColor: "var(--color-card)",
+                  border: "1px solid var(--color-border)",
+                  color: "var(--color-text)",
                   fontSize: "18px",
                   cursor: "pointer",
                   display: "flex",
@@ -451,9 +452,9 @@ export function ReviewsSection({ googleReviewsConfig }) {
                   e.currentTarget.style.borderColor = "#D4AF37";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(10, 10, 10, 0.9)";
-                  e.currentTarget.style.color = "#ffffff";
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.2)";
+                  e.currentTarget.style.backgroundColor = "var(--color-card)";
+                  e.currentTarget.style.color = "var(--color-text)";
+                  e.currentTarget.style.borderColor = "var(--color-border)";
                 }}
               >
                 ›
