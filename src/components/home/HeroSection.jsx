@@ -6,6 +6,7 @@ import { Eyebrow, Display, Text } from "../ui/Typography";
 import Button from "../ui/Button";
 import IconButton from "../ui/IconButton";
 import { isReducedMotion } from "../../utils/animation";
+import { useTheme } from "../../contexts/ThemeContext";
 
 /**
  * German Auto — Production Cinematic Hero Section
@@ -15,6 +16,7 @@ import { isReducedMotion } from "../../utils/animation";
 
 export function HeroSection({ heroConfig, siteConfig }) {
   const { t, i18n } = useTranslation(["common", "navigation"]);
+  const { isDark } = useTheme();
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const isEnabled = heroConfig?.enabled !== false;
@@ -30,6 +32,7 @@ export function HeroSection({ heroConfig, siteConfig }) {
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const heroRef = useRef(null);
+  const videoRefs = useRef({});
 
   const itemCount = activeItems.length;
 
@@ -74,6 +77,27 @@ export function HeroSection({ heroConfig, siteConfig }) {
       if (node) node.removeEventListener("keydown", handleKeyDown);
     };
   }, [nextSlide, prevSlide]);
+
+  // Synchronize video playback: ensure only the currently active slide plays and prevent overlapping playback
+  useEffect(() => {
+    Object.entries(videoRefs.current).forEach(([idxStr, videoEl]) => {
+      if (!videoEl) return;
+      const idx = Number(idxStr);
+      if (idx === currentIndex) {
+        try {
+          const playPromise = videoEl.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(() => {});
+          }
+        } catch (_) {}
+      } else {
+        try {
+          videoEl.pause();
+          videoEl.currentTime = 0;
+        } catch (_) {}
+      }
+    });
+  }, [currentIndex, isDark]);
 
   // Touch swipe handling: strictly horizontal swipes advance slides, never interfering with vertical page scrolling
   const handleTouchStart = (e) => {
@@ -143,7 +167,15 @@ export function HeroSection({ heroConfig, siteConfig }) {
       <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none" }}>
         {activeItems.map((item, idx) => {
           const isActive = idx === currentIndex;
-          const isItemVideo = item.type === "VIDEO" || item.media_type === "video" || item.media_url?.match(/\.(mp4|webm)$/i);
+          const useLightMedia = !isDark && Boolean(item.media_light_url);
+          const currentMediaUrl = useLightMedia ? item.media_light_url : item.media_url;
+          const currentMediaType = useLightMedia
+            ? (item.type_light || item.type || "IMAGE")
+            : (item.type || "IMAGE");
+          const isItemVideo = currentMediaType === "VIDEO" || currentMediaUrl?.match(/\.(mp4|webm)$/i);
+          const currentPoster = useLightMedia
+            ? (item.poster_light_url || item.poster_url)
+            : item.poster_url;
 
           return (
             <div
@@ -158,11 +190,16 @@ export function HeroSection({ heroConfig, siteConfig }) {
                 pointerEvents: "none",
               }}
             >
-              {isItemVideo && item.media_url ? (
+              {isItemVideo && currentMediaUrl ? (
                 <video
-                  src={item.media_url}
-                  poster={item.poster_url}
-                  autoPlay={true}
+                  ref={(el) => {
+                    if (el) videoRefs.current[idx] = el;
+                    else delete videoRefs.current[idx];
+                  }}
+                  key={`${idx}-${currentMediaUrl}`}
+                  src={currentMediaUrl}
+                  poster={currentPoster}
+                  autoPlay={isActive}
                   loop
                   muted
                   playsInline
@@ -172,9 +209,10 @@ export function HeroSection({ heroConfig, siteConfig }) {
                     objectFit: "cover",
                   }}
                 />
-              ) : item.media_url ? (
+              ) : currentMediaUrl ? (
                 <img
-                  src={item.media_url}
+                  key={`${idx}-${currentMediaUrl}`}
+                  src={currentMediaUrl}
                   alt={item.title_de || item.title_en || "Hero"}
                   fetchPriority={idx === 0 ? "high" : "auto"}
                   loading={idx === 0 ? "eager" : "lazy"}
@@ -187,13 +225,13 @@ export function HeroSection({ heroConfig, siteConfig }) {
                   }}
                 />
               ) : (
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      background: "radial-gradient(ellipse at 50% 60%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.95) 75%)",
-                    }}
-                  />
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    background: "radial-gradient(ellipse at 50% 60%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.95) 75%)",
+                  }}
+                />
               )}
             </div>
           );

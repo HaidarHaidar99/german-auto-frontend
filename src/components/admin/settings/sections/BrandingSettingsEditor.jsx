@@ -23,12 +23,15 @@ export function BrandingSettingsEditor({
       const keyMap = {
         logo: "logo_url",
         logo_dark: "logo_dark_url",
+        logo_light: "logo_light_url",
         favicon: "favicon_url",
       };
       const fieldKey = keyMap[type] || "logo_url";
       onChange?.({
         ...data,
         [fieldKey]: newUrl,
+        // Keep logo_dark_url synchronized if updating the default logo
+        ...(type === "logo" && !data.logo_dark_url ? { logo_dark_url: newUrl } : {}),
       });
     }
     return res;
@@ -38,7 +41,7 @@ export function BrandingSettingsEditor({
     <SettingsSection
       title={t("settingsSections.branding", { defaultValue: "Branding & Logos" })}
       subtitle={t("brandingSubtitle", {
-        defaultValue: "Verwalten Sie Ihr offizielles Logo, Dark-Mode-Varianten und das Browser-Favicon.",
+        defaultValue: "Verwalten Sie Ihr offizielles Logo, Light- und Dark-Mode-Varianten und das Browser-Favicon.",
       })}
       sectionKey="branding"
       onReset={onReset}
@@ -46,32 +49,45 @@ export function BrandingSettingsEditor({
       previewUrl="/"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
-        <MediaUploadField
-          label={t("primaryLogo", { defaultValue: "Hauptlogo (Hell / Standard)" })}
-          value={data.logo_url || ""}
-          accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
-          maxSizeMB={5}
-          onChange={(val) => onChange?.({ ...data, logo_url: val })}
-          onUpload={(file) => handleUploadAsset(file, "logo")}
-          helper={t("primaryLogoHelper", {
-            defaultValue: "Wird in der Navigation auf dunklen Hintergründen gerendert. SVG, PNG oder JPEG empfohlen.",
-          })}
-          error={errors["branding.logo_url"]}
-        />
+        {/* Responsive Two-Column Grid for Dark Mode and Light Mode Logos */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "var(--space-lg)",
+            alignItems: "start",
+          }}
+        >
+          {/* Current Logo / Dark Mode Version */}
+          <MediaUploadField
+            label={t("darkModeLogo", { defaultValue: "Dark-Mode Logo (Standard)" })}
+            value={data.logo_url || ""}
+            accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
+            maxSizeMB={5}
+            onChange={(val) => onChange?.({ ...data, logo_url: val, logo_dark_url: val })}
+            onUpload={(file) => handleUploadAsset(file, "logo")}
+            helper={t("darkModeLogoHelper", {
+              defaultValue: "Wird im standardmäßigen dunklen Design verwendet. SVG, PNG oder JPEG empfohlen.",
+            })}
+            error={errors["branding.logo_url"]}
+          />
 
-        <MediaUploadField
-          label={t("logoDark", { defaultValue: "Alternatives Logo (Dunkel / Kontrast)" })}
-          value={data.logo_dark_url || ""}
-          accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
-          maxSizeMB={5}
-          onChange={(val) => onChange?.({ ...data, logo_dark_url: val })}
-          onUpload={(file) => handleUploadAsset(file, "logo_dark")}
-          helper={t("logoDarkHelper", {
-            defaultValue: "Optional. Wird für helle Hintergründe oder Druckansichten verwendet. SVG, PNG oder JPEG empfohlen.",
-          })}
-          error={errors["branding.logo_dark_url"]}
-        />
+          {/* Light Mode Logo Upload Beside Current Logo */}
+          <MediaUploadField
+            label={t("lightModeLogo", { defaultValue: "Light-Mode Logo" })}
+            value={data.logo_light_url || ""}
+            accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
+            maxSizeMB={5}
+            onChange={(val) => onChange?.({ ...data, logo_light_url: val })}
+            onUpload={(file) => handleUploadAsset(file, "logo_light")}
+            helper={t("lightModeLogoHelper", {
+              defaultValue: "Wird im hellen Design verwendet. Fällt automatisch auf das Dark-Mode-Logo zurück, wenn nicht hochgeladen.",
+            })}
+            error={errors["branding.logo_light_url"]}
+          />
+        </div>
 
+        {/* Browser Favicon */}
         <MediaUploadField
           label={t("favicon", { defaultValue: "Browser-Favicon" })}
           value={data.favicon_url || ""}

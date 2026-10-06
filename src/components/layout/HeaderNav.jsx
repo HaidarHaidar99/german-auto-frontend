@@ -304,7 +304,9 @@ export function HeaderNav({
   };
 
   const siteName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const activeLogoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
+  const activeLogoUrl = (!isDark && settings?.branding?.logo_light_url)
+    ? settings.branding.logo_light_url
+    : (settings?.branding?.logo_url || settings?.branding?.logo_dark_url || DEFAULT_LOGO_URL);
 
   const isTransparent = transparent && !isScrolled && !menuOpen;
 

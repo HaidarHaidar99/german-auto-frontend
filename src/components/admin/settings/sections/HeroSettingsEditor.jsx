@@ -26,18 +26,26 @@ export function HeroSettingsEditor({
   const [editingIndex, setEditingIndex] = useState(null);
   const [draftSlide, setDraftSlide] = useState({});
 
-  const handleUploadHeroMedia = async (file) => {
+  const handleUploadHeroMedia = async (file, mode = "dark") => {
     const formData = new FormData();
     formData.append("file", file);
     const res = await settingsService.adminUploadHeroMedia(formData);
     const uploadedUrl = res?.data?.url;
     const mediaType = res?.data?.type || (file.type.startsWith("video/") ? "VIDEO" : "IMAGE");
     if (uploadedUrl) {
-      setDraftSlide((prev) => ({
-        ...prev,
-        media_url: uploadedUrl,
-        type: mediaType,
-      }));
+      if (mode === "light") {
+        setDraftSlide((prev) => ({
+          ...prev,
+          media_light_url: uploadedUrl,
+          type_light: mediaType,
+        }));
+      } else {
+        setDraftSlide((prev) => ({
+          ...prev,
+          media_url: uploadedUrl,
+          type: mediaType,
+        }));
+      }
     }
     return res;
   };
@@ -53,7 +61,10 @@ export function HeroSettingsEditor({
       button_link: "/cars",
       type: "IMAGE",
       media_url: "",
+      type_light: "IMAGE",
+      media_light_url: "",
       poster_url: "",
+      poster_light_url: "",
       enabled: true,
       order: items.length + 1,
     });
@@ -164,7 +175,7 @@ export function HeroSettingsEditor({
               ) : null}
 
               <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", flexWrap: "wrap" }}>
                   <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 500, color: "var(--color-admin-text, #ffffff)" }}>
                     {item.title_de || item.title_en || `Slide #${index + 1}`}
                   </span>
@@ -178,8 +189,23 @@ export function HeroSettingsEditor({
                       color: "var(--color-primary, var(--color-text))",
                     }}
                   >
-                    {item.type || "IMAGE"}
+                    🌙 {item.type || "IMAGE"}
                   </span>
+                  {item.media_light_url && (
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        textTransform: "uppercase",
+                        padding: "1px 6px",
+                        borderRadius: "3px",
+                        backgroundColor: "rgba(212, 175, 55, 0.15)",
+                        color: "#D4AF37",
+                        border: "1px solid rgba(212, 175, 55, 0.3)",
+                      }}
+                    >
+                      ☀️ Light
+                    </span>
+                  )}
                 </div>
                 <p style={{ margin: "2px 0 0", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
                   {item.subtitle_de || item.subtitle_en || "Keine Unterzeile"}
@@ -261,38 +287,121 @@ export function HeroSettingsEditor({
             </SettingsField>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Button-Link">
-              <Input
-                value={draftSlide.button_link || ""}
-                onChange={(e) => setDraftSlide({ ...draftSlide, button_link: e.target.value })}
-                placeholder="/cars"
-              />
-            </SettingsField>
+          <SettingsField label="Button-Link">
+            <Input
+              value={draftSlide.button_link || ""}
+              onChange={(e) => setDraftSlide({ ...draftSlide, button_link: e.target.value })}
+              placeholder="/cars"
+            />
+          </SettingsField>
 
-            <SettingsField label="Medientyp">
-              <Select
-                value={draftSlide.type || "IMAGE"}
-                onChange={(e) => setDraftSlide({ ...draftSlide, type: e.target.value })}
-                options={[
-                  { value: "IMAGE", label: "Bild (Image)" },
-                  { value: "VIDEO", label: "Video (MP4 / WebM)" },
-                ]}
+          {/* Media Configurations: Dark Mode (Default) and Light Mode (Optional) */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "var(--space-md)",
+              borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.1))",
+              paddingTop: "var(--space-md)",
+              marginTop: "var(--space-xs)",
+            }}
+          >
+            {/* 1. Dark Mode Media (Standard / Default) */}
+            <div
+              style={{
+                padding: "var(--space-md)",
+                backgroundColor: "rgba(255, 255, 255, 0.02)",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "var(--space-sm)",
+                  flexWrap: "wrap",
+                  gap: "var(--space-xs)",
+                }}
+              >
+                <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
+                  🌙 {t("heroDarkMedia", { defaultValue: "Dark-Mode Medium (Standard)" })}
+                </span>
+                <div style={{ width: "170px" }}>
+                  <Select
+                    value={draftSlide.type || "IMAGE"}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, type: e.target.value })}
+                    options={[
+                      { value: "IMAGE", label: "Bild (Image)" },
+                      { value: "VIDEO", label: "Video (MP4 / WebM)" },
+                    ]}
+                  />
+                </div>
+              </div>
+
+              <MediaUploadField
+                label=""
+                value={draftSlide.media_url || ""}
+                accept={draftSlide.type === "VIDEO" ? "video/mp4, video/webm" : "image/jpeg, image/png, image/webp"}
+                mediaType={draftSlide.type || "IMAGE"}
+                maxSizeMB={draftSlide.type === "VIDEO" ? 50 : 10}
+                onChange={(url) => setDraftSlide({ ...draftSlide, media_url: url || "" })}
+                onUpload={(file) => handleUploadHeroMedia(file, "dark")}
+                helper={t("heroDarkMediaHelper", {
+                  defaultValue: "Standard-Medium für das dunkle Design. Video: max. 50 MB • Bild: max. 10 MB",
+                })}
               />
-            </SettingsField>
+            </div>
+
+            {/* 2. Light Mode Media (Optional Upload) */}
+            <div
+              style={{
+                padding: "var(--space-md)",
+                backgroundColor: "rgba(255, 255, 255, 0.02)",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "var(--space-sm)",
+                  flexWrap: "wrap",
+                  gap: "var(--space-xs)",
+                }}
+              >
+                <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
+                  ☀️ {t("heroLightMedia", { defaultValue: "Light-Mode Medium (Optional)" })}
+                </span>
+                <div style={{ width: "170px" }}>
+                  <Select
+                    value={draftSlide.type_light || draftSlide.type || "IMAGE"}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, type_light: e.target.value })}
+                    options={[
+                      { value: "IMAGE", label: "Bild (Image)" },
+                      { value: "VIDEO", label: "Video (MP4 / WebM)" },
+                    ]}
+                  />
+                </div>
+              </div>
+
+              <MediaUploadField
+                label=""
+                value={draftSlide.media_light_url || ""}
+                accept={(draftSlide.type_light || draftSlide.type) === "VIDEO" ? "video/mp4, video/webm" : "image/jpeg, image/png, image/webp"}
+                mediaType={draftSlide.type_light || draftSlide.type || "IMAGE"}
+                maxSizeMB={(draftSlide.type_light || draftSlide.type) === "VIDEO" ? 50 : 10}
+                onChange={(url) => setDraftSlide({ ...draftSlide, media_light_url: url || "" })}
+                onUpload={(file) => handleUploadHeroMedia(file, "light")}
+                helper={t("heroLightMediaHelper", {
+                  defaultValue: "Optionales Bild oder Video für das helle Design. Fällt auf das Dark-Mode-Medium zurück, wenn nicht hochgeladen.",
+                })}
+              />
+            </div>
           </div>
-
-          {/* Media Upload using existing endpoint */}
-          <MediaUploadField
-            label="Hero-Medium hochladen"
-            value={draftSlide.media_url || ""}
-            accept={draftSlide.type === "VIDEO" ? "video/mp4, video/webm" : "image/jpeg, image/png, image/webp"}
-            mediaType={draftSlide.type}
-            maxSizeMB={draftSlide.type === "VIDEO" ? 50 : 10}
-            onChange={(url) => setDraftSlide({ ...draftSlide, media_url: url || "" })}
-            onUpload={handleUploadHeroMedia}
-            helper="Video: max. 50 MB (MP4, WebM) • Bild: max. 10 MB (JPEG, PNG, WEBP)"
-          />
 
           <SettingsToggle
             label="Slide aktiv"

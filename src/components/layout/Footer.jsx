@@ -2,11 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSettings, DEFAULT_BRAND_NAME, DEFAULT_LOGO_URL } from "../../contexts/SettingsContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import Icon from "../common/Icon";
 
 export function Footer() {
   const { t, i18n } = useTranslation(["navigation", "common", "footer"]);
   const { settings } = useSettings();
+  const { isDark } = useTheme();
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const siteConfig = settings?.site || {};
@@ -18,11 +20,10 @@ export function Footer() {
 
   const siteName = siteConfig.name || DEFAULT_BRAND_NAME;
 
-  // Footer Logo priority: footer_logo_url -> logo_dark_url -> logo_url -> default fallback
-  const footerLogo =
-    footerConfig.footer_logo_url ||
-    brandingConfig.logo_url ||
-    DEFAULT_LOGO_URL;
+  // Footer Logo priority based on active theme with fallback to default
+  const footerLogo = !isDark && (footerConfig.footer_logo_light_url || brandingConfig.logo_light_url)
+    ? (footerConfig.footer_logo_light_url || brandingConfig.logo_light_url)
+    : (footerConfig.footer_logo_url || brandingConfig.logo_url || DEFAULT_LOGO_URL);
 
   // Description
   const description =

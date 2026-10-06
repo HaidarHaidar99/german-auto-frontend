@@ -1,13 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useSettings, DEFAULT_LOGO_URL, DEFAULT_BRAND_NAME } from "../../contexts/SettingsContext";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export function LoadingState({ message = null, minHeight = "240px", showBrand = false }) {
   const { t } = useTranslation("common");
   const { settings } = useSettings?.() || {};
+  const { isDark } = useTheme?.() || { isDark: true };
 
   const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const logoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
+  const logoUrl = (!isDark && settings?.branding?.logo_light_url)
+    ? settings.branding.logo_light_url
+    : (settings?.branding?.logo_url || DEFAULT_LOGO_URL);
 
   return (
     <div
