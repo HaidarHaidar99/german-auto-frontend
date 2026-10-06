@@ -9,6 +9,7 @@ import Icon from "../../components/common/Icon";
 import ErrorState from "../../components/ui/ErrorState";
 import Modal from "../../components/ui/Modal";
 import Button from "../../components/ui/Button";
+import { useSettings } from "../../contexts/SettingsContext";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
 
@@ -51,6 +52,7 @@ const SECTIONS = [
 
 export function AdminSettingsPage() {
   const { t } = useTranslation(["admin", "common"]);
+  const { refreshSettings } = useSettings();
   const pageContainerRef = useRef(null);
 
   const [serverSettings, setServerSettings] = useState(null);
@@ -150,6 +152,7 @@ export function AdminSettingsPage() {
       [activeSection]: updatedSectionData,
     }));
     setSaveSuccess(false);
+    setError(null);
   };
 
   // Save current active section
@@ -158,6 +161,7 @@ export function AdminSettingsPage() {
 
     try {
       setSaving(true);
+      setError(null);
       setValidationErrors({});
       setSaveSuccess(false);
 
@@ -174,14 +178,26 @@ export function AdminSettingsPage() {
         [activeSection]: updatedFromServer[activeSection] || formData[activeSection],
       }));
 
+      // Synchronize global SettingsContext so the homepage and public components update immediately
+      if (typeof refreshSettings === "function") {
+        try {
+          await refreshSettings();
+        } catch (_) {}
+      }
+
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err) {
       const errs = err?.errors || {};
-      if (typeof errs === "object" && errs !== null) {
+      if (typeof errs === "object" && errs !== null && Object.keys(errs).length > 0) {
         setValidationErrors(errs);
+        const details = Object.entries(errs)
+          .map(([f, msg]) => `${f}: ${msg}`)
+          .join(" • ");
+        setError(`${err?.message || "Validierung fehlgeschlagen"} (${details})`);
+      } else {
+        setError(err?.message || "Fehler beim Speichern der Einstellungen.");
       }
-      setError(err?.message || "Fehler beim Speichern der Einstellungen.");
     } finally {
       setSaving(false);
     }
@@ -195,6 +211,7 @@ export function AdminSettingsPage() {
       [activeSection]: JSON.parse(JSON.stringify(serverSettings[activeSection] || {})),
     }));
     setValidationErrors({});
+    setError(null);
     setSaveSuccess(false);
   };
 
@@ -202,6 +219,7 @@ export function AdminSettingsPage() {
   const handleResetSection = async () => {
     try {
       setResetLoading(true);
+      setError(null);
       const res = await settingsService.adminResetSection(activeSection);
       const updatedFromServer = res?.data?.settings || res?.data || {};
 
@@ -214,6 +232,12 @@ export function AdminSettingsPage() {
         ...prev,
         [activeSection]: JSON.parse(JSON.stringify(resetValue)),
       }));
+
+      if (typeof refreshSettings === "function") {
+        try {
+          await refreshSettings();
+        } catch (_) {}
+      }
 
       setSaveSuccess(true);
       setValidationErrors({});

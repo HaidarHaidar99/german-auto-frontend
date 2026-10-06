@@ -26,6 +26,15 @@ export function HeroSettingsEditor({
   const [editingIndex, setEditingIndex] = useState(null);
   const [draftSlide, setDraftSlide] = useState({});
 
+  const getFieldError = (field) => {
+    if (editingIndex === null) return null;
+    return errors[`hero.items[${editingIndex}].${field}`] || null;
+  };
+
+  const hasSlideErrors = (index) => {
+    return Object.keys(errors).some((key) => key.startsWith(`hero.items[${index}]`));
+  };
+
   const handleUploadHeroMedia = async (file, mode = "dark") => {
     const formData = new FormData();
     formData.append("file", file);
@@ -81,8 +90,12 @@ export function HeroSettingsEditor({
 
   const handleOpenEdit = (index) => {
     const item = items[index] || {};
+    const inferredType = (item.type || (item.media_url?.match(/\.(mp4|webm)$/i) ? "VIDEO" : "IMAGE")).toUpperCase();
+    const inferredLightType = (item.type_light || (item.media_light_url?.match(/\.(mp4|webm)$/i) ? "VIDEO" : inferredType)).toUpperCase();
     setDraftSlide({
       ...item,
+      type: inferredType,
+      type_light: inferredLightType,
       cta_text_de: item.cta_text_de ?? "",
       cta_text_en: item.cta_text_en ?? "",
       button_link: item.button_link || item.cta_link || "/cars",
@@ -99,11 +112,40 @@ export function HeroSettingsEditor({
   };
 
   const handleSaveModal = () => {
+    const normalizeInput = (val) => {
+      if (typeof val !== "string") return val;
+      const trimmed = val.trim();
+      if (
+        trimmed.length > 0 &&
+        !trimmed.startsWith("/") &&
+        !trimmed.startsWith("#") &&
+        !trimmed.startsWith("http://") &&
+        !trimmed.startsWith("https://") &&
+        !trimmed.startsWith("tel:") &&
+        !trimmed.startsWith("mailto:")
+      ) {
+        return `/${trimmed}`;
+      }
+      return trimmed;
+    };
+
+    const cleanedSlide = {
+      ...draftSlide,
+      type: (draftSlide.type || "IMAGE").toUpperCase(),
+      type_light: (draftSlide.type_light || draftSlide.type || "IMAGE").toUpperCase(),
+      button_link: normalizeInput(draftSlide.button_link),
+      button_link_de: normalizeInput(draftSlide.button_link_de || draftSlide.button_link),
+      button_link_en: normalizeInput(draftSlide.button_link_en || draftSlide.button_link),
+      secondary_button_link: normalizeInput(draftSlide.secondary_button_link),
+      secondary_button_link_de: normalizeInput(draftSlide.secondary_button_link_de || draftSlide.secondary_button_link),
+      secondary_button_link_en: normalizeInput(draftSlide.secondary_button_link_en || draftSlide.secondary_button_link),
+    };
+
     const nextItems = [...items];
     if (editingIndex !== null) {
-      nextItems[editingIndex] = draftSlide;
+      nextItems[editingIndex] = cleanedSlide;
     } else {
-      nextItems.push(draftSlide);
+      nextItems.push(cleanedSlide);
     }
     onChange?.({
       ...data,
@@ -162,6 +204,32 @@ export function HeroSettingsEditor({
         <p role="alert" style={{ color: "var(--color-error, #ef4444)", fontSize: "var(--font-size-xs)", marginBottom: "var(--space-sm)" }}>
           {errors["hero.items"]}
         </p>
+      )}
+
+      {Object.keys(errors).some((k) => k.startsWith("hero.items[")) && (
+        <div
+          role="alert"
+          style={{
+            padding: "var(--space-sm) var(--space-md)",
+            backgroundColor: "rgba(239, 68, 68, 0.08)",
+            border: "1px solid rgba(239, 68, 68, 0.25)",
+            borderRadius: "var(--radius-sm)",
+            marginBottom: "var(--space-md)",
+          }}
+        >
+          <p style={{ margin: 0, fontSize: "var(--font-size-xs)", fontWeight: 600, color: "#ef4444" }}>
+            {t("heroValidationErrorsPresent", { defaultValue: "Einige Hero-Elemente enthalten Validierungsfehler. Bitte überprüfen Sie die markierten Slides:" })}
+          </p>
+          <ul style={{ margin: "6px 0 0", paddingLeft: "18px", fontSize: "var(--font-size-xs)", color: "#ef4444" }}>
+            {Object.entries(errors)
+              .filter(([k]) => k.startsWith("hero.items["))
+              .map(([k, msg]) => (
+                <li key={k}>
+                  <strong>{k}</strong>: {msg}
+                </li>
+              ))}
+          </ul>
+        </div>
       )}
 
       <SortableList
@@ -226,6 +294,21 @@ export function HeroSettingsEditor({
                       ☀️ Light
                     </span>
                   )}
+                  {hasSlideErrors(index) && (
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        fontWeight: 600,
+                        padding: "1px 6px",
+                        borderRadius: "3px",
+                        backgroundColor: "rgba(239, 68, 68, 0.15)",
+                        color: "#ef4444",
+                        border: "1px solid rgba(239, 68, 68, 0.35)",
+                      }}
+                    >
+                      ⚠️ Fehler
+                    </span>
+                  )}
                 </div>
                 <p style={{ margin: "2px 0 0", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
                   {item.subtitle_de || item.subtitle_en || "Keine Unterzeile"}
@@ -254,37 +337,41 @@ export function HeroSettingsEditor({
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Haupttitel (DE)" locale="de" required>
+            <SettingsField label="Haupttitel (DE)" locale="de" required error={getFieldError("title_de")}>
               <Input
                 value={draftSlide.title_de || ""}
                 onChange={(e) => setDraftSlide({ ...draftSlide, title_de: e.target.value })}
                 placeholder="Exklusive deutsche Automobile"
+                error={Boolean(getFieldError("title_de"))}
               />
             </SettingsField>
 
-            <SettingsField label="Haupttitel (EN)" locale="en">
+            <SettingsField label="Haupttitel (EN)" locale="en" error={getFieldError("title_en")}>
               <Input
                 value={draftSlide.title_en || ""}
                 onChange={(e) => setDraftSlide({ ...draftSlide, title_en: e.target.value })}
                 placeholder="Exclusive German Automobiles"
+                error={Boolean(getFieldError("title_en"))}
               />
             </SettingsField>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Untertitel (DE)" locale="de">
+            <SettingsField label="Untertitel (DE)" locale="de" error={getFieldError("subtitle_de")}>
               <Input
                 value={draftSlide.subtitle_de || ""}
                 onChange={(e) => setDraftSlide({ ...draftSlide, subtitle_de: e.target.value })}
                 placeholder="Handverlesenes Portfolio für Kenner"
+                error={Boolean(getFieldError("subtitle_de"))}
               />
             </SettingsField>
 
-            <SettingsField label="Untertitel (EN)" locale="en">
+            <SettingsField label="Untertitel (EN)" locale="en" error={getFieldError("subtitle_en")}>
               <Input
                 value={draftSlide.subtitle_en || ""}
                 onChange={(e) => setDraftSlide({ ...draftSlide, subtitle_en: e.target.value })}
                 placeholder="Curated high-performance inventory"
+                error={Boolean(getFieldError("subtitle_en"))}
               />
             </SettingsField>
           </div>
@@ -315,37 +402,41 @@ export function HeroSettingsEditor({
               </span>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
-                <SettingsField label="Button-Text (DE)" locale="de">
+                <SettingsField label="Button-Text (DE)" locale="de" error={getFieldError("cta_text_de")}>
                   <Input
                     value={draftSlide.cta_text_de || ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_de: e.target.value })}
                     placeholder="Fahrzeuge entdecken"
+                    error={Boolean(getFieldError("cta_text_de"))}
                   />
                 </SettingsField>
 
-                <SettingsField label="Button-Text (EN)" locale="en">
+                <SettingsField label="Button-Text (EN)" locale="en" error={getFieldError("cta_text_en")}>
                   <Input
                     value={draftSlide.cta_text_en || ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_en: e.target.value })}
                     placeholder="Explore Inventory"
+                    error={Boolean(getFieldError("cta_text_en"))}
                   />
                 </SettingsField>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
-                <SettingsField label="Zielroute / Link (DE)" locale="de">
+                <SettingsField label="Zielroute / Link (DE)" locale="de" error={getFieldError("button_link_de") || getFieldError("button_link")}>
                   <Input
                     value={draftSlide.button_link_de ?? draftSlide.button_link ?? ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, button_link_de: e.target.value, button_link: e.target.value })}
                     placeholder="/cars"
+                    error={Boolean(getFieldError("button_link_de") || getFieldError("button_link"))}
                   />
                 </SettingsField>
 
-                <SettingsField label="Zielroute / Link (EN)" locale="en">
+                <SettingsField label="Zielroute / Link (EN)" locale="en" error={getFieldError("button_link_en")}>
                   <Input
                     value={draftSlide.button_link_en ?? draftSlide.button_link ?? ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, button_link_en: e.target.value })}
                     placeholder="/cars"
+                    error={Boolean(getFieldError("button_link_en"))}
                   />
                 </SettingsField>
               </div>
@@ -368,37 +459,41 @@ export function HeroSettingsEditor({
               </span>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
-                <SettingsField label="Button-Text (DE)" locale="de">
+                <SettingsField label="Button-Text (DE)" locale="de" error={getFieldError("secondary_cta_text_de")}>
                   <Input
                     value={draftSlide.secondary_cta_text_de || ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, secondary_cta_text_de: e.target.value })}
                     placeholder="Fahrzeugbestand"
+                    error={Boolean(getFieldError("secondary_cta_text_de"))}
                   />
                 </SettingsField>
 
-                <SettingsField label="Button-Text (EN)" locale="en">
+                <SettingsField label="Button-Text (EN)" locale="en" error={getFieldError("secondary_cta_text_en")}>
                   <Input
                     value={draftSlide.secondary_cta_text_en || ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, secondary_cta_text_en: e.target.value })}
                     placeholder="Inventory"
+                    error={Boolean(getFieldError("secondary_cta_text_en"))}
                   />
                 </SettingsField>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
-                <SettingsField label="Zielroute / Link (DE)" locale="de">
+                <SettingsField label="Zielroute / Link (DE)" locale="de" error={getFieldError("secondary_button_link_de") || getFieldError("secondary_button_link")}>
                   <Input
                     value={draftSlide.secondary_button_link_de ?? draftSlide.secondary_button_link ?? ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, secondary_button_link_de: e.target.value, secondary_button_link: e.target.value })}
                     placeholder="/cars"
+                    error={Boolean(getFieldError("secondary_button_link_de") || getFieldError("secondary_button_link"))}
                   />
                 </SettingsField>
 
-                <SettingsField label="Zielroute / Link (EN)" locale="en">
+                <SettingsField label="Zielroute / Link (EN)" locale="en" error={getFieldError("secondary_button_link_en")}>
                   <Input
                     value={draftSlide.secondary_button_link_en ?? draftSlide.secondary_button_link ?? ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, secondary_button_link_en: e.target.value })}
                     placeholder="/cars"
+                    error={Boolean(getFieldError("secondary_button_link_en"))}
                   />
                 </SettingsField>
               </div>
@@ -450,6 +545,12 @@ export function HeroSettingsEditor({
                 </div>
               </div>
 
+              {(getFieldError("media_url") || getFieldError("type")) && (
+                <p role="alert" style={{ color: "var(--color-error, #ef4444)", fontSize: "var(--font-size-xs)", margin: "0 0 var(--space-xs)" }}>
+                  {getFieldError("media_url") || getFieldError("type")}
+                </p>
+              )}
+
               <MediaUploadField
                 label=""
                 value={draftSlide.media_url || ""}
@@ -497,6 +598,12 @@ export function HeroSettingsEditor({
                   />
                 </div>
               </div>
+
+              {(getFieldError("media_light_url") || getFieldError("type_light")) && (
+                <p role="alert" style={{ color: "var(--color-error, #ef4444)", fontSize: "var(--font-size-xs)", margin: "0 0 var(--space-xs)" }}>
+                  {getFieldError("media_light_url") || getFieldError("type_light")}
+                </p>
+              )}
 
               <MediaUploadField
                 label=""
