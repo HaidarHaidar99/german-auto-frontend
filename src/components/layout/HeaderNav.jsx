@@ -215,18 +215,12 @@ export function HeaderNav({
 
   const handleReviewsClick = (e) => {
     if (menuOpen) closeMenu();
-    if (location.pathname === "/") {
+    if (location.pathname === "/reviews") {
       e.preventDefault();
-      if (location.hash !== "#reviews") {
-        window.history.pushState(null, "", "/#reviews");
-      }
-      const el = document.getElementById("reviews");
-      if (el) {
-        if (window.__lenis?.instance?.scrollTo) {
-          window.__lenis.instance.scrollTo(el, { offset: -70, immediate: false });
-        } else {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+      if (window.__lenis?.instance?.scrollTo) {
+        window.__lenis.instance.scrollTo(0, { immediate: false });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
   };
@@ -268,22 +262,6 @@ export function HeaderNav({
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
       }, 150);
-    } else if (item.isReviews) {
-      if (location.pathname === "/") {
-        if (location.hash !== "#reviews") {
-          window.history.pushState(null, "", "/#reviews");
-        }
-        setTimeout(() => {
-          const el = document.getElementById("reviews");
-          if (el) {
-            if (window.__lenis?.instance?.scrollTo) {
-              window.__lenis.instance.scrollTo(el, { offset: -70, immediate: false });
-            } else {
-              el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          }
-        }, 150);
-      }
     } else if (item.isAbout && location.pathname === "/about") {
       setTimeout(() => {
         if (window.__lenis?.instance?.scrollTo) {
@@ -322,14 +300,14 @@ export function HeaderNav({
           width: "100%",
           height: "var(--header-height)",
           zIndex: 9999, // High z-index to stay above everything
-          backgroundColor: isTransparent ? "transparent" : (isDark ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.9)"),
-          backdropFilter: isTransparent ? "none" : "blur(16px)",
-          WebkitBackdropFilter: isTransparent ? "none" : "blur(16px)",
-          borderBottom: isTransparent ? "none" : "1px solid var(--color-border)",
+          backgroundColor: isDark ? "#000000" : "#FFFFFF",
+          backdropFilter: "none",
+          WebkitBackdropFilter: "none",
+          borderBottom: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(0, 0, 0, 0.08)",
           display: menuOpen ? "none" : "flex",
           alignItems: "center",
           transform: isVisible ? "translateY(0)" : "translateY(-100%)",
-          transition: "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease",
+          transition: "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease",
         }}
       >
         <div
@@ -406,7 +384,7 @@ export function HeaderNav({
               {t("about")}
             </Link>
             <Link
-              to="/#reviews"
+              to="/reviews"
               onClick={handleReviewsClick}
               style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
             >
@@ -659,7 +637,7 @@ export function HeaderNav({
             { to: "/", label: t("home", { defaultValue: "Home" }), isHome: true },
             { to: "/cars", label: t("inventory") },
             { to: "/sell-your-car", label: t("sellYourCar") },
-            { to: "/#reviews", label: t("reviews", { defaultValue: "Bewertungen" }), isReviews: true },
+            { to: "/reviews", label: t("reviews", { defaultValue: "Bewertungen" }) },
             { to: "/about", label: t("about"), isAbout: true },
             { to: "/contact", label: t("contact"), isContact: true }
           ].map((item, i) => (
@@ -782,8 +760,8 @@ export function HeaderNav({
               <Icon name="user" size={20} color="currentColor" />
             </Link>
 
-            {/* 3. Theme Toggle Switch (replaces Logout in mobile menu) */}
-            <ThemeToggle size="mobile" />
+            {/* 3. Theme Toggle Switch (replaces Logout in mobile menu and closes menu upon toggle) */}
+            <ThemeToggle size="mobile" onClick={closeMenu} />
           </div>
         </nav>
       </div>

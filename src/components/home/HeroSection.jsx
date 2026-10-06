@@ -135,9 +135,18 @@ export function HeroSection({ heroConfig, siteConfig }) {
     ? (currentItem.subtitle_en || currentItem.subtitle_de)
     : (currentItem.subtitle_de || currentItem.subtitle_en);
   const ctaText = currentLang === "en"
-    ? (currentItem.cta_text_en || currentItem.cta_text_de || "Fahrzeuge entdecken")
+    ? (currentItem.cta_text_en || currentItem.cta_text_de || "Explore Inventory")
     : (currentItem.cta_text_de || currentItem.cta_text_en || "Fahrzeuge entdecken");
-  const ctaLink = currentItem.cta_link || "/cars";
+  const ctaLink = currentLang === "en"
+    ? (currentItem.button_link_en || currentItem.button_link || currentItem.cta_link || "/cars")
+    : (currentItem.button_link_de || currentItem.button_link || currentItem.cta_link || "/cars");
+
+  const secondaryCtaText = currentLang === "en"
+    ? (currentItem.secondary_cta_text_en || currentItem.secondary_cta_text_de || t("navigation:inventory", "Inventory"))
+    : (currentItem.secondary_cta_text_de || currentItem.secondary_cta_text_en || t("navigation:inventory", "Fahrzeugbestand"));
+  const secondaryCtaLink = currentLang === "en"
+    ? (currentItem.secondary_button_link_en || currentItem.secondary_button_link || "/cars")
+    : (currentItem.secondary_button_link_de || currentItem.secondary_button_link || "/cars");
 
   return (
     <section
@@ -306,11 +315,17 @@ export function HeroSection({ heroConfig, siteConfig }) {
 
             <Button
               as={Link}
-              to="/cars"
+              to={secondaryCtaLink}
               variant="outline"
               size="lg"
+              className="hero-secondary-btn"
+              style={{
+                backgroundColor: "transparent",
+                borderColor: isDark ? "rgba(255, 255, 255, 0.18)" : "rgba(0, 0, 0, 0.15)",
+                color: "var(--color-text)",
+              }}
             >
-              {t("navigation:inventory", "Fahrzeugbestand")}
+              {secondaryCtaText}
             </Button>
           </div>
         </div>

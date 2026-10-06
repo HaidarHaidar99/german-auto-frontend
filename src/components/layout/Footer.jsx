@@ -83,7 +83,19 @@ export function Footer() {
         >
           {/* Column 1: Brand & Logo & Description */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.35rem" }}>
-            <Link to="/" style={{ display: "inline-block", maxWidth: "380px", textDecoration: "none" }}>
+            <Link
+              to="/"
+              style={{
+                display: "inline-block",
+                maxWidth: "380px",
+                textDecoration: "none",
+                backgroundColor: isDark ? "#000000" : "#FFFFFF",
+                border: "none",
+                boxShadow: "none",
+                borderRadius: "0px",
+                padding: 0,
+              }}
+            >
               {footerLogo ? (
                 <img
                   src={footerLogo}
@@ -95,6 +107,9 @@ export function Footer() {
                     height: "auto",
                     objectFit: "contain",
                     display: "block",
+                    backgroundColor: isDark ? "#000000" : "#FFFFFF",
+                    border: "none",
+                    boxShadow: "none",
                   }}
                 />
               ) : (
@@ -219,7 +234,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/#reviews"
+                  to="/reviews"
                   style={{ display: "inline-flex", alignItems: "center", gap: "8px", color: "var(--color-text-muted, #94a3b8)", textDecoration: "none", fontSize: "0.975rem", transition: "color 0.15s ease" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}

@@ -98,8 +98,8 @@ export function AccountReviewsPage() {
 
       setEditSuccessMsg(
         currentLang === "en"
-          ? "Review updated successfully and is pending approval."
-          : "Bewertung erfolgreich aktualisiert und zur Prüfung eingereicht."
+          ? "Review updated and published successfully."
+          : "Bewertung erfolgreich aktualisiert und veröffentlicht."
       );
 
       fetchMyReviews();

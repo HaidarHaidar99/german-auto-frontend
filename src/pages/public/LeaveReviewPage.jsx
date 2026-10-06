@@ -33,23 +33,8 @@ export function LeaveReviewPage() {
   }, [currentLang]);
 
   const handleBackToReviews = (e) => {
-    e.preventDefault();
-    navigate("/#reviews");
-    let count = 0;
-    const interval = setInterval(() => {
-      count++;
-      const el = document.getElementById("reviews");
-      if (el) {
-        if (window.__lenis?.instance?.scrollTo) {
-          window.__lenis.instance.scrollTo(el, { offset: -70, immediate: false });
-        } else {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }
-      if (count >= 8) {
-        clearInterval(interval);
-      }
-    }, 120);
+    e?.preventDefault?.();
+    navigate("/reviews");
   };
 
   const handleSubmit = async (e) => {
@@ -136,7 +121,7 @@ export function LeaveReviewPage() {
       >
         {/* Back Link */}
         <Link
-          to="/#reviews"
+          to="/reviews"
           onClick={handleBackToReviews}
           style={{
             display: "inline-flex",
@@ -175,17 +160,17 @@ export function LeaveReviewPage() {
             </div>
 
             <h2 style={{ fontSize: "1.75rem", fontWeight: 700, color: "var(--color-text)", margin: "0 0 var(--space-sm)" }}>
-              {currentLang === "en" ? "Review Submitted Successfully!" : "Bewertung erfolgreich übermittelt!"}
+              {currentLang === "en" ? "Review Published Successfully!" : "Bewertung erfolgreich veröffentlicht!"}
             </h2>
 
             <p style={{ color: "var(--color-text-muted)", fontSize: "1rem", lineHeight: 1.6, margin: "0 auto var(--space-2xl)", maxWidth: "460px" }}>
               {currentLang === "en"
-                ? "Thank you for sharing your experience. Your review will be published following short editorial verification."
-                : "Vielen Dank für Ihre Rückmeldung. Ihre Bewertung wird nach kurzer redaktioneller Prüfung auf der Website freigeschaltet."}
+                ? "Thank you for sharing your experience. Your review is now live and published on the website."
+                : "Vielen Dank für Ihre Rückmeldung. Ihre Bewertung ist nun direkt auf der Website veröffentlicht."}
             </p>
 
             <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-md)", flexWrap: "wrap" }}>
-              <Button as={Link} to="/#reviews" onClick={handleBackToReviews} variant="secondary" size="lg" style={{ borderRadius: "0px" }}>
+              <Button as={Link} to="/reviews" onClick={handleBackToReviews} variant="secondary" size="lg" style={{ borderRadius: "0px" }}>
                 {currentLang === "en" ? "View Reviews →" : "Zu den Bewertungen →"}
               </Button>
               {isAuthenticated && (

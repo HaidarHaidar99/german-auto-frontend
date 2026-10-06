@@ -56,9 +56,16 @@ export function HeroSettingsEditor({
       title_en: "",
       subtitle_de: "",
       subtitle_en: "",
-      cta_text_de: "",
-      cta_text_en: "",
+      cta_text_de: "Fahrzeuge entdecken",
+      cta_text_en: "Explore Inventory",
       button_link: "/cars",
+      button_link_de: "/cars",
+      button_link_en: "/cars",
+      secondary_cta_text_de: "Fahrzeugbestand",
+      secondary_cta_text_en: "Inventory",
+      secondary_button_link: "/cars",
+      secondary_button_link_de: "/cars",
+      secondary_button_link_en: "/cars",
       type: "IMAGE",
       media_url: "",
       type_light: "IMAGE",
@@ -73,7 +80,20 @@ export function HeroSettingsEditor({
   };
 
   const handleOpenEdit = (index) => {
-    setDraftSlide({ ...items[index] });
+    const item = items[index] || {};
+    setDraftSlide({
+      ...item,
+      cta_text_de: item.cta_text_de ?? "",
+      cta_text_en: item.cta_text_en ?? "",
+      button_link: item.button_link || item.cta_link || "/cars",
+      button_link_de: item.button_link_de || item.button_link || item.cta_link || "/cars",
+      button_link_en: item.button_link_en || item.button_link || item.cta_link || "/cars",
+      secondary_cta_text_de: item.secondary_cta_text_de ?? "Fahrzeugbestand",
+      secondary_cta_text_en: item.secondary_cta_text_en ?? "Inventory",
+      secondary_button_link: item.secondary_button_link ?? "/cars",
+      secondary_button_link_de: item.secondary_button_link_de ?? (item.secondary_button_link || "/cars"),
+      secondary_button_link_en: item.secondary_button_link_en ?? (item.secondary_button_link || "/cars"),
+    });
     setEditingIndex(index);
     setModalOpen(true);
   };
@@ -269,31 +289,121 @@ export function HeroSettingsEditor({
             </SettingsField>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Button-Text (DE)" locale="de">
-              <Input
-                value={draftSlide.cta_text_de || ""}
-                onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_de: e.target.value })}
-                placeholder="Fahrzeuge entdecken"
-              />
-            </SettingsField>
+          {/* Action Button Controls (First Button & Second Button side-by-side on desktop, stacking on mobile) */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "var(--space-md)",
+              padding: "var(--space-xs) 0",
+            }}
+          >
+            {/* First Button (Primary) */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-xs)",
+                padding: "var(--space-sm)",
+                backgroundColor: "rgba(255, 255, 255, 0.02)",
+                borderRadius: "var(--radius-sm)",
+                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              }}
+            >
+              <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--color-secondary, #D4AF37)", marginBottom: "2px" }}>
+                {t("heroPrimaryButton", { defaultValue: "Erster Button (Primär)" })}
+              </span>
 
-            <SettingsField label="Button-Text (EN)" locale="en">
-              <Input
-                value={draftSlide.cta_text_en || ""}
-                onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_en: e.target.value })}
-                placeholder="Explore Inventory"
-              />
-            </SettingsField>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+                <SettingsField label="Button-Text (DE)" locale="de">
+                  <Input
+                    value={draftSlide.cta_text_de || ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_de: e.target.value })}
+                    placeholder="Fahrzeuge entdecken"
+                  />
+                </SettingsField>
+
+                <SettingsField label="Button-Text (EN)" locale="en">
+                  <Input
+                    value={draftSlide.cta_text_en || ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_en: e.target.value })}
+                    placeholder="Explore Inventory"
+                  />
+                </SettingsField>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+                <SettingsField label="Zielroute / Link (DE)" locale="de">
+                  <Input
+                    value={draftSlide.button_link_de ?? draftSlide.button_link ?? ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, button_link_de: e.target.value, button_link: e.target.value })}
+                    placeholder="/cars"
+                  />
+                </SettingsField>
+
+                <SettingsField label="Zielroute / Link (EN)" locale="en">
+                  <Input
+                    value={draftSlide.button_link_en ?? draftSlide.button_link ?? ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, button_link_en: e.target.value })}
+                    placeholder="/cars"
+                  />
+                </SettingsField>
+              </div>
+            </div>
+
+            {/* Second Button (Secondary) */}
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "var(--space-xs)",
+                padding: "var(--space-sm)",
+                backgroundColor: "rgba(255, 255, 255, 0.02)",
+                borderRadius: "var(--radius-sm)",
+                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              }}
+            >
+              <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--color-secondary, #D4AF37)", marginBottom: "2px" }}>
+                {t("heroSecondaryButton", { defaultValue: "Zweiter Button (Sekundär)" })}
+              </span>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+                <SettingsField label="Button-Text (DE)" locale="de">
+                  <Input
+                    value={draftSlide.secondary_cta_text_de || ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, secondary_cta_text_de: e.target.value })}
+                    placeholder="Fahrzeugbestand"
+                  />
+                </SettingsField>
+
+                <SettingsField label="Button-Text (EN)" locale="en">
+                  <Input
+                    value={draftSlide.secondary_cta_text_en || ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, secondary_cta_text_en: e.target.value })}
+                    placeholder="Inventory"
+                  />
+                </SettingsField>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+                <SettingsField label="Zielroute / Link (DE)" locale="de">
+                  <Input
+                    value={draftSlide.secondary_button_link_de ?? draftSlide.secondary_button_link ?? ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, secondary_button_link_de: e.target.value, secondary_button_link: e.target.value })}
+                    placeholder="/cars"
+                  />
+                </SettingsField>
+
+                <SettingsField label="Zielroute / Link (EN)" locale="en">
+                  <Input
+                    value={draftSlide.secondary_button_link_en ?? draftSlide.secondary_button_link ?? ""}
+                    onChange={(e) => setDraftSlide({ ...draftSlide, secondary_button_link_en: e.target.value })}
+                    placeholder="/cars"
+                  />
+                </SettingsField>
+              </div>
+            </div>
           </div>
-
-          <SettingsField label="Button-Link">
-            <Input
-              value={draftSlide.button_link || ""}
-              onChange={(e) => setDraftSlide({ ...draftSlide, button_link: e.target.value })}
-              placeholder="/cars"
-            />
-          </SettingsField>
 
           {/* Media Configurations: Dark Mode (Default) and Light Mode (Optional) */}
           <div

@@ -15,6 +15,7 @@ const AboutPage          = lazy(() => import("../pages/public/AboutPage"));
 const ContactPage        = lazy(() => import("../pages/public/ContactPage"));
 const SellYourCarPage    = lazy(() => import("../pages/public/SellYourCarPage"));
 const LeaveReviewPage    = lazy(() => import("../pages/public/LeaveReviewPage"));
+const ReviewsPage        = lazy(() => import("../pages/public/ReviewsPage"));
 const NotFoundPage       = lazy(() => import("../pages/public/NotFoundPage"));
 
 const LoginPage          = lazy(() => import("../pages/auth/LoginPage"));
@@ -51,6 +52,7 @@ export function AppRoutes() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/sell-your-car" element={<SellYourCarPage />} />
           <Route path="/leave-review" element={<LeaveReviewPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
           <Route path="/reviews/new" element={<LeaveReviewPage />} />
           <Route path="/design-system" element={<DesignSystemPage />} />
 

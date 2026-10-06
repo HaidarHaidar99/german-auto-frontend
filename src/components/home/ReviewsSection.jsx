@@ -183,7 +183,7 @@ export function ReviewsSection({ googleReviewsConfig }) {
           }}
         >
           <Eyebrow>{currentLang === "en" ? "Client Feedback & Reviews" : "Kundenstimmen & Rezensionen"}</Eyebrow>
-          <Heading level={2} style={{ margin: "var(--space-2xs) 0 0", color: "#ffffff", fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}>
+          <Heading level={2} style={{ margin: "var(--space-2xs) 0 0", color: "var(--color-text)", fontSize: "clamp(1.75rem, 4vw, 2.5rem)" }}>
             {currentLang === "en" ? "Experiences & Reviews" : "Erfahrungen & Rezensionen"}
           </Heading>
         </div>
@@ -289,7 +289,9 @@ export function ReviewsSection({ googleReviewsConfig }) {
                                 fontSize: "1.1rem",
                                 display: "flex",
                                 alignItems: "center",
-                                justifyCenter: "center",
+                                justifyContent: "center",
+                                textAlign: "center",
+                                lineHeight: 1,
                                 flexShrink: 0,
                               }}
                             >

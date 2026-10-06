@@ -90,10 +90,15 @@
   -webkit-tap-highlight-color: transparent !important;
 }
 
-.btn:focus,
-.btn:focus-visible {
+.btn:focus:not(:focus-visible) {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.btn:focus-visible,
+.hero-secondary-btn:focus-visible {
+  outline: 2px solid var(--color-secondary, #D4AF37) !important;
+  outline-offset: 2px !important;
 }
 
 .btn:active {

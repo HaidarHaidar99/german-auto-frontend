@@ -39,7 +39,7 @@ export function CarsHeader() {
           <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-secondary, #D4AF37)", display: "block", marginBottom: "2px" }}>
             {t("title", "Fahrzeugbestand")}
           </span>
-          <h1 style={{ margin: "2px 0 4px", fontSize: "clamp(1.4rem, 2.2vw, 1.85rem)", fontWeight: 700, color: "#ffffff", letterSpacing: "-0.01em" }}>
+          <h1 style={{ margin: "2px 0 4px", fontSize: "clamp(1.4rem, 2.2vw, 1.85rem)", fontWeight: 700, color: "var(--color-text)", letterSpacing: "-0.01em" }}>
             {t("pageTitle", "Exklusiver Fahrzeugbestand")}
           </h1>
           <p style={{ margin: 0, fontSize: "13px", color: "var(--color-text-muted)", lineHeight: 1.4 }}>

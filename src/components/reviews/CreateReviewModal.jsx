@@ -106,7 +106,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
             <Icon name="user" size={24} />
           </div>
 
-          <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "1.25rem", color: "#ffffff", fontWeight: 700 }}>
+          <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "1.25rem", color: "var(--color-text)", fontWeight: 700 }}>
             {t("reviews.loginRequiredTitle", "Anmeldung erforderlich")}
           </h4>
           <p style={{ margin: "0 auto var(--space-xl)", color: "var(--color-text-muted)", fontSize: "0.925rem", maxWidth: "400px", lineHeight: 1.5 }}>
@@ -119,7 +119,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)", maxWidth: "300px", margin: "0 auto" }}>
             <Button
               as={Link}
-              to="/login?redirect=/#reviews"
+              to="/login?redirect=/reviews"
               variant="secondary"
               size="md"
               onClick={handleModalClose}
@@ -129,7 +129,7 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
             </Button>
             <Button
               as={Link}
-              to="/signup?redirect=/#reviews"
+              to="/signup?redirect=/reviews"
               variant="outline"
               size="md"
               onClick={handleModalClose}
@@ -161,13 +161,13 @@ export function CreateReviewModal({ isOpen, onClose, onSuccess }) {
             <Icon name="check" size={28} />
           </div>
 
-          <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "1.3rem", color: "#ffffff", fontWeight: 700 }}>
-            {t("reviews.successHeader", "Bewertung erfolgreich übermittelt!")}
+          <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "1.3rem", color: "var(--color-text)", fontWeight: 700 }}>
+            {t("reviews.successHeader", "Bewertung erfolgreich veröffentlicht!")}
           </h4>
           <p style={{ margin: "0 auto var(--space-xl)", color: "var(--color-text-muted)", fontSize: "0.925rem", maxWidth: "420px", lineHeight: 1.6 }}>
             {t(
               "reviews.successSubtext",
-              "Vielen Dank für Ihre Rückmeldung. Ihre Bewertung wird nach kurzer redaktioneller Prüfung auf der Website freigeschaltet."
+              "Vielen Dank für Ihre Rückmeldung. Ihre Bewertung ist nun direkt auf der Website veröffentlicht."
             )}
           </p>
 
