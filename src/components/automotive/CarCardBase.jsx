@@ -224,34 +224,37 @@ export function CarCardBase({
 
       {/* Card Body */}
       <div
+        className="car-card-body"
         style={{
-          padding: "var(--space-lg)",
+          padding: "13px 15px",
           display: "flex",
           flexDirection: "column",
-          gap: "var(--space-md)",
+          gap: "9px",
           flex: 1,
         }}
       >
         {/* Title & Brand Header */}
         <div>
           <div
+            className="car-card-brand"
             style={{
-              fontSize: "11px",
+              fontSize: "10px",
               fontWeight: 700,
               textTransform: "uppercase",
-              letterSpacing: "0.14em",
+              letterSpacing: "0.12em",
               color: "var(--color-text-muted)",
-              marginBottom: "4px",
+              marginBottom: "3px",
             }}
           >
             {brand}
           </div>
           <h3
+            className="car-card-title"
             style={{
               margin: 0,
-              fontSize: "1.15rem",
+              fontSize: "1.05rem",
               fontWeight: 700,
-              lineHeight: 1.35,
+              lineHeight: 1.3,
               color: "var(--color-text)",
               letterSpacing: "-0.01em",
               display: "-webkit-box",
@@ -265,10 +268,11 @@ export function CarCardBase({
         </div>
 
         {/* Pricing */}
-        <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
           <div
+            className="car-card-price"
             style={{
-              fontSize: "1.35rem",
+              fontSize: "1.25rem",
               fontWeight: 800,
               color: "var(--color-text)",
               letterSpacing: "-0.02em",
@@ -279,7 +283,7 @@ export function CarCardBase({
           {oldPrice && (
             <div
               style={{
-                fontSize: "0.9rem",
+                fontSize: "0.85rem",
                 color: "var(--color-text-subtle)",
                 textDecoration: "line-through",
               }}
@@ -300,7 +304,7 @@ export function CarCardBase({
         />
 
         {/* CTA Footer */}
-        <div style={{ marginTop: "auto", paddingTop: "var(--space-xs)" }}>
+        <div style={{ marginTop: "auto", paddingTop: "3px" }}>
           <Button
             variant="outline"
             size="sm"
@@ -313,11 +317,14 @@ export function CarCardBase({
             }}
             style={{
               width: "100%",
+              height: "34px",
+              minHeight: "34px",
               borderRadius: "var(--radius-sm, 6px)",
               borderColor: "var(--color-border)",
               color: "var(--color-text)",
               fontWeight: 600,
               letterSpacing: "0.04em",
+              fontSize: "0.82rem",
             }}
           >
             {ctaLabel}

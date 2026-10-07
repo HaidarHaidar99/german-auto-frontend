@@ -488,27 +488,33 @@
   border-color: rgba(245, 158, 11, 0.3);
 }
 
-/* Spec Chip Grid & Chips (for vehicle attributes — 3x2 equal grid) */
+/* Spec Chip Grid & Chips (for vehicle attributes — 2 columns x 3 rows) */
 .vehicle-specs-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px 8px;
   width: 100%;
   box-sizing: border-box;
 }
 
+@media (max-width: 640px) {
+  .vehicle-specs-grid {
+    gap: 4px 6px;
+  }
+}
+
 .spec-chip {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 8px;
+  gap: 6px;
+  padding: 5px 8px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-sm, 6px);
   font-size: 11px;
   font-weight: 500;
   color: var(--color-text-muted);
-  line-height: 1.2;
+  line-height: 1.25;
   width: 100%;
   min-width: 0;
   box-sizing: border-box;
@@ -516,6 +522,14 @@
   text-align: left;
   justify-content: flex-start;
   transition: border-color var(--duration-fast) var(--ease-smooth);
+}
+
+@media (max-width: 640px) {
+  .spec-chip {
+    padding: 4px 6px;
+    font-size: 10px;
+    gap: 4px;
+  }
 }
 
 .spec-chip-icon {
@@ -532,6 +546,40 @@
   white-space: nowrap;
   min-width: 0;
   flex: 1;
+}
+
+/* Compact Car Card Sizing (Desktop & Mobile) */
+.car-card-base .car-card-body {
+  padding: 13px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .car-card-base .car-card-body {
+    padding: 10px 11px !important;
+    gap: 7px !important;
+  }
+  .car-card-base .car-card-title {
+    font-size: 0.95rem !important;
+    line-height: 1.25 !important;
+  }
+  .car-card-base .car-card-price {
+    font-size: 1.15rem !important;
+  }
+  .car-card-base .car-card-brand {
+    font-size: 9.5px !important;
+    margin-bottom: 2px !important;
+  }
+  .car-card-base button,
+  .car-card-base .button {
+    height: 32px !important;
+    min-height: 32px !important;
+    font-size: 0.78rem !important;
+    padding: 0 10px !important;
+  }
 }
 
 /* ==========================================================================

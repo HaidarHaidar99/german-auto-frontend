@@ -74,14 +74,59 @@ export function FeaturedInventorySection() {
     await toggleFavorite(carId);
   };
 
+  const scrollTargetRef = useRef(null);
+  const isAnimatingRef = useRef(false);
+
   const handleScroll = (dir) => {
-    if (!trackRef.current) return;
-    const scrollAmount = 370;
-    trackRef.current.scrollBy({
-      left: dir === "left" ? -scrollAmount : scrollAmount,
-      behavior: "smooth",
-    });
-    setTimeout(updateScrollState, 350);
+    const track = trackRef.current;
+    if (!track) return;
+
+    // Dynamically calculate one card step (width + gap)
+    const firstItem = track.querySelector(".featured-car-item") || track.firstElementChild;
+    const itemWidth = firstItem ? firstItem.getBoundingClientRect().width : 300;
+    const gap = 18;
+    const step = itemWidth + gap;
+
+    const currentScroll = track.scrollLeft;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+
+    // Stack rapid clicks seamlessly without lag
+    let target = scrollTargetRef.current !== null ? scrollTargetRef.current : currentScroll;
+    if (dir === "left") {
+      target = Math.max(0, target - step);
+    } else {
+      target = Math.min(maxScroll, target + step);
+    }
+    scrollTargetRef.current = target;
+
+    // Fast 150ms cubic ease-out: starts immediately with maximum velocity
+    const startTime = performance.now();
+    const startPos = track.scrollLeft;
+    const distance = target - startPos;
+    const duration = 150;
+
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // Cubic ease-out: 1 - (1 - progress)^3
+      const ease = 1 - Math.pow(1 - progress, 3);
+
+      track.scrollLeft = startPos + distance * ease;
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        track.scrollLeft = scrollTargetRef.current !== null ? scrollTargetRef.current : target;
+        scrollTargetRef.current = null;
+        isAnimatingRef.current = false;
+        updateScrollState();
+      }
+    };
+
+    requestAnimationFrame(animate);
   };
 
   return (
@@ -170,36 +215,48 @@ export function FeaturedInventorySection() {
               <button
                 type="button"
                 onClick={() => handleScroll("left")}
+                onMouseDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
                 aria-label="Previous cars"
                 style={{
                   position: "absolute",
-                  left: "8px",
+                  left: "6px",
                   top: "46%",
                   transform: "translateY(-50%)",
                   zIndex: 25,
-                  width: "36px",
-                  height: "36px",
+                  width: "42px",
+                  height: "42px",
+                  minWidth: "42px",
+                  minHeight: "42px",
+                  padding: 0,
                   borderRadius: "50%",
                   backgroundColor: "rgba(18, 20, 24, 0.95)",
-                  backdropFilter: "blur(8px)",
-                  border: "1px solid rgba(255, 255, 255, 0.25)",
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                   color: "#ffffff",
-                  boxShadow: "none",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
                   outline: "none",
-                  transition: "border-color 0.2s ease",
+                  transition: "border-color 0.15s ease, background-color 0.15s ease",
+                  userSelect: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  pointerEvents: "auto",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.5)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.6)";
+                  e.currentTarget.style.backgroundColor = "rgba(28, 32, 38, 0.98)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)";
+                  e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
                 }}
               >
-                <Icon name="chevron-left" size={18} />
+                <Icon name="chevron-left" size={20} style={{ pointerEvents: "none" }} />
               </button>
             )}
 
@@ -208,36 +265,48 @@ export function FeaturedInventorySection() {
               <button
                 type="button"
                 onClick={() => handleScroll("right")}
+                onMouseDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
                 aria-label="Next cars"
                 style={{
                   position: "absolute",
-                  right: "8px",
+                  right: "6px",
                   top: "46%",
                   transform: "translateY(-50%)",
                   zIndex: 25,
-                  width: "36px",
-                  height: "36px",
+                  width: "42px",
+                  height: "42px",
+                  minWidth: "42px",
+                  minHeight: "42px",
+                  padding: 0,
                   borderRadius: "50%",
                   backgroundColor: "rgba(18, 20, 24, 0.95)",
-                  backdropFilter: "blur(8px)",
-                  border: "1px solid rgba(255, 255, 255, 0.25)",
+                  backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
                   color: "#ffffff",
-                  boxShadow: "none",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
                   outline: "none",
-                  transition: "border-color 0.2s ease",
+                  transition: "border-color 0.15s ease, background-color 0.15s ease",
+                  userSelect: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  pointerEvents: "auto",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.5)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.6)";
+                  e.currentTarget.style.backgroundColor = "rgba(28, 32, 38, 0.98)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
+                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)";
+                  e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
                 }}
               >
-                <Icon name="chevron-right" size={18} />
+                <Icon name="chevron-right" size={20} style={{ pointerEvents: "none" }} />
               </button>
             )}
 
@@ -247,7 +316,7 @@ export function FeaturedInventorySection() {
               style={{
                 display: "flex",
                 flexDirection: "row",
-                gap: "24px",
+                gap: "18px",
                 overflowX: "auto",
                 scrollSnapType: "none",
                 padding: "8px 0 20px 0",
@@ -280,8 +349,8 @@ export function FeaturedInventorySection() {
                     key={car.id}
                     className="featured-car-item"
                     style={{
-                      flex: "0 0 clamp(290px, 85vw, 360px)",
-                      maxWidth: "360px",
+                      flex: "0 0 clamp(245px, 75vw, 310px)",
+                      maxWidth: "310px",
                       margin: "0",
                       boxSizing: "border-box",
                       touchAction: "pan-y pan-x",

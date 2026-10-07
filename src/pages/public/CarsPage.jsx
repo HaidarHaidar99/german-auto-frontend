@@ -252,6 +252,13 @@ export function CarsPage() {
                   gap: 16px;
                   width: 100%;
                 }
+                @media (max-width: 639px) {
+                  .cars-inventory-grid {
+                    max-width: 340px;
+                    margin: 0 auto;
+                    gap: 14px;
+                  }
+                }
                 @media (min-width: 640px) {
                   .cars-inventory-grid {
                     grid-template-columns: repeat(2, 1fr);

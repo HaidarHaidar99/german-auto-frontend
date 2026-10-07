@@ -87,7 +87,7 @@ export function VehicleSpecs({
       className={`vehicle-specs-grid ${className}`.trim()}
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
         gap: "6px 8px",
         width: "100%",
         boxSizing: "border-box",
@@ -106,25 +106,25 @@ export function VehicleSpecs({
         <span>{formattedPower || "—"}</span>
       </span>
 
-      {/* Row 1, Col 3: Transmission */}
+      {/* Row 2, Col 1: Transmission */}
       <span className="spec-chip" title={localizedTransmission || "—"}>
         <span className="spec-chip-icon"><Icon name="settings" size={13} /></span>
         <span>{localizedTransmission || "—"}</span>
       </span>
 
-      {/* Row 2, Col 1: Fuel type */}
+      {/* Row 2, Col 2: Fuel type */}
       <span className="spec-chip" title={localizedFuel || "—"}>
         <span className="spec-chip-icon"><Icon name="fuel" size={13} /></span>
         <span>{localizedFuel || "—"}</span>
       </span>
 
-      {/* Row 2, Col 2: First registration */}
+      {/* Row 3, Col 1: First registration */}
       <span className="spec-chip" title={formattedRegistration || "—"}>
         <span className="spec-chip-icon"><Icon name="calendar" size={13} /></span>
         <span>{formattedRegistration || "—"}</span>
       </span>
 
-      {/* Row 2, Col 3: Condition */}
+      {/* Row 3, Col 2: Condition */}
       <span className="spec-chip" title={localizedCondition || "—"}>
         <span className="spec-chip-icon"><Icon name="award" size={13} /></span>
         <span>{localizedCondition || "—"}</span>

@@ -165,7 +165,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
           </div>
 
           {/* Real Contact Channels & Hours Grid */}
-          {(hasPhone || hasEmail || hasWhatsapp || hasMondayHours) && (
+          {(hasPhone || hasEmail || hasWhatsapp || Boolean(formattedHours)) && (
             <div
               style={{
                 display: "grid",
@@ -306,7 +306,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                 </a>
               )}
 
-              {hasMondayHours && (
+              {formattedHours && (
                 <div
                   style={{
                     display: "flex",
