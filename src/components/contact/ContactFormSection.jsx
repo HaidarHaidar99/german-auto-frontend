@@ -509,15 +509,28 @@ export function ContactFormSection({ contactFormConfig = {}, className = "", sty
           error={errors.privacy_consent}
         />
 
-        <div style={{ marginTop: "var(--space-xs)", width: "100%", boxSizing: "border-box" }}>
+        <div
+          style={{
+            marginTop: "var(--space-xs)",
+            width: "100%",
+            display: "flex",
+            justifyContent: "flex-end",
+            boxSizing: "border-box",
+          }}
+        >
           <Button
             type="submit"
             variant="primary"
-            size="lg"
+            size="md"
             loading={loading}
             disabled={loading}
-            fullWidth
             iconLeft="send"
+            style={{
+              height: "42px",
+              padding: "0 28px",
+              fontSize: "14px",
+              fontWeight: 600,
+            }}
           >
             {loading ? t("submitting") : t("submit")}
           </Button>

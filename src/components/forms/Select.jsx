@@ -36,7 +36,14 @@ export function Select({
           aria-invalid={isError}
           aria-describedby={helperText || error ? `${selectId}-desc` : undefined}
           className={`form-select ${isError ? "is-error" : ""}`.trim()}
-          style={{ paddingRight: "calc(var(--space-md) + 24px)" }}
+          style={{
+            appearance: "none",
+            WebkitAppearance: "none",
+            MozAppearance: "none",
+            backgroundImage: "none",
+            paddingRight: "calc(var(--space-md) + 24px)",
+            cursor: disabled ? "not-allowed" : "pointer",
+          }}
           {...props}
         >
           {placeholder && <option value="">{placeholder}</option>}

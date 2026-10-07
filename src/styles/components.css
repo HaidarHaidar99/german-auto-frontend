@@ -330,6 +330,13 @@
   border-color: var(--color-border-hover);
 }
 
+.form-select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: none !important;
+}
+
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {

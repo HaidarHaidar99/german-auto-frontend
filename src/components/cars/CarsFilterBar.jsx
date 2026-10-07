@@ -6,6 +6,7 @@ import Button from "../ui/Button";
 import Drawer from "../ui/Drawer";
 import Badge from "../ui/Badge";
 import Icon from "../common/Icon";
+import AOS from "aos";
 
 /**
  * German Auto — Cars Filter & Search Bar
@@ -30,6 +31,14 @@ export function CarsFilterBar({
   useEffect(() => {
     setSearchValue(filters.search || filters.brand || "");
   }, [filters.search, filters.brand]);
+
+  // Refresh AOS when desktop filter panel is toggled
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try { AOS.refresh(); } catch {}
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [desktopFiltersOpen]);
 
   // Debounce search update (350ms)
   useEffect(() => {

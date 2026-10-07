@@ -148,19 +148,27 @@ export function CarsPage() {
     }
   };
 
+  // Refresh AOS animations on data changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      try { AOS.refresh(); } catch {}
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [cars.length, loading, error]);
+
   const handleFavoriteClick = async (carId) => {
     await toggleFavorite(carId);
   };
 
   return (
-    <div className="cars-page" style={{ width: "100%", minHeight: "100vh" }}>
+    <div className="cars-page" style={{ width: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
       {/* 1. Page Intro / Cinematic Header */}
       <CarsHeader totalCars={meta.total} />
 
       <div ref={inventoryTopRef} />
 
       {/* 2. Main Inventory Content Section */}
-      <Section spacing="default" style={{ paddingTop: "var(--space-md)" }}>
+      <Section spacing="none" style={{ paddingTop: "var(--space-md)", paddingBottom: "clamp(24px, 4vw, 40px)", flex: 1 }}>
         <Container size="default">
           {/* 3. Search & Filter Bar with Mobile Drawer */}
           <div data-aos="fade-up" data-aos-delay="100">
