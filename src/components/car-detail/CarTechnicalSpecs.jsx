@@ -36,7 +36,7 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
   if (rawMileage !== undefined && rawMileage !== null && rawMileage !== "") {
     sixSpecs.push({
       id: "mileage",
-      icon: "activity",
+      icon: "speedometer",
       label: t("filterMileage", { defaultValue: "Kilometerstand" }),
       value:
         typeof rawMileage === "number" || !isNaN(Number(rawMileage))

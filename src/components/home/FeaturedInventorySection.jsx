@@ -13,6 +13,7 @@ import ScrollReveal from "../motion/ScrollReveal";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import carsService from "../../services/cars/cars.service";
+import AOS from "aos";
 
 /**
  * German Auto — Featured Inventory Section
@@ -81,6 +82,15 @@ export function FeaturedInventorySection() {
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, [cars.length]);
+
+  useEffect(() => {
+    if (cars.length > 0) {
+      const timer = setTimeout(() => {
+        try { AOS.refresh(); } catch {}
+      }, 120);
+      return () => clearTimeout(timer);
+    }
   }, [cars.length]);
 
   const maxIndex = Math.max(0, cars.length - visibleCards);
@@ -208,6 +218,8 @@ export function FeaturedInventorySection() {
           return (
             <div
               className="cars-showcase-container"
+              data-aos="fade-right"
+              data-aos-duration="750"
               style={{
                 display: "flex",
                 alignItems: "center",

@@ -15,6 +15,7 @@ import Button from "../../components/ui/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSettings } from "../../contexts/SettingsContext";
 import carsService from "../../services/cars/cars.service";
+import AOS from "aos";
 
 /**
  * German Auto — Production Cars / Inventory Page
@@ -98,6 +99,9 @@ export function CarsPage() {
       setCars([]);
     } finally {
       setLoading(false);
+      setTimeout(() => {
+        try { AOS.refresh(); } catch {}
+      }, 100);
     }
   }, []);
 
@@ -292,6 +296,9 @@ export function CarsPage() {
                   return (
                     <div
                       key={car.id}
+                      data-aos="fade-right"
+                      data-aos-delay={(idx % 3) * 100}
+                      data-aos-duration="650"
                       style={{ width: "100%", minWidth: 0 }}
                     >
                       <CarCardBase

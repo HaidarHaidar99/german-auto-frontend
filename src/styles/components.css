@@ -43,7 +43,16 @@
   box-shadow: none !important;
 }
 
-/* Keep favorite button active state isolated to heart logo only */
+/* Keep favorite button active state isolated to heart logo only - zero outside shadows */
+.favorite-button,
+.favorite-button:hover,
+.favorite-button:active,
+.favorite-button:focus,
+.favorite-button.is-favorite {
+  box-shadow: none !important;
+  border-radius: 50% !important;
+}
+
 .car-card-base:has(.favorite-button:hover),
 .car-card-base:has(.favorite-button:active),
 .car-card-base:has(.favorite-button:focus),

@@ -281,6 +281,26 @@ const ICONS = {
       <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88" />
     </>
   ),
+  speedometer: (
+    <>
+      <path d="M12 14l3-3" />
+      <path d="M3.34 17a10 10 0 1 1 17.32 0" />
+      <circle cx="12" cy="14" r="2" />
+    </>
+  ),
+  gauge: (
+    <>
+      <path d="M12 14l3-3" />
+      <path d="M3.34 17a10 10 0 1 1 17.32 0" />
+      <circle cx="12" cy="14" r="2" />
+    </>
+  ),
+  zap: (
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  ),
+  activity: (
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  ),
 
   // Media Controls
   play: <polygon points="5 3 19 12 5 21 5 3" fill="currentColor" />,
@@ -575,6 +595,11 @@ export function Icon({
     dashboard: "layout",
     login: "log-in",
     logout: "log-out",
+    mileage: "speedometer",
+    odometer: "speedometer",
+    performance: "zap",
+    power: "zap",
+    bolt: "zap",
   };
 
   const resolvedName = ALIASES[name] || name;

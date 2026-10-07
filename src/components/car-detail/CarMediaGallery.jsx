@@ -724,7 +724,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   opacity: isActive ? 1 : 0.65,
                   transform: isActive ? "scale(1.02)" : "scale(1)",
                   transition: "all var(--duration-fast) var(--ease-smooth)",
-                  boxShadow: isActive ? "0 0 12px rgba(212, 175, 55, 0.55)" : "none",
+                  boxShadow: (isActive && isDark) ? "0 0 12px rgba(212, 175, 55, 0.55)" : "none",
                 }}
               >
                 <img
@@ -759,7 +759,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             display: "flex",
             alignItems: "center",
             gap: "14px",
-            boxShadow: isDark ? "0 4px 18px rgba(0, 0, 0, 0.5)" : "0 4px 18px rgba(0, 0, 0, 0.08)",
+            boxShadow: isDark ? "0 4px 18px rgba(0, 0, 0, 0.5)" : "none",
             userSelect: "none",
           }}
         >
@@ -826,7 +826,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   width: `${uniquePhotos.length > 1 ? (activePhotoIdx / (uniquePhotos.length - 1)) * 100 : 100}%`,
                   borderRadius: "999px",
                   background: "linear-gradient(90deg, #996515 0%, #D4AF37 70%, #F5DEB3 100%)",
-                  boxShadow: "0 0 12px rgba(212, 175, 55, 0.75)",
+                  boxShadow: isDark ? "0 0 12px rgba(212, 175, 55, 0.75)" : "none",
                   transition: isScrubbing ? "none" : "width 0.35s cubic-bezier(0.25, 1, 0.5, 1)",
                 }}
               />
@@ -868,7 +868,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   touchAction: "none",
                   zIndex: 10,
                   padding: "4px",
-                  filter: "drop-shadow(0 3px 8px rgba(212, 175, 55, 0.85))",
+                  filter: isDark ? "drop-shadow(0 3px 8px rgba(212, 175, 55, 0.85))" : "none",
                 }}
               >
                 <svg width="28" height="16" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
