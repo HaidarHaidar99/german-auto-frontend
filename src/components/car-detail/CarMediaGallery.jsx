@@ -476,7 +476,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             border: isDark ? "2px solid rgba(212, 175, 55, 0.8)" : "2px solid rgba(212, 175, 55, 0.85)",
             boxShadow: isDark
               ? "0 4px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(212, 175, 55, 0.25)"
-              : "0 4px 18px rgba(0, 0, 0, 0.08), 0 0 14px rgba(212, 175, 55, 0.2)",
+              : "none",
             overflow: "hidden",
             touchAction: "pan-y",
             overscrollBehaviorX: "none",
@@ -649,6 +649,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             style={{
+              backgroundColor: isDark ? "#2d3748" : "#e5e7eb",
               color: isDark ? "#ffffff" : "#000000",
             }}
           >
@@ -669,6 +670,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             style={{
+              backgroundColor: isDark ? "#2d3748" : "#e5e7eb",
               color: isDark ? "#ffffff" : "#000000",
             }}
           >
