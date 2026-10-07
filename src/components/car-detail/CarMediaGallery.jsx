@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import Icon from "../common/Icon";
 import VideoMedia from "../media/VideoMedia";
 import { isReducedMotion } from "../../utils/animation";
+import { useTheme } from "../../contexts/ThemeContext";
 
 /**
  * German Auto — CarMediaGallery Component
@@ -11,6 +12,7 @@ import { isReducedMotion } from "../../utils/animation";
  */
 export function CarMediaGallery({ car, className = "", style = {} }) {
   const { t } = useTranslation(["cars", "common"]);
+  const { isDark } = useTheme?.() || { isDark: true };
 
   // Extract all media safely
   const media = car?.media || {};
@@ -533,22 +535,24 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                     e.stopPropagation();
                     handlePrevPhoto();
                   }}
-                  onTouchEnd={(e) => e.stopPropagation()}
-                  onPointerDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
                   style={{
                     position: "absolute",
                     left: "14px",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    width: "44px",
-                    height: "44px",
+                    width: "48px",
+                    height: "48px",
                     borderRadius: "50%",
-                    backgroundColor: activePhotoIdx === 0 ? "rgba(12, 14, 18, 0.45)" : "rgba(12, 14, 18, 0.85)",
+                    padding: 0,
+                    margin: 0,
+                    touchAction: "manipulation",
+                    backgroundColor: activePhotoIdx === 0 ? "rgba(12, 14, 18, 0.45)" : (isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)"),
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
                     border: "1.5px solid",
-                    borderColor: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.45)",
-                    color: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.3)" : "#D4AF37",
+                    borderColor: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.6)",
+                    color: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.3)" : (isDark ? "#D4AF37" : "#B8860B"),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -556,23 +560,25 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                     opacity: activePhotoIdx === 0 ? 0.35 : 1,
                     pointerEvents: activePhotoIdx === 0 ? "none" : "auto",
                     zIndex: 20,
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.5)",
+                    boxShadow: isDark ? "0 4px 16px rgba(0, 0, 0, 0.5)" : "0 4px 14px rgba(0, 0, 0, 0.12)",
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
                     if (activePhotoIdx === 0) return;
-                    e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
+                    e.currentTarget.style.backgroundColor = isDark ? "rgba(212, 175, 55, 0.25)" : "rgba(212, 175, 55, 0.15)";
                     e.currentTarget.style.borderColor = "#D4AF37";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
                   }}
                   onMouseLeave={(e) => {
                     if (activePhotoIdx === 0) return;
-                    e.currentTarget.style.backgroundColor = "rgba(12, 14, 18, 0.85)";
-                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
+                    e.currentTarget.style.backgroundColor = isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)";
+                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.6)";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1)";
                   }}
                 >
-                  <Icon name="chevron-left" size={22} />
+                  <span style={{ pointerEvents: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name="chevron-left" size={24} style={{ pointerEvents: "none" }} />
+                  </span>
                 </button>
 
                 {/* Right Arrow: Next Photo (stops cleanly at last image) */}
@@ -585,22 +591,24 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                     e.stopPropagation();
                     handleNextPhoto();
                   }}
-                  onTouchEnd={(e) => e.stopPropagation()}
-                  onPointerDown={(e) => e.stopPropagation()}
+                  onTouchStart={(e) => e.stopPropagation()}
                   style={{
                     position: "absolute",
                     right: "14px",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    width: "44px",
-                    height: "44px",
+                    width: "48px",
+                    height: "48px",
                     borderRadius: "50%",
-                    backgroundColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(12, 14, 18, 0.45)" : "rgba(12, 14, 18, 0.85)",
+                    padding: 0,
+                    margin: 0,
+                    touchAction: "manipulation",
+                    backgroundColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(12, 14, 18, 0.45)" : (isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)"),
                     backdropFilter: "blur(12px)",
                     WebkitBackdropFilter: "blur(12px)",
                     border: "1.5px solid",
-                    borderColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.45)",
-                    color: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.3)" : "#D4AF37",
+                    borderColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.6)",
+                    color: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.3)" : (isDark ? "#D4AF37" : "#B8860B"),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -608,23 +616,25 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                     opacity: activePhotoIdx === uniquePhotos.length - 1 ? 0.35 : 1,
                     pointerEvents: activePhotoIdx === uniquePhotos.length - 1 ? "none" : "auto",
                     zIndex: 20,
-                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.5)",
+                    boxShadow: isDark ? "0 4px 16px rgba(0, 0, 0, 0.5)" : "0 4px 14px rgba(0, 0, 0, 0.12)",
                     transition: "all 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
                     if (activePhotoIdx === uniquePhotos.length - 1) return;
-                    e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
+                    e.currentTarget.style.backgroundColor = isDark ? "rgba(212, 175, 55, 0.25)" : "rgba(212, 175, 55, 0.15)";
                     e.currentTarget.style.borderColor = "#D4AF37";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
                   }}
                   onMouseLeave={(e) => {
                     if (activePhotoIdx === uniquePhotos.length - 1) return;
-                    e.currentTarget.style.backgroundColor = "rgba(12, 14, 18, 0.85)";
-                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.45)";
+                    e.currentTarget.style.backgroundColor = isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)";
+                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.6)";
                     e.currentTarget.style.transform = "translateY(-50%) scale(1)";
                   }}
                 >
-                  <Icon name="chevron-right" size={22} />
+                  <span style={{ pointerEvents: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                    <Icon name="chevron-right" size={24} style={{ pointerEvents: "none" }} />
+                  </span>
                 </button>
               </>
             )}
@@ -842,13 +852,13 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             marginBottom: "6px",
             padding: "8px 14px",
             borderRadius: "14px",
-            backgroundColor: "rgba(12, 14, 18, 0.85)",
-            border: "1px solid rgba(212, 175, 55, 0.25)",
+            backgroundColor: isDark ? "rgba(12, 14, 18, 0.85)" : "#ffffff",
+            border: isDark ? "1px solid rgba(212, 175, 55, 0.25)" : "1px solid rgba(212, 175, 55, 0.4)",
             backdropFilter: "blur(12px)",
             display: "flex",
             alignItems: "center",
             gap: "14px",
-            boxShadow: "0 4px 18px rgba(0, 0, 0, 0.5)",
+            boxShadow: isDark ? "0 4px 18px rgba(0, 0, 0, 0.5)" : "0 4px 18px rgba(0, 0, 0, 0.08)",
             userSelect: "none",
           }}
         >
@@ -858,7 +868,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
               display: "flex",
               alignItems: "center",
               gap: "6px",
-              color: "#D4AF37",
+              color: isDark ? "#D4AF37" : "#B8860B",
               fontSize: "13px",
               fontWeight: 700,
               fontVariantNumeric: "tabular-nums",
@@ -866,7 +876,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
               userSelect: "none",
             }}
           >
-            <Icon name="image" size={15} color="#D4AF37" />
+            <Icon name="image" size={15} color={isDark ? "#D4AF37" : "#B8860B"} />
             <span>
               {String(activePhotoIdx + 1).padStart(2, "0")} / {String(uniquePhotos.length).padStart(2, "0")}
             </span>
@@ -893,16 +903,16 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
             }}
             title="Berühren oder ziehen, um das Auto zu steuern"
           >
-            {/* Dark Groove Track - No White Lines! */}
+            {/* Groove Track */}
             <div
               style={{
                 position: "relative",
                 width: "100%",
                 height: "6px",
                 borderRadius: "999px",
-                backgroundColor: "rgba(0, 0, 0, 0.7)",
-                border: "1px solid rgba(212, 175, 55, 0.2)",
-                boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.9)",
+                backgroundColor: isDark ? "rgba(0, 0, 0, 0.7)" : "rgba(0, 0, 0, 0.08)",
+                border: isDark ? "1px solid rgba(212, 175, 55, 0.2)" : "1px solid rgba(212, 175, 55, 0.3)",
+                boxShadow: isDark ? "inset 0 1px 3px rgba(0, 0, 0, 0.9)" : "inset 0 1px 2px rgba(0, 0, 0, 0.08)",
               }}
             >
               {/* Active Gold Road Line - The Only Highlight Line */}
@@ -937,7 +947,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
               >
                 <svg width="15" height="18" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <line x1="2" y1="1" x2="2" y2="19" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" />
-                  <rect x="2" y="2" width="12" height="10" rx="1" fill="#181a20" stroke="#D4AF37" strokeWidth="0.8" />
+                  <rect x="2" y="2" width="12" height="10" rx="1" fill={isDark ? "#181a20" : "#ffffff"} stroke="#D4AF37" strokeWidth="0.8" />
                   <rect x="2" y="2" width="3" height="5" fill="#D4AF37" />
                   <rect x="8" y="2" width="3" height="5" fill="#D4AF37" />
                   <rect x="5" y="7" width="3" height="5" fill="#D4AF37" />
@@ -945,13 +955,13 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                 </svg>
               </div>
 
-              {/* Small Car Icon - Touch & Drag Capable */}
+              {/* Small Car Icon - Touch & Drag Capable (Faces forward towards finish line) */}
               <div
                 style={{
                   position: "absolute",
                   top: "50%",
                   left: `${uniquePhotos.length > 1 ? (activePhotoIdx / (uniquePhotos.length - 1)) * 100 : 100}%`,
-                  transform: `translate(-50%, -75%) ${driveDirection === "left" ? "scaleX(-1)" : "scaleX(1)"}`,
+                  transform: `translate(-50%, -75%) ${driveDirection === "left" ? "scaleX(1)" : "scaleX(-1)"}`,
                   transition: isScrubbing ? "none" : "left 0.35s cubic-bezier(0.25, 1, 0.5, 1), transform 0.2s ease",
                   cursor: isScrubbing ? "grabbing" : "grab",
                   touchAction: "none",

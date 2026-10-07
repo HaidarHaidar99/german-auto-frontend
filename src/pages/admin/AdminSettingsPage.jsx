@@ -172,11 +172,32 @@ export function AdminSettingsPage() {
       const res = await settingsService.adminUpdateSettings(payload);
       const updatedFromServer = res?.data?.settings || res?.data || {};
 
-      // Sync serverSettings with latest persisted values
+      const savedSectionData = updatedFromServer[activeSection] !== undefined
+        ? updatedFromServer[activeSection]
+        : formData[activeSection];
+
+      // Clone deeply to ensure clean reference identity and no stale mutations
+      const clonedSavedData = JSON.parse(JSON.stringify(savedSectionData));
+
+      // Synchronize both serverSettings and formData so isSectionDirty becomes false immediately
       setServerSettings((prev) => ({
         ...prev,
-        [activeSection]: updatedFromServer[activeSection] || formData[activeSection],
+        [activeSection]: clonedSavedData,
       }));
+      setFormData((prev) => ({
+        ...prev,
+        [activeSection]: JSON.parse(JSON.stringify(clonedSavedData)),
+      }));
+
+      // Background re-fetch to ensure 100% database schema parity
+      settingsService.adminGetSettings().then((freshRes) => {
+        const freshSettings = freshRes?.data?.settings || freshRes?.settings || freshRes?.data;
+        if (freshSettings && freshSettings[activeSection] !== undefined) {
+          const freshData = JSON.parse(JSON.stringify(freshSettings[activeSection]));
+          setServerSettings((prev) => ({ ...prev, [activeSection]: freshData }));
+          setFormData((prev) => ({ ...prev, [activeSection]: JSON.parse(JSON.stringify(freshData)) }));
+        }
+      }).catch(() => {});
 
       // Synchronize global SettingsContext so the homepage and public components update immediately
       if (typeof refreshSettings === "function") {

@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Icon from "../common/Icon";
 import Badge from "../ui/Badge";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const DAYS_ORDER = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 
@@ -23,6 +24,7 @@ const DAY_INDEX_MAP = {
  */
 export function ContactInfoCards({ contact = {}, hours = {}, social = {}, className = "", style = {} }) {
   const { t } = useTranslation(["forms", "common"]);
+  const { isDark } = useTheme?.() || { isDark: true };
 
   const phone = contact?.phone ? String(contact.phone).trim() : null;
   const email = contact?.email ? String(contact.email).trim() : "konigautomobilerheinberg@gmail.com";
@@ -130,13 +132,14 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     height: "40px",
                     minWidth: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(212, 175, 55, 0.32)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "var(--color-secondary)",
+                    color: isDark ? "var(--color-secondary)" : "#B8860B",
                     flexShrink: 0,
+                    boxShadow: "none",
                   }}
                 >
                   <Icon name="phone" size={18} />
@@ -232,13 +235,14 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     height: "40px",
                     minWidth: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(212, 175, 55, 0.32)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "var(--color-secondary)",
+                    color: isDark ? "var(--color-secondary)" : "#B8860B",
                     flexShrink: 0,
+                    boxShadow: "none",
                   }}
                 >
                   <Icon name="mail" size={18} />
@@ -284,13 +288,14 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                     height: "40px",
                     minWidth: "40px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
+                    border: isDark ? "1px solid rgba(255, 255, 255, 0.12)" : "1px solid rgba(212, 175, 55, 0.32)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "var(--color-secondary)",
+                    color: isDark ? "var(--color-secondary)" : "#B8860B",
                     flexShrink: 0,
+                    boxShadow: "none",
                   }}
                 >
                   <Icon name="external-link" size={18} />
@@ -465,32 +470,22 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
           text-decoration: none;
           position: relative;
           overflow: hidden;
-          transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-          animation: socialPulseFloat 3.4s ease-in-out infinite;
+          transition: all 0.2s ease;
+          box-shadow: none !important;
+          filter: none !important;
+          animation: none !important;
           flex-shrink: 0;
         }
-        @keyframes socialPulseFloat {
-          0%, 100% {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 0 0 rgba(212, 175, 55, 0);
-            border-color: rgba(212, 175, 55, 0.35);
-          }
-          50% {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5), 0 0 14px rgba(212, 175, 55, 0.35);
-            border-color: rgba(212, 175, 55, 0.7);
-          }
-        }
         .animated-social-icon-btn:hover {
-          transform: translateY(-6px) scale(1.14);
+          transform: translateY(-2px);
           border-color: #D4AF37 !important;
-          color: #000000 !important;
-          background: linear-gradient(135deg, #D4AF37, #F5D77F) !important;
-          box-shadow: 0 10px 24px rgba(212, 175, 55, 0.55), 0 0 18px rgba(212, 175, 55, 0.45);
+          color: #D4AF37 !important;
+          background-color: rgba(212, 175, 55, 0.18) !important;
+          box-shadow: none !important;
+          filter: none !important;
         }
         .animated-social-icon-btn:active {
-          transform: translateY(-2px) scale(0.96);
+          transform: translateY(0);
         }
       `}</style>
     </div>

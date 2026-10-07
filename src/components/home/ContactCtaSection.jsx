@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../contexts/SettingsContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import { Container, Section } from "../ui/Layout";
 import { Eyebrow, Heading } from "../ui/Typography";
 import Button from "../ui/Button";
@@ -75,6 +76,7 @@ function formatOpeningHoursSummary(hours, lang = "de") {
 export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfig: propHoursConfig }) {
   const { t, i18n } = useTranslation(["common", "navigation"]);
   const { settings } = useSettings();
+  const { isDark } = useTheme?.() || { isDark: true };
 
   const contactConfig = propContactConfig || settings?.contact || {};
   const hoursConfig = propHoursConfig || settings?.hours || {};
@@ -168,7 +170,14 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
                     className="contact-channel-row"
                     style={{ textDecoration: "none" }}
                   >
-                    <div className="contact-channel-icon-circle">
+                    <div
+                      className="contact-channel-icon-circle"
+                      style={{
+                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
+                        border: isDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(212, 175, 55, 0.32)",
+                        color: isDark ? "#D4AF37" : "#B8860B",
+                      }}
+                    >
                       <Icon name="phone" size={17} />
                     </div>
                     <div className="contact-channel-info">
@@ -191,7 +200,14 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
                     className="contact-channel-row"
                     style={{ textDecoration: "none" }}
                   >
-                    <div className="contact-channel-icon-circle">
+                    <div
+                      className="contact-channel-icon-circle"
+                      style={{
+                        backgroundColor: "rgba(37, 211, 102, 0.12)",
+                        border: "1px solid rgba(37, 211, 102, 0.28)",
+                        color: "#25D366",
+                      }}
+                    >
                       <Icon name="whatsapp" size={17} />
                     </div>
                     <div className="contact-channel-info">
@@ -212,7 +228,14 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
                     className="contact-channel-row"
                     style={{ textDecoration: "none" }}
                   >
-                    <div className="contact-channel-icon-circle">
+                    <div
+                      className="contact-channel-icon-circle"
+                      style={{
+                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
+                        border: isDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(212, 175, 55, 0.32)",
+                        color: isDark ? "#D4AF37" : "#B8860B",
+                      }}
+                    >
                       <Icon name="mail" size={17} />
                     </div>
                     <div className="contact-channel-info">
@@ -229,7 +252,14 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
                 {/* 4. Opening Hours (Dynamically generated from saved hours) */}
                 {formattedHours && (
                   <div className="contact-channel-row">
-                    <div className="contact-channel-icon-circle">
+                    <div
+                      className="contact-channel-icon-circle"
+                      style={{
+                        backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
+                        border: isDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(212, 175, 55, 0.32)",
+                        color: isDark ? "#D4AF37" : "#B8860B",
+                      }}
+                    >
                       <Icon name="clock" size={17} />
                     </div>
                     <div className="contact-channel-info">
@@ -312,13 +342,12 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
           height: 38px;
           min-width: 38px;
           border-radius: 50%;
-          background-color: var(--color-card, #0f1115);
-          border: 1px solid var(--color-border, rgba(255, 255, 255, 0.12));
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #D4AF37;
           flex-shrink: 0;
+          box-shadow: none !important;
+          filter: none !important;
         }
 
         .contact-channel-info {
@@ -367,7 +396,8 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
           gap: 12px;
           width: 100%;
           box-sizing: border-box;
-          box-shadow: none;
+          box-shadow: none !important;
+          filter: none !important;
         }
 
         .contact-social-header {
@@ -404,8 +434,8 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
           align-items: center;
           justify-content: center;
           text-decoration: none;
-          box-shadow: none;
-          filter: none;
+          box-shadow: none !important;
+          filter: none !important;
           flex-shrink: 0;
           transition: background-color 0.2s ease, transform 0.2s ease;
         }
@@ -414,6 +444,8 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
           background-color: rgba(212, 175, 55, 0.22);
           transform: translateY(-2px);
           color: #D4AF37;
+          box-shadow: none !important;
+          filter: none !important;
         }
 
         @media (max-width: 1080px) {

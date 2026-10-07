@@ -167,9 +167,11 @@ export function CarDetailPage() {
         className="car-detail-page-skeleton"
         style={{
           minHeight: "80vh",
-          padding: "var(--space-2xl) var(--space-md)",
-          maxWidth: "1400px",
+          padding: "var(--space-xl) clamp(16px, 3.5vw, 36px) var(--space-4xl)",
+          maxWidth: "1360px",
           margin: "0 auto",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         <div style={{ marginBottom: "var(--space-xl)" }}>
@@ -240,10 +242,11 @@ export function CarDetailPage() {
       ref={pageContainerRef}
       className="car-detail-page"
       style={{
-        maxWidth: "1440px",
+        maxWidth: "1360px",
         margin: "0 auto",
-        padding: "var(--space-xl) var(--space-md) var(--space-4xl)",
+        padding: "var(--space-xl) clamp(16px, 3.5vw, 36px) var(--space-4xl)",
         width: "100%",
+        boxSizing: "border-box",
       }}
     >
       {/* ─── Breadcrumb & Navigation Trail (Home / Cars / Car Model + Name) ─ */}
@@ -380,10 +383,12 @@ export function CarDetailPage() {
           gridTemplateColumns: "1fr",
           gap: "var(--space-2xl)",
           alignItems: "start",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {/* Left Column: Media Stage, Specs, Description & Equipment */}
-        <div style={{ display: "flex", flexDirection: "column", minWidth: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", minWidth: 0, width: "100%", boxSizing: "border-box" }}>
           {/* Cinematic Media Area */}
           <div className="car-media-animate" style={{ marginBottom: "var(--space-2xl)" }}>
             <CarMediaGallery car={car} />
@@ -464,7 +469,7 @@ export function CarDetailPage() {
         </div>
 
         {/* Right Column: Pricing, Primary CTA & Real CMS Contact Card */}
-        <div className="car-sidebar-animate">
+        <div className="car-sidebar-animate" style={{ minWidth: 0, width: "100%", boxSizing: "border-box" }}>
           <CarContactCard car={car} />
         </div>
       </div>

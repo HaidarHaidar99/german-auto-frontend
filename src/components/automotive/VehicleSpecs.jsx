@@ -86,59 +86,49 @@ export function VehicleSpecs({
     <div
       className={`vehicle-specs-grid ${className}`.trim()}
       style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "var(--space-2xs)",
+        display: "grid",
+        gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+        gap: "6px 8px",
+        width: "100%",
+        boxSizing: "border-box",
         ...style,
       }}
     >
-      {/* 1. Mileage */}
-      {formattedMileage && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="speedometer" size={13} /></span>
-          <span>{formattedMileage}</span>
-        </span>
-      )}
+      {/* Row 1, Col 1: Mileage */}
+      <span className="spec-chip" title={formattedMileage || "—"}>
+        <span className="spec-chip-icon"><Icon name="speedometer" size={13} /></span>
+        <span>{formattedMileage || "—"}</span>
+      </span>
 
-      {/* 2. Power / Performance */}
-      {formattedPower && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="zap" size={13} /></span>
-          <span>{formattedPower}</span>
-        </span>
-      )}
+      {/* Row 1, Col 2: Power / Performance */}
+      <span className="spec-chip" title={formattedPower || "—"}>
+        <span className="spec-chip-icon"><Icon name="zap" size={13} /></span>
+        <span>{formattedPower || "—"}</span>
+      </span>
 
-      {/* 3. Transmission */}
-      {localizedTransmission && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="settings" size={13} /></span>
-          <span>{localizedTransmission}</span>
-        </span>
-      )}
+      {/* Row 1, Col 3: Transmission */}
+      <span className="spec-chip" title={localizedTransmission || "—"}>
+        <span className="spec-chip-icon"><Icon name="settings" size={13} /></span>
+        <span>{localizedTransmission || "—"}</span>
+      </span>
 
-      {/* 4. Fuel type */}
-      {localizedFuel && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="fuel" size={13} /></span>
-          <span>{localizedFuel}</span>
-        </span>
-      )}
+      {/* Row 2, Col 1: Fuel type */}
+      <span className="spec-chip" title={localizedFuel || "—"}>
+        <span className="spec-chip-icon"><Icon name="fuel" size={13} /></span>
+        <span>{localizedFuel || "—"}</span>
+      </span>
 
-      {/* 5. First registration */}
-      {formattedRegistration && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="calendar" size={13} /></span>
-          <span>{formattedRegistration}</span>
-        </span>
-      )}
+      {/* Row 2, Col 2: First registration */}
+      <span className="spec-chip" title={formattedRegistration || "—"}>
+        <span className="spec-chip-icon"><Icon name="calendar" size={13} /></span>
+        <span>{formattedRegistration || "—"}</span>
+      </span>
 
-      {/* 6. Condition */}
-      {localizedCondition && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="award" size={13} /></span>
-          <span>{localizedCondition}</span>
-        </span>
-      )}
+      {/* Row 2, Col 3: Condition */}
+      <span className="spec-chip" title={localizedCondition || "—"}>
+        <span className="spec-chip-icon"><Icon name="award" size={13} /></span>
+        <span>{localizedCondition || "—"}</span>
+      </span>
     </div>
   );
 }
