@@ -278,7 +278,7 @@ export function CarDetailPage() {
           <span>{t("navigation:home", "Startseite")}</span>
         </Link>
 
-        <span style={{ color: "rgba(255, 255, 255, 0.25)" }}>/</span>
+        <span style={{ color: "var(--color-text-muted, #71717a)", opacity: 0.65 }}>/</span>
 
         <Link
           to="/cars"
@@ -293,7 +293,7 @@ export function CarDetailPage() {
           <span>{t("navigation:cars", t("cars:title", "Fahrzeuge"))}</span>
         </Link>
 
-        <span style={{ color: "rgba(255, 255, 255, 0.25)" }}>/</span>
+        <span style={{ color: "var(--color-text-muted, #71717a)", opacity: 0.65 }}>/</span>
 
         <span
           style={{

@@ -462,219 +462,71 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
         </div>
       )}
 
-      {/* Main Viewport Container */}
-      <div
-        className="primary-media-viewport"
-        style={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "16 / 9",
-          backgroundColor: "#07080a",
-          borderRadius: "var(--radius-lg)",
-          border: "1px solid var(--color-border-subtle)",
-          overflow: "hidden",
-          boxShadow: "var(--shadow-elevation-2)",
-          touchAction: "pan-y",
-          overscrollBehaviorX: "none",
-          userSelect: "none",
-        }}
-      >
-        {/* TAB: PHOTOS */}
-        {activeTab === "photos" && hasPhotos && (
-          <div
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            onTouchCancel={handleTouchCancel}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "relative",
-              touchAction: "pan-y",
-              overscrollBehaviorX: "none",
-              overflow: "hidden",
-            }}
-          >
-            <img
-              key={currentPhotoSrc}
-              src={currentPhotoSrc}
-              alt={`${vehicleAlt} — Ansicht ${activePhotoIdx + 1}`}
-              loading={activePhotoIdx === 0 ? "eager" : "lazy"}
-              draggable={false}
+      {/* ─── Main Viewport & Outer Arrow Stage Wrapper ─── */}
+      <div className="gallery-stage-wrapper" style={{ position: "relative", width: "100%" }}>
+        {/* Main Viewport Container */}
+        <div
+          className="primary-media-viewport"
+          style={{
+            position: "relative",
+            width: "100%",
+            aspectRatio: "16 / 9",
+            backgroundColor: "#07080a",
+            borderRadius: "16px",
+            border: isDark ? "2px solid rgba(212, 175, 55, 0.8)" : "2px solid rgba(212, 175, 55, 0.85)",
+            boxShadow: isDark
+              ? "0 4px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(212, 175, 55, 0.25)"
+              : "0 4px 18px rgba(0, 0, 0, 0.08), 0 0 14px rgba(212, 175, 55, 0.2)",
+            overflow: "hidden",
+            touchAction: "pan-y",
+            overscrollBehaviorX: "none",
+            userSelect: "none",
+          }}
+        >
+          {/* TAB: PHOTOS */}
+          {activeTab === "photos" && hasPhotos && (
+            <div
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchCancel}
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
-                display: "block",
-                cursor: "default",
-                userSelect: "none",
-                transition: isReducedMotion() ? "none" : "opacity var(--duration-fast) var(--ease-smooth)",
-              }}
-            />
-
-            {/* Subtle Floor Ambient Gradient */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(to top, rgba(9, 10, 12, 0.6) 0%, transparent 40%)",
-                pointerEvents: "none",
-              }}
-            />
-
-            {/* Navigation Overlay Controls (Positioned INSIDE the large image) */}
-            {uniquePhotos.length > 1 && (
-              <>
-                {/* Left Arrow: Previous Photo (stops cleanly at first image) */}
-                <button
-                  type="button"
-                  aria-label={t("lightboxPrev", "Vorheriges Bild")}
-                  disabled={activePhotoIdx === 0}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handlePrevPhoto();
-                  }}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  style={{
-                    position: "absolute",
-                    left: "14px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "50%",
-                    padding: 0,
-                    margin: 0,
-                    touchAction: "manipulation",
-                    backgroundColor: activePhotoIdx === 0 ? "rgba(12, 14, 18, 0.45)" : (isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)"),
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1.5px solid",
-                    borderColor: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.6)",
-                    color: activePhotoIdx === 0 ? "rgba(255, 255, 255, 0.3)" : (isDark ? "#D4AF37" : "#B8860B"),
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: activePhotoIdx === 0 ? "not-allowed" : "pointer",
-                    opacity: activePhotoIdx === 0 ? 0.35 : 1,
-                    pointerEvents: activePhotoIdx === 0 ? "none" : "auto",
-                    zIndex: 20,
-                    boxShadow: isDark ? "0 4px 16px rgba(0, 0, 0, 0.5)" : "0 4px 14px rgba(0, 0, 0, 0.12)",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (activePhotoIdx === 0) return;
-                    e.currentTarget.style.backgroundColor = isDark ? "rgba(212, 175, 55, 0.25)" : "rgba(212, 175, 55, 0.15)";
-                    e.currentTarget.style.borderColor = "#D4AF37";
-                    e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (activePhotoIdx === 0) return;
-                    e.currentTarget.style.backgroundColor = isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)";
-                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.6)";
-                    e.currentTarget.style.transform = "translateY(-50%) scale(1)";
-                  }}
-                >
-                  <span style={{ pointerEvents: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-                    <Icon name="chevron-left" size={24} style={{ pointerEvents: "none" }} />
-                  </span>
-                </button>
-
-                {/* Right Arrow: Next Photo (stops cleanly at last image) */}
-                <button
-                  type="button"
-                  aria-label={t("lightboxNext", "Nächstes Bild")}
-                  disabled={activePhotoIdx === uniquePhotos.length - 1}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleNextPhoto();
-                  }}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  style={{
-                    position: "absolute",
-                    right: "14px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    width: "48px",
-                    height: "48px",
-                    borderRadius: "50%",
-                    padding: 0,
-                    margin: 0,
-                    touchAction: "manipulation",
-                    backgroundColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(12, 14, 18, 0.45)" : (isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)"),
-                    backdropFilter: "blur(12px)",
-                    WebkitBackdropFilter: "blur(12px)",
-                    border: "1.5px solid",
-                    borderColor: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.12)" : "rgba(212, 175, 55, 0.6)",
-                    color: activePhotoIdx === uniquePhotos.length - 1 ? "rgba(255, 255, 255, 0.3)" : (isDark ? "#D4AF37" : "#B8860B"),
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: activePhotoIdx === uniquePhotos.length - 1 ? "not-allowed" : "pointer",
-                    opacity: activePhotoIdx === uniquePhotos.length - 1 ? 0.35 : 1,
-                    pointerEvents: activePhotoIdx === uniquePhotos.length - 1 ? "none" : "auto",
-                    zIndex: 20,
-                    boxShadow: isDark ? "0 4px 16px rgba(0, 0, 0, 0.5)" : "0 4px 14px rgba(0, 0, 0, 0.12)",
-                    transition: "all 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (activePhotoIdx === uniquePhotos.length - 1) return;
-                    e.currentTarget.style.backgroundColor = isDark ? "rgba(212, 175, 55, 0.25)" : "rgba(212, 175, 55, 0.15)";
-                    e.currentTarget.style.borderColor = "#D4AF37";
-                    e.currentTarget.style.transform = "translateY(-50%) scale(1.08)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (activePhotoIdx === uniquePhotos.length - 1) return;
-                    e.currentTarget.style.backgroundColor = isDark ? "rgba(12, 14, 18, 0.85)" : "rgba(255, 255, 255, 0.95)";
-                    e.currentTarget.style.borderColor = "rgba(212, 175, 55, 0.6)";
-                    e.currentTarget.style.transform = "translateY(-50%) scale(1)";
-                  }}
-                >
-                  <span style={{ pointerEvents: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-                    <Icon name="chevron-right" size={24} style={{ pointerEvents: "none" }} />
-                  </span>
-                </button>
-              </>
-            )}
-
-            {/* Bottom Meta Bar: Photo Counter (No Fullscreen button) */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "var(--space-md)",
-                left: "var(--space-md)",
-                display: "flex",
-                alignItems: "center",
-                zIndex: 6,
-                pointerEvents: "none",
+                position: "relative",
+                touchAction: "pan-y",
+                overscrollBehaviorX: "none",
+                overflow: "hidden",
               }}
             >
+              <img
+                key={currentPhotoSrc}
+                src={currentPhotoSrc}
+                alt={`${vehicleAlt} — Ansicht ${activePhotoIdx + 1}`}
+                loading={activePhotoIdx === 0 ? "eager" : "lazy"}
+                draggable={false}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  display: "block",
+                  cursor: "default",
+                  userSelect: "none",
+                  transition: isReducedMotion() ? "none" : "opacity var(--duration-fast) var(--ease-smooth)",
+                }}
+              />
+
+              {/* Subtle Floor Ambient Gradient */}
               <div
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "var(--space-2xs)",
-                  padding: "4px 10px",
-                  borderRadius: "var(--radius-sm)",
-                  backgroundColor: "rgba(9, 10, 12, 0.75)",
-                  backdropFilter: "blur(10px)",
-                  border: "1px solid rgba(212, 175, 55, 0.3)",
-                  fontSize: "var(--font-size-xs)",
-                  fontWeight: 600,
-                  color: "#D4AF37",
-                  fontVariantNumeric: "tabular-nums",
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(to top, rgba(9, 10, 12, 0.6) 0%, transparent 40%)",
+                  pointerEvents: "none",
                 }}
-              >
-                <Icon name="image" size={13} color="#D4AF37" />
-                <span>
-                  {activePhotoIdx + 1} / {uniquePhotos.length}
-                </span>
-              </div>
+              />
             </div>
-          </div>
-        )}
+          )}
 
         {/* TAB: VIDEO */}
         {activeTab === "video" && hasVideo && (
@@ -780,6 +632,52 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
         )}
       </div>
 
+      {/* Outer Navigation Arrows (Outside on Desktop, Transparent on Mobile) */}
+      {activeTab === "photos" && uniquePhotos.length > 1 && (
+        <>
+          {/* Left Arrow: Previous Photo (stops cleanly at first image) */}
+          <button
+            type="button"
+            className="gallery-nav-arrow gallery-nav-prev"
+            aria-label={t("lightboxPrev", "Vorheriges Bild")}
+            disabled={activePhotoIdx === 0}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handlePrevPhoto();
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            style={{
+              color: isDark ? "#ffffff" : "#000000",
+            }}
+          >
+            <Icon name="chevron-left" size={18} style={{ pointerEvents: "none" }} />
+          </button>
+
+          {/* Right Arrow: Next Photo (stops cleanly at last image) */}
+          <button
+            type="button"
+            className="gallery-nav-arrow gallery-nav-next"
+            aria-label={t("lightboxNext", "Nächstes Bild")}
+            disabled={activePhotoIdx === uniquePhotos.length - 1}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleNextPhoto();
+            }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onTouchStart={(e) => e.stopPropagation()}
+            style={{
+              color: isDark ? "#ffffff" : "#000000",
+            }}
+          >
+            <Icon name="chevron-right" size={18} style={{ pointerEvents: "none" }} />
+          </button>
+        </>
+      )}
+    </div>
+
       {/* ─── 1. Gallery View / Thumbnail Strip (ABOVE the gold line) ─── */}
       {activeTab === "photos" && uniquePhotos.length > 1 && (
         <div
@@ -814,16 +712,15 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   width: "100%",
                   aspectRatio: "16 / 10",
                   padding: 0,
-                  borderRadius: "var(--radius-sm)",
-                  border: "2px solid",
-                  borderColor: isActive ? "#D4AF37" : "var(--color-border-subtle)",
+                  borderRadius: "10px",
+                  border: isActive ? "2.5px solid #D4AF37" : "1.5px solid var(--color-border-subtle)",
                   overflow: "hidden",
                   cursor: "pointer",
                   backgroundColor: "var(--color-surface)",
                   opacity: isActive ? 1 : 0.65,
                   transform: isActive ? "scale(1.02)" : "scale(1)",
                   transition: "all var(--duration-fast) var(--ease-smooth)",
-                  boxShadow: isActive ? "0 0 10px rgba(212, 175, 55, 0.4)" : "none",
+                  boxShadow: isActive ? "0 0 12px rgba(212, 175, 55, 0.55)" : "none",
                 }}
               >
                 <img

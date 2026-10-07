@@ -11,6 +11,7 @@ import EmptyState from "../ui/EmptyState";
 import CarCardBase from "../automotive/CarCardBase";
 import ScrollReveal from "../motion/ScrollReveal";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import carsService from "../../services/cars/cars.service";
 
 /**
@@ -23,6 +24,7 @@ export function FeaturedInventorySection() {
   const { t, i18n } = useTranslation(["cars", "common"]);
   const navigate = useNavigate();
   const { isAuthenticated, isCarFavorite, toggleFavorite } = useAuth();
+  const { isDark } = useTheme?.() || { isDark: true };
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const [cars, setCars] = useState([]);
@@ -210,6 +212,46 @@ export function FeaturedInventorySection() {
               boxSizing: "border-box",
             }}
           >
+            <style>{`
+              @media (max-width: 640px) {
+                .featured-cars-track {
+                  scroll-snap-type: x mandatory !important;
+                  padding-left: calc((100% - 280px) / 2) !important;
+                  padding-right: calc((100% - 280px) / 2) !important;
+                  gap: 16px !important;
+                }
+                .featured-car-item {
+                  flex: 0 0 280px !important;
+                  width: 280px !important;
+                  max-width: 280px !important;
+                  scroll-snap-align: center !important;
+                }
+                .carousel-nav-arrow {
+                  width: 34px !important;
+                  height: 34px !important;
+                  min-width: 34px !important;
+                  min-height: 34px !important;
+                }
+                .carousel-nav-arrow-left {
+                  left: 4px !important;
+                }
+                .carousel-nav-arrow-right {
+                  right: 4px !important;
+                }
+              }
+              @media (max-width: 330px) {
+                .featured-cars-track {
+                  padding-left: calc((100% - 245px) / 2) !important;
+                  padding-right: calc((100% - 245px) / 2) !important;
+                }
+                .featured-car-item {
+                  flex: 0 0 245px !important;
+                  width: 245px !important;
+                  max-width: 245px !important;
+                }
+              }
+            `}</style>
+
             {/* Left Arrow Button - ONLY visible if not on first car card */}
             {canScrollLeft && (
               <button
@@ -219,41 +261,40 @@ export function FeaturedInventorySection() {
                 onPointerDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-label="Previous cars"
+                className="carousel-nav-arrow carousel-nav-arrow-left"
                 style={{
                   position: "absolute",
                   left: "6px",
                   top: "46%",
                   transform: "translateY(-50%)",
                   zIndex: 25,
-                  width: "42px",
-                  height: "42px",
-                  minWidth: "42px",
-                  minHeight: "42px",
+                  width: "40px",
+                  height: "40px",
+                  minWidth: "40px",
+                  minHeight: "40px",
                   padding: 0,
                   borderRadius: "50%",
-                  backgroundColor: "rgba(18, 20, 24, 0.95)",
+                  backgroundColor: isDark ? "rgba(18, 20, 24, 0.95)" : "#ffffff",
                   backdropFilter: "blur(10px)",
                   WebkitBackdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  color: "#ffffff",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+                  border: isDark ? "1px solid rgba(255, 255, 255, 0.3)" : "1px solid rgba(0, 0, 0, 0.16)",
+                  color: isDark ? "#ffffff" : "#000000",
+                  boxShadow: isDark ? "0 4px 12px rgba(0, 0, 0, 0.4)" : "0 3px 12px rgba(0, 0, 0, 0.14)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
                   outline: "none",
-                  transition: "border-color 0.15s ease, background-color 0.15s ease",
+                  transition: "opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
                   userSelect: "none",
                   WebkitTapHighlightColor: "transparent",
                   pointerEvents: "auto",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.6)";
-                  e.currentTarget.style.backgroundColor = "rgba(28, 32, 38, 0.98)";
+                  e.currentTarget.style.opacity = "0.85";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)";
-                  e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
+                  e.currentTarget.style.opacity = "1";
                 }}
               >
                 <Icon name="chevron-left" size={20} style={{ pointerEvents: "none" }} />
@@ -269,41 +310,40 @@ export function FeaturedInventorySection() {
                 onPointerDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
                 aria-label="Next cars"
+                className="carousel-nav-arrow carousel-nav-arrow-right"
                 style={{
                   position: "absolute",
                   right: "6px",
                   top: "46%",
                   transform: "translateY(-50%)",
                   zIndex: 25,
-                  width: "42px",
-                  height: "42px",
-                  minWidth: "42px",
-                  minHeight: "42px",
+                  width: "40px",
+                  height: "40px",
+                  minWidth: "40px",
+                  minHeight: "40px",
                   padding: 0,
                   borderRadius: "50%",
-                  backgroundColor: "rgba(18, 20, 24, 0.95)",
+                  backgroundColor: isDark ? "rgba(18, 20, 24, 0.95)" : "#ffffff",
                   backdropFilter: "blur(10px)",
                   WebkitBackdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  color: "#ffffff",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+                  border: isDark ? "1px solid rgba(255, 255, 255, 0.3)" : "1px solid rgba(0, 0, 0, 0.16)",
+                  color: isDark ? "#ffffff" : "#000000",
+                  boxShadow: isDark ? "0 4px 12px rgba(0, 0, 0, 0.4)" : "0 3px 12px rgba(0, 0, 0, 0.14)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   cursor: "pointer",
                   outline: "none",
-                  transition: "border-color 0.15s ease, background-color 0.15s ease",
+                  transition: "opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease",
                   userSelect: "none",
                   WebkitTapHighlightColor: "transparent",
                   pointerEvents: "auto",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.6)";
-                  e.currentTarget.style.backgroundColor = "rgba(28, 32, 38, 0.98)";
+                  e.currentTarget.style.opacity = "0.85";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.3)";
-                  e.currentTarget.style.backgroundColor = "rgba(18, 20, 24, 0.95)";
+                  e.currentTarget.style.opacity = "1";
                 }}
               >
                 <Icon name="chevron-right" size={20} style={{ pointerEvents: "none" }} />
