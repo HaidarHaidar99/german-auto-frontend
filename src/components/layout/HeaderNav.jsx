@@ -154,6 +154,9 @@ export function HeaderNav({
   const openMenu = () => {
     setMenuOpen(true);
     document.body.style.overflow = "hidden"; // Prevent scrolling
+    if (window.__lenis && typeof window.__lenis.stop === "function") {
+      window.__lenis.stop();
+    }
 
     gsap.killTweensOf([menuBgRef.current, ...menuItemsRef.current]);
 
@@ -183,6 +186,9 @@ export function HeaderNav({
       onComplete: () => {
         setMenuOpen(false);
         document.body.style.overflow = "";
+        if (window.__lenis && typeof window.__lenis.start === "function") {
+          window.__lenis.start();
+        }
       }
     });
 
@@ -452,7 +458,7 @@ export function HeaderNav({
                       justifyContent: "center",
                       padding: "0 4px",
                       lineHeight: 1,
-                      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.5)",
+                      boxShadow: "none",
                     }}
                   >
                     {favorites.length}
@@ -555,39 +561,46 @@ export function HeaderNav({
         </div>
       </header>
 
-      {/* Full Screen Cinematic Menu */}
+      {/* Full Screen Cinematic Menu (No Scroll in All Languages & Modes) */}
       <div 
         ref={menuBgRef}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
+          right: 0,
+          bottom: 0,
           width: "100%",
           height: "100dvh",
+          maxHeight: "100dvh",
+          boxSizing: "border-box",
           backgroundColor: "var(--color-background)",
           zIndex: 9998,
           display: menuOpen ? "flex" : "none", // Avoid rendering when closed to prevent interaction
           flexDirection: "column",
-          justifyContent: "flex-start",
+          justifyContent: "space-between",
           alignItems: "center",
-          paddingTop: "clamp(64px, 11vh, 80px)",
-          paddingBottom: "2rem",
-          paddingLeft: "var(--space-xl)",
-          paddingRight: "var(--space-xl)",
-          overflowY: "auto",
-          WebkitOverflowScrolling: "touch",
+          paddingTop: "clamp(12px, 2.5vh, 22px)",
+          paddingBottom: "clamp(14px, 3vh, 24px)",
+          paddingLeft: "clamp(16px, 4vw, 24px)",
+          paddingRight: "clamp(16px, 4vw, 24px)",
+          overflow: "hidden",
+          overflowY: "hidden",
+          overflowX: "hidden",
+          touchAction: "none",
+          overscrollBehavior: "none",
+          WebkitOverflowScrolling: "auto",
           transform: "translateY(-100%)", // Initial state for GSAP
         }}
       >
-        {/* Mobile Menu Top Bar: Close Button Only (No Language Switcher) */}
+        {/* Mobile Menu Top Bar: Close Button */}
         <div
           style={{
-            position: "absolute",
-            top: "16px",
-            right: "20px",
+            width: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
+            flexShrink: 0,
             zIndex: 10001,
           }}
         >
@@ -596,13 +609,13 @@ export function HeaderNav({
             onClick={closeMenu}
             aria-label="Close menu"
             style={{
-              width: "42px",
-              height: "42px",
+              width: "38px",
+              height: "38px",
               borderRadius: "50%",
               backgroundColor: "var(--color-accent-subtle)",
               border: "1px solid var(--color-border)",
               color: "var(--color-text)",
-              fontSize: "18px",
+              fontSize: "16px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -627,11 +640,15 @@ export function HeaderNav({
         <nav style={{ 
           display: "flex", 
           flexDirection: "column", 
-          gap: "clamp(0.65rem, 1.8vh, 1rem)", 
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "clamp(4px, 1.2vh, 10px)", 
           textAlign: "center",
           width: "100%",
-          maxWidth: "480px",
-          margin: "0 auto",
+          maxWidth: "420px",
+          margin: "auto 0",
+          flex: "1 1 auto",
+          overflow: "hidden",
         }}>
           {[
             { to: "/", label: t("home", { defaultValue: "Home" }), isHome: true },
@@ -647,18 +664,20 @@ export function HeaderNav({
               onClick={() => handleMobileNavClick(item)}
               ref={el => menuItemsRef.current[i] = el}
               style={{ 
-                fontSize: "clamp(1.4rem, 4.5vw, 1.95rem)", 
+                fontSize: "clamp(1.1rem, 2.7vh, 1.55rem)", 
                 fontWeight: 700, 
                 color: "var(--color-text)", 
                 textDecoration: "none",
-                letterSpacing: "0.12em",
+                letterSpacing: "0.08em",
                 textTransform: "uppercase",
+                whiteSpace: "nowrap",
                 opacity: 0, // Initial state for GSAP
                 display: "block",
-                padding: "clamp(6px, 1.2vh, 10px) 16px",
+                padding: "clamp(4px, 0.9vh, 8px) 14px",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid transparent",
                 backgroundColor: "transparent",
+                lineHeight: 1.2,
                 transition: "color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease",
               }}
               onMouseEnter={(e) => {
@@ -680,29 +699,31 @@ export function HeaderNav({
           <div 
             ref={el => menuItemsRef.current[6] = el} 
             style={{ 
-              marginTop: "clamp(1.25rem, 3vh, 1.85rem)", 
+              marginTop: "clamp(8px, 1.8vh, 16px)", 
               opacity: 0, 
               display: "flex", 
               flexDirection: "row", 
-              gap: "24px",
+              gap: "20px",
               alignItems: "center",
               justifyContent: "center",
               width: "100%",
+              flexShrink: 0,
             }}
           >
-            {/* 1. Favorites Icon */}
+            {/* 1. Favorites Icon with Live Count Badge */}
             <Link
               to="/account/favorites"
               onClick={closeMenu}
               aria-label={t("favorites", { defaultValue: "Favoriten" })}
               title={t("favorites", { defaultValue: "Favoriten" })}
               style={{
-                width: "48px",
-                height: "48px",
+                position: "relative",
+                width: "44px",
+                height: "44px",
                 borderRadius: "50%",
-                border: "1.5px solid var(--color-text)",
-                backgroundColor: "transparent",
-                color: "var(--color-text)",
+                border: favorites.length > 0 ? "1.5px solid #ef4444" : "1.5px solid var(--color-text)",
+                backgroundColor: favorites.length > 0 ? "rgba(239, 68, 68, 0.12)" : "transparent",
+                color: favorites.length > 0 ? "#ef4444" : "var(--color-text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -710,6 +731,7 @@ export function HeaderNav({
                 transition: "all 0.2s ease",
                 textDecoration: "none",
                 flexShrink: 0,
+                boxShadow: "none",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
@@ -717,12 +739,35 @@ export function HeaderNav({
                 e.currentTarget.style.color = "var(--color-secondary)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.borderColor = "var(--color-text)";
-                e.currentTarget.style.color = "var(--color-text)";
+                e.currentTarget.style.backgroundColor = favorites.length > 0 ? "rgba(239, 68, 68, 0.12)" : "transparent";
+                e.currentTarget.style.borderColor = favorites.length > 0 ? "#ef4444" : "var(--color-text)";
+                e.currentTarget.style.color = favorites.length > 0 ? "#ef4444" : "var(--color-text)";
               }}
             >
-              <Icon name="heart" size={20} color="currentColor" />
+              <Icon name={favorites.length > 0 ? "heart-filled" : "heart"} size={19} color={favorites.length > 0 ? "#ef4444" : "currentColor"} />
+              <span
+                style={{
+                  position: "absolute",
+                  top: "-4px",
+                  right: "-4px",
+                  minWidth: "18px",
+                  height: "18px",
+                  borderRadius: "9px",
+                  backgroundColor: "#D4AF37",
+                  color: "#000000",
+                  fontSize: "10px",
+                  fontWeight: 800,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "0 4px",
+                  lineHeight: 1,
+                  boxShadow: "none",
+                  border: "1px solid rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                {favorites.length}
+              </span>
             </Link>
 
             {/* 2. Profile Icon */}
@@ -732,8 +777,8 @@ export function HeaderNav({
               aria-label={t("profile", { ns: "account", defaultValue: "Profile" })}
               title={t("profile", { ns: "account", defaultValue: "Profile" })}
               style={{
-                width: "48px",
-                height: "48px",
+                width: "44px",
+                height: "44px",
                 borderRadius: "50%",
                 border: "1.5px solid var(--color-text)",
                 backgroundColor: "transparent",
@@ -745,6 +790,7 @@ export function HeaderNav({
                 transition: "all 0.2s ease",
                 textDecoration: "none",
                 flexShrink: 0,
+                boxShadow: "none",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
@@ -757,7 +803,7 @@ export function HeaderNav({
                 e.currentTarget.style.color = "var(--color-text)";
               }}
             >
-              <Icon name="user" size={20} color="currentColor" />
+              <Icon name="user" size={19} color="currentColor" />
             </Link>
 
             {/* 3. Theme Toggle Switch (replaces Logout in mobile menu and closes menu upon toggle) */}

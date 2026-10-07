@@ -43,14 +43,22 @@
   box-shadow: none !important;
 }
 
-/* Keep favorite button active state isolated to heart logo only - zero outside shadows */
+/* Keep favorite button active state isolated to heart logo only - zero outside shadows in all modes */
 .favorite-button,
+.favorite-button *,
+.favorite-button::before,
+.favorite-button::after,
 .favorite-button:hover,
 .favorite-button:active,
 .favorite-button:focus,
+.favorite-button:focus-visible,
 .favorite-button.is-favorite {
   box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
   border-radius: 50% !important;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .car-card-base:has(.favorite-button:hover),
