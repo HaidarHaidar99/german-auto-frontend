@@ -406,52 +406,47 @@ export function CarEditorModal({
       errors.brand = "Marke / Hersteller ist ein Pflichtfeld.";
     }
 
-    // 2. Model
-    if (!form.model?.trim()) {
-      errors.model = "Modell ist ein Pflichtfeld.";
-    }
-
-    // 3. Car Name / Title
+    // 2. Car Name / Title (vehicle identity uses Brand and Name)
     if (!form.title?.trim()) {
       errors.title = "Fahrzeugname / Titel ist ein Pflichtfeld.";
     }
 
-    // 4. Condition (Used or New)
+    // 3. Condition (Used or New)
     if (!form.condition) {
       errors.condition = "Fahrzeugzustand (Neu / Gebraucht) ist ein Pflichtfeld.";
     }
 
-    // 5. Price
+    // 4. Price
     if (form.price === "" || form.price === null || isNaN(Number(form.price)) || Number(form.price) < 0) {
       errors.price = "Gültiger Kaufpreis (€) ist ein Pflichtfeld.";
     }
 
-    // 6. Mileage (km)
+    // 5. Mileage (km)
     if (form.mileage_km === "" || form.mileage_km === null || isNaN(Number(form.mileage_km)) || Number(form.mileage_km) < 0) {
       errors.mileage_km = "Kilometerstand (km) ist ein Pflichtfeld.";
     }
 
-    // 7. Power (PS)
+    // 6. Power (PS)
     if (form.performance_hp === "" || form.performance_hp === null || isNaN(Number(form.performance_hp)) || Number(form.performance_hp) <= 0) {
       errors.performance_hp = "Leistung (PS) ist ein Pflichtfeld.";
     }
 
-    // 8. First Registration
+    // 7. First Registration
     if (!form.first_registration?.trim()) {
       errors.first_registration = "Erstzulassung ist ein Pflichtfeld.";
     }
 
-    // 9. Fuel Type
+    // 8. Fuel Type
     if (!form.fuel_type) {
       errors.fuel_type = "Kraftstoffart ist ein Pflichtfeld.";
     }
 
-    // 10. Transmission
+    // 9. Transmission
     if (!form.transmission) {
       errors.transmission = "Getriebe ist ein Pflichtfeld.";
     }
 
-    // 11. At least 1 image
+    // 10. At least 1 image
     const imagesCount = (form.media?.gallery?.length || 0) + (form.media?.thumbnail ? 1 : 0);
     if (imagesCount === 0) {
       errors.media = "Mindestens 1 Fahrzeugbild ist erforderlich.";
@@ -470,7 +465,6 @@ export function CarEditorModal({
       // Auto-switch to tab containing the first error
       if (
         errorsFound.brand ||
-        errorsFound.model ||
         errorsFound.title ||
         errorsFound.price ||
         errorsFound.condition ||
@@ -492,7 +486,7 @@ export function CarEditorModal({
 
     const payload = {
       brand: form.brand.trim(),
-      model: form.model.trim(),
+      model: (form.model || form.title || form.brand || "").trim(),
       title: form.title.trim(),
       category: form.category,
       condition: form.condition,
@@ -655,22 +649,13 @@ export function CarEditorModal({
         {/* ── Tab 1: Grunddaten & Pflichtfelder ───────────────────────────── */}
         {activeTab === "core" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            {/* Row 1: Marke, Modell, Fahrzeugname/Titel */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
+            {/* Row 1: Marke, Fahrzeugname/Titel */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label={t("brandManufacturer", { defaultValue: "Marke / Hersteller" })} required error={formErrors.brand}>
                 <Input
                   value={form.brand}
                   onChange={(e) => handleChange("brand", e.target.value)}
                   placeholder="z. B. Porsche, BMW, Mercedes"
-                  required
-                />
-              </SettingsField>
-
-              <SettingsField label={t("model", { defaultValue: "Modell" })} required error={formErrors.model}>
-                <Input
-                  value={form.model}
-                  onChange={(e) => handleChange("model", e.target.value)}
-                  placeholder="z. B. 911 GT3 RS, M3"
                   required
                 />
               </SettingsField>

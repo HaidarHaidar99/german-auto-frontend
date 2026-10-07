@@ -16,7 +16,9 @@ import Icon from "../common/Icon";
 
 export function CarCardBase({
   brand = "Fahrzeugmarke",
-  model = "Modellbezeichnung",
+  model = "",
+  name = "",
+  title = "",
   price = 0,
   oldPrice,
   currency = "€",
@@ -26,9 +28,14 @@ export function CarCardBase({
   media,
   status = "AVAILABLE",
   mileage,
+  mileage_km,
+  power,
+  performance_hp,
   fuel,
+  fuel_type,
   transmission,
   registration,
+  first_registration,
   condition,
   isFavorite = false,
   onFavoriteToggle,
@@ -39,6 +46,8 @@ export function CarCardBase({
 }) {
   const { t } = useTranslation(["cars"]);
   const cardRef = useRef(null);
+
+  const displayName = name || title || model || "";
 
   const displayImage =
     thumbnail ||
@@ -200,14 +209,14 @@ export function CarCardBase({
               <FavoriteButton
                 isFavorite={isFavorite}
                 onToggle={onFavoriteToggle}
-                ariaLabel={`${brand} ${model} zu Favoriten hinzufügen`}
+                ariaLabel={`${brand} ${displayName}`.trim() + " zu Favoriten hinzufügen"}
               />
             </div>
           }
         >
           <CinematicImage
             src={displayImage}
-            alt={`${brand} ${model}`}
+            alt={`${brand} ${displayName}`.trim()}
             zoomOnHover
           />
         </CarMediaFrame>
@@ -251,7 +260,7 @@ export function CarCardBase({
               overflow: "hidden",
             }}
           >
-            {model}
+            {displayName}
           </h3>
         </div>
 
@@ -282,10 +291,11 @@ export function CarCardBase({
 
         {/* Specs Chips */}
         <VehicleSpecs
-          mileage={mileage}
-          fuel={fuel}
+          mileage={mileage ?? mileage_km}
+          power={power ?? performance_hp}
+          fuel={fuel || fuel_type}
           transmission={transmission}
-          registration={registration}
+          registration={registration || first_registration}
           condition={condition}
         />
 

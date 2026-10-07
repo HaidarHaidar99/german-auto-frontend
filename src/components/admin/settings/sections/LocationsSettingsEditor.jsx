@@ -14,7 +14,7 @@ export function LocationsSettingsEditor({
   onChange,
   onReset,
   resetLoading,
-  _errors = {},
+  errors = {},
 }) {
   const { t } = useTranslation(["admin", "common"]);
   const locations = Array.isArray(data) ? data : [];
@@ -27,6 +27,7 @@ export function LocationsSettingsEditor({
     setDraftLocation({
       name: "",
       address: "",
+      street: "",
       postal_code: "",
       city: "",
       phone: "",
@@ -41,15 +42,33 @@ export function LocationsSettingsEditor({
   };
 
   const handleOpenEdit = (index) => {
-    setDraftLocation({ ...locations[index] });
+    const loc = locations[index] || {};
+    setDraftLocation({
+      ...loc,
+      address: loc.address || loc.street || "",
+      street: loc.street || loc.address || "",
+    });
     setEditingIndex(index);
     setModalOpen(true);
   };
 
   const handleSaveModal = () => {
     let nextLocations = [...locations];
+    let mapUrl = draftLocation.map_url ? String(draftLocation.map_url).trim() : "";
+    if (mapUrl && !/^https?:\/\//i.test(mapUrl) && !mapUrl.startsWith("/")) {
+      mapUrl = `https://${mapUrl}`;
+    }
+    const addr = (draftLocation.address || draftLocation.street || "").trim();
     const cleanedLocation = {
       ...draftLocation,
+      name: draftLocation.name?.trim() || "",
+      address: addr,
+      street: addr,
+      postal_code: draftLocation.postal_code?.trim() || "",
+      city: draftLocation.city?.trim() || "",
+      phone: draftLocation.phone?.trim() || "",
+      email: draftLocation.email?.trim() || "",
+      map_url: mapUrl,
       latitude: draftLocation.latitude !== "" && draftLocation.latitude !== null && draftLocation.latitude !== undefined
         ? Number(draftLocation.latitude)
         : null,
@@ -134,7 +153,7 @@ export function LocationsSettingsEditor({
         size="md"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-          <SettingsField label="Standort-Name" required>
+          <SettingsField label="Standort-Name" required error={editingIndex !== null ? errors[`locations[${editingIndex}].name`] : null}>
             <Input
               value={draftLocation.name || ""}
               onChange={(e) => setDraftLocation({ ...draftLocation, name: e.target.value })}
@@ -143,14 +162,14 @@ export function LocationsSettingsEditor({
           </SettingsField>
 
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Straße & Hausnummer">
+            <SettingsField label="Straße & Hausnummer" error={editingIndex !== null ? errors[`locations[${editingIndex}].address`] : null}>
               <Input
                 value={draftLocation.address || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, address: e.target.value })}
                 placeholder="Maximilianstraße 1"
               />
             </SettingsField>
-            <SettingsField label="PLZ">
+            <SettingsField label="PLZ" error={editingIndex !== null ? errors[`locations[${editingIndex}].postal_code`] : null}>
               <Input
                 value={draftLocation.postal_code || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, postal_code: e.target.value })}
@@ -160,14 +179,14 @@ export function LocationsSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Stadt">
+            <SettingsField label="Stadt" error={editingIndex !== null ? errors[`locations[${editingIndex}].city`] : null}>
               <Input
                 value={draftLocation.city || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, city: e.target.value })}
                 placeholder="München"
               />
             </SettingsField>
-            <SettingsField label="Telefon">
+            <SettingsField label="Telefon" error={editingIndex !== null ? errors[`locations[${editingIndex}].phone`] : null}>
               <Input
                 value={draftLocation.phone || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, phone: e.target.value })}
@@ -177,7 +196,7 @@ export function LocationsSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="E-Mail">
+            <SettingsField label="E-Mail" error={editingIndex !== null ? errors[`locations[${editingIndex}].email`] : null}>
               <Input
                 type="email"
                 value={draftLocation.email || ""}
@@ -185,7 +204,7 @@ export function LocationsSettingsEditor({
                 placeholder="muenchen@example.de"
               />
             </SettingsField>
-            <SettingsField label="Google Maps Link">
+            <SettingsField label="Google Maps Link" error={editingIndex !== null ? errors[`locations[${editingIndex}].map_url`] : null}>
               <Input
                 value={draftLocation.map_url || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, map_url: e.target.value })}
@@ -195,7 +214,7 @@ export function LocationsSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Breitengrad (Latitude)" helper="-90 bis 90">
+            <SettingsField label="Breitengrad (Latitude)" helper="-90 bis 90" error={editingIndex !== null ? errors[`locations[${editingIndex}].latitude`] : null}>
               <Input
                 type="number"
                 step="any"
@@ -204,7 +223,7 @@ export function LocationsSettingsEditor({
                 placeholder="48.137154"
               />
             </SettingsField>
-            <SettingsField label="Längengrad (Longitude)" helper="-180 bis 180">
+            <SettingsField label="Längengrad (Longitude)" helper="-180 bis 180" error={editingIndex !== null ? errors[`locations[${editingIndex}].longitude`] : null}>
               <Input
                 type="number"
                 step="any"

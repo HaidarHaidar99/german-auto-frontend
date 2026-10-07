@@ -363,40 +363,43 @@ export function DesignSystemPage() {
 
           <Grid cols="responsive" gap="lg">
             <CarCardBase
-              brand="Herstellermarke"
-              model="Baureihe Coupé V8"
+              brand="Porsche"
+              name="911 GT3 RS Weissach"
               price={148500}
               oldPrice={159000}
               status="AVAILABLE"
               mileage={18400}
+              power={525}
               fuel="Benzin"
               transmission="Automatik"
               registration="05/2023"
-              condition="Unfallfrei"
+              condition="Gebraucht"
               isFavorite={cardFavorite}
               onFavoriteToggle={setCardFavorite}
               ctaLabel="Fahrzeugdetails"
             />
 
             <CarCardBase
-              brand="Premiummarke"
-              model="Gran Turismo Performance"
+              brand="BMW"
+              name="M8 Gran Coupé First Edition"
               price={98900}
               status="RESERVED"
               mileage={32100}
-              fuel="Hybrid"
+              power={625}
+              fuel="Benzin"
               transmission="Automatik"
               registration="11/2022"
-              condition="1. Hand"
+              condition="Gebraucht"
               ctaLabel="Fahrzeugdetails"
             />
 
             <CarCardBase
-              brand="Sportwagenmarke"
-              model="Roadster Bi-Turbo"
+              brand="Mercedes-AMG"
+              name="GT R Roadster Bi-Turbo"
               price={215000}
               status="SOLD"
               mileage={8900}
+              power={585}
               fuel="Benzin"
               transmission="Doppelkupplung"
               registration="08/2024"

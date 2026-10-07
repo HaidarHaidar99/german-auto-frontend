@@ -28,57 +28,92 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
 
   if (!car) return null;
 
-  // Key hero specs for top row
-  const keySpecs = [];
+  // Six core specifications displayed prominently at the beginning, one underneath another
+  const sixSpecs = [];
 
-  if (car.performance_hp !== undefined && car.performance_hp !== null) {
-    const hp = Number(car.performance_hp);
-    const kw = Math.round(hp * 0.735499);
-    keySpecs.push({
-      id: "performance",
-      icon: "zap",
-      label: t("performance"),
-      value: `${numFmt.format(hp)} PS (${numFmt.format(kw)} kW)`,
-    });
-  }
-
-  if (car.mileage_km !== undefined && car.mileage_km !== null) {
-    keySpecs.push({
+  // 1. Mileage in km
+  const rawMileage = car.mileage_km !== undefined && car.mileage_km !== null ? car.mileage_km : car.mileage;
+  if (rawMileage !== undefined && rawMileage !== null && rawMileage !== "") {
+    sixSpecs.push({
       id: "mileage",
       icon: "activity",
-      label: t("filterMileage"),
-      value: `${numFmt.format(car.mileage_km)} km`,
+      label: t("filterMileage", { defaultValue: "Kilometerstand" }),
+      value:
+        typeof rawMileage === "number" || !isNaN(Number(rawMileage))
+          ? `${numFmt.format(Number(rawMileage))} km`
+          : String(rawMileage).includes("km")
+          ? String(rawMileage)
+          : `${rawMileage} km`,
     });
   }
 
-  if (car.first_registration) {
-    keySpecs.push({
-      id: "first_reg",
-      icon: "calendar",
-      label: t("firstRegistration", { defaultValue: "Erstzulassung" }),
-      value: formatRegistrationDate(car.first_registration),
-    });
+  // 2. Performance/power in kW and/or PS, with accurate units
+  const rawPower = car.performance_hp !== undefined && car.performance_hp !== null ? car.performance_hp : car.power;
+  if (rawPower !== undefined && rawPower !== null && rawPower !== "") {
+    if (typeof rawPower === "number" || !isNaN(Number(rawPower))) {
+      const hp = Number(rawPower);
+      if (hp > 0) {
+        const kw = Math.round(hp * 0.735499);
+        sixSpecs.push({
+          id: "performance",
+          icon: "zap",
+          label: t("performance", { defaultValue: "Leistung" }),
+          value: `${numFmt.format(hp)} PS (${numFmt.format(kw)} kW)`,
+        });
+      }
+    } else {
+      sixSpecs.push({
+        id: "performance",
+        icon: "zap",
+        label: t("performance", { defaultValue: "Leistung" }),
+        value: String(rawPower),
+      });
+    }
   }
 
-  if (car.fuel_type) {
-    keySpecs.push({
-      id: "fuel",
-      icon: "fuel",
-      label: t("filterFuel"),
-      value: t(`fuel_${car.fuel_type}`, { defaultValue: car.fuel_type }),
-    });
-  }
-
+  // 3. Transmission: automatic or manual
   if (car.transmission) {
-    keySpecs.push({
+    sixSpecs.push({
       id: "transmission",
       icon: "settings",
-      label: t("filterTransmission"),
+      label: t("filterTransmission", { defaultValue: "Getriebe" }),
       value: t(`trans_${car.transmission}`, { defaultValue: car.transmission }),
     });
   }
 
-  // Detailed technical rows
+  // 4. Fuel type
+  const rawFuel = car.fuel_type || car.fuel;
+  if (rawFuel) {
+    sixSpecs.push({
+      id: "fuel",
+      icon: "fuel",
+      label: t("filterFuel", { defaultValue: "Kraftstoffart" }),
+      value: t(`fuel_${rawFuel}`, { defaultValue: rawFuel }),
+    });
+  }
+
+  // 5. First registration
+  const rawReg = car.first_registration || car.registration_year;
+  if (rawReg) {
+    sixSpecs.push({
+      id: "first_reg",
+      icon: "calendar",
+      label: t("firstRegistration", { defaultValue: "Erstzulassung" }),
+      value: formatRegistrationDate(rawReg),
+    });
+  }
+
+  // 6. Condition: used or new
+  if (car.condition) {
+    sixSpecs.push({
+      id: "condition",
+      icon: "award",
+      label: t("filterCondition", { defaultValue: "Fahrzeugzustand" }),
+      value: t(`cond_${car.condition}`, { defaultValue: car.condition }),
+    });
+  }
+
+  // Detailed technical rows (all other vehicle specifications kept intact)
   const detailRows = [];
 
   if (car.engine_displacement_cc) {
@@ -92,13 +127,6 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
     detailRows.push({
       label: t("filterCategory"),
       value: t(`cat_${car.category}`, { defaultValue: car.category }),
-    });
-  }
-
-  if (car.condition) {
-    detailRows.push({
-      label: t("filterCondition"),
-      value: t(`cond_${car.condition}`, { defaultValue: car.condition }),
     });
   }
 
@@ -159,40 +187,43 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
 
   return (
     <div className={`car-technical-specs ${className}`.trim()} style={{ ...style }}>
-      {/* Key Metric Highlights Grid */}
-      {keySpecs.length > 0 && (
-        <div
-          className="specs-metric-grid"
+      {/* 6 Specifications prominently displayed at the beginning, one underneath another */}
+      {sixSpecs.length > 0 && (
+        <section
+          aria-label={t("keySpecifications", { defaultValue: "Wichtigste Fahrzeugdaten" })}
+          className="specs-prominent-stack"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "var(--space-sm)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "8px",
             marginBottom: "var(--space-xl)",
           }}
         >
-          {keySpecs.map((spec) => (
+          {sixSpecs.map((spec) => (
             <div
               key={spec.id}
-              className="spec-metric-card"
+              className="spec-prominent-row"
               style={{
                 backgroundColor: "var(--color-surface)",
-                padding: "var(--space-md) var(--space-lg)",
+                padding: "14px 20px",
                 borderRadius: "var(--radius-md)",
                 border: "1px solid var(--color-border-subtle)",
                 display: "flex",
-                flexDirection: "column",
-                gap: "var(--space-2xs)",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: "var(--space-md)",
                 transition: "border-color var(--duration-fast) var(--ease-smooth)",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2xs)", color: "var(--color-secondary)" }}>
-                <Icon name={spec.icon} size={16} />
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", color: "var(--color-secondary)" }}>
+                <Icon name={spec.icon} size={18} color="#D4AF37" />
                 <span
                   style={{
-                    fontSize: "var(--font-size-2xs)",
+                    fontSize: "var(--font-size-xs)",
                     textTransform: "uppercase",
                     letterSpacing: "var(--tracking-wider)",
                     color: "var(--color-text-subtle)",
+                    fontWeight: 600,
                   }}
                 >
                   {spec.label}
@@ -201,16 +232,17 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
               <div
                 style={{
                   fontSize: "var(--font-size-base)",
-                  fontWeight: "var(--font-weight-semibold)",
+                  fontWeight: "var(--font-weight-bold)",
                   color: "var(--color-text)",
                   fontVariantNumeric: "tabular-nums",
+                  textAlign: "right",
                 }}
               >
                 {spec.value}
               </div>
             </div>
           ))}
-        </div>
+        </section>
       )}
 
       {/* Comprehensive Technical Table */}

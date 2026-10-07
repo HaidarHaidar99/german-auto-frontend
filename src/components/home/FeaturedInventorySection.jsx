@@ -289,14 +289,15 @@ export function FeaturedInventorySection() {
                   >
                     <CarCardBase
                       brand={car.brand}
-                      model={car.model || title}
+                      name={title || car.name || car.model || car.title}
                       price={car.price}
                       oldPrice={car.old_price}
                       status={car.status}
-                      mileage={car.mileage}
-                      fuel={car.fuel_type}
+                      mileage={car.mileage_km ?? car.mileage}
+                      power={car.performance_hp ?? car.power}
+                      fuel={car.fuel_type || car.fuel}
                       transmission={car.transmission}
-                      registration={car.registration_year || car.first_registration}
+                      registration={car.first_registration || car.registration_year}
                       condition={car.condition}
                       image={mainImage}
                       thumbnail={mainImage}

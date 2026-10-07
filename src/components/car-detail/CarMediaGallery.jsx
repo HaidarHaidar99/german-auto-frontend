@@ -179,19 +179,24 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
   const highwayTrackRef = useRef(null);
   const isPointerDownRef = useRef(false);
 
-  // Auto-scroll thumbnail strip whenever active photo changes (via arrows, keyboard, click, or bar)
+  // Auto-scroll thumbnail strip smoothly isolated within container (NEVER shifts the page or window)
   useEffect(() => {
-    if (thumbnailRefs.current[activePhotoIdx]) {
-      thumbnailRefs.current[activePhotoIdx].scrollIntoView({
+    const strip = thumbnailStripRef.current;
+    const thumb = thumbnailRefs.current[activePhotoIdx];
+    if (strip && thumb) {
+      const thumbLeft = thumb.offsetLeft;
+      const thumbWidth = thumb.offsetWidth;
+      const stripWidth = strip.clientWidth;
+      const targetScroll = thumbLeft - (stripWidth / 2) + (thumbWidth / 2);
+      strip.scrollTo({
+        left: Math.max(0, targetScroll),
         behavior: isScrubbing ? "auto" : "smooth",
-        block: "nearest",
-        inline: "center",
       });
-    } else if (thumbnailStripRef.current && uniquePhotos.length > 1) {
-      const maxScroll = thumbnailStripRef.current.scrollWidth - thumbnailStripRef.current.clientWidth;
+    } else if (strip && uniquePhotos.length > 1) {
+      const maxScroll = strip.scrollWidth - strip.clientWidth;
       if (maxScroll > 0) {
         const targetScroll = (activePhotoIdx / (uniquePhotos.length - 1)) * maxScroll;
-        thumbnailStripRef.current.scrollTo({
+        strip.scrollTo({
           left: targetScroll,
           behavior: isScrubbing ? "auto" : "smooth",
         });
@@ -914,6 +919,31 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   transition: isScrubbing ? "none" : "width 0.35s cubic-bezier(0.25, 1, 0.5, 1)",
                 }}
               />
+
+              {/* Finish Line Checkered Marker at the end of the track */}
+              <div
+                style={{
+                  position: "absolute",
+                  right: "-4px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  zIndex: 8,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  pointerEvents: "none",
+                }}
+                title="Ziel / Finish Line"
+              >
+                <svg width="15" height="18" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <line x1="2" y1="1" x2="2" y2="19" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" />
+                  <rect x="2" y="2" width="12" height="10" rx="1" fill="#181a20" stroke="#D4AF37" strokeWidth="0.8" />
+                  <rect x="2" y="2" width="3" height="5" fill="#D4AF37" />
+                  <rect x="8" y="2" width="3" height="5" fill="#D4AF37" />
+                  <rect x="5" y="7" width="3" height="5" fill="#D4AF37" />
+                  <rect x="11" y="7" width="3" height="5" fill="#D4AF37" />
+                </svg>
+              </div>
 
               {/* Small Car Icon - Touch & Drag Capable */}
               <div

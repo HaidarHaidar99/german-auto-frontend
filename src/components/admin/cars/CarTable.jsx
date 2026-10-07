@@ -83,7 +83,7 @@ export function CarTable({
               }}
             >
               <th style={{ padding: "12px 16px", width: "70px" }}>{t("preview", { defaultValue: "Vorschau" })}</th>
-              <th style={{ padding: "12px 16px" }}>{t("vehicleModel", { defaultValue: "Fahrzeug / Modell" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("vehicleName", { defaultValue: "Fahrzeug / Name" })}</th>
               <th style={{ padding: "12px 16px" }}>{t("price", { defaultValue: "Preis" })}</th>
               <th style={{ padding: "12px 16px" }}>{t("mileageYear", { defaultValue: "Kilometer & Baujahr" })}</th>
               <th style={{ padding: "12px 16px" }}>{t("driveCondition", { defaultValue: "Antrieb / Zustand" })}</th>
@@ -96,7 +96,7 @@ export function CarTable({
           <tbody>
             {cars.map((car) => {
               const thumbnail = car.media?.thumbnail || (Array.isArray(car.media?.gallery) && car.media.gallery[0]);
-              const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim();
+              const vehicleName = car.title || car.name || `${car.brand || ""} ${car.model || ""}`.trim();
 
               return (
                 <tr
@@ -161,7 +161,7 @@ export function CarTable({
                         {vehicleName}
                       </span>
                       <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                        {car.brand} • {car.model}
+                        {car.brand}
                       </span>
                     </button>
                   </td>
@@ -370,7 +370,7 @@ export function CarTable({
                     {vehicleName}
                   </h4>
                   <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                    {car.brand} • {car.model}
+                    {car.brand}
                   </span>
                 </div>
               </div>

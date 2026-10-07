@@ -18,9 +18,44 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
   const hasEmail = true;
   const hasWhatsapp = Boolean(contact?.whatsapp);
 
-  // Format hours if configured in CMS
-  const hasMondayHours = Boolean(hours?.monday?.open && hours?.monday?.close && !hours?.monday?.closed);
-  const hasSaturdayHours = Boolean(hours?.saturday?.open && hours?.saturday?.close && !hours?.saturday?.closed);
+  // Format hours dynamically if configured in CMS
+  const formatHours = (h) => {
+    if (!h) return null;
+    const days = [
+      { key: "monday", de: "Mo", en: "Mon" },
+      { key: "tuesday", de: "Di", en: "Tue" },
+      { key: "wednesday", de: "Mi", en: "Wed" },
+      { key: "thursday", de: "Do", en: "Thu" },
+      { key: "friday", de: "Fr", en: "Fri" },
+      { key: "saturday", de: "Sa", en: "Sat" },
+      { key: "sunday", de: "So", en: "Sun" },
+    ];
+    const groups = [];
+    let cur = null;
+    for (let i = 0; i < days.length; i++) {
+      const d = days[i];
+      const entry = h[d.key];
+      if (entry?.enabled !== false && entry?.open && entry?.close && !entry?.closed) {
+        const timeStr = `${entry.open}–${entry.close}`;
+        if (cur && cur.timeStr === timeStr && cur.lastIndex === i - 1) {
+          cur.days.push(d);
+          cur.lastIndex = i;
+        } else {
+          cur = { timeStr, days: [d], lastIndex: i };
+          groups.push(cur);
+        }
+      }
+    }
+    if (groups.length === 0) return null;
+    const parts = groups.map((g) => {
+      const start = g.days[0].de;
+      const end = g.days[g.days.length - 1].de;
+      const span = g.days.length > 2 ? `${start}–${end}` : g.days.map((d) => d.de).join(", ");
+      return `${span}: ${g.timeStr}`;
+    });
+    return parts.join(" | ") + " Uhr";
+  };
+  const formattedHours = formatHours(hours);
 
   return (
     <section
@@ -303,8 +338,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                       {t("hoursLabel")}
                     </div>
                     <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)", marginTop: "2px" }}>
-                      Mo–Fr: {hours.monday.open}–{hours.monday.close} Uhr
-                      {hasSaturdayHours ? ` · Sa: ${hours.saturday.open}–${hours.saturday.close}` : ""}
+                      {formattedHours}
                     </div>
                   </div>
                 </div>

@@ -28,6 +28,8 @@ export function CarDetailPage() {
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareTimeoutRef = useRef(null);
 
   const pageContainerRef = useRef(null);
   const contentSectionRef = useRef(null);
@@ -59,13 +61,59 @@ export function CarDetailPage() {
     fetchCar();
     // Scroll to top upon navigating to a new car
     window.scrollTo({ top: 0, behavior: "smooth" });
+    return () => {
+      if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+    };
   }, [fetchCar]);
+
+  const handleShare = async () => {
+    if (!car) return;
+    const shareUrl = window.location.origin + `/cars/${car.slug || car.id}`;
+    const carName = car.title || car.name || car.model || "";
+    const shareTitle = `${car.brand || ""} ${carName}`.trim();
+    const siteName = settings?.site?.name || "König Automobile";
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: `${shareTitle} | ${siteName}`,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        if (err?.name === "AbortError") {
+          return; // User cancelled
+        }
+      }
+    }
+
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const input = document.createElement("input");
+        input.value = shareUrl;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        document.body.removeChild(input);
+      }
+      setShareCopied(true);
+      if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+      shareTimeoutRef.current = setTimeout(() => {
+        setShareCopied(false);
+      }, 3000);
+    } catch {
+      // Fallback in case clipboard fails
+    }
+  };
 
   // Dynamic SEO metadata updates
   useEffect(() => {
     if (!car) return;
     const siteName = settings?.site?.name || "König Automobile Rheinberg";
-    const carTitle = `${car.brand || ""} ${car.model || ""} ${car.title || ""}`.trim();
+    const carTitle = `${car.brand || ""} ${car.title || car.name || car.model || ""}`.trim();
     document.title = `${carTitle} | ${siteName}`;
 
     const desc = car.description_de || car.description_en || "";
@@ -250,43 +298,77 @@ export function CarDetailPage() {
             fontWeight: 600,
           }}
         >
-          {`${car.brand || ""} ${car.model || ""} ${
-            car.title && car.title !== car.model && !car.title.toLowerCase().includes(car.model?.toLowerCase() || "")
-              ? car.title
-              : ""
-          }`.trim()}
+          {`${car.brand || ""} ${car.title || car.name || car.model || ""}`.trim()}
         </span>
       </nav>
 
-      {/* ─── Vehicle Header ────────────────────────────────────────────── */}
-      <header className="car-header-animate" style={{ marginBottom: "var(--space-xl)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", marginBottom: "var(--space-2xs)" }}>
-          <span
+      {/* ─── Vehicle Header & Actions (Brand, Name, Share Button) ────────── */}
+      <header
+        className="car-header-animate"
+        style={{
+          marginBottom: "var(--space-xl)",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "var(--space-md)",
+        }}
+      >
+        <div style={{ flex: 1, minWidth: "260px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", marginBottom: "var(--space-2xs)" }}>
+            <span
+              style={{
+                fontSize: "var(--font-size-sm)",
+                fontWeight: "var(--font-weight-semibold)",
+                letterSpacing: "var(--tracking-widest)",
+                textTransform: "uppercase",
+                color: "var(--color-secondary)",
+              }}
+            >
+              {car.brand}
+            </span>
+          </div>
+
+          <h1
             style={{
-              fontSize: "var(--font-size-sm)",
-              fontWeight: "var(--font-weight-semibold)",
-              letterSpacing: "var(--tracking-widest)",
-              textTransform: "uppercase",
-              color: "var(--color-secondary)",
+              fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
+              fontWeight: "var(--font-weight-bold)",
+              letterSpacing: "var(--tracking-tight)",
+              lineHeight: 1.15,
+              margin: 0,
+              color: "var(--color-text)",
             }}
           >
-            {car.brand}
-          </span>
+            {car.title || car.name || car.model}
+          </h1>
         </div>
 
-        <h1
-          style={{
-            fontSize: "clamp(1.75rem, 3.5vw, 2.75rem)",
-            fontWeight: "var(--font-weight-bold)",
-            letterSpacing: "var(--tracking-tight)",
-            lineHeight: 1.15,
-            margin: "0 0 var(--space-2xs) 0",
-            color: "var(--color-text)",
-          }}
-        >
-          {car.model}
-          {car.title && car.title !== car.model ? ` — ${car.title}` : ""}
-        </h1>
+        {/* Share Button near the top of the vehicle detail page */}
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label={t("shareVehicle", { defaultValue: "Fahrzeug teilen" })}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "10px 18px",
+              borderRadius: "var(--radius-full, 9999px)",
+              backgroundColor: shareCopied ? "rgba(16, 185, 129, 0.15)" : "var(--color-surface, rgba(255, 255, 255, 0.06))",
+              border: "1px solid",
+              borderColor: shareCopied ? "#10b981" : "var(--color-border-subtle, rgba(255, 255, 255, 0.12))",
+              color: shareCopied ? "#34d399" : "var(--color-text)",
+              fontSize: "var(--font-size-sm, 14px)",
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <Icon name={shareCopied ? "check" : "share-2"} size={16} color={shareCopied ? "#34d399" : "#D4AF37"} />
+            <span>{shareCopied ? t("linkCopied", { defaultValue: "Link kopiert!" }) : t("share", { defaultValue: "Teilen" })}</span>
+          </button>
+        </div>
       </header>
 
       {/* ─── Two-Column Luxury Automotive Layout ───────────────────────── */}

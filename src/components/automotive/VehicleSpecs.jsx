@@ -9,33 +9,78 @@ import Icon from "../common/Icon";
 
 export function VehicleSpecs({
   mileage,
-  fuel,
+  mileage_km,
+  power,
+  performance_hp,
   transmission,
+  fuel,
+  fuel_type,
   registration,
+  first_registration,
   condition,
   className = "",
   style = {},
 }) {
-  const { t } = useTranslation(["cars"]);
+  const { t, i18n } = useTranslation(["cars"]);
+  const locale = i18n?.language === "de" ? "de-DE" : "en-US";
+  const numFmt = new Intl.NumberFormat(locale);
 
-  const formattedMileage = typeof mileage === "number"
-    ? `${new Intl.NumberFormat("de-DE").format(mileage)} km`
-    : mileage;
+  // 1. Mileage in km
+  const rawMileage = mileage !== undefined && mileage !== null ? mileage : mileage_km;
+  const formattedMileage =
+    rawMileage !== undefined && rawMileage !== null && rawMileage !== ""
+      ? typeof rawMileage === "number" || !isNaN(Number(rawMileage))
+        ? `${numFmt.format(Number(rawMileage))} km`
+        : String(rawMileage).includes("km")
+        ? String(rawMileage)
+        : `${rawMileage} km`
+      : null;
 
-  // Format registration date if it's an ISO date or year
-  let formattedRegistration = registration;
-  if (registration && typeof registration === "string" && registration.includes("-")) {
-    const d = new Date(registration);
-    if (!isNaN(d.getTime())) {
-      const month = String(d.getMonth() + 1).padStart(2, "0");
-      formattedRegistration = `${month}/${d.getFullYear()}`;
+  // 2. Performance/power in kW and/or PS, with accurate units
+  const rawPower = power !== undefined && power !== null ? power : performance_hp;
+  let formattedPower = null;
+  if (rawPower !== undefined && rawPower !== null && rawPower !== "") {
+    if (typeof rawPower === "number" || !isNaN(Number(rawPower))) {
+      const hp = Number(rawPower);
+      if (hp > 0) {
+        const kw = Math.round(hp * 0.735499);
+        formattedPower = `${numFmt.format(hp)} PS (${numFmt.format(kw)} kW)`;
+      }
+    } else {
+      formattedPower = String(rawPower);
     }
   }
 
-  // Resolve localized enum labels
-  const localizedFuel = fuel ? t(`fuel_${fuel}`, fuel) : null;
-  const localizedTransmission = transmission ? t(`trans_${transmission}`, transmission) : null;
-  const localizedCondition = condition ? t(`cond_${condition}`, condition) : null;
+  // 3. Transmission: automatic or manual
+  const rawTrans = transmission;
+  const localizedTransmission = rawTrans ? t(`trans_${rawTrans}`, { defaultValue: rawTrans }) : null;
+
+  // 4. Fuel type
+  const rawFuel = fuel || fuel_type;
+  const localizedFuel = rawFuel ? t(`fuel_${rawFuel}`, { defaultValue: rawFuel }) : null;
+
+  // 5. First registration
+  const rawReg = registration || first_registration;
+  let formattedRegistration = null;
+  if (rawReg) {
+    const str = String(rawReg).trim();
+    if (/^\d{4}$/.test(str)) {
+      formattedRegistration = str;
+    } else if (str.includes("-")) {
+      const d = new Date(str);
+      if (!isNaN(d.getTime())) {
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        formattedRegistration = `${month}/${d.getFullYear()}`;
+      } else {
+        formattedRegistration = str;
+      }
+    } else {
+      formattedRegistration = str;
+    }
+  }
+
+  // 6. Condition: used or new
+  const localizedCondition = condition ? t(`cond_${condition}`, { defaultValue: condition }) : null;
 
   return (
     <div
@@ -47,6 +92,7 @@ export function VehicleSpecs({
         ...style,
       }}
     >
+      {/* 1. Mileage */}
       {formattedMileage && (
         <span className="spec-chip">
           <span className="spec-chip-icon"><Icon name="speedometer" size={13} /></span>
@@ -54,6 +100,23 @@ export function VehicleSpecs({
         </span>
       )}
 
+      {/* 2. Power / Performance */}
+      {formattedPower && (
+        <span className="spec-chip">
+          <span className="spec-chip-icon"><Icon name="zap" size={13} /></span>
+          <span>{formattedPower}</span>
+        </span>
+      )}
+
+      {/* 3. Transmission */}
+      {localizedTransmission && (
+        <span className="spec-chip">
+          <span className="spec-chip-icon"><Icon name="settings" size={13} /></span>
+          <span>{localizedTransmission}</span>
+        </span>
+      )}
+
+      {/* 4. Fuel type */}
       {localizedFuel && (
         <span className="spec-chip">
           <span className="spec-chip-icon"><Icon name="fuel" size={13} /></span>
@@ -61,13 +124,7 @@ export function VehicleSpecs({
         </span>
       )}
 
-      {localizedTransmission && (
-        <span className="spec-chip">
-          <span className="spec-chip-icon"><Icon name="cog" size={13} /></span>
-          <span>{localizedTransmission}</span>
-        </span>
-      )}
-
+      {/* 5. First registration */}
       {formattedRegistration && (
         <span className="spec-chip">
           <span className="spec-chip-icon"><Icon name="calendar" size={13} /></span>
@@ -75,6 +132,7 @@ export function VehicleSpecs({
         </span>
       )}
 
+      {/* 6. Condition */}
       {localizedCondition && (
         <span className="spec-chip">
           <span className="spec-chip-icon"><Icon name="award" size={13} /></span>

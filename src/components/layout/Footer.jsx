@@ -44,11 +44,13 @@ export function Footer() {
 
   // Active Social Media accounts
   const socialPlatforms = [
+    { key: "facebook", icon: "facebook", label: "Facebook", url: socialConfig.facebook?.url, enabled: socialConfig.facebook?.enabled },
     { key: "instagram", icon: "instagram", label: "Instagram", url: socialConfig.instagram?.url, enabled: socialConfig.instagram?.enabled },
+    { key: "whatsapp", icon: "whatsapp", label: "WhatsApp", url: socialConfig.whatsapp?.url, enabled: socialConfig.whatsapp?.enabled },
     { key: "youtube", icon: "youtube", label: "YouTube", url: socialConfig.youtube?.url, enabled: socialConfig.youtube?.enabled },
-    { key: "tiktok", icon: "video", label: "TikTok", url: socialConfig.tiktok?.url, enabled: socialConfig.tiktok?.enabled },
+    { key: "tiktok", icon: "tiktok", label: "TikTok", url: socialConfig.tiktok?.url, enabled: socialConfig.tiktok?.enabled },
     { key: "linkedin", icon: "linkedin", label: "LinkedIn", url: socialConfig.linkedin?.url, enabled: socialConfig.linkedin?.enabled },
-    { key: "x", icon: "share-2", label: "X / Twitter", url: socialConfig.x?.url, enabled: socialConfig.x?.enabled },
+    { key: "x", icon: "x", label: "X (Twitter)", url: socialConfig.x?.url, enabled: socialConfig.x?.enabled },
   ].filter((p) => p.enabled && p.url);
 
   const cleanPhone = (contactConfig.phone || "").replace(/[^0-9+]/g, "");

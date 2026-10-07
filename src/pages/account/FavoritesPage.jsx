@@ -199,12 +199,13 @@ export function FavoritesPage() {
                 <CarCardBase
                   key={car.id}
                   brand={car.brand}
-                  model={car.model || car.title}
+                  name={car.title || car.name || car.model}
                   price={car.price}
                   oldPrice={car.old_price}
                   status={car.status}
-                  mileage={car.mileage_km || car.mileage}
-                  fuel={car.fuel_type}
+                  mileage={car.mileage_km ?? car.mileage}
+                  power={car.performance_hp ?? car.power}
+                  fuel={car.fuel_type || car.fuel}
                   transmission={car.transmission}
                   registration={car.first_registration || car.registration_year}
                   condition={car.condition}
