@@ -36,8 +36,8 @@ export function FeaturedInventorySection() {
     try {
       setLoading(true);
       setError(null);
-      const res = await carsService.getCars({ is_featured: true, limit: 3 });
-      const carList = (res?.data?.cars || []).slice(0, 3);
+      const res = await carsService.getCars({ is_featured: true, limit: 12 });
+      const carList = res?.data?.cars || [];
       setCars(carList);
     } catch (err) {
       setError(err?.message || "Fehler beim Laden des Fahrzeugbestands.");
@@ -50,17 +50,49 @@ export function FeaturedInventorySection() {
     loadFeaturedCars();
   }, [loadFeaturedCars]);
 
+  // Responsive cards per view: 3 on desktop (>=1024px), 2 on tablet (>=700px), 1 on mobile (<700px)
+  const [visibleCards, setVisibleCards] = useState(() => {
+    if (typeof window === "undefined") return 3;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 700) return 2;
+    return 1;
+  });
+
   const [activeCarIdx, setActiveCarIdx] = useState(0);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      let newVisible = 1;
+      if (width >= 1024) {
+        newVisible = 3;
+      } else if (width >= 700) {
+        newVisible = 2;
+      } else {
+        newVisible = 1;
+      }
+      setVisibleCards(newVisible);
+      setActiveCarIdx((prev) => {
+        const maxIdx = Math.max(0, cars.length - newVisible);
+        return Math.min(prev, maxIdx);
+      });
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [cars.length]);
+
+  const maxIndex = Math.max(0, cars.length - visibleCards);
   const canGoLeft = activeCarIdx > 0;
-  const canGoRight = activeCarIdx < cars.length - 1;
+  const canGoRight = activeCarIdx < maxIndex;
 
   const handlePrevCar = () => {
     setActiveCarIdx((prev) => Math.max(0, prev - 1));
   };
 
   const handleNextCar = () => {
-    setActiveCarIdx((prev) => Math.min(cars.length - 1, prev + 1));
+    setActiveCarIdx((prev) => Math.min(maxIndex, prev + 1));
   };
 
   const touchStartX = useRef(0);
@@ -162,198 +194,214 @@ export function FeaturedInventorySection() {
           />
         )}
 
-        {/* Real Cars Showcase: Only 1 card centered with equal blank side spaces containing only arrows */}
-        {!loading && !error && cars.length > 0 && (
-          <div
-            className="single-car-showcase-container"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-              maxWidth: "500px",
-              margin: "0 auto",
-              padding: "10px 0 24px 0",
-              boxSizing: "border-box",
-              position: "relative",
-            }}
-          >
-            {/* Left Blank Space: Contains ONLY the left arrow */}
+        {/* Real Cars Showcase: 3 on desktop, 1 on mobile, equal blank side spaces for arrows */}
+        {!loading && !error && cars.length > 0 && (() => {
+          const gapPx = visibleCards > 1 ? 20 : 0;
+          const cardWidthCss = visibleCards === 1
+            ? "100%"
+            : `calc((100% - ${(visibleCards - 1) * gapPx}px) / ${visibleCards})`;
+
+          const trackTransform = visibleCards === 1
+            ? `translateX(-${activeCarIdx * 100}%)`
+            : `translateX(calc(-${activeCarIdx} * ((100% - ${(visibleCards - 1) * gapPx}px) / ${visibleCards} + ${gapPx}px)))`;
+
+          return (
             <div
-              className="carousel-arrow-slot carousel-arrow-slot-left"
+              className="cars-showcase-container"
               style={{
-                flex: "0 0 clamp(44px, 10vw, 60px)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                width: "100%",
+                maxWidth: visibleCards > 1 ? "1260px" : "480px",
+                margin: "0 auto",
+                padding: "10px 0 24px 0",
                 boxSizing: "border-box",
+                position: "relative",
               }}
             >
-              <button
-                type="button"
-                onClick={handlePrevCar}
-                aria-label="Previous car"
-                disabled={activeCarIdx === 0}
-                className="carousel-nav-arrow carousel-nav-arrow-left"
+              {/* Left Blank Space: Arrow appears ONLY if there is a car before */}
+              <div
+                className="carousel-arrow-slot carousel-arrow-slot-left"
                 style={{
-                  width: "38px",
-                  height: "38px",
-                  minWidth: "38px",
-                  minHeight: "38px",
-                  padding: 0,
-                  borderRadius: "50%",
-                  backgroundColor: isDark ? "rgba(18, 20, 24, 0.95)" : "#ffffff",
-                  backdropFilter: "blur(10px)",
-                  WebkitBackdropFilter: "blur(10px)",
-                  border: isDark ? "1px solid rgba(255, 255, 255, 0.28)" : "1px solid rgba(0, 0, 0, 0.16)",
-                  color: isDark ? "#ffffff" : "#000000",
-                  boxShadow: isDark ? "0 4px 14px rgba(0, 0, 0, 0.45)" : "0 3px 12px rgba(0, 0, 0, 0.14)",
+                  flex: "0 0 clamp(42px, 5vw, 56px)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  cursor: activeCarIdx === 0 ? "not-allowed" : "pointer",
-                  outline: "none",
-                  opacity: activeCarIdx === 0 ? 0.22 : 1,
-                  transition: "opacity 0.15s ease",
-                  userSelect: "none",
-                  WebkitTapHighlightColor: "transparent",
-                  pointerEvents: activeCarIdx === 0 ? "none" : "auto",
-                }}
-                onMouseEnter={(e) => {
-                  if (activeCarIdx > 0) e.currentTarget.style.opacity = "0.85";
-                }}
-                onMouseLeave={(e) => {
-                  if (activeCarIdx > 0) e.currentTarget.style.opacity = "1";
+                  boxSizing: "border-box",
+                  height: "100%",
+                  minHeight: "44px",
                 }}
               >
-                <Icon name="chevron-left" size={18} style={{ pointerEvents: "none" }} />
-              </button>
-            </div>
+                {canGoLeft && (
+                  <button
+                    type="button"
+                    onClick={handlePrevCar}
+                    aria-label="Previous cars"
+                    className="carousel-nav-arrow carousel-nav-arrow-left"
+                    style={{
+                      width: "38px",
+                      height: "38px",
+                      minWidth: "38px",
+                      minHeight: "38px",
+                      padding: 0,
+                      margin: 0,
+                      borderRadius: "50%",
+                      backgroundColor: isDark ? "rgba(18, 20, 24, 0.95)" : "#ffffff",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      border: isDark ? "1px solid rgba(255, 255, 255, 0.28)" : "1px solid rgba(0, 0, 0, 0.16)",
+                      color: isDark ? "#ffffff" : "#000000",
+                      boxShadow: isDark ? "0 4px 14px rgba(0, 0, 0, 0.45)" : "0 3px 12px rgba(0, 0, 0, 0.14)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      outline: "none",
+                      transition: "opacity 0.15s ease",
+                      userSelect: "none",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "0.85";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "1";
+                    }}
+                  >
+                    <Icon name="chevron-left" size={18} style={{ pointerEvents: "none" }} />
+                  </button>
+                )}
+              </div>
 
-            {/* ONLY ONE CAR CARD IN THE MIDDLE (overflow: hidden guarantees 0% peek) */}
-            <div
-              className="single-car-viewport"
-              style={{
-                flex: "1 1 auto",
-                maxWidth: "330px",
-                minWidth: 0,
-                overflow: "hidden",
-                boxSizing: "border-box",
-                borderRadius: "var(--radius-xl, 16px)",
-              }}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
+              {/* Viewport: 3 cars on desktop, only 1 on mobile with 0% peeking */}
               <div
+                className="cars-viewport"
                 style={{
+                  flex: "1 1 auto",
+                  maxWidth: visibleCards > 1 ? "100%" : "340px",
+                  minWidth: 0,
+                  overflow: "hidden",
+                  boxSizing: "border-box",
+                  borderRadius: "var(--radius-xl, 16px)",
+                }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: `${gapPx}px`,
+                    width: "100%",
+                    transform: trackTransform,
+                    transition: "transform 0.32s cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
+                >
+                  {cars.map((car) => {
+                    const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
+                    const mainImage =
+                      car.media?.thumbnail ||
+                      car.thumbnail ||
+                      car.cover_image ||
+                      car.images?.[0] ||
+                      car.media?.gallery?.[0] ||
+                      car.media?.[0]?.url ||
+                      car.image_url;
+                    const identifier = car.slug || car.id;
+                    const isFav = isCarFavorite(car.id);
+
+                    return (
+                      <div
+                        key={car.id}
+                        style={{
+                          flex: `0 0 ${cardWidthCss}`,
+                          width: cardWidthCss,
+                          maxWidth: cardWidthCss,
+                          boxSizing: "border-box",
+                        }}
+                      >
+                        <CarCardBase
+                          brand={car.brand}
+                          name={title || car.name || car.model || car.title}
+                          price={car.price}
+                          oldPrice={car.old_price}
+                          status={car.status}
+                          mileage={car.mileage_km ?? car.mileage}
+                          power={car.performance_hp ?? car.power}
+                          fuel={car.fuel_type || car.fuel}
+                          transmission={car.transmission}
+                          registration={car.first_registration || car.registration_year}
+                          condition={car.condition}
+                          image={mainImage}
+                          thumbnail={mainImage}
+                          isFavorite={isFav}
+                          onFavoriteToggle={() => handleFavoriteClick(car.id)}
+                          onSelect={() => navigate(`/cars/${identifier}`)}
+                          ctaLabel={t("viewDetails", "Details anzeigen")}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Right Blank Space: Arrow appears ONLY if there is a car after */}
+              <div
+                className="carousel-arrow-slot carousel-arrow-slot-right"
+                style={{
+                  flex: "0 0 clamp(42px, 5vw, 56px)",
                   display: "flex",
-                  width: "100%",
-                  transform: `translateX(-${activeCarIdx * 100}%)`,
-                  transition: "transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxSizing: "border-box",
+                  height: "100%",
+                  minHeight: "44px",
                 }}
               >
-                {cars.map((car) => {
-                  const title = currentLang === "en" ? (car.title_en || car.title) : car.title;
-                  const mainImage =
-                    car.media?.thumbnail ||
-                    car.thumbnail ||
-                    car.cover_image ||
-                    car.images?.[0] ||
-                    car.media?.gallery?.[0] ||
-                    car.media?.[0]?.url ||
-                    car.image_url;
-                  const identifier = car.slug || car.id;
-                  const isFav = isCarFavorite(car.id);
-
-                  return (
-                    <div
-                      key={car.id}
-                      style={{
-                        flex: "0 0 100%",
-                        width: "100%",
-                        maxWidth: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      <CarCardBase
-                        brand={car.brand}
-                        name={title || car.name || car.model || car.title}
-                        price={car.price}
-                        oldPrice={car.old_price}
-                        status={car.status}
-                        mileage={car.mileage_km ?? car.mileage}
-                        power={car.performance_hp ?? car.power}
-                        fuel={car.fuel_type || car.fuel}
-                        transmission={car.transmission}
-                        registration={car.first_registration || car.registration_year}
-                        condition={car.condition}
-                        image={mainImage}
-                        thumbnail={mainImage}
-                        isFavorite={isFav}
-                        onFavoriteToggle={() => handleFavoriteClick(car.id)}
-                        onSelect={() => navigate(`/cars/${identifier}`)}
-                        ctaLabel={t("viewDetails", "Details anzeigen")}
-                      />
-                    </div>
-                  );
-                })}
+                {canGoRight && (
+                  <button
+                    type="button"
+                    onClick={handleNextCar}
+                    aria-label="Next cars"
+                    className="carousel-nav-arrow carousel-nav-arrow-right"
+                    style={{
+                      width: "38px",
+                      height: "38px",
+                      minWidth: "38px",
+                      minHeight: "38px",
+                      padding: 0,
+                      margin: 0,
+                      borderRadius: "50%",
+                      backgroundColor: isDark ? "rgba(18, 20, 24, 0.95)" : "#ffffff",
+                      backdropFilter: "blur(10px)",
+                      WebkitBackdropFilter: "blur(10px)",
+                      border: isDark ? "1px solid rgba(255, 255, 255, 0.28)" : "1px solid rgba(0, 0, 0, 0.16)",
+                      color: isDark ? "#ffffff" : "#000000",
+                      boxShadow: isDark ? "0 4px 14px rgba(0, 0, 0, 0.45)" : "0 3px 12px rgba(0, 0, 0, 0.14)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      outline: "none",
+                      transition: "opacity 0.15s ease",
+                      userSelect: "none",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.opacity = "0.85";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = "1";
+                    }}
+                  >
+                    <Icon name="chevron-right" size={18} style={{ pointerEvents: "none" }} />
+                  </button>
+                )}
               </div>
             </div>
-
-            {/* Right Blank Space: Contains ONLY the right arrow */}
-            <div
-              className="carousel-arrow-slot carousel-arrow-slot-right"
-              style={{
-                flex: "0 0 clamp(44px, 10vw, 60px)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxSizing: "border-box",
-              }}
-            >
-              <button
-                type="button"
-                onClick={handleNextCar}
-                aria-label="Next car"
-                disabled={activeCarIdx === cars.length - 1}
-                className="carousel-nav-arrow carousel-nav-arrow-right"
-                style={{
-                  width: "38px",
-                  height: "38px",
-                  minWidth: "38px",
-                  minHeight: "38px",
-                  padding: 0,
-                  borderRadius: "50%",
-                  backgroundColor: isDark ? "rgba(18, 20, 24, 0.95)" : "#ffffff",
-                  backdropFilter: "blur(10px)",
-                  WebkitBackdropFilter: "blur(10px)",
-                  border: isDark ? "1px solid rgba(255, 255, 255, 0.28)" : "1px solid rgba(0, 0, 0, 0.16)",
-                  color: isDark ? "#ffffff" : "#000000",
-                  boxShadow: isDark ? "0 4px 14px rgba(0, 0, 0, 0.45)" : "0 3px 12px rgba(0, 0, 0, 0.14)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: activeCarIdx === cars.length - 1 ? "not-allowed" : "pointer",
-                  outline: "none",
-                  opacity: activeCarIdx === cars.length - 1 ? 0.22 : 1,
-                  transition: "opacity 0.15s ease",
-                  userSelect: "none",
-                  WebkitTapHighlightColor: "transparent",
-                  pointerEvents: activeCarIdx === cars.length - 1 ? "none" : "auto",
-                }}
-                onMouseEnter={(e) => {
-                  if (activeCarIdx < cars.length - 1) e.currentTarget.style.opacity = "0.85";
-                }}
-                onMouseLeave={(e) => {
-                  if (activeCarIdx < cars.length - 1) e.currentTarget.style.opacity = "1";
-                }}
-              >
-                <Icon name="chevron-right" size={18} style={{ pointerEvents: "none" }} />
-              </button>
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </Container>
     </Section>
   );

@@ -749,15 +749,16 @@ a:hover .group-hover-shift {
 
 /* Outer Car Carousel Arrows */
 .carousel-nav-arrow {
-  position: absolute;
-  top: 46%;
-  transform: translateY(-50%) !important;
+  position: static !important;
+  top: auto !important;
+  transform: none !important;
   z-index: 25;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
   padding: 0;
+  margin: 0 !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -769,7 +770,7 @@ a:hover .group-hover-shift {
   transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
-/* Zero movement on click or hover */
+/* Zero movement on click, hover or focus */
 .carousel-nav-arrow:hover,
 .carousel-nav-arrow:active,
 .carousel-nav-arrow:focus {
@@ -791,44 +792,39 @@ a:hover .group-hover-shift {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
 }
 
-/* Outer Single Car Showcase (1 card only, equal blank spaces with arrows) */
-.single-car-showcase-container {
+/* Outer Car Showcase (3 cars on desktop, 1 car on mobile, equal blank arrow slots) */
+.cars-showcase-container {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   width: 100% !important;
-  max-width: 500px !important;
   margin: 0 auto !important;
   box-sizing: border-box !important;
   position: relative !important;
 }
 
 .carousel-arrow-slot {
-  flex: 0 0 clamp(44px, 10vw, 60px) !important;
+  flex: 0 0 clamp(42px, 5vw, 56px) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   box-sizing: border-box !important;
 }
 
-.single-car-viewport {
+.cars-viewport {
   flex: 1 1 auto !important;
-  max-width: 330px !important;
   min-width: 0 !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
   border-radius: var(--radius-xl, 16px) !important;
 }
 
-@media (max-width: 480px) {
-  .single-car-showcase-container {
-    max-width: 100% !important;
-  }
+@media (max-width: 699px) {
   .carousel-arrow-slot {
-    flex: 0 0 44px !important;
+    flex: 0 0 42px !important;
   }
-  .single-car-viewport {
-    max-width: calc(100% - 88px) !important;
+  .cars-viewport {
+    max-width: calc(100% - 84px) !important;
   }
   .carousel-nav-arrow {
     width: 36px !important;

@@ -635,47 +635,49 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
       {/* Outer Navigation Arrows (Outside on Desktop, Transparent on Mobile) */}
       {activeTab === "photos" && uniquePhotos.length > 1 && (
         <>
-          {/* Left Arrow: Previous Photo (stops cleanly at first image) */}
-          <button
-            type="button"
-            className="gallery-nav-arrow gallery-nav-prev"
-            aria-label={t("lightboxPrev", "Vorheriges Bild")}
-            disabled={activePhotoIdx === 0}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handlePrevPhoto();
-            }}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: isDark ? "#2d3748" : "#e5e7eb",
-              color: isDark ? "#ffffff" : "#000000",
-            }}
-          >
-            <Icon name="chevron-left" size={18} style={{ pointerEvents: "none" }} />
-          </button>
+          {/* Left Arrow: Only appears if there is a photo before */}
+          {activePhotoIdx > 0 && (
+            <button
+              type="button"
+              className="gallery-nav-arrow gallery-nav-prev"
+              aria-label={t("lightboxPrev", "Vorheriges Bild")}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handlePrevPhoto();
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              style={{
+                backgroundColor: isDark ? "#2d3748" : "#e5e7eb",
+                color: isDark ? "#ffffff" : "#000000",
+              }}
+            >
+              <Icon name="chevron-left" size={18} style={{ pointerEvents: "none" }} />
+            </button>
+          )}
 
-          {/* Right Arrow: Next Photo (stops cleanly at last image) */}
-          <button
-            type="button"
-            className="gallery-nav-arrow gallery-nav-next"
-            aria-label={t("lightboxNext", "Nächstes Bild")}
-            disabled={activePhotoIdx === uniquePhotos.length - 1}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              handleNextPhoto();
-            }}
-            onMouseDown={(e) => e.stopPropagation()}
-            onTouchStart={(e) => e.stopPropagation()}
-            style={{
-              backgroundColor: isDark ? "#2d3748" : "#e5e7eb",
-              color: isDark ? "#ffffff" : "#000000",
-            }}
-          >
-            <Icon name="chevron-right" size={18} style={{ pointerEvents: "none" }} />
-          </button>
+          {/* Right Arrow: Only appears if there is a photo after */}
+          {activePhotoIdx < uniquePhotos.length - 1 && (
+            <button
+              type="button"
+              className="gallery-nav-arrow gallery-nav-next"
+              aria-label={t("lightboxNext", "Nächstes Bild")}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleNextPhoto();
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              style={{
+                backgroundColor: isDark ? "#2d3748" : "#e5e7eb",
+                color: isDark ? "#ffffff" : "#000000",
+              }}
+            >
+              <Icon name="chevron-right" size={18} style={{ pointerEvents: "none" }} />
+            </button>
+          )}
         </>
       )}
     </div>
