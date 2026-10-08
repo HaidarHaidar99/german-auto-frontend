@@ -70,16 +70,16 @@ export function UserFiltersBar({
             type="text"
             value={filters.search}
             onChange={(e) => onChange({ search: e.target.value })}
-            placeholder={t("searchUsersPlaceholder", { defaultValue: "Name oder E-Mail suchen..." })}
-            aria-label={t("searchUsersPlaceholder", { defaultValue: "Name oder E-Mail suchen..." })}
+            placeholder={t("searchUsersPlaceholder", { defaultValue: "Search name or email..." })}
+            aria-label={t("searchUsersPlaceholder", { defaultValue: "Search name or email..." })}
             style={{
               width: "100%",
               height: "40px",
               padding: "0 36px 0 38px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
               border: "1px solid var(--color-admin-border)",
               borderRadius: "var(--radius-md)",
-              color: "var(--color-admin-text)",
+              color: "var(--color-admin-text, #0f172a)",
               fontSize: "var(--font-size-sm)",
               outline: "none",
               transition: "border-color var(--transition-fast)",
@@ -95,7 +95,7 @@ export function UserFiltersBar({
             <button
               type="button"
               onClick={() => onChange({ search: "" })}
-              aria-label={t("clearSearch", { defaultValue: "Suche löschen" })}
+              aria-label={t("clearSearch", { defaultValue: "Clear search" })}
               style={{
                 position: "absolute",
                 right: "10px",
@@ -134,7 +134,7 @@ export function UserFiltersBar({
                 fontWeight: 500,
               }}
             >
-              {t("role", { defaultValue: "Rolle" })}:
+              {t("role", { defaultValue: "Role" })}:
             </label>
             <select
               id="filter-role-select"
@@ -143,19 +143,19 @@ export function UserFiltersBar({
               style={{
                 height: "40px",
                 padding: "0 var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
+                backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 border: "1px solid var(--color-admin-border)",
                 borderRadius: "var(--radius-md)",
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 fontSize: "var(--font-size-sm)",
                 outline: "none",
                 cursor: "pointer",
               }}
             >
-              <option value="ALL">{t("filterAllRoles", { defaultValue: "Alle Rollen" })}</option>
-              <option value="CUSTOMER">Kunde (CUSTOMER)</option>
+              <option value="ALL">{t("filterAllRoles", { defaultValue: "All Roles" })}</option>
+              <option value="CUSTOMER">Customer (CUSTOMER)</option>
               <option value="ADMIN">Administrator (ADMIN)</option>
-              <option value="SUPER_ADMIN">Super-Administrator (SUPER_ADMIN)</option>
+              <option value="SUPER_ADMIN">Super Administrator (SUPER_ADMIN)</option>
             </select>
           </div>
 
@@ -178,18 +178,18 @@ export function UserFiltersBar({
               style={{
                 height: "40px",
                 padding: "0 var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
+                backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 border: "1px solid var(--color-admin-border)",
                 borderRadius: "var(--radius-md)",
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 fontSize: "var(--font-size-sm)",
                 outline: "none",
                 cursor: "pointer",
               }}
             >
-              <option value="ALL">{t("filterAllStatuses", { defaultValue: "Alle Status" })}</option>
-              <option value="true">{t("verifiedOnly", { defaultValue: "Nur Verifizierte" })}</option>
-              <option value="false">{t("unverifiedOnly", { defaultValue: "Nicht Verifizierte" })}</option>
+              <option value="ALL">{t("filterAllStatuses", { defaultValue: "All Statuses" })}</option>
+              <option value="true">{t("verifiedOnly", { defaultValue: "Verified Only" })}</option>
+              <option value="false">{t("unverifiedOnly", { defaultValue: "Unverified Only" })}</option>
             </select>
           </div>
 
@@ -207,7 +207,7 @@ export function UserFiltersBar({
               }}
             >
               <Icon name="close" size={14} />
-              <span>{t("resetFilters", { defaultValue: "Zurücksetzen" })}</span>
+              <span>{t("resetFilters", { defaultValue: "Reset" })}</span>
             </Button>
           )}
         </div>
@@ -221,16 +221,16 @@ export function UserFiltersBar({
           alignItems: "center",
           fontSize: "var(--font-size-xs)",
           color: "var(--color-admin-muted)",
-          borderTop: "1px solid rgba(255, 255, 255, 0.05)",
+          borderTop: "1px solid var(--color-admin-border)",
           paddingTop: "var(--space-xs)",
         }}
       >
         <span>
           {loading
-            ? t("loadingUsers", { defaultValue: "Benutzerliste wird geladen..." })
+            ? t("loadingUsers", { defaultValue: "Loading users list..." })
             : t("usersFoundCount", {
                 count: totalResults,
-                defaultValue: "{{count}} Benutzer gefunden",
+                defaultValue: "{{count}} users found",
               })}
         </span>
       </div>

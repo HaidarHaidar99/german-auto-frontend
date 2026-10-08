@@ -34,25 +34,25 @@ export function NotificationList({
     switch (type) {
       case "CONTACT_FORM":
         return {
-          label: t("filterContactForms", { defaultValue: "Kontaktanfrage" }),
+          label: t("filterContactForms", { defaultValue: "Contact Inquiry" }),
           icon: "message-square",
           color: "#a855f7",
           bg: "rgba(168, 85, 247, 0.12)",
           targetRoute: "/admincoresecure/forms",
-          targetLabel: t("openInForms", { defaultValue: "Formulare" }),
+          targetLabel: t("openInForms", { defaultValue: "Forms" }),
         };
       case "SELL_CAR_FORM":
         return {
-          label: t("filterSellCarForms", { defaultValue: "Fahrzeugankauf" }),
+          label: t("filterSellCarForms", { defaultValue: "Car Submission" }),
           icon: "car",
           color: "#f97316",
           bg: "rgba(249, 115, 22, 0.12)",
           targetRoute: "/admincoresecure/forms",
-          targetLabel: t("openInForms", { defaultValue: "Ankauf" }),
+          targetLabel: t("openInForms", { defaultValue: "Purchases" }),
         };
       case "NEW_REVIEW":
         return {
-          label: t("filterReviews", { defaultValue: "Kundenbewertung" }),
+          label: t("filterReviews", { defaultValue: "Customer Review" }),
           icon: "star",
           color: "#06b6d4",
           bg: "rgba(6, 182, 212, 0.12)",
@@ -61,7 +61,7 @@ export function NotificationList({
         };
       default:
         return {
-          label: t("filterSystem", { defaultValue: "Systemmeldung" }),
+          label: t("filterSystem", { defaultValue: "System Alert" }),
           icon: "bell",
           color: "var(--color-admin-accent, #2563eb)",
           bg: "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.12))",
@@ -151,7 +151,7 @@ export function NotificationList({
                     style={{
                       fontSize: "var(--font-size-sm, 14px)",
                       fontWeight: notif.is_read ? 600 : 700,
-                      color: notif.is_read ? "var(--color-admin-text, #ffffff)" : "var(--color-primary, var(--color-text))",
+                      color: "var(--color-admin-text, #0f172a)",
                       cursor: "pointer",
                     }}
                   >
@@ -165,7 +165,7 @@ export function NotificationList({
                       fontSize: "10px",
                       padding: "1px 6px",
                       color: typeCfg.color,
-                      borderColor: "rgba(255, 255, 255, 0.12)",
+                      borderColor: "rgba(0, 0, 0, 0.12)",
                     }}
                   >
                     {typeCfg.label}
@@ -173,7 +173,7 @@ export function NotificationList({
 
                   {!notif.is_read && (
                     <Badge variant="secondary" size="sm" style={{ fontSize: "10px", padding: "1px 6px" }}>
-                      Neu
+                      {t("badgeNew", { defaultValue: "New" })}
                     </Badge>
                   )}
                 </div>
@@ -182,7 +182,7 @@ export function NotificationList({
                   style={{
                     margin: 0,
                     fontSize: "var(--font-size-xs, 13px)",
-                    color: notif.is_read ? "var(--color-admin-muted, #94a3b8)" : "#e2e8f0",
+                    color: notif.is_read ? "var(--color-admin-muted, #64748b)" : "var(--color-admin-text, #0f172a)",
                     lineHeight: 1.5,
                   }}
                 >
@@ -209,7 +209,7 @@ export function NotificationList({
                         display: "inline-flex",
                         alignItems: "center",
                         gap: "4px",
-                        color: "var(--color-primary, var(--color-text))",
+                        color: "var(--color-admin-accent, #2563eb)",
                         textDecoration: "none",
                         fontWeight: 600,
                       }}
@@ -239,17 +239,17 @@ export function NotificationList({
                 size="sm"
                 disabled={isUpdating}
                 onClick={() => onToggleRead?.(notif.id, notif.is_read)}
-                title={notif.is_read ? t("markAsUnread") : t("markAsRead")}
+                title={notif.is_read ? t("markAsUnread", { defaultValue: "Mark as unread" }) : t("markAsRead", { defaultValue: "Mark as read" })}
                 style={{
                   fontSize: "11px",
                   padding: "4px 8px",
                   height: "28px",
-                  color: notif.is_read ? "var(--color-admin-muted, #94a3b8)" : "var(--color-primary, var(--color-text))",
+                  color: notif.is_read ? "var(--color-admin-muted, #94a3b8)" : "var(--color-admin-accent, #2563eb)",
                 }}
               >
                 <Icon name={notif.is_read ? "clock" : "check"} size={12} />
                 <span className="hide-mobile">
-                  {notif.is_read ? t("markAsUnread") : t("markAsRead")}
+                  {notif.is_read ? t("markAsUnread", { defaultValue: "Mark as unread" }) : t("markAsRead", { defaultValue: "Mark as read" })}
                 </span>
               </Button>
 
@@ -270,8 +270,8 @@ export function NotificationList({
                   icon="x"
                   size="sm"
                   variant="ghost"
-                  ariaLabel={t("dismiss", { defaultValue: "Verwerfen" })}
-                  title={t("dismiss", { defaultValue: "Verwerfen" })}
+                  ariaLabel={t("dismiss", { defaultValue: "Dismiss" })}
+                  title={t("dismiss", { defaultValue: "Dismiss" })}
                   onClick={() => setConfirmDismissId(notif.id)}
                   style={{
                     width: "28px",
@@ -294,13 +294,13 @@ export function NotificationList({
                       borderColor: "var(--color-error, #ef4444)",
                     }}
                   >
-                    Verwerfen
+                    {t("dismiss", { defaultValue: "Dismiss" })}
                   </Button>
                   <IconButton
                     icon="x"
                     size="sm"
                     variant="ghost"
-                    ariaLabel="Abbrechen"
+                    ariaLabel={t("cancel", { defaultValue: "Cancel" })}
                     onClick={() => setConfirmDismissId(null)}
                     style={{ width: "26px", height: "26px" }}
                   />

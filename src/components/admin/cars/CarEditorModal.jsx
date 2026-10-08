@@ -11,53 +11,53 @@ import Icon from "../../common/Icon";
 import carsService from "../../../services/cars/cars.service";
 
 const CATEGORIES = [
-  { value: "SEDAN", label: "Limousine (SEDAN)" },
-  { value: "SUV", label: "SUV / Geländewagen (SUV)" },
-  { value: "COUPE", label: "Coupé (COUPE)" },
-  { value: "CONVERTIBLE", label: "Cabriolet (CONVERTIBLE)" },
-  { value: "WAGON", label: "Kombi (WAGON)" },
-  { value: "HATCHBACK", label: "Schrägheck (HATCHBACK)" },
-  { value: "VAN", label: "Van / Kleinbus (VAN)" },
-  { value: "TRUCK", label: "Nutzfahrzeug (TRUCK)" },
-  { value: "MOTORCYCLE", label: "Motorrad (MOTORCYCLE)" },
-  { value: "OTHER", label: "Sonstige (OTHER)" },
+  { value: "SEDAN", label: "Sedan (SEDAN)" },
+  { value: "SUV", label: "SUV / Off-road (SUV)" },
+  { value: "COUPE", label: "Coupe (COUPE)" },
+  { value: "CONVERTIBLE", label: "Convertible (CONVERTIBLE)" },
+  { value: "WAGON", label: "Station Wagon (WAGON)" },
+  { value: "HATCHBACK", label: "Hatchback (HATCHBACK)" },
+  { value: "VAN", label: "Van (VAN)" },
+  { value: "TRUCK", label: "Commercial / Truck (TRUCK)" },
+  { value: "MOTORCYCLE", label: "Motorcycle (MOTORCYCLE)" },
+  { value: "OTHER", label: "Other (OTHER)" },
 ];
 
 const CONDITIONS = [
-  { value: "USED", label: "Gebrauchtfahrzeug (USED)" },
-  { value: "NEW", label: "Neufahrzeug (NEW)" },
+  { value: "USED", label: "Used (USED)" },
+  { value: "NEW", label: "New (NEW)" },
 ];
 
 const STATUSES = [
-  { value: "AVAILABLE", label: "Verfügbar (AVAILABLE)" },
-  { value: "RESERVED", label: "Reserviert (RESERVED)" },
-  { value: "SOLD", label: "Verkauft (SOLD)" },
-  { value: "HIDDEN", label: "Ausgeblendet (HIDDEN)" },
+  { value: "AVAILABLE", label: "Available (AVAILABLE)" },
+  { value: "RESERVED", label: "Reserved (RESERVED)" },
+  { value: "SOLD", label: "Sold (SOLD)" },
+  { value: "HIDDEN", label: "Hidden (HIDDEN)" },
 ];
 
 const FUELS = [
-  { value: "PETROL", label: "Benzin (PETROL)" },
+  { value: "PETROL", label: "Petrol (PETROL)" },
   { value: "DIESEL", label: "Diesel (DIESEL)" },
-  { value: "ELECTRIC", label: "Elektro (ELECTRIC)" },
+  { value: "ELECTRIC", label: "Electric (ELECTRIC)" },
   { value: "HYBRID", label: "Hybrid (HYBRID)" },
   { value: "PLUGIN_HYBRID", label: "Plug-in Hybrid (PLUGIN_HYBRID)" },
-  { value: "LPG", label: "Autogas (LPG)" },
-  { value: "HYDROGEN", label: "Wasserstoff (HYDROGEN)" },
-  { value: "OTHER", label: "Sonstige (OTHER)" },
+  { value: "LPG", label: "LPG (LPG)" },
+  { value: "HYDROGEN", label: "Hydrogen (HYDROGEN)" },
+  { value: "OTHER", label: "Other (OTHER)" },
 ];
 
 const TRANSMISSIONS = [
-  { value: "AUTOMATIC", label: "Automatik (AUTOMATIC)" },
-  { value: "MANUAL", label: "Schaltgetriebe (MANUAL)" },
-  { value: "SEMI_AUTOMATIC", label: "Halbautomatik (SEMI_AUTOMATIC)" },
+  { value: "AUTOMATIC", label: "Automatic (AUTOMATIC)" },
+  { value: "MANUAL", label: "Manual (MANUAL)" },
+  { value: "SEMI_AUTOMATIC", label: "Semi-Automatic (SEMI_AUTOMATIC)" },
 ];
 
 const INTERIORS = [
-  { value: "LEATHER", label: "Vollleder (LEATHER)" },
+  { value: "LEATHER", label: "Full Leather (LEATHER)" },
   { value: "ALCANTARA", label: "Alcantara (ALCANTARA)" },
-  { value: "FABRIC", label: "Stoff (FABRIC)" },
-  { value: "MIXED", label: "Teilleder / Mix (MIXED)" },
-  { value: "OTHER", label: "Sonstige (OTHER)" },
+  { value: "FABRIC", label: "Fabric (FABRIC)" },
+  { value: "MIXED", label: "Part Leather / Mixed (MIXED)" },
+  { value: "OTHER", label: "Other (OTHER)" },
 ];
 
 const INITIAL_FORM = {
@@ -190,7 +190,7 @@ export function CarEditorModal({
     const validFiles = rawFiles.filter((f) => allowedTypes.includes(f.type));
 
     if (validFiles.length === 0) {
-      setMediaError("Nur Bilddateien (JPG, PNG, WEBP, AVIF) sind erlaubt.");
+      setMediaError(t("onlyImagesAllowed", { defaultValue: "Only image files (JPG, PNG, WEBP, AVIF) are allowed." }));
       return;
     }
 
@@ -198,7 +198,7 @@ export function CarEditorModal({
     const availableSlots = 20 - currentGallery.length;
 
     if (availableSlots <= 0) {
-      setMediaError("Maximal 20 Galeriebilder erlaubt.");
+      setMediaError(t("maxGalleryImagesError", { defaultValue: "Maximum 20 gallery images allowed." }));
       return;
     }
 
@@ -271,7 +271,7 @@ export function CarEditorModal({
           return next;
         });
       } catch (readErr) {
-        setMediaError("Fehler beim Verarbeiten der Bilddateien.");
+        setMediaError(t("errorProcessingImages", { defaultValue: "Error processing image files." }));
       }
     } finally {
       setIsUploading(false);
@@ -403,53 +403,53 @@ export function CarEditorModal({
 
     // 1. Company Name / Brand
     if (!form.brand?.trim()) {
-      errors.brand = "Marke / Hersteller ist ein Pflichtfeld.";
+      errors.brand = t("errorBrandRequired", { defaultValue: "Make / Manufacturer is required." });
     }
 
     // 2. Car Name / Title (vehicle identity uses Brand and Name)
     if (!form.title?.trim()) {
-      errors.title = "Fahrzeugname / Titel ist ein Pflichtfeld.";
+      errors.title = t("errorTitleRequired", { defaultValue: "Vehicle title / model is required." });
     }
 
     // 3. Condition (Used or New)
     if (!form.condition) {
-      errors.condition = "Fahrzeugzustand (Neu / Gebraucht) ist ein Pflichtfeld.";
+      errors.condition = t("errorConditionRequired", { defaultValue: "Vehicle condition is required." });
     }
 
     // 4. Price
     if (form.price === "" || form.price === null || isNaN(Number(form.price)) || Number(form.price) < 0) {
-      errors.price = "Gültiger Kaufpreis (€) ist ein Pflichtfeld.";
+      errors.price = t("errorPriceRequired", { defaultValue: "Valid purchase price (€) is required." });
     }
 
     // 5. Mileage (km)
     if (form.mileage_km === "" || form.mileage_km === null || isNaN(Number(form.mileage_km)) || Number(form.mileage_km) < 0) {
-      errors.mileage_km = "Kilometerstand (km) ist ein Pflichtfeld.";
+      errors.mileage_km = t("errorMileageRequired", { defaultValue: "Mileage (km) is required." });
     }
 
     // 6. Power (PS)
     if (form.performance_hp === "" || form.performance_hp === null || isNaN(Number(form.performance_hp)) || Number(form.performance_hp) <= 0) {
-      errors.performance_hp = "Leistung (PS) ist ein Pflichtfeld.";
+      errors.performance_hp = t("errorPerformanceRequired", { defaultValue: "Engine power (HP) is required." });
     }
 
     // 7. First Registration
     if (!form.first_registration?.trim()) {
-      errors.first_registration = "Erstzulassung ist ein Pflichtfeld.";
+      errors.first_registration = t("errorFirstRegRequired", { defaultValue: "First registration date is required." });
     }
 
     // 8. Fuel Type
     if (!form.fuel_type) {
-      errors.fuel_type = "Kraftstoffart ist ein Pflichtfeld.";
+      errors.fuel_type = t("errorFuelRequired", { defaultValue: "Fuel type is required." });
     }
 
     // 9. Transmission
     if (!form.transmission) {
-      errors.transmission = "Getriebe ist ein Pflichtfeld.";
+      errors.transmission = t("errorTransmissionRequired", { defaultValue: "Transmission is required." });
     }
 
     // 10. At least 1 image
     const imagesCount = (form.media?.gallery?.length || 0) + (form.media?.thumbnail ? 1 : 0);
     if (imagesCount === 0) {
-      errors.media = "Mindestens 1 Fahrzeugbild ist erforderlich.";
+      errors.media = t("errorMediaRequired", { defaultValue: "At least 1 vehicle image is required." });
     }
 
     return errors;
@@ -529,67 +529,67 @@ export function CarEditorModal({
   const currentCover = form.media?.thumbnail || galleryImages[0] || "";
 
   const categoryOptions = useMemo(() => [
-    { value: "SEDAN", label: `${t("catSedan", { defaultValue: "Limousine" })} (SEDAN)` },
-    { value: "SUV", label: `${t("catSuv", { defaultValue: "SUV / Geländewagen" })} (SUV)` },
-    { value: "COUPE", label: `${t("catCoupe", { defaultValue: "Coupé" })} (COUPE)` },
-    { value: "CONVERTIBLE", label: `${t("catConvertible", { defaultValue: "Cabriolet" })} (CONVERTIBLE)` },
-    { value: "WAGON", label: `${t("catWagon", { defaultValue: "Kombi" })} (WAGON)` },
-    { value: "HATCHBACK", label: `${t("catHatchback", { defaultValue: "Schrägheck" })} (HATCHBACK)` },
-    { value: "VAN", label: `${t("catVan", { defaultValue: "Van / Kleinbus" })} (VAN)` },
-    { value: "TRUCK", label: `${t("catTruck", { defaultValue: "Nutzfahrzeug" })} (TRUCK)` },
-    { value: "MOTORCYCLE", label: `${t("catMotorcycle", { defaultValue: "Motorrad" })} (MOTORCYCLE)` },
-    { value: "OTHER", label: `${t("catOther", { defaultValue: "Sonstige" })} (OTHER)` },
+    { value: "SEDAN", label: `${t("catSedan", { defaultValue: "Sedan" })} (SEDAN)` },
+    { value: "SUV", label: `${t("catSuv", { defaultValue: "SUV / Off-road" })} (SUV)` },
+    { value: "COUPE", label: `${t("catCoupe", { defaultValue: "Coupe" })} (COUPE)` },
+    { value: "CONVERTIBLE", label: `${t("catConvertible", { defaultValue: "Convertible" })} (CONVERTIBLE)` },
+    { value: "WAGON", label: `${t("catWagon", { defaultValue: "Station Wagon" })} (WAGON)` },
+    { value: "HATCHBACK", label: `${t("catHatchback", { defaultValue: "Hatchback" })} (HATCHBACK)` },
+    { value: "VAN", label: `${t("catVan", { defaultValue: "Van" })} (VAN)` },
+    { value: "TRUCK", label: `${t("catTruck", { defaultValue: "Commercial / Truck" })} (TRUCK)` },
+    { value: "MOTORCYCLE", label: `${t("catMotorcycle", { defaultValue: "Motorcycle" })} (MOTORCYCLE)` },
+    { value: "OTHER", label: `${t("catOther", { defaultValue: "Other" })} (OTHER)` },
   ], [t]);
 
   const conditionOptions = useMemo(() => [
-    { value: "USED", label: `${t("conditionUsed", { defaultValue: "Gebrauchtfahrzeug" })} (USED)` },
-    { value: "NEW", label: `${t("conditionNew", { defaultValue: "Neufahrzeug" })} (NEW)` },
+    { value: "USED", label: `${t("conditionUsed", { defaultValue: "Used" })} (USED)` },
+    { value: "NEW", label: `${t("conditionNew", { defaultValue: "New" })} (NEW)` },
   ], [t]);
 
   const statusOptions = useMemo(() => [
-    { value: "AVAILABLE", label: `${t("statusAvailable", { defaultValue: "Verfügbar" })} (AVAILABLE)` },
-    { value: "RESERVED", label: `${t("statusReserved", { defaultValue: "Reserviert" })} (RESERVED)` },
-    { value: "SOLD", label: `${t("statusSold", { defaultValue: "Verkauft" })} (SOLD)` },
-    { value: "HIDDEN", label: `${t("statusHidden", { defaultValue: "Ausgeblendet" })} (HIDDEN)` },
+    { value: "AVAILABLE", label: `${t("statusAvailable", { defaultValue: "Available" })} (AVAILABLE)` },
+    { value: "RESERVED", label: `${t("statusReserved", { defaultValue: "Reserved" })} (RESERVED)` },
+    { value: "SOLD", label: `${t("statusSold", { defaultValue: "Sold" })} (SOLD)` },
+    { value: "HIDDEN", label: `${t("statusHidden", { defaultValue: "Hidden" })} (HIDDEN)` },
   ], [t]);
 
   const fuelOptions = useMemo(() => [
-    { value: "PETROL", label: `${t("fuelPetrol", { defaultValue: "Benzin" })} (PETROL)` },
+    { value: "PETROL", label: `${t("fuelPetrol", { defaultValue: "Petrol" })} (PETROL)` },
     { value: "DIESEL", label: `${t("fuelDiesel", { defaultValue: "Diesel" })} (DIESEL)` },
-    { value: "ELECTRIC", label: `${t("fuelElectric", { defaultValue: "Elektro" })} (ELECTRIC)` },
+    { value: "ELECTRIC", label: `${t("fuelElectric", { defaultValue: "Electric" })} (ELECTRIC)` },
     { value: "HYBRID", label: `${t("fuelHybrid", { defaultValue: "Hybrid" })} (HYBRID)` },
     { value: "PLUGIN_HYBRID", label: `${t("fuelPluginHybrid", { defaultValue: "Plug-in Hybrid" })} (PLUGIN_HYBRID)` },
-    { value: "LPG", label: `${t("fuelLpg", { defaultValue: "Autogas" })} (LPG)` },
-    { value: "HYDROGEN", label: `${t("fuelHydrogen", { defaultValue: "Wasserstoff" })} (HYDROGEN)` },
-    { value: "OTHER", label: `${t("catOther", { defaultValue: "Sonstige" })} (OTHER)` },
+    { value: "LPG", label: `${t("fuelLpg", { defaultValue: "LPG / Autogas" })} (LPG)` },
+    { value: "HYDROGEN", label: `${t("fuelHydrogen", { defaultValue: "Hydrogen" })} (HYDROGEN)` },
+    { value: "OTHER", label: `${t("catOther", { defaultValue: "Other" })} (OTHER)` },
   ], [t]);
 
   const transmissionOptions = useMemo(() => [
-    { value: "AUTOMATIC", label: `${t("transmissionAutomatic", { defaultValue: "Automatik" })} (AUTOMATIC)` },
-    { value: "MANUAL", label: `${t("transmissionManual", { defaultValue: "Schaltgetriebe" })} (MANUAL)` },
-    { value: "SEMI_AUTOMATIC", label: `${t("transmissionSemiAutomatic", { defaultValue: "Halbautomatik" })} (SEMI_AUTOMATIC)` },
+    { value: "AUTOMATIC", label: `${t("transmissionAutomatic", { defaultValue: "Automatic" })} (AUTOMATIC)` },
+    { value: "MANUAL", label: `${t("transmissionManual", { defaultValue: "Manual" })} (MANUAL)` },
+    { value: "SEMI_AUTOMATIC", label: `${t("transmissionSemiAutomatic", { defaultValue: "Semi-Automatic" })} (SEMI_AUTOMATIC)` },
   ], [t]);
 
   const interiorOptions = useMemo(() => [
-    { value: "LEATHER", label: `${t("interLeather", { defaultValue: "Vollleder" })} (LEATHER)` },
+    { value: "LEATHER", label: `${t("interLeather", { defaultValue: "Full Leather" })} (LEATHER)` },
     { value: "ALCANTARA", label: `${t("interAlcantara", { defaultValue: "Alcantara" })} (ALCANTARA)` },
-    { value: "FABRIC", label: `${t("interFabric", { defaultValue: "Stoff" })} (FABRIC)` },
-    { value: "MIXED", label: `${t("interMixed", { defaultValue: "Teilleder / Mix" })} (MIXED)` },
-    { value: "OTHER", label: `${t("catOther", { defaultValue: "Sonstige" })} (OTHER)` },
+    { value: "FABRIC", label: `${t("interFabric", { defaultValue: "Fabric" })} (FABRIC)` },
+    { value: "MIXED", label: `${t("interMixed", { defaultValue: "Part Leather / Mixed" })} (MIXED)` },
+    { value: "OTHER", label: `${t("catOther", { defaultValue: "Other" })} (OTHER)` },
   ], [t]);
 
   const tabs = [
-    { key: "core", label: t("coreDataTab", { defaultValue: "Grunddaten & Pflichtfelder *" }) },
-    { key: "specs", label: t("specsTab", { defaultValue: "Weitere Details" }) },
-    { key: "equipment", label: `${t("equipmentTab", { defaultValue: "Ausstattung" })} (${form.equipment.length})` },
-    { key: "media", label: `${t("mediaTab", { defaultValue: "Bilder" })} (${galleryImages.length}/20) *` },
+    { key: "core", label: t("coreDataTab", { defaultValue: "Core Data & Required Fields *" }) },
+    { key: "specs", label: t("specsTab", { defaultValue: "Specifications & Details" }) },
+    { key: "equipment", label: `${t("equipmentTab", { defaultValue: "Equipment & Features" })} (${form.equipment.length})` },
+    { key: "media", label: `${t("mediaTab", { defaultValue: "Images" })} (${galleryImages.length}/20) *` },
   ];
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={() => !saving && onClose?.()}
-      title={car ? `${t("editVehicle", { defaultValue: "Fahrzeug bearbeiten" })}: ${car.title || car.model}` : t("createNewVehicle", { defaultValue: "Neues Fahrzeug anlegen" })}
+      title={car ? `${t("editVehicle", { defaultValue: "Edit Vehicle" })}: ${car.title || car.model}` : t("createNewVehicle", { defaultValue: "Add New Vehicle" })}
       size="xl"
     >
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
@@ -642,48 +642,48 @@ export function CarEditorModal({
             }}
           >
             <Icon name="alert-triangle" size={16} />
-            <span>{t("fillRequiredFields", { defaultValue: "Bitte füllen Sie alle erforderlichen Pflichtfelder aus (siehe rot markierte Felder)." })}</span>
+            <span>{t("fillRequiredFields", { defaultValue: "Please fill in all required fields (marked in red)." })}</span>
           </div>
         )}
 
-        {/* ── Tab 1: Grunddaten & Pflichtfelder ───────────────────────────── */}
+        {/* ── Tab 1: Core Data & Required Fields ───────────────────────────── */}
         {activeTab === "core" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            {/* Row 1: Marke, Fahrzeugname/Titel */}
+            {/* Row 1: Brand, Title */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("brandManufacturer", { defaultValue: "Marke / Hersteller" })} required error={formErrors.brand}>
+              <SettingsField label={t("brandManufacturer", { defaultValue: "Make / Manufacturer" })} required error={formErrors.brand}>
                 <Input
                   value={form.brand}
                   onChange={(e) => handleChange("brand", e.target.value)}
-                  placeholder="z. B. Porsche, BMW, Mercedes"
+                  placeholder="e.g. Porsche, BMW, Mercedes"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label={t("carTitle", { defaultValue: "Fahrzeugname / Titel" })} required error={formErrors.title}>
+              <SettingsField label={t("carTitle", { defaultValue: "Vehicle Title / Name" })} required error={formErrors.title}>
                 <Input
                   value={form.title}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  placeholder="z. B. Porsche 911 GT3 RS Weissach"
+                  placeholder="e.g. Porsche 911 GT3 RS Weissach"
                   required
                 />
               </SettingsField>
             </div>
 
-            {/* Row 2: Kaufpreis, Zustand (Neu/Gebraucht), Fahrzeugklasse */}
+            {/* Row 2: Price, Condition, Category */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("purchasePrice", { defaultValue: "Kaufpreis (€)" })} required error={formErrors.price}>
+              <SettingsField label={t("purchasePrice", { defaultValue: "Price (€)" })} required error={formErrors.price}>
                 <Input
                   type="number"
                   min="0"
                   value={form.price}
                   onChange={(e) => handleChange("price", e.target.value)}
-                  placeholder="z. B. 89900"
+                  placeholder="e.g. 89900"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label={t("condition", { defaultValue: "Fahrzeugzustand (Neu / Gebraucht)" })} required error={formErrors.condition}>
+              <SettingsField label={t("condition", { defaultValue: "Condition" })} required error={formErrors.condition}>
                 <Select
                   value={form.condition}
                   onChange={(e) => handleChange("condition", e.target.value)}
@@ -692,7 +692,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label={t("category", { defaultValue: "Fahrzeugklasse" })} error={formErrors.category}>
+              <SettingsField label={t("category", { defaultValue: "Vehicle Category" })} error={formErrors.category}>
                 <Select
                   value={form.category}
                   onChange={(e) => handleChange("category", e.target.value)}
@@ -701,31 +701,31 @@ export function CarEditorModal({
               </SettingsField>
             </div>
 
-            {/* Row 3: Kilometerstand, Leistung, Erstzulassung */}
+            {/* Row 3: Mileage, Power, First Registration */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("mileageKm", { defaultValue: "Kilometerstand (km)" })} required error={formErrors.mileage_km}>
+              <SettingsField label={t("mileageKm", { defaultValue: "Mileage (km)" })} required error={formErrors.mileage_km}>
                 <Input
                   type="number"
                   min="0"
                   value={form.mileage_km}
                   onChange={(e) => handleChange("mileage_km", e.target.value)}
-                  placeholder="z. B. 25000"
+                  placeholder="e.g. 25000"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label={t("performanceHp", { defaultValue: "Leistung (PS)" })} required error={formErrors.performance_hp}>
+              <SettingsField label={t("performanceHp", { defaultValue: "Power (HP)" })} required error={formErrors.performance_hp}>
                 <Input
                   type="number"
                   min="1"
                   value={form.performance_hp}
                   onChange={(e) => handleChange("performance_hp", e.target.value)}
-                  placeholder="z. B. 510"
+                  placeholder="e.g. 510"
                   required
                 />
               </SettingsField>
 
-              <SettingsField label={t("firstRegistrationDate", { defaultValue: "Erstzulassung (Datum/Jahr)" })} required error={formErrors.first_registration}>
+              <SettingsField label={t("firstRegistrationDate", { defaultValue: "First Registration Date" })} required error={formErrors.first_registration}>
                 <Input
                   type="date"
                   value={form.first_registration}
@@ -735,9 +735,9 @@ export function CarEditorModal({
               </SettingsField>
             </div>
 
-            {/* Row 4: Kraftstoffart, Getriebe, Bestandsstatus */}
+            {/* Row 4: Fuel Type, Transmission, Status */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("fuelType", { defaultValue: "Kraftstoffart" })} required error={formErrors.fuel_type}>
+              <SettingsField label={t("fuelType", { defaultValue: "Fuel Type" })} required error={formErrors.fuel_type}>
                 <Select
                   value={form.fuel_type}
                   onChange={(e) => handleChange("fuel_type", e.target.value)}
@@ -746,7 +746,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label={t("transmission", { defaultValue: "Getriebe" })} required error={formErrors.transmission}>
+              <SettingsField label={t("transmission", { defaultValue: "Transmission" })} required error={formErrors.transmission}>
                 <Select
                   value={form.transmission}
                   onChange={(e) => handleChange("transmission", e.target.value)}
@@ -755,7 +755,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label={t("inventoryStatus", { defaultValue: "Bestands-Status" })} error={formErrors.status}>
+              <SettingsField label={t("inventoryStatus", { defaultValue: "Inventory Status" })} error={formErrors.status}>
                 <Select
                   value={form.status}
                   onChange={(e) => handleChange("status", e.target.value)}
@@ -764,23 +764,23 @@ export function CarEditorModal({
               </SettingsField>
             </div>
 
-            {/* Row 5: Ursprünglicher Preis, URL-Slug */}
+            {/* Row 5: Old Price, Slug */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("originalPrice", { defaultValue: "Ursprünglicher Preis (€)" })} helper={t("originalPriceHelper", { defaultValue: "Optional (für Rabattanzeige)" })} error={formErrors.old_price}>
+              <SettingsField label={t("originalPrice", { defaultValue: "Original / Comparison Price (€)" })} helper={t("originalPriceHelper", { defaultValue: "Optional (for strikethrough discount display)" })} error={formErrors.old_price}>
                 <Input
                   type="number"
                   min="0"
                   value={form.old_price}
                   onChange={(e) => handleChange("old_price", e.target.value)}
-                  placeholder="z. B. 95000"
+                  placeholder="e.g. 95000"
                 />
               </SettingsField>
 
-              <SettingsField label={t("urlSlug", { defaultValue: "URL-Slug" })} helper={t("urlSlugHelper", { defaultValue: "Optional (wird sonst automatisch erzeugt)" })} error={formErrors.slug}>
+              <SettingsField label={t("urlSlug", { defaultValue: "URL Slug" })} helper={t("urlSlugHelper", { defaultValue: "Optional (auto-generated if empty)" })} error={formErrors.slug}>
                 <Input
                   value={form.slug}
                   onChange={(e) => handleChange("slug", e.target.value)}
-                  placeholder="z. B. porsche-911-gt3-rs"
+                  placeholder="e.g. porsche-911-gt3-rs"
                 />
               </SettingsField>
             </div>
@@ -788,13 +788,13 @@ export function CarEditorModal({
             {/* Row 6: Toggles */}
             <div style={{ display: "flex", gap: "var(--space-xl)", marginTop: "var(--space-xs)" }}>
               <SettingsToggle
-                label={t("featuredHome", { defaultValue: "Featured (Auf Startseite hervorheben)" })}
+                label={t("featuredHome", { defaultValue: "Featured on Homepage" })}
                 checked={form.is_featured}
                 onChange={(checked) => handleChange("is_featured", checked)}
               />
 
               <SettingsToggle
-                label={t("publiclyVisible", { defaultValue: "Öffentlich sichtbar" })}
+                label={t("publiclyVisible", { defaultValue: "Publicly Visible" })}
                 checked={form.is_visible}
                 onChange={(checked) => handleChange("is_visible", checked)}
               />
@@ -806,7 +806,7 @@ export function CarEditorModal({
         {activeTab === "specs" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("descriptionDe", { defaultValue: "Beschreibung (Deutsch)" })} locale="de" error={formErrors.description_de}>
+              <SettingsField label={t("descriptionDe", { defaultValue: "Description (German)" })} locale="de" error={formErrors.description_de}>
                 <Textarea
                   value={form.description_de}
                   onChange={(e) => handleChange("description_de", e.target.value)}
@@ -826,17 +826,17 @@ export function CarEditorModal({
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("displacementCc", { defaultValue: "Hubraum (ccm)" })} error={formErrors.engine_displacement_cc}>
+              <SettingsField label={t("displacementCc", { defaultValue: "Displacement (ccm)" })} error={formErrors.engine_displacement_cc}>
                 <Input
                   type="number"
                   min="0"
                   value={form.engine_displacement_cc}
                   onChange={(e) => handleChange("engine_displacement_cc", e.target.value)}
-                  placeholder="z. B. 3996"
+                  placeholder="e.g. 3996"
                 />
               </SettingsField>
 
-              <SettingsField label={t("seats", { defaultValue: "Sitze" })} error={formErrors.seats}>
+              <SettingsField label={t("seats", { defaultValue: "Seats" })} error={formErrors.seats}>
                 <Input
                   type="number"
                   min="1"
@@ -846,7 +846,7 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label={t("previousOwners", { defaultValue: "Vorbesitzer (Fahrzeughalter)" })} error={formErrors.vehicle_owners}>
+              <SettingsField label={t("previousOwners", { defaultValue: "Previous Owners" })} error={formErrors.vehicle_owners}>
                 <Input
                   type="number"
                   min="0"
@@ -858,7 +858,7 @@ export function CarEditorModal({
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("interiorDesign", { defaultValue: "Innenausstattung" })} error={formErrors.interior_design}>
+              <SettingsField label={t("interiorDesign", { defaultValue: "Interior Material" })} error={formErrors.interior_design}>
                 <Select
                   value={form.interior_design}
                   onChange={(e) => handleChange("interior_design", e.target.value)}
@@ -866,34 +866,34 @@ export function CarEditorModal({
                 />
               </SettingsField>
 
-              <SettingsField label={t("interiorColor", { defaultValue: "Innenfarbe" })} error={formErrors.interior_color}>
+              <SettingsField label={t("interiorColor", { defaultValue: "Interior Color" })} error={formErrors.interior_color}>
                 <Input
                   value={form.interior_color}
                   onChange={(e) => handleChange("interior_color", e.target.value)}
-                  placeholder="Schwarz / Kontrastnaht"
+                  placeholder="Black / Contrast stitching"
                 />
               </SettingsField>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("conditionNotes", { defaultValue: "Zustandsbeschreibung (z. B. Unfallfrei)" })} error={formErrors.vehicle_condition}>
+              <SettingsField label={t("conditionNotes", { defaultValue: "Condition Notes (e.g. Accident-free)" })} error={formErrors.vehicle_condition}>
                 <Input
                   value={form.vehicle_condition}
                   onChange={(e) => handleChange("vehicle_condition", e.target.value)}
-                  placeholder="Unfallfrei, scheckheftgepflegt bei Vertragswerkstatt"
+                  placeholder="Accident-free, full dealer service history"
                 />
               </SettingsField>
             </div>
 
             <div style={{ display: "flex", gap: "var(--space-xl)", marginTop: "var(--space-xs)" }}>
               <SettingsToggle
-                label={t("acAvailable", { defaultValue: "Klimaanlage / Klimaautomatik vorhanden" })}
+                label={t("acAvailable", { defaultValue: "Air Conditioning / Climate Control" })}
                 checked={form.air_conditioning}
                 onChange={(checked) => handleChange("air_conditioning", checked)}
               />
 
               <SettingsToggle
-                label={t("cameraAvailable", { defaultValue: "Rückfahrkamera / 360° Kamera vorhanden" })}
+                label={t("cameraAvailable", { defaultValue: "Reversing / 360° Camera" })}
                 checked={form.camera}
                 onChange={(checked) => handleChange("camera", checked)}
               />
@@ -901,26 +901,26 @@ export function CarEditorModal({
 
             {/* Custom Attributes / Fields */}
             <div style={{ borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))", paddingTop: "var(--space-sm)" }}>
-              <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 700, color: "var(--color-admin-text)", display: "block", marginBottom: "8px" }}>
-                {t("customAttributes", { defaultValue: "Benutzerdefinierte Merkmale (Key-Value)" })}
+              <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 700, color: "var(--color-admin-text, #0f172a)", display: "block", marginBottom: "8px" }}>
+                {t("customAttributes", { defaultValue: "Custom Attributes (Key-Value)" })}
               </label>
 
               <div style={{ display: "flex", gap: "var(--space-xs)", marginBottom: "var(--space-xs)" }}>
                 <Input
                   value={newCustomKey}
                   onChange={(e) => setNewCustomKey(e.target.value)}
-                  placeholder={t("attributeKeyPlaceholder", { defaultValue: "Eigenschaft (z. B. Garantie)" })}
+                  placeholder={t("attributeKeyPlaceholder", { defaultValue: "Attribute Name (e.g. Warranty)" })}
                   style={{ flex: 1 }}
                 />
                 <Input
                   value={newCustomVal}
                   onChange={(e) => setNewCustomVal(e.target.value)}
-                  placeholder={t("attributeValPlaceholder", { defaultValue: "Wert (z. B. 24 Monate Porsche Approved)" })}
+                  placeholder={t("attributeValPlaceholder", { defaultValue: "Value (e.g. 24 Months Warranty)" })}
                   style={{ flex: 2 }}
                 />
                 <Button type="button" variant="outline" size="sm" onClick={handleAddCustomField}>
                   <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                  {t("add", { defaultValue: "Hinzufügen" })}
+                  {t("add", { defaultValue: "Add" })}
                 </Button>
               </div>
 
@@ -945,7 +945,7 @@ export function CarEditorModal({
                         type="button"
                         onClick={() => handleRemoveCustomField(k)}
                         style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: "2px" }}
-                        title="Entfernen"
+                        title={t("remove", { defaultValue: "Remove" })}
                       >
                         <Icon name="trash" size={12} />
                       </button>
@@ -957,14 +957,14 @@ export function CarEditorModal({
           </div>
         )}
 
-        {/* ── Tab 3: Ausstattung (Equipment) ─────────────────────────────── */}
+        {/* ── Tab 3: Equipment ─────────────────────────────── */}
         {activeTab === "equipment" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
             <div style={{ display: "flex", gap: "var(--space-xs)" }}>
               <Input
                 value={newEquipmentItem}
                 onChange={(e) => setNewEquipmentItem(e.target.value)}
-                placeholder={t("addEquipmentPlaceholder", { defaultValue: "Ausstattungsmerkmal hinzufügen (z. B. Keramikbremsen, Panoramadach)..." })}
+                placeholder={t("addEquipmentPlaceholder", { defaultValue: "Add equipment feature (e.g. Ceramic Brakes, Panoramic Roof)..." })}
                 style={{ flex: 1 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -975,7 +975,7 @@ export function CarEditorModal({
               />
               <Button type="button" variant="outline" size="sm" onClick={handleAddEquipment}>
                 <Icon name="plus" size={14} style={{ marginRight: "4px" }} />
-                {t("add", { defaultValue: "Hinzufügen" })}
+                {t("add", { defaultValue: "Add" })}
               </Button>
             </div>
 
@@ -1005,7 +1005,7 @@ export function CarEditorModal({
                       backgroundColor: "rgba(255, 255, 255, 0.08)",
                       border: "1px solid rgba(255, 255, 255, 0.12)",
                       fontSize: "12px",
-                      color: "#ffffff",
+                      color: "var(--color-admin-text, #0f172a)",
                     }}
                   >
                     {item}
@@ -1015,13 +1015,13 @@ export function CarEditorModal({
                       style={{
                         background: "none",
                         border: "none",
-                        color: "rgba(255, 255, 255, 0.6)",
+                        color: "var(--color-admin-muted, rgba(255, 255, 255, 0.6))",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         padding: 0,
                       }}
-                      title="Entfernen"
+                      title={t("remove", { defaultValue: "Remove" })}
                     >
                       <Icon name="close" size={12} />
                     </button>
@@ -1039,7 +1039,7 @@ export function CarEditorModal({
                   fontSize: "var(--font-size-xs)",
                 }}
               >
-                {t("noEquipmentAdded", { defaultValue: "Noch keine Ausstattungsmerkmale hinzugefügt. Geben Sie oben Merkmale ein und drücken Sie Enter." })}
+                {t("noEquipmentAdded", { defaultValue: "No equipment features added yet. Enter features above and press Enter." })}
               </div>
             )}
           </div>
@@ -1051,11 +1051,11 @@ export function CarEditorModal({
             {/* Header info */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
               <div>
-                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "#ffffff" }}>
-                  {t("vehicleMediaTitle", { count: galleryImages.length, defaultValue: `Fahrzeugbilder (${galleryImages.length} von max. 20)` })}
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
+                  {t("vehicleMediaTitle", { count: galleryImages.length, defaultValue: `Vehicle Images (${galleryImages.length} of max. 20)` })}
                 </h4>
                 <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--color-admin-muted)" }}>
-                  {t("vehicleMediaDesc", { defaultValue: "Laden Sie bis zu 20 Bilder direkt von Ihrem Gerät hoch. Das erste Bild wird automatisch als Cover verwendet, Sie können aber jedes Bild als Cover festlegen." })}
+                  {t("vehicleMediaDesc", { defaultValue: "Upload up to 20 images directly from your device. The first image is automatically used as the cover, but you can set any image as the cover." })}
                 </p>
               </div>
 
@@ -1068,7 +1068,7 @@ export function CarEditorModal({
                   disabled={isUploading}
                 >
                   <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                  {t("uploadFromDevice", { defaultValue: "Bilder vom Gerät hochladen" })}
+                  {t("uploadFromDevice", { defaultValue: "Upload Images from Device" })}
                 </Button>
               )}
             </div>
@@ -1120,11 +1120,11 @@ export function CarEditorModal({
                   <Icon name="upload" size={22} />
                 </div>
                 <div>
-                  <span style={{ fontSize: "13px", fontWeight: 700, color: "#ffffff" }}>
-                    Bilder hierher ziehen oder durchsuchen
+                  <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
+                    {t("dragImagesOrBrowse", { defaultValue: "Drag images here or browse" })}
                   </span>
                   <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                    JPG, PNG, WEBP oder AVIF (max. 15 MB pro Bild)
+                    {t("imageFormatsAllowed", { defaultValue: "JPG, PNG, WEBP or AVIF (max. 15 MB per image)" })}
                   </span>
                 </div>
               </div>
@@ -1157,7 +1157,7 @@ export function CarEditorModal({
                     animation: "btn-spin 0.6s linear infinite",
                   }}
                 />
-                <span>Bilder werden hochgeladen... Bitte einen Moment warten.</span>
+                <span>{t("uploadingImagesWait", { defaultValue: "Uploading images... Please wait." })}</span>
               </div>
             )}
 
@@ -1207,7 +1207,7 @@ export function CarEditorModal({
                 >
                   <img
                     src={currentCover}
-                    alt="Cover Vorschau"
+                    alt={t("coverPreview", { defaultValue: "Cover preview" })}
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                 </div>
@@ -1228,10 +1228,10 @@ export function CarEditorModal({
                       marginBottom: "4px",
                     }}
                   >
-                    ⭐ Aktuelles Coverbild
+                    ⭐ {t("currentCoverImage", { defaultValue: "Current Cover Image" })}
                   </span>
                   <p style={{ margin: 0, fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                    Dieses Bild wird als Hauptdarstellung in allen Listen, Fahrzeugkarten und im Showroom verwendet.
+                    {t("coverImageDescription", { defaultValue: "This image is used as the primary display in all inventory lists and showroom cards." })}
                   </p>
                 </div>
               </div>
@@ -1269,7 +1269,7 @@ export function CarEditorModal({
                       <div style={{ height: "95px", position: "relative" }}>
                         <img
                           src={imgUrl}
-                          alt={`Fahrzeug Bild ${idx + 1}`}
+                          alt={t("vehicleImageNum", { count: idx + 1, defaultValue: `Vehicle Image ${idx + 1}` })}
                           style={{ width: "100%", height: "100%", objectFit: "cover" }}
                         />
 
@@ -1291,7 +1291,7 @@ export function CarEditorModal({
                               boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
                             }}
                           >
-                            ⭐ Cover
+                            ⭐ {t("coverBadge", { defaultValue: "Cover" })}
                           </div>
                         )}
                       </div>
@@ -1324,7 +1324,7 @@ export function CarEditorModal({
                               transition: "all 0.15s ease",
                             }}
                           >
-                            Als Cover setzen
+                            {t("setAsCover", { defaultValue: "Set as cover" })}
                           </button>
                         ) : (
                           <div
@@ -1336,7 +1336,7 @@ export function CarEditorModal({
                               padding: "4px 0",
                             }}
                           >
-                            Hauptbild
+                            {t("mainImage", { defaultValue: "Main Cover" })}
                           </div>
                         )}
 
@@ -1356,7 +1356,7 @@ export function CarEditorModal({
                                 padding: "2px 4px",
                                 fontSize: "12px",
                               }}
-                              title="Nach links verschieben"
+                              title={t("moveLeft", { defaultValue: "Move left" })}
                             >
                               &larr;
                             </button>
@@ -1373,7 +1373,7 @@ export function CarEditorModal({
                                 padding: "2px 4px",
                                 fontSize: "12px",
                               }}
-                              title="Nach rechts verschieben"
+                              title={t("moveRight", { defaultValue: "Move right" })}
                             >
                               &rarr;
                             </button>
@@ -1395,7 +1395,7 @@ export function CarEditorModal({
                               display: "flex",
                               alignItems: "center",
                             }}
-                            title="Bild entfernen"
+                            title={t("removeImage", { defaultValue: "Remove image" })}
                           >
                             <Icon name="trash" size={13} />
                           </button>
@@ -1416,7 +1416,7 @@ export function CarEditorModal({
                   fontSize: "var(--font-size-xs)",
                 }}
               >
-                {t("noImagesUploaded", { defaultValue: "Noch keine Bilder hochgeladen. Klicken Sie oben auf \"Bilder vom Gerät hochladen\", um Fahrzeugbilder von Ihrem Computer oder Smartphone hinzuzufügen." })}
+                {t("noImagesUploaded", { defaultValue: "No images uploaded yet. Click \"Upload Images from Device\" above to add vehicle photos." })}
               </div>
             )}
           </div>
@@ -1436,12 +1436,12 @@ export function CarEditorModal({
         >
           <Button variant="outline" size="sm" type="button" disabled={saving || isUploading} onClick={onClose}>
             <Icon name="close" size={14} style={{ marginRight: "6px" }} />
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
 
           <Button variant="primary" size="sm" type="submit" loading={saving} disabled={isUploading}>
             <Icon name="save" size={14} style={{ marginRight: "6px" }} />
-            {car ? t("saveChanges", { defaultValue: "Änderungen speichern" }) : t("createVehicle", { defaultValue: "Fahrzeug erstellen" })}
+            {car ? t("saveChanges", { defaultValue: "Save Changes" }) : t("createVehicle", { defaultValue: "Create Vehicle" })}
           </Button>
         </div>
       </form>

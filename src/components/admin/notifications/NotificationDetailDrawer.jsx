@@ -38,37 +38,37 @@ export function NotificationDetailDrawer({
     switch (type) {
       case "CONTACT_FORM":
         return {
-          label: t("filterContactForms", { defaultValue: "Kontaktanfrage" }),
+          label: t("filterContactForms", { defaultValue: "Contact Inquiry" }),
           icon: "message-square",
           color: "#a855f7",
           bg: "rgba(168, 85, 247, 0.12)",
           border: "rgba(168, 85, 247, 0.3)",
           targetRoute: "/admincoresecure/forms",
-          targetLabel: t("openInForms", { defaultValue: "In Formularverwaltung öffnen" }),
+          targetLabel: t("openInForms", { defaultValue: "Open in Forms Management" }),
         };
       case "SELL_CAR_FORM":
         return {
-          label: t("filterSellCarForms", { defaultValue: "Fahrzeugankauf" }),
+          label: t("filterSellCarForms", { defaultValue: "Car Submission" }),
           icon: "car",
           color: "#f97316",
           bg: "rgba(249, 115, 22, 0.12)",
           border: "rgba(249, 115, 22, 0.3)",
           targetRoute: "/admincoresecure/forms",
-          targetLabel: t("openInForms", { defaultValue: "In Formularverwaltung öffnen" }),
+          targetLabel: t("openInForms", { defaultValue: "Open in Forms Management" }),
         };
       case "NEW_REVIEW":
         return {
-          label: t("filterReviews", { defaultValue: "Kundenbewertung" }),
+          label: t("filterReviews", { defaultValue: "Customer Review" }),
           icon: "star",
           color: "#06b6d4",
           bg: "rgba(6, 182, 212, 0.12)",
           border: "rgba(6, 182, 212, 0.3)",
           targetRoute: "/admincoresecure/reviews",
-          targetLabel: t("openInReviews", { defaultValue: "In Bewertungsmoderation öffnen" }),
+          targetLabel: t("openInReviews", { defaultValue: "Open in Review Moderation" }),
         };
       default:
         return {
-          label: t("filterSystem", { defaultValue: "Systemmeldung" }),
+          label: t("filterSystem", { defaultValue: "System Alert" }),
           icon: "bell",
           color: "var(--color-admin-accent, #2563eb)",
           bg: "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.12))",
@@ -92,7 +92,7 @@ export function NotificationDetailDrawer({
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      title={t("notificationDetails", { defaultValue: "Benachrichtigungs-Details" })}
+      title={t("notificationDetails", { defaultValue: "Notification Details" })}
       size="md"
       footer={
         <div
@@ -122,7 +122,7 @@ export function NotificationDetailDrawer({
                 }}
               >
                 <Icon name="x" size={14} />
-                <span>{t("dismiss", { defaultValue: "Verwerfen" })}</span>
+                <span>{t("dismiss", { defaultValue: "Dismiss" })}</span>
               </Button>
             ) : (
               <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -137,7 +137,7 @@ export function NotificationDetailDrawer({
                     fontSize: "11px",
                   }}
                 >
-                  {t("confirmReset", { defaultValue: "Ja, verwerfen" })}
+                  {t("confirmReset", { defaultValue: "Yes, dismiss" })}
                 </Button>
                 <Button
                   variant="ghost"
@@ -145,7 +145,7 @@ export function NotificationDetailDrawer({
                   onClick={() => setShowDismissConfirm(false)}
                   style={{ fontSize: "11px" }}
                 >
-                  {t("cancel", { defaultValue: "Abbrechen" })}
+                  {t("cancel", { defaultValue: "Cancel" })}
                 </Button>
               </div>
             )}
@@ -163,13 +163,13 @@ export function NotificationDetailDrawer({
               <Icon name={notification.is_read ? "clock" : "check"} size={13} />
               <span>
                 {notification.is_read
-                  ? t("markAsUnread", { defaultValue: "Als ungelesen markieren" })
-                  : t("markAsRead", { defaultValue: "Als gelesen markieren" })}
+                  ? t("markAsUnread", { defaultValue: "Mark as unread" })
+                  : t("markAsRead", { defaultValue: "Mark as read" })}
               </span>
             </Button>
 
             <Button variant="secondary" size="sm" onClick={onClose} style={{ fontSize: "12px" }}>
-              {t("close", { defaultValue: "Schließen" })}
+              {t("close", { defaultValue: "Close" })}
             </Button>
           </div>
         </div>
@@ -215,7 +215,7 @@ export function NotificationDetailDrawer({
           </div>
 
           <Badge variant={notification.is_read ? "neutral" : "secondary"} size="sm">
-            {notification.is_read ? t("filterRead", { defaultValue: "Gelesen" }) : t("filterUnread", { defaultValue: "Ungelesen" })}
+            {notification.is_read ? t("filterRead", { defaultValue: "Read" }) : t("filterUnread", { defaultValue: "Unread" })}
           </Badge>
         </div>
 
@@ -223,8 +223,8 @@ export function NotificationDetailDrawer({
         <div
           style={{
             padding: "16px",
-            backgroundColor: "var(--color-admin-card, #121418)",
-            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+            backgroundColor: "var(--color-admin-card, #ffffff)",
+            border: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
             borderRadius: "var(--radius-md, 8px)",
             display: "flex",
             flexDirection: "column",
@@ -236,7 +236,7 @@ export function NotificationDetailDrawer({
               margin: 0,
               fontSize: "var(--font-size-base, 16px)",
               fontWeight: 700,
-              color: "var(--color-admin-text, #ffffff)",
+              color: "var(--color-admin-text, #0f172a)",
             }}
           >
             {notification.title}
@@ -246,7 +246,7 @@ export function NotificationDetailDrawer({
             style={{
               margin: 0,
               fontSize: "var(--font-size-sm, 14px)",
-              color: "var(--color-admin-text, #e2e8f0)",
+              color: "var(--color-admin-text, #334155)",
               lineHeight: 1.6,
             }}
           >
@@ -258,8 +258,8 @@ export function NotificationDetailDrawer({
         <div
           style={{
             padding: "14px 16px",
-            backgroundColor: "var(--color-admin-card, #121418)",
-            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+            backgroundColor: "var(--color-admin-card, #ffffff)",
+            border: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
             borderRadius: "var(--radius-md, 8px)",
             display: "flex",
             flexDirection: "column",
@@ -267,19 +267,19 @@ export function NotificationDetailDrawer({
           }}
         >
           <div style={{ fontSize: "11px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--color-admin-muted, #94a3b8)" }}>
-            Herkunft & Referenz
+            {t("originAndReference", { defaultValue: "Origin & Reference" })}
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", flexWrap: "wrap", gap: "8px" }}>
-            <span style={{ color: "var(--color-admin-muted, #94a3b8)" }}>Quelle:</span>
+            <span style={{ color: "var(--color-admin-muted, #94a3b8)" }}>{t("source", { defaultValue: "Source:" })}</span>
             <Badge variant="outline" size="sm">
-              {notification.source_type === "forms" ? t("sourceForms", { defaultValue: "Formulare" }) : t("sourceReviews", { defaultValue: "Bewertungen" })}
+              {notification.source_type === "forms" ? t("sourceForms", { defaultValue: "Forms" }) : t("sourceReviews", { defaultValue: "Reviews" })}
             </Badge>
           </div>
 
           {notification.source_record_id && (
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", flexWrap: "wrap", gap: "8px" }}>
-              <span style={{ color: "var(--color-admin-muted, #64748b)" }}>{t("sourceRecord", { defaultValue: "Datensatz-ID" })}:</span>
+              <span style={{ color: "var(--color-admin-muted, #64748b)" }}>{t("sourceRecord", { defaultValue: "Record ID" })}:</span>
               <code style={{ fontSize: "11px", fontFamily: "monospace", color: "var(--color-admin-accent, #2563eb)", backgroundColor: "var(--color-admin-border-subtle)", padding: "2px 6px", borderRadius: "4px" }}>
                 {notification.source_record_id}
               </code>

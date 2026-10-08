@@ -8,35 +8,35 @@ import Icon from "../../common/Icon";
 const STATUS_CONFIG = {
   AVAILABLE: {
     labelKey: "statusAvailable",
-    defaultLabel: "Verfügbar",
+    defaultLabel: "Available",
     badgeVariant: "success",
     color: "#22c55e",
     descriptionKey: "statusAvailableDesc",
-    defaultDesc: "Das Fahrzeug ist im öffentlichen Showroom aktiv sichtbar und für Kunden zum Kauf verfügbar.",
+    defaultDesc: "The vehicle is actively visible in the showroom and available for purchase.",
   },
   RESERVED: {
     labelKey: "statusReserved",
-    defaultLabel: "Reserviert",
+    defaultLabel: "Reserved",
     badgeVariant: "secondary",
     color: "var(--color-text)",
     descriptionKey: "statusReservedDesc",
-    defaultDesc: "Das Fahrzeug ist für einen Interessenten reserviert. Kaufanfragen werden als Warteliste vermerkt.",
+    defaultDesc: "The vehicle is reserved for an interested customer.",
   },
   SOLD: {
     labelKey: "statusSold",
-    defaultLabel: "Verkauft",
+    defaultLabel: "Sold",
     badgeVariant: "neutral",
     color: "#94a3b8",
     descriptionKey: "statusSoldDesc",
-    defaultDesc: "Das Fahrzeug wurde erfolgreich verkauft. Es wird im Showroom als verkauft gekennzeichnet.",
+    defaultDesc: "The vehicle has been successfully sold.",
   },
   HIDDEN: {
     labelKey: "statusHidden",
-    defaultLabel: "Ausgeblendet",
+    defaultLabel: "Hidden",
     badgeVariant: "warning",
     color: "#ef4444",
     descriptionKey: "statusHiddenDesc",
-    defaultDesc: "Das Fahrzeug wird vollständig vor der Öffentlichkeit verborgen und ist nur für Administratoren sichtbar.",
+    defaultDesc: "The vehicle is completely hidden from the public showroom and only visible to administrators.",
   },
 };
 
@@ -58,7 +58,7 @@ export function CarStatusModal({
 
   if (!car) return null;
 
-  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || "Fahrzeug";
+  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || t("vehicle", { defaultValue: "Vehicle" });
   const currentStatus = car.status || "AVAILABLE";
   const isChanged = selectedStatus !== currentStatus;
 
@@ -72,7 +72,7 @@ export function CarStatusModal({
     <Modal
       isOpen={isOpen}
       onClose={() => !loading && onClose?.()}
-      title={t("changeVehicleStatusTitle", { defaultValue: "Fahrzeugstatus ändern" })}
+      title={t("changeVehicleStatusTitle", { defaultValue: "Change Vehicle Status" })}
       size="md"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
@@ -89,7 +89,7 @@ export function CarStatusModal({
           }}
         >
           <div>
-            <div style={{ fontWeight: 700, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text)" }}>
+            <div style={{ fontWeight: 700, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)" }}>
               {vehicleName}
             </div>
             <div style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)" }}>
@@ -98,7 +98,7 @@ export function CarStatusModal({
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             <span style={{ fontSize: "var(--font-size-2xs)", color: "var(--color-admin-muted)" }}>
-              {t("currentStatus", { defaultValue: "Aktuell" })}:
+              {t("currentStatus", { defaultValue: "Current" })}:
             </span>
             <Badge variant={STATUS_CONFIG[currentStatus]?.badgeVariant || "neutral"} size="sm">
               {t(STATUS_CONFIG[currentStatus]?.labelKey, { defaultValue: STATUS_CONFIG[currentStatus]?.defaultLabel || currentStatus })}
@@ -139,12 +139,12 @@ export function CarStatusModal({
 
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)", marginBottom: "2px" }}>
-                    <span style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text)" }}>
+                    <span style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)" }}>
                       {t(config.labelKey, { defaultValue: config.defaultLabel })}
                     </span>
                     {isCurrent && (
                       <Badge variant="outline" size="sm" style={{ fontSize: "10px" }}>
-                        {t("current", { defaultValue: "Aktuell" })}
+                        {t("current", { defaultValue: "Current" })}
                       </Badge>
                     )}
                   </div>
@@ -175,8 +175,8 @@ export function CarStatusModal({
             <Icon name="alert-circle" size={16} />
             <span>
               {selectedStatus === "HIDDEN"
-                ? t("statusHiddenWarning", { defaultValue: "Dieses Fahrzeug wird für Kunden nicht mehr auf der Website angezeigt." })
-                : t("statusSoldWarning", { defaultValue: "Dieses Fahrzeug wird als verkauft markiert und steht nicht mehr zur Reservierung zur Verfügung." })}
+                ? t("statusHiddenWarning", { defaultValue: "Hidden vehicles are not visible in the public catalog." })
+                : t("statusSoldWarning", { defaultValue: "Vehicles marked as sold may still appear in the archive." })}
             </span>
           </div>
         )}
@@ -191,7 +191,7 @@ export function CarStatusModal({
           }}
         >
           <Button variant="outline" size="sm" disabled={loading} onClick={onClose}>
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
           <Button
             variant="primary"
@@ -200,7 +200,7 @@ export function CarStatusModal({
             disabled={!isChanged || loading}
             onClick={handleConfirm}
           >
-            {t("saveStatus", { defaultValue: "Status übernehmen" })}
+            {t("saveStatus", { defaultValue: "Save Status" })}
           </Button>
         </div>
       </div>

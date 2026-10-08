@@ -39,9 +39,9 @@ export function SiteSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.general", { defaultValue: "Allgemeine Website" })}
+      title={t("settingsSections.general", { defaultValue: "General Website" })}
       subtitle={t("siteSettingsSubtitle", {
-        defaultValue: "Grundlegende Metadaten, Markenidentität und Suchmaschinenoptimierung (SEO).",
+        defaultValue: "Basic metadata, brand identity, and search engine optimization (SEO).",
       })}
       sectionKey="site"
       onReset={onReset}
@@ -51,19 +51,19 @@ export function SiteSettingsEditor({
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
         <SettingsField
           label={t("siteName", { defaultValue: "Website Name" })}
-          helper={t("siteNameHelper", { defaultValue: "Wird im Browser-Titel und Markenbereich verwendet." })}
+          helper={t("siteNameHelper", { defaultValue: "Used in browser title and branding areas." })}
           error={errors["site.name"]}
         >
           <Input
             value={data.name || ""}
             onChange={(e) => handleChange("name", e.target.value)}
-            placeholder="z. B. German Auto"
+            placeholder="e.g. German Auto"
           />
         </SettingsField>
 
         <SettingsField
-          label={t("timezone", { defaultValue: "Zeitzone" })}
-          helper={t("timezoneHelper", { defaultValue: "Referenz für Öffnungszeiten und Serverzeit." })}
+          label={t("timezone", { defaultValue: "Timezone" })}
+          helper={t("timezoneHelper", { defaultValue: "Reference for opening hours and server time." })}
           error={errors["site.timezone"]}
         >
           <Input
@@ -75,14 +75,14 @@ export function SiteSettingsEditor({
       </div>
 
       <SettingsField
-        label={t("siteDescription", { defaultValue: "Website Beschreibung" })}
-        helper={t("siteDescHelper", { defaultValue: "Kurze Beschreibung des Autohauses für Suchmaschinen und Barrierefreiheit." })}
+        label={t("siteDescription", { defaultValue: "Website Description" })}
+        helper={t("siteDescHelper", { defaultValue: "Short description of the dealership for search engines and accessibility." })}
         error={errors["site.description"]}
       >
         <Textarea
           value={data.description || ""}
           onChange={(e) => handleChange("description", e.target.value)}
-          placeholder={t("siteDescPlaceholder", { defaultValue: "Ihr Spezialist für exklusive deutsche Automobile..." })}
+          placeholder={t("siteDescPlaceholder", { defaultValue: "Your specialist for exclusive German automobiles..." })}
           rows={3}
         />
       </SettingsField>
@@ -91,23 +91,23 @@ export function SiteSettingsEditor({
         style={{
           marginTop: "var(--space-lg)",
           paddingTop: "var(--space-md)",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          borderTop: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
         }}
       >
         <h3
           style={{
             fontSize: "var(--font-size-md)",
             fontWeight: 600,
-            color: "var(--color-admin-text, #ffffff)",
+            color: "var(--color-admin-text, #0f172a)",
             marginBottom: "var(--space-md)",
           }}
         >
-          {t("seoSettings", { defaultValue: "Suchmaschinenoptimierung (SEO)" })}
+          {t("seoSettings", { defaultValue: "Search Engine Optimization (SEO)" })}
         </h3>
 
         <SettingsField
-          label={t("seoTitle", { defaultValue: "Standard SEO-Titel" })}
-          helper={t("seoTitleHelper", { defaultValue: "Wird an Unterseiten angehängt oder als Standard-Title genutzt." })}
+          label={t("seoTitle", { defaultValue: "Default SEO Title" })}
+          helper={t("seoTitleHelper", { defaultValue: "Appended to subpages or used as default title." })}
           error={errors["site.seo_title"]}
         >
           <Input
@@ -118,33 +118,33 @@ export function SiteSettingsEditor({
         </SettingsField>
 
         <SettingsField
-          label={t("seoDescription", { defaultValue: "Meta-Description" })}
-          helper={t("seoDescHelper", { defaultValue: "Optimale Länge: 140 bis 160 Zeichen." })}
+          label={t("seoDescription", { defaultValue: "Meta Description" })}
+          helper={t("seoDescHelper", { defaultValue: "Optimal length: 140 to 160 characters." })}
           error={errors["site.seo_description"]}
         >
           <Textarea
             value={data.seo_description || ""}
             onChange={(e) => handleChange("seo_description", e.target.value)}
-            placeholder="Exklusive deutsche Automobile und erstklassiger Service..."
+            placeholder="Exclusive German automobiles and first-class service..."
             rows={2}
           />
         </SettingsField>
 
         <SettingsField
-          label={t("seoKeywords", { defaultValue: "SEO Suchbegriffe (Keywords)" })}
-          helper={t("seoKeywordsHelper", { defaultValue: "Mit Komma trennen (z. B. Porsche, BMW, Sportwagen, München)." })}
+          label={t("seoKeywords", { defaultValue: "SEO Keywords" })}
+          helper={t("seoKeywordsHelper", { defaultValue: "Separate with commas (e.g. Porsche, BMW, sports cars, Munich)." })}
           error={errors["site.seo_keywords"]}
         >
           <Input
             value={keywordsString}
             onChange={handleKeywordsChange}
-            placeholder="Automobile, Sportwagen, Luxusfahrzeuge"
+            placeholder="Automobiles, Sports Cars, Luxury Vehicles"
           />
         </SettingsField>
 
         <SettingsToggle
-          label={t("robotsIndexing", { defaultValue: "Suchmaschinen-Indexierung erlauben" })}
-          description={t("robotsIndexingDesc", { defaultValue: "Erlaubt Google und Bing das Erfassen und Anzeigen der Website in Suchergebnissen." })}
+          label={t("robotsIndexing", { defaultValue: "Allow Search Engine Indexing" })}
+          description={t("robotsIndexingDesc", { defaultValue: "Allows Google and Bing to crawl and display the website in search results." })}
           checked={data.robots_indexing !== false}
           onChange={(checked) => handleChange("robots_indexing", checked)}
         />

@@ -19,11 +19,12 @@ export function CarTable({
   className = "",
   style = {},
 }) {
-  const { t } = useTranslation(["admin", "cars", "common"]);
+  const { t, i18n } = useTranslation(["admin", "cars", "common"]);
+  const currentLang = i18n?.language?.startsWith("en") ? "en" : "de";
 
   const formatPrice = (price) => {
     if (price == null) return "—";
-    return new Intl.NumberFormat("de-DE", {
+    return new Intl.NumberFormat(currentLang === "en" ? "en-US" : "de-DE", {
       style: "currency",
       currency: "EUR",
       maximumFractionDigits: 0,
@@ -32,7 +33,7 @@ export function CarTable({
 
   const formatMileage = (km) => {
     if (km == null) return "—";
-    return `${new Intl.NumberFormat("de-DE").format(km)} km`;
+    return `${new Intl.NumberFormat(currentLang === "en" ? "en-US" : "de-DE").format(km)} km`;
   };
 
   const getStatusBadgeVariant = (status) => {
@@ -58,9 +59,9 @@ export function CarTable({
         style={{
           width: "100%",
           overflowX: "auto",
-          backgroundColor: "var(--color-admin-card, #121418)",
+          backgroundColor: "var(--color-admin-card, #ffffff)",
           borderRadius: "var(--radius-md, 8px)",
-          border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+          border: "1px solid var(--color-admin-border, #e2e8f0)",
         }}
       >
         <table
@@ -82,15 +83,15 @@ export function CarTable({
                 letterSpacing: "0.06em",
               }}
             >
-              <th style={{ padding: "12px 16px", width: "70px" }}>{t("preview", { defaultValue: "Vorschau" })}</th>
-              <th style={{ padding: "12px 16px" }}>{t("vehicleName", { defaultValue: "Fahrzeug / Name" })}</th>
-              <th style={{ padding: "12px 16px" }}>{t("price", { defaultValue: "Preis" })}</th>
-              <th style={{ padding: "12px 16px" }}>{t("mileageYear", { defaultValue: "Kilometer & Baujahr" })}</th>
-              <th style={{ padding: "12px 16px" }}>{t("driveCondition", { defaultValue: "Antrieb / Zustand" })}</th>
-              <th style={{ padding: "12px 16px" }}>{t("status", { defaultValue: "Status" })}</th>
-              <th style={{ padding: "12px 16px", textAlign: "center" }}>{t("featured", { defaultValue: "Featured" })}</th>
-              <th style={{ padding: "12px 16px", textAlign: "center" }}>{t("visible", { defaultValue: "Sichtbar" })}</th>
-              <th style={{ padding: "12px 16px", textAlign: "right" }}>{t("actions", { defaultValue: "Aktionen" })}</th>
+              <th style={{ padding: "12px 16px", width: "70px" }}>{t("columns.preview", { defaultValue: "Preview" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("columns.vehicle", { defaultValue: "Vehicle / Name" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("columns.price", { defaultValue: "Price" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("columns.mileageYear", { defaultValue: "Mileage & Year" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("columns.driveCondition", { defaultValue: "Fuel / Transmission" })}</th>
+              <th style={{ padding: "12px 16px" }}>{t("columns.status", { defaultValue: "Status" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "center" }}>{t("columns.featured", { defaultValue: "Featured" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "center" }}>{t("columns.visible", { defaultValue: "Visible" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "right" }}>{t("columns.actions", { defaultValue: "Actions" })}</th>
             </tr>
           </thead>
           <tbody>
@@ -102,10 +103,10 @@ export function CarTable({
                 <tr
                   key={car.id}
                   style={{
-                    borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                    borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
                     transition: "background-color 0.15s ease",
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.04))")}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, #f1f5f9)")}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                 >
                   {/* Thumbnail */}
@@ -117,7 +118,7 @@ export function CarTable({
                         borderRadius: "4px",
                         backgroundColor: "#000",
                         overflow: "hidden",
-                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        border: "1px solid var(--color-admin-border, #e2e8f0)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -131,7 +132,7 @@ export function CarTable({
                           onError={(e) => (e.currentTarget.style.display = "none")}
                         />
                       ) : (
-                        <Icon name="car" size={18} style={{ color: "var(--color-admin-muted)" }} />
+                        <Icon name="car" size={18} style={{ color: "var(--color-admin-muted, #64748b)" }} />
                       )}
                     </div>
                   </td>
@@ -154,13 +155,13 @@ export function CarTable({
                         style={{
                           fontWeight: 600,
                           fontSize: "var(--font-size-xs)",
-                          color: "var(--color-admin-text, #ffffff)",
+                          color: "var(--color-admin-text, #0f172a)",
                           display: "block",
                         }}
                       >
                         {vehicleName}
                       </span>
-                      <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
+                      <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}>
                         {car.brand}
                       </span>
                     </button>
@@ -168,11 +169,11 @@ export function CarTable({
 
                   {/* Price */}
                   <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
-                    <span style={{ fontWeight: 600, color: "var(--color-primary, var(--color-text))" }}>
+                    <span style={{ fontWeight: 600, color: "var(--color-primary, #D4AF37)" }}>
                       {formatPrice(car.price)}
                     </span>
                     {car.old_price && (
-                      <span style={{ fontSize: "10px", color: "var(--color-admin-muted)", textDecoration: "line-through", display: "block" }}>
+                      <span style={{ fontSize: "10px", color: "var(--color-admin-muted, #64748b)", textDecoration: "line-through", display: "block" }}>
                         {formatPrice(car.old_price)}
                       </span>
                     )}
@@ -180,20 +181,20 @@ export function CarTable({
 
                   {/* Mileage & Year */}
                   <td style={{ padding: "10px 16px", whiteSpace: "nowrap" }}>
-                    <span style={{ color: "var(--color-admin-text, #fff)" }}>{formatMileage(car.mileage_km)}</span>
-                    <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>
+                    <span style={{ color: "var(--color-admin-text, #0f172a)" }}>{formatMileage(car.mileage_km)}</span>
+                    <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)", display: "block" }}>
                       {car.first_registration ? car.first_registration.substring(0, 4) : "—"}
-                      {car.performance_hp ? ` • ${car.performance_hp} PS` : ""}
+                      {car.performance_hp ? ` • ${car.performance_hp} HP` : ""}
                     </span>
                   </td>
 
                   {/* Fuel / Transmission / Condition */}
                   <td style={{ padding: "10px 16px" }}>
-                    <span style={{ color: "var(--color-admin-text, #fff)" }}>
+                    <span style={{ color: "var(--color-admin-text, #0f172a)" }}>
                       {car.fuel_type || "—"} / {car.transmission || "—"}
                     </span>
                     {car.condition && (
-                      <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>
+                      <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)", display: "block" }}>
                         {car.condition}
                       </span>
                     )}
@@ -209,17 +210,17 @@ export function CarTable({
                         fontSize: "11px",
                         fontWeight: 600,
                         borderRadius: "var(--radius-sm, 4px)",
-                        border: "1px solid rgba(255, 255, 255, 0.15)",
-                        backgroundColor: "rgba(255, 255, 255, 0.05)",
-                        color: car.status === "AVAILABLE" ? "#22c55e" : car.status === "RESERVED" ? "#eab308" : "#94a3b8",
+                        border: "1px solid var(--color-admin-border, #e2e8f0)",
+                        backgroundColor: "var(--color-admin-card, #ffffff)",
+                        color: car.status === "AVAILABLE" ? "#16a34a" : car.status === "RESERVED" ? "#d97706" : "#64748b",
                         cursor: "pointer",
                         outline: "none",
                       }}
                     >
-                      <option value="AVAILABLE" style={{ backgroundColor: "#121418", color: "#22c55e" }}>AVAILABLE</option>
-                      <option value="RESERVED" style={{ backgroundColor: "#121418", color: "#eab308" }}>RESERVED</option>
-                      <option value="SOLD" style={{ backgroundColor: "#121418", color: "#94a3b8" }}>SOLD</option>
-                      <option value="HIDDEN" style={{ backgroundColor: "#121418", color: "#ef4444" }}>HIDDEN</option>
+                      <option value="AVAILABLE">{t("statusAvailable", { defaultValue: "AVAILABLE" })}</option>
+                      <option value="RESERVED">{t("statusReserved", { defaultValue: "RESERVED" })}</option>
+                      <option value="SOLD">{t("statusSold", { defaultValue: "SOLD" })}</option>
+                      <option value="HIDDEN">{t("statusHidden", { defaultValue: "HIDDEN" })}</option>
                     </select>
                   </td>
 
@@ -227,13 +228,13 @@ export function CarTable({
                   <td style={{ padding: "10px 16px", textAlign: "center" }}>
                     <button
                       type="button"
-                      title={car.is_featured ? t("featuredActivated", { defaultValue: "Hervorgehoben" }) : t("featuredDeactivated", { defaultValue: "Nicht hervorgehoben" })}
+                      title={car.is_featured ? t("featuredActivated", { defaultValue: "Featured" }) : t("featuredDeactivated", { defaultValue: "Not featured" })}
                       onClick={() => onToggleFeatured?.(car.id, !car.is_featured)}
                       style={{
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        color: car.is_featured ? "var(--color-primary, var(--color-text))" : "rgba(255, 255, 255, 0.2)",
+                        color: car.is_featured ? "#f59e0b" : "var(--color-admin-muted, #cbd5e1)",
                         transition: "color 0.2s",
                       }}
                     >
@@ -245,13 +246,13 @@ export function CarTable({
                   <td style={{ padding: "10px 16px", textAlign: "center" }}>
                     <button
                       type="button"
-                      title={car.is_visible !== false ? t("visibilityVisible", { defaultValue: "Sichtbar" }) : t("visibilityHidden", { defaultValue: "Ausgeblendet" })}
+                      title={car.is_visible !== false ? t("visibilityVisible", { defaultValue: "Visible" }) : t("visibilityHidden", { defaultValue: "Hidden" })}
                       onClick={() => onToggleVisibility?.(car.id, car.is_visible === false ? true : false)}
                       style={{
                         background: "none",
                         border: "none",
                         cursor: "pointer",
-                        color: car.is_visible !== false ? "#22c55e" : "#ef4444",
+                        color: car.is_visible !== false ? "#16a34a" : "#dc2626",
                         transition: "color 0.2s",
                       }}
                     >
@@ -265,16 +266,16 @@ export function CarTable({
                       <IconButton
                         icon="eye"
                         size="sm"
-                        ariaLabel={t("previewVehicle", { defaultValue: "Fahrzeugdetails ansehen" })}
-                        title={t("previewVehicle", { defaultValue: "Fahrzeugdetails ansehen" })}
+                        ariaLabel={t("previewVehicle", { defaultValue: "View Vehicle Details" })}
+                        title={t("previewVehicle", { defaultValue: "View Vehicle Details" })}
                         onClick={() => onPreview?.(car)}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
                         icon="external-link"
                         size="sm"
-                        ariaLabel={t("openPublicPage", { defaultValue: "Öffentliche Seite öffnen" })}
-                        title={t("openPublicPage", { defaultValue: "Öffentliche Seite öffnen" })}
+                        ariaLabel={t("openPublicPage", { defaultValue: "Open Public Page" })}
+                        title={t("openPublicPage", { defaultValue: "Open Public Page" })}
                         onClick={() => {
                           const fullUrl = `${window.location.origin}/cars/${car.slug || car.id}`;
                           window.open(fullUrl, "_blank", "noopener,noreferrer");
@@ -284,16 +285,16 @@ export function CarTable({
                       <IconButton
                         icon="edit"
                         size="sm"
-                        ariaLabel={t("editVehicle", { defaultValue: "Fahrzeug bearbeiten" })}
-                        title={t("editVehicle", { defaultValue: "Fahrzeug bearbeiten" })}
+                        ariaLabel={t("editVehicle", { defaultValue: "Edit Vehicle" })}
+                        title={t("editVehicle", { defaultValue: "Edit Vehicle" })}
                         onClick={() => onEdit?.(car)}
                         style={{ width: "28px", height: "28px" }}
                       />
                       <IconButton
                         icon="trash"
                         size="sm"
-                        ariaLabel={t("deleteVehicle", { defaultValue: "Fahrzeug löschen" })}
-                        title={t("deleteVehicle", { defaultValue: "Fahrzeug löschen" })}
+                        ariaLabel={t("deleteVehicle", { defaultValue: "Delete Vehicle" })}
+                        title={t("deleteVehicle", { defaultValue: "Delete Vehicle" })}
                         onClick={() => onDelete?.(car)}
                         style={{ width: "28px", height: "28px", color: "var(--color-error, #ef4444)" }}
                       />
@@ -316,9 +317,9 @@ export function CarTable({
             <div
               key={car.id}
               style={{
-                backgroundColor: "var(--color-admin-card, #121418)",
+                backgroundColor: "var(--color-admin-card, #ffffff)",
                 borderRadius: "var(--radius-md, 8px)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                border: "1px solid var(--color-admin-border, #e2e8f0)",
                 padding: "var(--space-md)",
                 display: "flex",
                 flexDirection: "column",
@@ -353,7 +354,7 @@ export function CarTable({
                     {car.is_featured && <Badge variant="secondary" size="sm">Featured</Badge>}
                     {car.is_visible === false && (
                       <Badge variant="outline" size="sm" style={{ borderColor: "#ef4444", color: "#ef4444" }}>
-                        {t("statHidden", { defaultValue: "Versteckt" })}
+                        {t("statHidden", { defaultValue: "Hidden" })}
                       </Badge>
                     )}
                   </div>
@@ -363,13 +364,13 @@ export function CarTable({
                       margin: 0,
                       fontSize: "var(--font-size-sm)",
                       fontWeight: 600,
-                      color: "var(--color-admin-text, #ffffff)",
+                      color: "var(--color-admin-text, #0f172a)",
                       cursor: "pointer",
                     }}
                   >
                     {vehicleName}
                   </h4>
-                  <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
+                  <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}>
                     {car.brand}
                   </span>
                 </div>
@@ -385,10 +386,10 @@ export function CarTable({
                 }}
               >
                 <div>
-                  <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-primary, var(--color-text))" }}>
+                  <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-primary, #D4AF37)" }}>
                     {formatPrice(car.price)}
                   </span>
-                  <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginLeft: "8px" }}>
+                  <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)", marginLeft: "8px" }}>
                     {formatMileage(car.mileage_km)}
                   </span>
                 </div>
@@ -397,19 +398,19 @@ export function CarTable({
                   <IconButton
                     icon="eye"
                     size="sm"
-                    ariaLabel={t("previewVehicle", { defaultValue: "Details" })}
+                    ariaLabel={t("previewVehicle", { defaultValue: "View Details" })}
                     onClick={() => onPreview?.(car)}
                   />
                   <IconButton
                     icon="edit"
                     size="sm"
-                    ariaLabel={t("editVehicle", { defaultValue: "Bearbeiten" })}
+                    ariaLabel={t("editVehicle", { defaultValue: "Edit" })}
                     onClick={() => onEdit?.(car)}
                   />
                   <IconButton
                     icon="trash"
                     size="sm"
-                    ariaLabel={t("deleteVehicle", { defaultValue: "Löschen" })}
+                    ariaLabel={t("deleteVehicle", { defaultValue: "Delete" })}
                     onClick={() => onDelete?.(car)}
                     style={{ color: "var(--color-error, #ef4444)" }}
                   />
@@ -431,11 +432,11 @@ export function CarTable({
             gap: "var(--space-md)",
             marginTop: "var(--space-md)",
             padding: "var(--space-md) var(--space-lg)",
-            backgroundColor: "var(--color-admin-card, #121418)",
+            backgroundColor: "var(--color-admin-card, #ffffff)",
             borderRadius: "var(--radius-md, 8px)",
-            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+            border: "1px solid var(--color-admin-border, #e2e8f0)",
             fontSize: "var(--font-size-sm)",
-            color: "var(--color-admin-muted)",
+            color: "var(--color-admin-muted, #64748b)",
           }}
         >
           <div>
@@ -443,7 +444,7 @@ export function CarTable({
               page: pagination.page,
               pages: pagination.pages,
               total: pagination.total,
-              defaultValue: `Seite ${pagination.page} von ${pagination.pages} (${pagination.total} Fahrzeuge gesamt)`,
+              defaultValue: `Page ${pagination.page} of ${pagination.pages} (${pagination.total} total vehicles)`,
             })}
           </div>
 
@@ -456,14 +457,14 @@ export function CarTable({
               style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
               <Icon name="chevron-left" size={14} />
-              <span>{t("previous", { defaultValue: "Zurück" })}</span>
+              <span>{t("previous", { defaultValue: "Previous" })}</span>
             </Button>
 
             <span
               style={{
                 padding: "0 10px",
                 fontWeight: 600,
-                color: "var(--color-admin-text, #ffffff)",
+                color: "var(--color-admin-text, #0f172a)",
               }}
             >
               {pagination.page} / {pagination.pages}
@@ -476,7 +477,7 @@ export function CarTable({
               onClick={() => onPageChange?.(pagination.page + 1)}
               style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
-              <span>{t("next", { defaultValue: "Weiter" })}</span>
+              <span>{t("next", { defaultValue: "Next" })}</span>
               <Icon name="chevron-right" size={14} />
             </Button>
           </div>

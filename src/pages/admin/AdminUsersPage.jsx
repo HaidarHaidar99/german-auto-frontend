@@ -78,7 +78,7 @@ export function AdminUsersPage() {
   };
 
   useEffect(() => {
-    document.title = `${t("userManagement", { defaultValue: "Benutzerverwaltung" })} | ADMINCORE`;
+    document.title = `${t("userManagement", { defaultValue: "User Management" })} | ADMINCORE`;
   }, [t]);
 
   // ─── Fetch Stats ────────────────────────────────────────────────────────────
@@ -151,7 +151,7 @@ export function AdminUsersPage() {
       } catch (err) {
         setError(
           err?.message ||
-          t("errorLoadUsersFailed", { defaultValue: "Fehler beim Laden der Benutzerkonten." })
+          t("errorLoadUsersFailed", { defaultValue: "Failed to load user accounts." })
         );
       } finally {
         setLoading(false);
@@ -214,7 +214,7 @@ export function AdminUsersPage() {
       "success",
       t("adminCreatedSuccess", {
         name: newUser?.full_name || newUser?.email,
-        defaultValue: `Administrator-Konto für "${newUser?.full_name || newUser?.email}" erfolgreich angelegt.`,
+        defaultValue: `Administrator account for "${newUser?.full_name || newUser?.email}" created successfully.`,
       })
     );
     fetchUsers(1, filters);
@@ -234,7 +234,7 @@ export function AdminUsersPage() {
       t("roleUpdatedSuccess", {
         name: updatedUser.full_name || updatedUser.email,
         role: updatedUser.role,
-        defaultValue: `Rolle von "${updatedUser.full_name || updatedUser.email}" wurde auf "${updatedUser.role}" aktualisiert.`,
+        defaultValue: `Role of "${updatedUser.full_name || updatedUser.email}" updated to "${updatedUser.role}".`,
       })
     );
     fetchStats();
@@ -246,7 +246,7 @@ export function AdminUsersPage() {
       "success",
       t("sessionsRevokedSuccess", {
         name: targetUser.full_name || targetUser.email,
-        defaultValue: `Alle aktiven Sitzungen für "${targetUser.full_name || targetUser.email}" wurden beendet.`,
+        defaultValue: `All active sessions for "${targetUser.full_name || targetUser.email}" have been revoked.`,
       })
     );
   };
@@ -259,7 +259,7 @@ export function AdminUsersPage() {
     }
     showToast(
       "success",
-      t("userDeletedSuccess", { defaultValue: "Benutzerkonto wurde dauerhaft gelöscht." })
+      t("userDeletedSuccess", { defaultValue: "User account has been permanently deleted." })
     );
 
     // If current page is left empty after deletion, step back
@@ -275,7 +275,7 @@ export function AdminUsersPage() {
     return (
       <UnauthorizedState
         message={t("superAdminOnlyNotice", {
-          defaultValue: "Zugriff verweigert. Dieser Bereich erfordert Super-Administrator-Rechte.",
+          defaultValue: "Access denied. This section requires Super Administrator privileges.",
         })}
       />
     );
@@ -316,10 +316,10 @@ export function AdminUsersPage() {
 
       {/* Page Header */}
       <AdminPageHeader
-        title={t("userManagement", { defaultValue: "Benutzerverwaltung & Sicherheit" })}
+        title={t("userManagement", { defaultValue: "User Management & Security" })}
         subtitle={t("userManagementSubtitle", {
           defaultValue:
-            "Verwalten Sie Kunden- und Administratorenkonten, Rollenberechtigungen und Sitzungssicherheit.",
+            "Manage customer and administrator accounts, role permissions, and session security.",
         })}
         actions={
           <Button
@@ -329,7 +329,7 @@ export function AdminUsersPage() {
             style={{ display: "flex", alignItems: "center", gap: "6px" }}
           >
             <Icon name="user-plus" size={16} />
-            <span>{t("addAdministrator", { defaultValue: "Administrator anlegen" })}</span>
+            <span>{t("addAdministrator", { defaultValue: "Add Administrator" })}</span>
           </Button>
         }
       />
@@ -351,7 +351,7 @@ export function AdminUsersPage() {
         {/* Error State */}
         {error && (
           <ErrorState
-            title={t("errorLoadingUsers", { defaultValue: "Fehler beim Laden" })}
+            title={t("errorLoadingUsers", { defaultValue: "Failed to load" })}
             message={error}
             onRetry={() => {
               fetchUsers(pagination.page, filters);
@@ -362,7 +362,7 @@ export function AdminUsersPage() {
 
         {/* Loading State or Users Table */}
         {loading && !refreshing ? (
-          <AdminLoadingState message={t("loadingUserAccounts", { defaultValue: "Benutzerdaten werden geladen..." })} />
+          <AdminLoadingState message={t("loadingUserAccounts", { defaultValue: "Loading user accounts..." })} />
         ) : (
           <UserTable
             users={users}

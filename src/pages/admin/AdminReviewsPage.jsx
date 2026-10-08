@@ -25,13 +25,12 @@ export function AdminReviewsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  // Filters: search, status, rating, sort, imageFilter
+  // Filters: search, status, rating, sort
   const [filters, setFilters] = useState({
     search: "",
     status: "ALL",
     rating: "ALL",
     sort: "newest",
-    imageFilter: "ALL",
   });
 
   // Selected review for detail drawer
@@ -50,7 +49,7 @@ export function AdminReviewsPage() {
   };
 
   useEffect(() => {
-    document.title = `${t("reviews", { defaultValue: "Bewertungsmoderation" })} | ADMINCORE`;
+    document.title = `${t("reviews", { defaultValue: "Review Moderation" })} | ADMINCORE`;
   }, [t]);
 
   // ─── Fetch Reviews ──────────────────────────────────────────────────────────
@@ -67,12 +66,12 @@ export function AdminReviewsPage() {
       setReviews(items);
       setError(null);
     } catch (err) {
-      setError(err?.message || "Fehler beim Laden der Kundenbewertungen.");
+      setError(err?.message || t("errorLoadingReviews", { defaultValue: "Error loading customer reviews." }));
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     fetchReviews();
@@ -112,9 +111,9 @@ export function AdminReviewsPage() {
           prev && prev.id === reviewId ? { ...prev, ...updated, status: "PUBLISHED" } : prev
         );
 
-        showToast("success", t("reviewPublished", { defaultValue: "Rezension wurde erfolgreich veröffentlicht." }));
+        showToast("success", t("reviewPublished", { defaultValue: "Review published successfully." }));
       } catch (err) {
-        showToast("error", err?.message || "Fehler beim Veröffentlichen der Rezension.");
+        showToast("error", err?.message || t("errorPublishingReview", { defaultValue: "Error publishing review." }));
       } finally {
         setUpdatingId(null);
       }
@@ -143,9 +142,9 @@ export function AdminReviewsPage() {
           prev && prev.id === reviewId ? { ...prev, ...updated, status: "HIDDEN" } : prev
         );
 
-        showToast("success", t("reviewHidden", { defaultValue: "Rezension wurde ausgeblendet." }));
+        showToast("success", t("reviewHidden", { defaultValue: "Review has been hidden." }));
       } catch (err) {
-        showToast("error", err?.message || "Fehler beim Ausblenden der Rezension.");
+        showToast("error", err?.message || t("errorHidingReview", { defaultValue: "Error hiding review." }));
       } finally {
         setUpdatingId(null);
       }
@@ -153,47 +152,38 @@ export function AdminReviewsPage() {
     [t]
   );
 
-  // Soft-delete a review
+  // Delete a review permanently and remove immediately from view
   const handleDelete = useCallback(
     async (reviewItem) => {
       if (!reviewItem) return;
       const confirmed = window.confirm(
         t("deleteReviewConfirmMessage", {
-          name: reviewItem.name || "diesem Kunden",
-          defaultValue: `Möchten Sie diese Bewertung von "${reviewItem.name || "Kunde"}" wirklich löschen? Der Status wird auf GELÖSCHT gesetzt und ein eventuell hinterlegtes Bild wird entfernt.`,
+          name: reviewItem.name || "this customer",
+          defaultValue: `Are you sure you want to delete this review from "${reviewItem.name || "Customer"}"? This action cannot be undone.`,
         })
       );
       if (!confirmed) return;
 
       try {
         setUpdatingId(reviewItem.id);
-        const res = await reviewsService.adminDeleteReview(reviewItem.id);
-        const updated = res?.data?.review || {
-          status: "DELETED",
-          image_url: null,
-          updated_at: new Date().toISOString(),
-        };
+        await reviewsService.adminDeleteReview(reviewItem.id);
 
-        setReviews((prev) =>
-          prev.map((item) =>
-            item.id === reviewItem.id ? { ...item, ...updated, status: "DELETED", image_url: null } : item
-          )
-        );
+        // Immediately remove from state so it disappears
+        setReviews((prev) => prev.filter((item) => item.id !== reviewItem.id));
 
-        setSelectedReview((prev) =>
-          prev && prev.id === reviewItem.id
-            ? { ...prev, ...updated, status: "DELETED", image_url: null }
-            : prev
-        );
+        if (selectedReview?.id === reviewItem.id) {
+          setIsDrawerOpen(false);
+          setSelectedReview(null);
+        }
 
-        showToast("success", t("reviewDeleted", { defaultValue: "Rezension wurde erfolgreich gelöscht." }));
+        showToast("success", t("reviewDeleted", { defaultValue: "Review deleted successfully." }));
       } catch (err) {
-        showToast("error", err?.message || "Fehler beim Löschen der Rezension.");
+        showToast("error", err?.message || t("errorDeletingReview", { defaultValue: "Error deleting review." }));
       } finally {
         setUpdatingId(null);
       }
     },
-    [t]
+    [t, selectedReview]
   );
 
   // Detail drawer triggers
@@ -223,18 +213,14 @@ export function AdminReviewsPage() {
     // Status filter
     if (filters.status && filters.status !== "ALL") {
       result = result.filter((item) => item.status === filters.status);
+    } else {
+      // Exclude DELETED reviews by default
+      result = result.filter((item) => item.status !== "DELETED");
     }
 
     // Rating filter
     if (filters.rating && filters.rating !== "ALL") {
       result = result.filter((item) => Number(item.rating) === Number(filters.rating));
-    }
-
-    // Image filter
-    if (filters.imageFilter === "with_image") {
-      result = result.filter((item) => Boolean(item.image_url));
-    } else if (filters.imageFilter === "without_image") {
-      result = result.filter((item) => !item.image_url);
     }
 
     // Search query (reviewer name or text)
@@ -271,7 +257,6 @@ export function AdminReviewsPage() {
       status: "ALL",
       rating: "ALL",
       sort: "newest",
-      imageFilter: "ALL",
     });
   };
 
@@ -279,8 +264,7 @@ export function AdminReviewsPage() {
     filters.search ||
     filters.status !== "ALL" ||
     filters.rating !== "ALL" ||
-    filters.sort !== "newest" ||
-    filters.imageFilter !== "ALL"
+    filters.sort !== "newest"
   );
 
   return (
@@ -319,13 +303,13 @@ export function AdminReviewsPage() {
 
       {/* Page Header */}
       <AdminPageHeader
-        title={t("reviews", { defaultValue: "Bewertungsmoderation" })}
+        title={t("reviews", { defaultValue: "Review Moderation" })}
         subtitle={t("reviewsSubtitle", {
-          defaultValue: "Moderation und Freigabe aller eingereichten Kundenstimmen und Erfahrungsberichte",
+          defaultValue: "Moderation and publishing of all submitted customer reviews and testimonials",
         })}
         badge={
           <Badge variant="secondary" size="sm">
-            {reviews.length} {t("statTotalReviews", { defaultValue: "Rezensionen" })}
+            {reviews.length} {t("statTotalReviews", { defaultValue: "Reviews" })}
           </Badge>
         }
       />
@@ -356,29 +340,29 @@ export function AdminReviewsPage() {
 
         {/* Content States */}
         {loading ? (
-          <AdminLoadingState message="Lade Rezensionen aus der Datenbank..." />
+          <AdminLoadingState message={t("loadingReviews", { defaultValue: "Loading reviews from database..." })} />
         ) : error ? (
           <ErrorState
-            title="Fehler beim Laden"
+            title={t("errorLoading", { defaultValue: "Error loading" })}
             message={error}
             onRetry={() => fetchReviews(false)}
           />
         ) : reviews.length === 0 ? (
           <AdminEmptyState
             icon="star"
-            title={t("noReviewsTitle", { defaultValue: "Keine Kundenbewertungen vorhanden" })}
+            title={t("noReviewsTitle", { defaultValue: "No customer reviews available" })}
             message={t("noReviewsDesc", {
-              defaultValue: "Es sind derzeit keine Kundenstimmen in der Datenbank hinterlegt.",
+              defaultValue: "There are currently no reviews stored in the database.",
             })}
           />
         ) : filteredReviews.length === 0 ? (
           <AdminEmptyState
             icon="search"
-            title={t("noMatchingReviewsTitle", { defaultValue: "Keine passenden Rezensionen gefunden" })}
+            title={t("noMatchingReviewsTitle", { defaultValue: "No matching reviews found" })}
             message={t("noMatchingReviewsDesc", {
-              defaultValue: "Zu den gewählten Filterkriterien liegen keine Bewertungen vor.",
+              defaultValue: "No reviews match the selected filter criteria.",
             })}
-            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Filter zurücksetzen" }) : undefined}
+            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Reset filters" }) : undefined}
             onAction={handleResetFilters}
           />
         ) : (
@@ -394,7 +378,11 @@ export function AdminReviewsPage() {
               }}
             >
               <span>
-                {filteredReviews.length} von {reviews.length} Bewertungen angezeigt
+                {t("reviewsShownCount", {
+                  count: filteredReviews.length,
+                  total: reviews.length,
+                  defaultValue: `${filteredReviews.length} of ${reviews.length} reviews displayed`,
+                })}
               </span>
             </div>
 

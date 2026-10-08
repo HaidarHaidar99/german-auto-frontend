@@ -51,7 +51,7 @@ export function ChangeRoleModal({
     } catch (err) {
       setServerError(
         err?.message ||
-        t("errorChangeRoleFailed", { defaultValue: "Fehler beim Aktualisieren der Benutzerrolle." })
+        t("errorChangeRoleFailed", { defaultValue: "Failed to update user role." })
       );
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export function ChangeRoleModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("changeRoleTitle", { defaultValue: "Benutzerrolle anpassen" })}
+      title={t("changeRoleTitle", { defaultValue: "Update User Role" })}
       size="md"
       className={className}
     >
@@ -79,15 +79,15 @@ export function ChangeRoleModal({
             gap: "4px",
           }}
         >
-          <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text)" }}>
+          <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)" }}>
             {user.full_name || "—"}
           </div>
           <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)", wordBreak: "break-all" }}>
             {user.email}
           </div>
           <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "4px" }}>
-            Aktuelle Rolle:{" "}
-            <strong style={{ color: "var(--color-admin-text)" }}>{user.role}</strong>
+            {t("currentRole", { defaultValue: "Current Role:" })}{" "}
+            <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{user.role}</strong>
           </div>
         </div>
 
@@ -112,8 +112,8 @@ export function ChangeRoleModal({
 
         {/* Role Options */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text)" }}>
-            {t("selectNewRole", { defaultValue: "Neue Rolle auswählen" })}:
+          <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
+            {t("selectNewRole", { defaultValue: "Select New Role" })}:
           </label>
 
           {/* CUSTOMER */}
@@ -138,11 +138,11 @@ export function ChangeRoleModal({
               style={{ marginTop: "3px" }}
             />
             <div>
-              <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text)" }}>
-                CUSTOMER (Standard-Kunde)
+              <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)" }}>
+                CUSTOMER
               </div>
               <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                Zugriff auf öffentliches Portal, Fahrzeugsuche, Merkliste und eigene Kontoeinstellungen. Kein Admin-Zugang.
+                {t("customerRoleDesc", { defaultValue: "Access to public portal, inventory search, watchlist, and personal account settings. No admin access." })}
               </div>
             </div>
           </label>
@@ -170,10 +170,10 @@ export function ChangeRoleModal({
             />
             <div>
               <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "#0284c7" }}>
-                ADMIN (Administrator)
+                ADMIN
               </div>
               <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                Verwaltung von Fahrzeugbestand, Formulareingängen, Kundenbewertungen und Benachrichtigungen.
+                {t("adminRoleDetailedDesc", { defaultValue: "Management of vehicle inventory, form submissions, customer reviews, and notifications." })}
               </div>
             </div>
           </label>
@@ -201,10 +201,10 @@ export function ChangeRoleModal({
             />
             <div>
               <div style={{ fontWeight: 700, fontSize: "var(--font-size-sm)", color: "#d97706" }}>
-                SUPER_ADMIN (Hauptadministrator)
+                SUPER_ADMIN
               </div>
               <div style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                Vollzugriff auf alle administrativen Bereiche, Benutzerverwaltung und CMS-Systemeinstellungen.
+                {t("superAdminRoleDetailedDesc", { defaultValue: "Full access to all administrative sections, user accounts, and system configuration." })}
               </div>
             </div>
           </label>
@@ -227,7 +227,10 @@ export function ChangeRoleModal({
         >
           <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px", color: "#d97706" }} />
           <div>
-            <strong>Sitzungsinvalidierung:</strong> Durch die Rollenänderung wird die Versionsnummer der Tokens (token_version) im Backend erhöht. Alle aktiven Sitzungen dieses Benutzers werden sofort ungültig.
+            <strong>{t("sessionInvalidation", { defaultValue: "Session Invalidation:" })}</strong>{" "}
+            {t("sessionInvalidationNotice", {
+              defaultValue: "Changing this role increments the backend token version. All active login sessions for this user will be invalidated immediately.",
+            })}
           </div>
         </div>
 
@@ -248,7 +251,10 @@ export function ChangeRoleModal({
           >
             <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px" }} />
             <div>
-              <strong>Achtung:</strong> Sie stufen Ihr eigenes Super-Admin-Konto herab. Nach dieser Änderung verlieren Sie sofort den Zugriff auf diese Benutzerverwaltung.
+              <strong>{t("warning", { defaultValue: "Warning:" })}</strong>{" "}
+              {t("selfDemotionWarning", {
+                defaultValue: "You are demoting your own Super Admin account. After saving this change, you will immediately lose access to User Management.",
+              })}
             </div>
           </div>
         )}
@@ -266,13 +272,13 @@ export function ChangeRoleModal({
           }}
         >
           <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
 
           <Button type="submit" variant="primary" disabled={loading || isUnchanged}>
             {loading
-              ? t("updating", { defaultValue: "Wird gespeichert..." })
-              : t("saveRoleChange", { defaultValue: "Rolle übernehmen" })}
+              ? t("updating", { defaultValue: "Saving..." })
+              : t("saveRoleChange", { defaultValue: "Save Role" })}
           </Button>
         </div>
       </form>

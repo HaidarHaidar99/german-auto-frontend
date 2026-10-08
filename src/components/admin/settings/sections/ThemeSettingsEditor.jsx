@@ -30,9 +30,9 @@ export function ThemeSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.theme", { defaultValue: "Design & Farbschema" })}
+      title={t("settingsSections.theme", { defaultValue: "Theme & Colors" })}
       subtitle={t("themeSubtitle", {
-        defaultValue: "Passen Sie die primären Akzentfarben, Oberflächen und Typografietöne an.",
+        defaultValue: "Customize primary accent colors, surfaces, and typography shades.",
       })}
       sectionKey="theme"
       onReset={onReset}
@@ -51,17 +51,17 @@ export function ThemeSettingsEditor({
 
       <div style={{ maxWidth: "340px" }}>
         <SettingsField
-          label={t("themeMode", { defaultValue: "Farbmodus" })}
-          helper={t("themeModeHelper", { defaultValue: "Standard-Erscheinungsbild der Website." })}
+          label={t("themeMode", { defaultValue: "Theme Mode" })}
+          helper={t("themeModeHelper", { defaultValue: "Default appearance of the website." })}
           error={errors["theme.mode"]}
         >
           <Select
             value={data.mode || "dark"}
             onChange={(e) => handleChange("mode", e.target.value)}
             options={[
-              { value: "dark", label: "Dark Mode (Dunkel)" },
-              { value: "light", label: "Light Mode (Hell)" },
-              { value: "auto", label: "Auto (System-Präferenz)" },
+              { value: "dark", label: t("themeOptions.dark", { defaultValue: "Dark Mode" }) },
+              { value: "light", label: t("themeOptions.light", { defaultValue: "Light Mode" }) },
+              { value: "auto", label: t("themeOptions.auto", { defaultValue: "Auto (System Preference)" }) },
             ]}
           />
         </SettingsField>

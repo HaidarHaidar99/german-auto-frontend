@@ -55,7 +55,7 @@ export function SettingsColorField({
             width: "42px",
             height: "42px",
             borderRadius: "var(--radius-sm, 6px)",
-            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.15))",
+            border: "1px solid var(--color-admin-border, #cbd5e1)",
             overflow: "hidden",
             flexShrink: 0,
             cursor: "pointer",
@@ -66,7 +66,7 @@ export function SettingsColorField({
             type="color"
             value={isValidHex && safeValue.length === 7 ? safeValue : "#000000"}
             onChange={handleColorPickerChange}
-            aria-label={`${label} Farbwähler`}
+            aria-label={`${label} color picker`}
             style={{
               position: "absolute",
               top: "-50%",
@@ -96,14 +96,14 @@ export function SettingsColorField({
             padding: "0 var(--space-md)",
             fontSize: "var(--font-size-sm)",
             fontFamily: "monospace",
-            backgroundColor: "rgba(255, 255, 255, 0.04)",
+            backgroundColor: "var(--color-admin-pill-bg, rgba(0, 0, 0, 0.03))",
             border: `1px solid ${
               error || (!isValidHex && safeValue.length > 1)
                 ? "var(--color-error, #ef4444)"
-                : "var(--color-admin-border, rgba(255, 255, 255, 0.15))"
+                : "var(--color-admin-border, #cbd5e1)"
             }`,
             borderRadius: "var(--radius-sm, 6px)",
-            color: "var(--color-admin-text, #ffffff)",
+            color: "var(--color-admin-text, #0f172a)",
             letterSpacing: "0.08em",
             outline: "none",
           }}

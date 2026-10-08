@@ -5,14 +5,14 @@ import SortableList from "../SortableList";
 import SettingsToggle from "../SettingsToggle";
 
 const SECTION_LABELS = {
-  hero: "Hero Bühne / Carousel",
-  featured_cars: "Ausgewählte Fahrzeuge (Featured Cars)",
-  offers: "Aktuelle Angebote & Aktionen",
-  sell_car: "Fahrzeugankauf Teaser (Sell Your Car)",
-  testimonials: "Kundenstimmen & Vertrauen",
-  google_reviews: "Google Bewertungen Integration",
-  locations: "Standorte & Showrooms",
-  contact: "Kontaktformular Schnellzugriff",
+  hero: { en: "Hero Stage / Carousel", de: "Hero Bühne / Carousel" },
+  featured_cars: { en: "Featured Vehicles (Featured Cars)", de: "Ausgewählte Fahrzeuge (Featured Cars)" },
+  offers: { en: "Current Offers & Promotions", de: "Aktuelle Angebote & Aktionen" },
+  sell_car: { en: "Sell Your Car Teaser", de: "Fahrzeugankauf Teaser (Sell Your Car)" },
+  testimonials: { en: "Customer Testimonials & Trust", de: "Kundenstimmen & Vertrauen" },
+  google_reviews: { en: "Google Reviews Integration", de: "Google Bewertungen Integration" },
+  locations: { en: "Locations & Showrooms", de: "Standorte & Showrooms" },
+  contact: { en: "Contact Form Quick Access", de: "Kontaktformular Schnellzugriff" },
 };
 
 export function HomepageSettingsEditor({
@@ -22,7 +22,8 @@ export function HomepageSettingsEditor({
   resetLoading,
   _errors = {},
 }) {
-  const { t } = useTranslation(["admin", "common"]);
+  const { t, i18n } = useTranslation(["admin", "common"]);
+  const currentLang = i18n.language?.startsWith("de") ? "de" : "en";
 
   const sectionsOrder = Array.isArray(data.sections_order)
     ? data.sections_order
@@ -49,9 +50,9 @@ export function HomepageSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.homepage", { defaultValue: "Startseiten-Module" })}
+      title={t("settingsSections.homepage", { defaultValue: "Homepage Modules" })}
       subtitle={t("homepageSubtitle", {
-        defaultValue: "Steuern Sie die Anordnung und Sichtbarkeit aller Sektionen auf der Haupt-Homepage.",
+        defaultValue: "Control the layout order and visibility of all sections on the main homepage.",
       })}
       sectionKey="homepage"
       onReset={onReset}
@@ -65,7 +66,7 @@ export function HomepageSettingsEditor({
           color: "var(--color-admin-muted)",
         }}
       >
-        Nutzen Sie die Pfeiltasten, um die vertikale Reihenfolge der Startseiten-Abschnitte anzupassen.
+        {t("reorderInstructions", { defaultValue: "Use the arrow buttons to customize the vertical order of homepage sections." })}
       </p>
 
       <SortableList
@@ -73,7 +74,8 @@ export function HomepageSettingsEditor({
         onReorder={handleReorder}
         renderItem={(secKey) => {
           const isEnabled = sectionsEnabled[secKey] !== false;
-          const label = SECTION_LABELS[secKey] || secKey;
+          const labelObj = SECTION_LABELS[secKey];
+          const label = labelObj ? (labelObj[currentLang] || labelObj.en) : secKey;
 
           return (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-md)", width: "100%" }}>
@@ -82,7 +84,7 @@ export function HomepageSettingsEditor({
                   style={{
                     fontSize: "var(--font-size-sm)",
                     fontWeight: 500,
-                    color: isEnabled ? "var(--color-admin-text, #ffffff)" : "var(--color-admin-muted)",
+                    color: isEnabled ? "var(--color-admin-text, #0f172a)" : "var(--color-admin-muted, #64748b)",
                   }}
                 >
                   {label}
@@ -95,7 +97,7 @@ export function HomepageSettingsEditor({
                     color: "var(--color-primary, var(--color-text))",
                   }}
                 >
-                  Modul: {secKey}
+                  {t("module", { defaultValue: "Module" })}: {secKey}
                 </span>
               </div>
 

@@ -40,13 +40,13 @@ export function SettingsResetButton({
         }}
       >
         <Icon name="refresh-cw" size={14} style={{ marginRight: "6px" }} />
-        {t("resetSection", { defaultValue: "Bereich zurücksetzen" })}
+        {t("resetSection", { defaultValue: "Reset section" })}
       </Button>
 
       <Modal
         isOpen={modalOpen}
         onClose={() => !loading && setModalOpen(false)}
-        title={t("resetSectionTitle", { defaultValue: "Bereich auf Standard zurücksetzen?" })}
+        title={t("resetSectionTitle", { defaultValue: "Reset section to defaults?" })}
         size="sm"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
@@ -60,7 +60,7 @@ export function SettingsResetButton({
           >
             {t("resetSectionExplanation", {
               defaultValue:
-                "Möchten Sie diesen Bereich wirklich zurücksetzen? Alle benutzerdefinierten Angaben dieses Bereichs werden auf den vom System vorgegebenen Standardzustand zurückgestellt.",
+                "Are you sure you want to reset this section? All customizations in this section will be reverted to system default settings.",
             })}
           </p>
 
@@ -74,10 +74,10 @@ export function SettingsResetButton({
               color: "var(--color-error, #ef4444)",
             }}
           >
-            <strong>{t("warning", { defaultValue: "Hinweis" })}:</strong>{" "}
+            <strong>{t("warning", { defaultValue: "Warning" })}:</strong>{" "}
             {sectionName
-              ? `Betroffener Bereich: ${sectionName}`
-              : "Diese Aktion kann nicht rückgängig gemacht werden."}
+              ? `${t("affectedSection", { defaultValue: "Affected section" })}: ${sectionName}`
+              : t("actionCannotBeUndone", { defaultValue: "This action cannot be undone." })}
           </div>
 
           <div
@@ -94,7 +94,7 @@ export function SettingsResetButton({
               disabled={loading}
               onClick={() => setModalOpen(false)}
             >
-              {t("cancel", { defaultValue: "Abbrechen" })}
+              {t("cancel", { defaultValue: "Cancel" })}
             </Button>
             <Button
               variant="primary"
@@ -107,7 +107,7 @@ export function SettingsResetButton({
                 color: "#ffffff",
               }}
             >
-              {t("confirmReset", { defaultValue: "Jetzt zurücksetzen" })}
+              {t("confirmReset", { defaultValue: "Reset now" })}
             </Button>
           </div>
         </div>

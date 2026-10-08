@@ -74,9 +74,9 @@ export function OffersSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.offers", { defaultValue: "Angebote & Aktionen" })}
+      title={t("settingsSections.offers", { defaultValue: "Offers & Promotions" })}
       subtitle={t("offersSubtitle", {
-        defaultValue: "Verwalten Sie die Top-Ankündigungsleiste und wechselnde Aktionsbanner.",
+        defaultValue: "Manage the top announcement bar and rotating promotional banners.",
       })}
       sectionKey="offers"
       onReset={onReset}
@@ -85,8 +85,8 @@ export function OffersSettingsEditor({
     >
       <div style={{ marginBottom: "var(--space-lg)" }}>
         <SettingsToggle
-          label="Angebotsleiste aktivieren"
-          description="Zeigt das rotierende Aktionsbanner oberhalb der Navigation an."
+          label={t("enableOffersBar", { defaultValue: "Enable Offers Bar" })}
+          description={t("enableOffersBarDesc", { defaultValue: "Displays rotating promotional banner above navigation." })}
           checked={isEnabled}
           onChange={(checked) => onChange?.({ ...data, enabled: checked })}
         />
@@ -97,27 +97,27 @@ export function OffersSettingsEditor({
         onReorder={(newItems) => onChange?.({ ...data, items: newItems })}
         onAdd={handleOpenAdd}
         onRemove={handleRemove}
-        addLabel={t("addOffer", { defaultValue: "Neues Aktionsangebot hinzufügen" })}
-        emptyMessage={t("noOffersConfigured", { defaultValue: "Keine Aktionen hinterlegt." })}
+        addLabel={t("addOffer", { defaultValue: "Add new promotion" })}
+        emptyMessage={t("noOffersConfigured", { defaultValue: "No promotions configured." })}
         renderItem={(item, index) => (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-md)" }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-                <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 500, color: "var(--color-admin-text, #ffffff)" }}>
-                  {item.text_de || item.text_en || `Angebot #${index + 1}`}
+                <span style={{ fontSize: "var(--font-size-sm)", fontWeight: 500, color: "var(--color-admin-text, #0f172a)" }}>
+                  {item.text_de || item.text_en || `${t("offer", { defaultValue: "Offer" })} #${index + 1}`}
                 </span>
                 <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                  ({item.duration || 5}s Anzeigedauer)
+                  ({item.duration || 5}s {t("displayDuration", { defaultValue: "display duration" })})
                 </span>
                 {!item.enabled && (
                   <span style={{ fontSize: "10px", color: "var(--color-error)", backgroundColor: "rgba(239, 68, 68, 0.1)", padding: "1px 6px", borderRadius: "3px" }}>
-                    Inaktiv
+                    {t("inactive", { defaultValue: "Inactive" })}
                   </span>
                 )}
               </div>
               {item.link && (
                 <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-primary, var(--color-text))", fontFamily: "monospace" }}>
-                  Link: {item.link}
+                  {t("link", { defaultValue: "Link" })}: {item.link}
                 </span>
               )}
             </div>
@@ -128,7 +128,7 @@ export function OffersSettingsEditor({
               onClick={() => handleOpenEdit(index)}
               style={{ fontSize: "var(--font-size-xs)", padding: "4px 12px" }}
             >
-              {t("edit", { defaultValue: "Bearbeiten" })}
+              {t("edit", { defaultValue: "Edit" })}
             </Button>
           </div>
         )}
@@ -138,11 +138,11 @@ export function OffersSettingsEditor({
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editingIndex !== null ? "Angebot bearbeiten" : "Neues Angebot anlegen"}
+        title={editingIndex !== null ? t("editOffer", { defaultValue: "Edit Offer" }) : t("addOffer", { defaultValue: "Add New Offer" })}
         size="md"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-          <SettingsField label="Aktionstext (DE)" locale="de" required>
+          <SettingsField label={`${t("promoText", { defaultValue: "Promo Text" })} (DE)`} locale="de" required>
             <Input
               value={draftOffer.text_de || ""}
               onChange={(e) => setDraftOffer({ ...draftOffer, text_de: e.target.value })}
@@ -150,7 +150,7 @@ export function OffersSettingsEditor({
             />
           </SettingsField>
 
-          <SettingsField label="Aktionstext (EN)" locale="en">
+          <SettingsField label={`${t("promoText", { defaultValue: "Promo Text" })} (EN)`} locale="en">
             <Input
               value={draftOffer.text_en || ""}
               onChange={(e) => setDraftOffer({ ...draftOffer, text_en: e.target.value })}
@@ -159,7 +159,7 @@ export function OffersSettingsEditor({
           </SettingsField>
 
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Ziel-Verlinkung">
+            <SettingsField label={t("targetLink", { defaultValue: "Target Link" })}>
               <Input
                 value={draftOffer.link || ""}
                 onChange={(e) => setDraftOffer({ ...draftOffer, link: e.target.value })}
@@ -167,7 +167,7 @@ export function OffersSettingsEditor({
               />
             </SettingsField>
 
-            <SettingsField label="Dauer (Sekunden)">
+            <SettingsField label={t("durationSeconds", { defaultValue: "Duration (Seconds)" })}>
               <Input
                 type="number"
                 min="1"
@@ -178,7 +178,7 @@ export function OffersSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Gültig ab (ISO / Datum)" helper="Optional">
+            <SettingsField label={t("validFrom", { defaultValue: "Valid From (Date)" })} helper={t("optional", { defaultValue: "Optional" })}>
               <Input
                 type="date"
                 value={draftOffer.start_at ? draftOffer.start_at.substring(0, 10) : ""}
@@ -186,7 +186,7 @@ export function OffersSettingsEditor({
               />
             </SettingsField>
 
-            <SettingsField label="Gültig bis (ISO / Datum)" helper="Optional">
+            <SettingsField label={t("validTo", { defaultValue: "Valid To (Date)" })} helper={t("optional", { defaultValue: "Optional" })}>
               <Input
                 type="date"
                 value={draftOffer.end_at ? draftOffer.end_at.substring(0, 10) : ""}
@@ -196,17 +196,17 @@ export function OffersSettingsEditor({
           </div>
 
           <SettingsToggle
-            label="Angebot aktiv"
+            label={t("offerActive", { defaultValue: "Offer active" })}
             checked={draftOffer.enabled !== false}
             onChange={(checked) => setDraftOffer({ ...draftOffer, enabled: checked })}
           />
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-sm)", marginTop: "var(--space-md)" }}>
             <Button variant="outline" size="sm" onClick={() => setModalOpen(false)}>
-              Abbrechen
+              {t("cancel", { defaultValue: "Cancel" })}
             </Button>
             <Button variant="primary" size="sm" onClick={handleSaveModal}>
-              Angebot übernehmen
+              {t("applyOffer", { defaultValue: "Apply Offer" })}
             </Button>
           </div>
         </div>

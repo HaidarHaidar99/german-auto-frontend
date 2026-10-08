@@ -22,9 +22,9 @@ export function ContactSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.contact", { defaultValue: "Kontaktdaten" })}
+      title={t("settingsSections.contact", { defaultValue: "Contact Information" })}
       subtitle={t("contactSubtitle", {
-        defaultValue: "Zentrale Kontaktkanäle, Telefonnummern, E-Mail-Adresse und WhatsApp-Support.",
+        defaultValue: "Central contact channels, phone numbers, email address, and WhatsApp support.",
       })}
       sectionKey="contact"
       onReset={onReset}
@@ -33,8 +33,8 @@ export function ContactSettingsEditor({
     >
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
         <SettingsField
-          label={t("phone", { defaultValue: "Telefonnummer" })}
-          helper={t("phoneHelper", { defaultValue: "Im internationalen Format (z. B. +49 89 12345678)." })}
+          label={t("phone", { defaultValue: "Phone Number" })}
+          helper={t("phoneHelper", { defaultValue: "In international format (e.g. +49 89 12345678)." })}
           error={errors["contact.phone"]}
         >
           <Input
@@ -45,21 +45,21 @@ export function ContactSettingsEditor({
         </SettingsField>
 
         <SettingsField
-          label={t("email", { defaultValue: "E-Mail-Adresse" })}
-          helper={t("emailHelper", { defaultValue: "Öffentlich angezeigte E-Mail-Adresse für Kundenanfragen." })}
+          label={t("email", { defaultValue: "Email Address" })}
+          helper={t("emailHelper", { defaultValue: "Publicly displayed email address for customer inquiries." })}
           error={errors["contact.email"]}
         >
           <Input
             type="email"
             value={data.email || ""}
             onChange={(e) => handleChange("email", e.target.value)}
-            placeholder="kontakt@example.de"
+            placeholder="contact@example.de"
           />
         </SettingsField>
 
         <SettingsField
-          label={t("whatsapp", { defaultValue: "WhatsApp-Nummer" })}
-          helper={t("whatsappHelper", { defaultValue: "Mit Ländervorwahl ohne Sonderzeichen (z. B. +491701234567)." })}
+          label={t("whatsapp", { defaultValue: "WhatsApp Number" })}
+          helper={t("whatsappHelper", { defaultValue: "With country code without special characters (e.g. +491701234567)." })}
           error={errors["contact.whatsapp"]}
         >
           <Input
@@ -70,14 +70,14 @@ export function ContactSettingsEditor({
         </SettingsField>
 
         <SettingsField
-          label={t("contactUrl", { defaultValue: "Benutzerdefinierter Kontakt-Link" })}
-          helper={t("contactUrlHelper", { defaultValue: "Optional. Überschreibt das Standard-Kontaktformular (z. B. externer Buchungslink)." })}
+          label={t("contactUrl", { defaultValue: "Custom Contact Link" })}
+          helper={t("contactUrlHelper", { defaultValue: "Optional. Overrides the default contact form (e.g. external booking link)." })}
           error={errors["contact.contact_url"]}
         >
           <Input
             value={data.contact_url || ""}
             onChange={(e) => handleChange("contact_url", e.target.value)}
-            placeholder="/contact oder https://..."
+            placeholder="/contact or https://..."
           />
         </SettingsField>
       </div>

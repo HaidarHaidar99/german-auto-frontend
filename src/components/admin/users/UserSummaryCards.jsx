@@ -22,36 +22,36 @@ export function UserSummaryCards({
       }}
     >
       <AdminStatCard
-        label={t("statTotalUsers", { defaultValue: "Gesamte Benutzer" })}
+        label={t("statTotalUsers", { defaultValue: "Total Users" })}
         value={stats.total}
-        subtitle={t("statTotalUsersDesc", { defaultValue: "Registrierte Konten in der Datenbank" })}
+        subtitle={t("statTotalUsersDesc", { defaultValue: "Registered accounts in database" })}
         icon="users"
         iconBg="#2563eb"
         loading={loading}
       />
 
       <AdminStatCard
-        label={t("statCustomers", { defaultValue: "Kundenkonten" })}
+        label={t("statCustomers", { defaultValue: "Customer Accounts" })}
         value={stats.customers}
-        subtitle={t("statCustomersDesc", { defaultValue: "Normale Kunden (CUSTOMER)" })}
+        subtitle={t("statCustomersDesc", { defaultValue: "Standard customers (CUSTOMER)" })}
         icon="user"
         iconBg="#0284c7"
         loading={loading}
       />
 
       <AdminStatCard
-        label={t("statAdmins", { defaultValue: "Administratoren" })}
+        label={t("statAdmins", { defaultValue: "Administrators" })}
         value={stats.admins}
-        subtitle={t("statAdminsDesc", { defaultValue: "Verwaltungskonten (ADMIN)" })}
+        subtitle={t("statAdminsDesc", { defaultValue: "Management accounts (ADMIN)" })}
         icon="shield"
         iconBg="#10b981"
         loading={loading}
       />
 
       <AdminStatCard
-        label={t("statSuperAdmins", { defaultValue: "Super-Administratoren" })}
+        label={t("statSuperAdmins", { defaultValue: "Super Administrators" })}
         value={stats.superAdmins}
-        subtitle={t("statSuperAdminsDesc", { defaultValue: "Vollzugriff (SUPER_ADMIN)" })}
+        subtitle={t("statSuperAdminsDesc", { defaultValue: "Full access (SUPER_ADMIN)" })}
         icon="award"
         iconBg="#f59e0b"
         loading={loading}

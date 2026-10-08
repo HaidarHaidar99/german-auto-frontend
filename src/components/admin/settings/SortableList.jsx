@@ -68,14 +68,14 @@ export function SortableList({
           style={{
             padding: "var(--space-xl) var(--space-md)",
             textAlign: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.02)",
-            border: "1px dashed var(--color-admin-border, rgba(255, 255, 255, 0.12))",
+            backgroundColor: "var(--color-admin-card-inner, rgba(0, 0, 0, 0.02))",
+            border: "1px dashed var(--color-admin-border, rgba(0, 0, 0, 0.12))",
             borderRadius: "var(--radius-sm, 6px)",
-            color: "var(--color-admin-muted, var(--color-text-muted))",
+            color: "var(--color-admin-muted, #64748b)",
             fontSize: "var(--font-size-sm)",
           }}
         >
-          {emptyMessage || t("noItemsConfigured", { defaultValue: "Keine Einträge konfiguriert." })}
+          {emptyMessage || t("noItemsConfigured", { defaultValue: "No items configured." })}
         </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
@@ -87,8 +87,8 @@ export function SortableList({
                 alignItems: "stretch",
                 gap: "var(--space-sm)",
                 padding: "var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.03)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.1))",
+                backgroundColor: "var(--color-admin-card-inner, rgba(0, 0, 0, 0.02))",
+                border: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.1))",
                 borderRadius: "var(--radius-sm, 6px)",
               }}
             >
@@ -100,13 +100,13 @@ export function SortableList({
                   justifyContent: "center",
                   gap: "4px",
                   paddingRight: "var(--space-xs)",
-                  borderRight: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderRight: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.06))",
                 }}
               >
                 <IconButton
                   name="arrow-up"
                   size="sm"
-                  ariaLabel="Nach oben verschieben"
+                  ariaLabel={t("moveUp", { defaultValue: "Move up" })}
                   disabled={index === 0}
                   onClick={() => handleMoveUp(index)}
                   style={{ width: "26px", height: "26px", padding: 0 }}
@@ -114,7 +114,7 @@ export function SortableList({
                 <IconButton
                   name="arrow-down"
                   size="sm"
-                  ariaLabel="Nach unten verschieben"
+                  ariaLabel={t("moveDown", { defaultValue: "Move down" })}
                   disabled={index === items.length - 1}
                   onClick={() => handleMoveDown(index)}
                   style={{ width: "26px", height: "26px", padding: 0 }}
@@ -132,7 +132,7 @@ export function SortableList({
                   <IconButton
                     name="trash"
                     size="sm"
-                    ariaLabel="Eintrag entfernen"
+                    ariaLabel={t("removeItem", { defaultValue: "Remove item" })}
                     onClick={() => onRemove(index)}
                     style={{
                       width: "30px",
@@ -160,7 +160,7 @@ export function SortableList({
             }}
           >
             <Icon name="plus" size={14} style={{ marginRight: "6px" }} />
-            {addLabel || t("addNewItem", { defaultValue: "Neuen Eintrag hinzufügen" })}
+            {addLabel || t("addNewItem", { defaultValue: "Add new item" })}
           </Button>
         </div>
       )}

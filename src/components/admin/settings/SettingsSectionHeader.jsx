@@ -28,7 +28,7 @@ export function SettingsSectionHeader({
         gap: "var(--space-md)",
         paddingBottom: "var(--space-md)",
         marginBottom: "var(--space-lg)",
-        borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+        borderBottom: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
         ...style,
       }}
     >
@@ -40,7 +40,7 @@ export function SettingsSectionHeader({
               fontSize: "var(--font-size-lg)",
               fontFamily: "var(--font-heading, inherit)",
               fontWeight: 600,
-              color: "var(--color-admin-text, #ffffff)",
+              color: "var(--color-admin-text, #0f172a)",
               letterSpacing: "-0.01em",
             }}
           >

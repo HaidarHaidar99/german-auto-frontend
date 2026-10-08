@@ -8,37 +8,37 @@ export function QuickActions({ isSuperAdmin }) {
 
   const actions = [
     {
-      label: t("addVehicle", { defaultValue: "Fahrzeug anlegen" }),
+      label: t("addVehicle", { defaultValue: "Add Vehicle" }),
       to: "/admincoresecure/cars",
       icon: "plus",
       iconBg: "#2563eb",
     },
     {
-      label: t("manageVehicles", { defaultValue: "Fahrzeugbestand" }),
+      label: t("manageVehicles", { defaultValue: "Manage Inventory" }),
       to: "/admincoresecure/cars",
       icon: "car",
       iconBg: "#3b82f6",
     },
     {
-      label: t("viewForms", { defaultValue: "Anfragen" }),
+      label: t("viewForms", { defaultValue: "View Submissions" }),
       to: "/admincoresecure/forms",
       icon: "mail",
       iconBg: "#06b6d4",
     },
     {
-      label: t("manageReviews", { defaultValue: "Kundenrezensionen" }),
+      label: t("manageReviews", { defaultValue: "Moderate Reviews" }),
       to: "/admincoresecure/reviews",
       icon: "star",
       iconBg: "#8b5cf6",
     },
     {
-      label: t("viewNotifications", { defaultValue: "Benachrichtigungen" }),
+      label: t("viewNotifications", { defaultValue: "Notifications" }),
       to: "/admincoresecure/notifications",
       icon: "bell",
       iconBg: "#f59e0b",
     },
     {
-      label: t("manageWebsite", { defaultValue: "CMS Einstellungen" }),
+      label: t("manageWebsite", { defaultValue: "Website CMS" }),
       to: "/admincoresecure/settings",
       icon: "settings",
       iconBg: "#64748b",
@@ -47,7 +47,7 @@ export function QuickActions({ isSuperAdmin }) {
 
   if (isSuperAdmin) {
     actions.push({
-      label: t("manageUsers", { defaultValue: "Benutzerverwaltung" }),
+      label: t("manageUsers", { defaultValue: "User Management" }),
       to: "/admincoresecure/users",
       icon: "users",
       iconBg: "#10b981",

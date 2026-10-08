@@ -24,11 +24,11 @@ export function AttentionRequired({
       id: "pending-forms",
       icon: "mail",
       title: t("pendingFormsCount", {
-        defaultValue: "{{count}} neue Formulareingänge",
+        defaultValue: "{{count}} new form submissions",
         count: forms.pending,
       }),
       subtitle: t("pendingFormsSubtitle", {
-        defaultValue: "Kundenanfragen & Fahrzeugangebote warten auf Bearbeitung",
+        defaultValue: "Customer inquiries & vehicle submissions awaiting processing",
       }),
       count: forms.pending,
       badgeVariant: "warning",
@@ -42,11 +42,11 @@ export function AttentionRequired({
       id: "pending-reviews",
       icon: "star",
       title: t("pendingReviewsCount", {
-        defaultValue: "{{count}} Kundenrezensionen ausstehend",
+        defaultValue: "{{count}} pending customer reviews",
         count: reviews.pending,
       }),
       subtitle: t("pendingReviewsSubtitle", {
-        defaultValue: "Bewertungen müssen vor Veröffentlichung freigegeben werden",
+        defaultValue: "Reviews must be approved before publication",
       }),
       count: reviews.pending,
       badgeVariant: "warning",
@@ -60,11 +60,11 @@ export function AttentionRequired({
       id: "unverified-users",
       icon: "users",
       title: t("unverifiedUsersCount", {
-        defaultValue: "{{count}} unbestätigte Benutzerkonten",
+        defaultValue: "{{count}} unverified user accounts",
         count: users.unverified,
       }),
       subtitle: t("unverifiedUsersSubtitleAction", {
-        defaultValue: "E-Mail-Verifizierung oder manuelle Freigabe ausstehend",
+        defaultValue: "Email verification or manual approval pending",
       }),
       count: users.unverified,
       badgeVariant: "neutral",
@@ -78,11 +78,11 @@ export function AttentionRequired({
       id: "hidden-vehicles",
       icon: "eye",
       title: t("hiddenVehiclesCount", {
-        defaultValue: "{{count}} ausgeblendete Fahrzeuge",
+        defaultValue: "{{count}} hidden vehicles",
         count: inventory.hidden,
       }),
       subtitle: t("hiddenVehiclesSubtitle", {
-        defaultValue: "Fahrzeuge sind derzeit für Kunden im Showroom unsichtbar",
+        defaultValue: "Vehicles are currently hidden from customers in showroom",
       }),
       count: inventory.hidden,
       badgeVariant: "secondary",
@@ -96,11 +96,11 @@ export function AttentionRequired({
       id: "unread-notifications",
       icon: "bell",
       title: t("unreadNotificationsCount", {
-        defaultValue: "{{count}} ungelesene Systemmeldungen",
+        defaultValue: "{{count}} unread system notifications",
         count: notifications.unreadCount,
       }),
       subtitle: t("unreadNotificationsSubtitle", {
-        defaultValue: "Wichtige Systemereignisse und Anfragen",
+        defaultValue: "Important system events and requests",
       }),
       count: notifications.unreadCount,
       badgeVariant: "primary",
@@ -110,9 +110,9 @@ export function AttentionRequired({
 
   return (
     <AdminSectionCard
-      title={t("attentionRequired", { defaultValue: "Dringender Handlungsbedarf" })}
+      title={t("attentionRequired", { defaultValue: "Attention Required" })}
       subtitle={t("actionRequiredSubtitle", {
-        defaultValue: "Aufgaben und Vorgänge, die administrative Aufmerksamkeit erfordern",
+        defaultValue: "Tasks and processes that require administrative attention",
       })}
     >
       {items.length === 0 ? (
@@ -147,15 +147,15 @@ export function AttentionRequired({
               style={{
                 fontSize: "var(--font-size-sm)",
                 fontWeight: 700,
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 margin: "0 0 2px 0",
               }}
             >
-              {t("noAttentionRequiredTitle", { defaultValue: "Alles auf aktuellem Stand" })}
+              {t("noAttentionRequiredTitle", { defaultValue: "All up to date" })}
             </h3>
             <p style={{ margin: 0, fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
               {t("noAttentionRequired", {
-                defaultValue: "Keine ausstehenden Aufgaben. Alle Kundenanfragen und Bewertungen sind bearbeitet.",
+                defaultValue: "No pending tasks. All inquiries and reviews have been processed.",
               })}
             </p>
           </div>
@@ -209,7 +209,7 @@ export function AttentionRequired({
                     style={{
                       fontSize: "var(--font-size-sm)",
                       fontWeight: 600,
-                      color: "var(--color-admin-text)",
+                      color: "var(--color-admin-text, #0f172a)",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",

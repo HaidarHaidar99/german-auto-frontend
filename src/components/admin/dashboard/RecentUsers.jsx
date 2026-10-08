@@ -27,7 +27,7 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
       case "ADMIN":
         return <Badge variant="primary" size="sm">{t("admin", { defaultValue: "Admin" })}</Badge>;
       default:
-        return <Badge variant="neutral" size="sm">{t("customer", { defaultValue: "Kunde" })}</Badge>;
+        return <Badge variant="neutral" size="sm">{t("customer", { defaultValue: "Customer" })}</Badge>;
     }
   };
 
@@ -35,9 +35,9 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
   if (!isSuperAdmin) {
     return (
       <AdminSectionCard
-        title={t("recentUsers", { defaultValue: "Neueste Benutzerkonten" })}
+        title={t("recentUsers", { defaultValue: "Recent User Accounts" })}
         subtitle={t("userManagementRestrictedSubtitle", {
-          defaultValue: "Zugangsbeschränkte Hauptadministrator-Funktion",
+          defaultValue: "Restricted Super Administrator Function",
         })}
       >
         <div
@@ -75,11 +75,11 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
                 margin: "0 0 2px 0",
               }}
             >
-              {t("superAdminOnly", { defaultValue: "Nur für Hauptadministratoren" })}
+              {t("superAdminOnly", { defaultValue: "Super Administrators Only" })}
             </h4>
             <p style={{ margin: 0, fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
               {t("userManagementSuperAdminNotice", {
-                defaultValue: "Die Anzeige und Verwaltung von Benutzerkonten ist autorisierten Super-Administratoren vorbehalten.",
+                defaultValue: "Access to view and manage user accounts is strictly reserved for Super Administrators.",
               })}
             </p>
           </div>
@@ -90,8 +90,8 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
 
   return (
     <AdminSectionCard
-      title={t("recentUsers", { defaultValue: "Neueste Benutzerkonten" })}
-      subtitle={t("recentUsersSubtitle", { defaultValue: "Zuletzt registrierte Kunden und Administratoren" })}
+      title={t("recentUsers", { defaultValue: "Recent User Accounts" })}
+      subtitle={t("recentUsersSubtitle", { defaultValue: "Recently registered customers and administrators" })}
       actions={
         <Button
           as={Link}
@@ -100,15 +100,15 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
           size="sm"
           iconRight="arrow-right"
         >
-          {t("manageUsers", { defaultValue: "Benutzer verwalten" })}
+          {t("manageUsers", { defaultValue: "Manage Users" })}
         </Button>
       }
     >
       {users.length === 0 ? (
         <AdminEmptyState
           icon="users"
-          title={t("noRecentUsers", { defaultValue: "Keine Benutzerkonten gefunden." })}
-          actionLabel={t("manageUsers", { defaultValue: "Benutzer verwalten" })}
+          title={t("noRecentUsers", { defaultValue: "No user accounts found." })}
+          actionLabel={t("manageUsers", { defaultValue: "Manage Users" })}
           actionTo="/admincoresecure/users"
         />
       ) : (
@@ -189,11 +189,11 @@ export function RecentUsers({ users = [], isSuperAdmin = false, loading = false 
                 {getRoleBadge(usr.role)}
                 {usr.is_verified ? (
                   <Badge variant="success" size="sm">
-                    {t("verified", { defaultValue: "Verifiziert" })}
+                    {t("verified", { defaultValue: "Verified" })}
                   </Badge>
                 ) : (
                   <Badge variant="neutral" size="sm">
-                    {t("unverified", { defaultValue: "Offen" })}
+                    {t("unverified", { defaultValue: "Unverified" })}
                   </Badge>
                 )}
                 <span style={{ fontSize: "10px", color: "var(--color-admin-muted)", marginLeft: "4px" }}>

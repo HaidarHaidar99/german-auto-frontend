@@ -57,16 +57,6 @@ export function ReviewSummaryCards({
       onClick: () => onSelectStatusFilter?.("ALL"),
     },
     {
-      id: "pending",
-      label: t("statusPending", { defaultValue: "Pending" }),
-      count: stats.pending,
-      icon: "clock",
-      iconBg: "#f59e0b",
-      isActive: activeStatusFilter === "PENDING",
-      onClick: () =>
-        onSelectStatusFilter?.(activeStatusFilter === "PENDING" ? "ALL" : "PENDING"),
-    },
-    {
       id: "published",
       label: t("statusPublished", { defaultValue: "Published" }),
       count: stats.published,

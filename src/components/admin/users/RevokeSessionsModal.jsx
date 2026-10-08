@@ -31,7 +31,7 @@ export function RevokeSessionsModal({
     } catch (err) {
       setServerError(
         err?.message ||
-        t("errorRevokeSessionsFailed", { defaultValue: "Fehler beim Beenden der Sitzungen." })
+        t("errorRevokeSessionsFailed", { defaultValue: "Failed to revoke sessions." })
       );
     } finally {
       setLoading(false);
@@ -42,7 +42,7 @@ export function RevokeSessionsModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("revokeSessionsTitle", { defaultValue: "Sitzungen beenden?" })}
+      title={t("revokeSessionsTitle", { defaultValue: "Revoke Sessions?" })}
       size="sm"
       className={className}
     >
@@ -57,7 +57,7 @@ export function RevokeSessionsModal({
             fontSize: "var(--font-size-xs)",
           }}
         >
-          <div style={{ fontWeight: 600, color: "var(--color-admin-text)" }}>{user.full_name || "—"}</div>
+          <div style={{ fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>{user.full_name || "—"}</div>
           <div style={{ color: "var(--color-admin-muted)", wordBreak: "break-all" }}>{user.email}</div>
         </div>
 
@@ -90,7 +90,7 @@ export function RevokeSessionsModal({
         >
           {t("revokeSessionsExplanation", {
             defaultValue:
-              "Dies invalidiert alle aktiven Sitzungen für diesen Benutzer. Alle bestehenden JWT-Anmeldetoken verlieren sofort ihre Gültigkeit und der Benutzer muss sich erneut anmelden.",
+              "This will invalidate all active sessions for this user. All existing login tokens will immediately expire and the user will need to sign in again.",
           })}
         </p>
 
@@ -110,7 +110,10 @@ export function RevokeSessionsModal({
           >
             <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px" }} />
             <span>
-              <strong>Hinweis:</strong> Sie beenden die Sitzungen Ihres eigenen Kontos. Nach Abschluss müssen Sie sich bei Ihrer nächsten Aktion erneut authentifizieren.
+              <strong>{t("note", { defaultValue: "Note:" })}</strong>{" "}
+              {t("selfRevokeNotice", {
+                defaultValue: "You are revoking sessions for your own account. You will need to sign in again on your next action.",
+              })}
             </span>
           </div>
         )}
@@ -127,13 +130,13 @@ export function RevokeSessionsModal({
           }}
         >
           <Button variant="ghost" onClick={onClose} disabled={loading}>
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
 
           <Button variant="primary" onClick={handleRevoke} disabled={loading}>
             {loading
-              ? t("revoking", { defaultValue: "Wird beendet..." })
-              : t("confirmRevokeSessions", { defaultValue: "Sitzungen beenden" })}
+              ? t("revoking", { defaultValue: "Revoking..." })
+              : t("confirmRevokeSessions", { defaultValue: "Revoke Sessions" })}
           </Button>
         </div>
       </div>

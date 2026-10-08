@@ -35,8 +35,8 @@ export function RecentActivity({ notifications = [], loading = false }) {
 
   return (
     <AdminSectionCard
-      title={t("recentActivity", { defaultValue: "Aktuelle Systemaktivität" })}
-      subtitle={t("recentActivitySubtitle", { defaultValue: "Eingegangene Anfragen, Bewertungen und Systemereignisse" })}
+      title={t("recentActivity", { defaultValue: "Recent System Activity" })}
+      subtitle={t("recentActivitySubtitle", { defaultValue: "Incoming inquiries, reviews, and system events" })}
       actions={
         <Button
           as={Link}
@@ -45,15 +45,15 @@ export function RecentActivity({ notifications = [], loading = false }) {
           size="sm"
           iconRight="arrow-right"
         >
-          {t("viewAll", { defaultValue: "Alle anzeigen" })}
+          {t("viewAll", { defaultValue: "View All" })}
         </Button>
       }
     >
       {notifications.length === 0 ? (
         <AdminEmptyState
           icon="bell"
-          title={t("noRecentActivity", { defaultValue: "Keine aktuellen Aktivitäten verzeichnet." })}
-          actionLabel={t("viewNotifications", { defaultValue: "Mitteilungen ansehen" })}
+          title={t("noRecentActivity", { defaultValue: "No recent activity recorded." })}
+          actionLabel={t("viewNotifications", { defaultValue: "View Notifications" })}
           actionTo="/admincoresecure/notifications"
         />
       ) : (
@@ -136,7 +136,7 @@ export function RecentActivity({ notifications = [], loading = false }) {
 
               {!notif.is_read && (
                 <span
-                  title={t("unread", { defaultValue: "Ungelesen" })}
+                  title={t("unread", { defaultValue: "Unread" })}
                   style={{
                     width: "8px",
                     height: "8px",

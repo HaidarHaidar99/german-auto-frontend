@@ -61,15 +61,15 @@ export function AdminProfilePage() {
     setPasswordSuccess(false);
 
     if (!currentPassword) {
-      setPasswordError(t("errorCurrentPasswordRequired", { defaultValue: "Bitte geben Sie Ihr aktuelles Passwort ein." }));
+      setPasswordError(t("profile.errorCurrentPasswordRequired", { defaultValue: "Please enter your current password." }));
       return;
     }
     if (newPassword.length < 8) {
-      setPasswordError(t("errorPasswordMinLength", { defaultValue: "Das neue Passwort muss mindestens 8 Zeichen lang sein." }));
+      setPasswordError(t("profile.errorPasswordMinLength", { defaultValue: "The new password must be at least 8 characters long." }));
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError(t("errorPasswordMismatch", { defaultValue: "Die neuen Passwörter stimmen nicht überein." }));
+      setPasswordError(t("profile.errorPasswordMismatch", { defaultValue: "The new passwords do not match." }));
       return;
     }
 
@@ -83,7 +83,7 @@ export function AdminProfilePage() {
     } catch (err) {
       setPasswordError(
         err?.message ||
-        t("errorChangePasswordFailed", { defaultValue: "Fehler beim Aktualisieren des Passworts. Bitte prüfen Sie Ihr aktuelles Passwort." })
+        t("profile.errorChangePasswordFailed", { defaultValue: "Error updating password. Please check your current password." })
       );
     } finally {
       setPasswordLoading(false);
@@ -93,8 +93,8 @@ export function AdminProfilePage() {
   const handleDowngradeSelf = async () => {
     if (otherSuperAdmins.length === 0) {
       setRoleError(
-        t("errorSoleSuperAdmin", {
-          defaultValue: "Sie können Ihre Rolle nicht herabstufen. Sie sind derzeit der einzige Super-Administrator. Befördern Sie zuerst einen anderen Benutzer.",
+        t("profile.errorSoleSuperAdmin", {
+          defaultValue: "You cannot downgrade your role. You are currently the only Super Administrator. Promote another user first.",
         })
       );
       return;
@@ -102,8 +102,8 @@ export function AdminProfilePage() {
 
     if (
       !window.confirm(
-        t("confirmDowngrade", {
-          defaultValue: "Sind Sie sicher, dass Sie Ihre Rolle auf Administrator herabstufen möchten? Sie verlieren dadurch Super-Admin-Rechte.",
+        t("profile.confirmDowngrade", {
+          defaultValue: "Are you sure you want to downgrade your role to Administrator? You will forfeit Super Admin privileges.",
         })
       )
     ) {
@@ -114,10 +114,10 @@ export function AdminProfilePage() {
       setRoleLoading(true);
       setRoleError("");
       await adminUsersService.updateRole(user.id, "ADMIN");
-      setRoleSuccess(t("downgradeSuccess", { defaultValue: "Ihre Rolle wurde erfolgreich auf Administrator herabgestuft." }));
+      setRoleSuccess(t("profile.downgradeSuccess", { defaultValue: "Your role has been successfully downgraded to Administrator." }));
       if (refreshUser) await refreshUser();
     } catch (err) {
-      setRoleError(err?.message || t("errorUpdateRoleFailed", { defaultValue: "Fehler beim Aktualisieren der Rolle." }));
+      setRoleError(err?.message || t("profile.errorUpdateRoleFailed", { defaultValue: "Error updating role." }));
     } finally {
       setRoleLoading(false);
     }
@@ -130,9 +130,9 @@ export function AdminProfilePage() {
     <div className="admin-profile-page" style={{ position: "relative" }}>
       {/* Header */}
       <AdminPageHeader
-        title={t("adminProfileTitle", { defaultValue: "Admin-Profil & Kontoeinstellungen" })}
-        subtitle={t("adminProfileSubtitle", {
-          defaultValue: "Verwalten Sie Ihre persönlichen Kontodaten, Sicherheitsoptionen und Administratorrollen",
+        title={t("profile.title", { defaultValue: "Admin Profile & Account Settings" })}
+        subtitle={t("profile.subtitle", {
+          defaultValue: "Manage your personal account details, security options, and administrator roles.",
         })}
         badge={
           isSuperAdmin ? (
@@ -254,7 +254,7 @@ export function AdminProfilePage() {
               }}
             >
               <Icon name="check-circle" size={15} />
-              <span>Konto aktiv & verifiziert</span>
+              <span>{t("profile.accountActive", { defaultValue: "Account active & verified" })}</span>
             </div>
           </div>
         </div>
@@ -293,7 +293,7 @@ export function AdminProfilePage() {
             }}
           >
             <Icon name="user" size={16} />
-            <span>Kontoinformationen</span>
+            <span>{t("profile.tabInfo", { defaultValue: "Account Info" })}</span>
           </button>
 
           <button
@@ -316,7 +316,7 @@ export function AdminProfilePage() {
             }}
           >
             <Icon name="lock" size={16} />
-            <span>Passwort ändern</span>
+            <span>{t("profile.tabSecurity", { defaultValue: "Change Password" })}</span>
           </button>
 
           <button
@@ -339,18 +339,18 @@ export function AdminProfilePage() {
             }}
           >
             <Icon name="shield" size={16} />
-            <span>Rollenverwaltung</span>
+            <span>{t("profile.tabRole", { defaultValue: "Role Management" })}</span>
           </button>
         </div>
 
         {/* Tab 1: Profile Details */}
         {activeTab === "profile" && (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "20px" }}>
-            <AdminSectionCard title="Stammdaten">
+            <AdminSectionCard title={t("profile.masterData", { defaultValue: "Account Details" })}>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-admin-muted)" }}>
-                    Vollständiger Name
+                    {t("profile.fullName", { defaultValue: "Full Name" })}
                   </span>
                   <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-admin-text)" }}>
                     {user?.full_name || "—"}
@@ -359,7 +359,7 @@ export function AdminProfilePage() {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-admin-muted)" }}>
-                    E-Mail-Adresse
+                    {t("profile.email", { defaultValue: "Email Address" })}
                   </span>
                   <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-admin-text)", wordBreak: "break-all" }}>
                     {user?.email}
@@ -368,7 +368,7 @@ export function AdminProfilePage() {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-admin-muted)" }}>
-                    System-Rolle
+                    {t("profile.systemRole", { defaultValue: "System Role" })}
                   </span>
                   <div>
                     {isSuperAdmin ? (
@@ -401,11 +401,11 @@ export function AdminProfilePage() {
               </div>
             </AdminSectionCard>
 
-            <AdminSectionCard title="Sicherheit & Sitzung">
+            <AdminSectionCard title={t("profile.securityAndSession", { defaultValue: "Security & Session" })}>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-admin-muted)" }}>
-                    Benutzer-ID
+                    {t("profile.userId", { defaultValue: "User ID" })}
                   </span>
                   <code
                     style={{
@@ -424,20 +424,20 @@ export function AdminProfilePage() {
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-admin-muted)" }}>
-                    E-Mail Verifizierung
+                    {t("profile.emailVerification", { defaultValue: "Email Verification" })}
                   </span>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#16a34a", fontSize: "13px", fontWeight: 600 }}>
                     <Icon name="check" size={16} />
-                    <span>Bestätigt</span>
+                    <span>{t("profile.verified", { defaultValue: "Verified" })}</span>
                   </div>
                 </div>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                   <span style={{ fontSize: "11px", fontWeight: 700, textTransform: "uppercase", color: "var(--color-admin-muted)" }}>
-                    Sicherheitsstatus
+                    {t("profile.securityStatus", { defaultValue: "Security Status" })}
                   </span>
                   <div style={{ fontSize: "13px", color: "var(--color-admin-muted)" }}>
-                    Multi-Faktor & Token-Invalidierung aktiv
+                    {t("profile.securityStatusDesc", { defaultValue: "Multi-factor & session invalidation active" })}
                   </div>
                 </div>
               </div>
@@ -448,7 +448,7 @@ export function AdminProfilePage() {
         {/* Tab 2: Change Password */}
         {activeTab === "security" && (
           <div style={{ maxWidth: "600px" }}>
-            <AdminSectionCard title="Passwort aktualisieren">
+            <AdminSectionCard title={t("profile.updatePassword", { defaultValue: "Update Password" })}>
               <form onSubmit={handlePasswordSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {passwordSuccess && (
                   <div
@@ -466,7 +466,7 @@ export function AdminProfilePage() {
                     }}
                   >
                     <Icon name="check-circle" size={16} />
-                    <span>Passwort erfolgreich aktualisiert!</span>
+                    <span>{t("profile.passwordSuccess", { defaultValue: "Password updated successfully!" })}</span>
                   </div>
                 )}
 
@@ -491,7 +491,7 @@ export function AdminProfilePage() {
                 )}
 
                 <Input
-                  label="Aktuelles Passwort"
+                  label={t("profile.currentPassword", { defaultValue: "Current Password" })}
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
@@ -500,7 +500,7 @@ export function AdminProfilePage() {
                 />
 
                 <Input
-                  label="Neues Passwort (mind. 8 Zeichen)"
+                  label={t("profile.newPassword", { defaultValue: "New Password (min. 8 characters)" })}
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -509,7 +509,7 @@ export function AdminProfilePage() {
                 />
 
                 <Input
-                  label="Neues Passwort bestätigen"
+                  label={t("profile.confirmNewPassword", { defaultValue: "Confirm New Password" })}
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -519,7 +519,7 @@ export function AdminProfilePage() {
 
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "8px" }}>
                   <Button type="submit" variant="primary" loading={passwordLoading}>
-                    Passwort speichern
+                    {t("profile.savePassword", { defaultValue: "Save Password" })}
                   </Button>
                 </div>
               </form>
@@ -530,7 +530,7 @@ export function AdminProfilePage() {
         {/* Tab 3: Role Management */}
         {activeTab === "role" && (
           <div style={{ maxWidth: "700px" }}>
-            <AdminSectionCard title="Super-Administrator Richtlinie">
+            <AdminSectionCard title={t("profile.superAdminPolicy", { defaultValue: "Super Administrator Policy" })}>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div
                   style={{
@@ -541,10 +541,12 @@ export function AdminProfilePage() {
                   }}
                 >
                   <h4 style={{ margin: "0 0 6px 0", fontSize: "14px", color: "var(--color-admin-text)", fontWeight: 700 }}>
-                    Sicherheitsregel für Super-Administratoren
+                    {t("profile.policyTitle", { defaultValue: "Super Administrator Security Rule" })}
                   </h4>
                   <p style={{ margin: 0, fontSize: "13px", color: "var(--color-admin-muted)", lineHeight: 1.5 }}>
-                    Ein Super-Administrator kann sich nur dann selbst auf den Status eines Administrators herabstufen, wenn mindestens ein weiterer aktiver Super-Administrator im System existiert. Dadurch wird sichergestellt, dass das System niemals ohne Hauptadministrator verbleibt.
+                    {t("profile.policyDesc", {
+                      defaultValue: "A Super Administrator can only downgrade their own role to Administrator if at least one other active Super Administrator exists in the system. This ensures the system is never left without a primary administrator.",
+                    })}
                   </p>
                 </div>
 
@@ -562,7 +564,7 @@ export function AdminProfilePage() {
                   >
                     <div style={{ display: "flex", alignItems: "center", gap: "8px", fontWeight: 700, marginBottom: "4px" }}>
                       <Icon name="alert-circle" size={16} />
-                      Herabstufung nicht möglich
+                      {t("profile.downgradeNotPossible", { defaultValue: "Downgrade not possible" })}
                     </div>
                     {roleError}
                   </div>
@@ -587,13 +589,13 @@ export function AdminProfilePage() {
                 {isSuperAdmin ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
                     <div style={{ fontSize: "13px", color: "var(--color-admin-text)" }}>
-                      Andere aktive Super-Administratoren:{" "}
+                      {t("profile.otherSuperAdmins", { defaultValue: "Other active Super Administrators:" })}{" "}
                       <strong>
                         {checkingSuperAdmins
-                          ? "Wird geprüft..."
+                          ? t("profile.checking", { defaultValue: "Checking..." })
                           : otherSuperAdmins.length > 0
                           ? `${otherSuperAdmins.length} (${otherSuperAdmins.map((o) => o.email).join(", ")})`
-                          : "Keine (Sie sind der einzige Super-Admin)"}
+                          : t("profile.noneSoleSuperAdmin", { defaultValue: "None (You are the sole Super Admin)" })}
                       </strong>
                     </div>
 
@@ -615,7 +617,9 @@ export function AdminProfilePage() {
                       >
                         <Icon name="alert-circle" size={16} style={{ flexShrink: 0, marginTop: "2px", color: "#d97706" }} />
                         <span>
-                          Um sich selbst herabzustufen, navigieren Sie zur <strong>Benutzerverwaltung</strong> und befördern Sie zuerst einen anderen Administrator zum Super-Admin.
+                          {t("profile.promoteFirstNotice", {
+                            defaultValue: "To downgrade yourself, navigate to User Management and first promote another administrator to Super Admin.",
+                          })}
                         </span>
                       </div>
                     )}
@@ -633,13 +637,15 @@ export function AdminProfilePage() {
                           color: "#ffffff",
                         }}
                       >
-                        Auf Administrator herabstufen
+                        {t("profile.downgradeToAdmin", { defaultValue: "Downgrade to Administrator" })}
                       </Button>
                     </div>
                   </div>
                 ) : (
                   <div style={{ fontSize: "13px", color: "var(--color-admin-muted)" }}>
-                    Sie besitzen aktuell den Status Administrator. Nur ein Super-Administrator kann Ihre Berechtigungen anpassen.
+                    {t("profile.adminStatusNotice", {
+                      defaultValue: "You currently hold Administrator status. Only a Super Administrator can modify your permissions.",
+                    })}
                   </div>
                 )}
               </div>

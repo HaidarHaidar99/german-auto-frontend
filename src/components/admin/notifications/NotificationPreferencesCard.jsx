@@ -87,15 +87,15 @@ export function NotificationPreferencesCard({
 
         // Update preferences
         await onUpdatePreferences?.({ ...preferences, push: true });
-        setPushStatusMessage({ type: "success", text: t("pushPermissionGranted", { defaultValue: "Push-Berechtigung erteilt." }) });
+        setPushStatusMessage({ type: "success", text: t("pushPermissionGranted", { defaultValue: "Push permission granted." }) });
       } else if (permission === "denied") {
         setPushStatusMessage({
           type: "error",
-          text: t("pushPermissionDenied", { defaultValue: "Push-Benachrichtigungen wurden im Browser blockiert." }),
+          text: t("pushPermissionDenied", { defaultValue: "Push notifications blocked in browser." }),
         });
       }
     } catch (err) {
-      setPushStatusMessage({ type: "error", text: err?.message || "Fehler bei der Push-Aktivierung." });
+      setPushStatusMessage({ type: "error", text: err?.message || t("errorPushActivation", { defaultValue: "Error enabling push notifications." }) });
     } finally {
       setPushWorking(false);
     }
@@ -118,9 +118,9 @@ export function NotificationPreferencesCard({
       }
 
       await onUpdatePreferences?.({ ...preferences, push: false });
-      setPushStatusMessage({ type: "success", text: t("disablePush", { defaultValue: "Push deaktiviert." }) });
+      setPushStatusMessage({ type: "success", text: t("disablePush", { defaultValue: "Push disabled." }) });
     } catch (err) {
-      setPushStatusMessage({ type: "error", text: err?.message || "Fehler beim Deaktivieren von Push." });
+      setPushStatusMessage({ type: "error", text: err?.message || t("errorPushDeactivation", { defaultValue: "Error disabling push notifications." }) });
     } finally {
       setPushWorking(false);
     }
@@ -129,24 +129,24 @@ export function NotificationPreferencesCard({
   const toggleItems = [
     {
       key: "forms",
-      label: t("prefFormsLabel", { defaultValue: "Formulareingänge" }),
-      description: t("prefFormsDesc", { defaultValue: "Meldungen über neue Kontakt- und Ankaufsanfragen im Feed anzeigen" }),
+      label: t("prefFormsLabel", { defaultValue: "Form Submissions" }),
+      description: t("prefFormsDesc", { defaultValue: "Show alerts for new contact and purchase requests in the feed" }),
       icon: "message-square",
       color: "#a855f7",
       value: preferences.forms ?? true,
     },
     {
       key: "reviews",
-      label: t("prefReviewsLabel", { defaultValue: "Kundenbewertungen" }),
-      description: t("prefReviewsDesc", { defaultValue: "Meldungen über neu eingereichte Kundenbewertungen im Feed anzeigen" }),
+      label: t("prefReviewsLabel", { defaultValue: "Customer Reviews" }),
+      description: t("prefReviewsDesc", { defaultValue: "Show alerts for newly submitted customer reviews in the feed" }),
       icon: "star",
       color: "#06b6d4",
       value: preferences.reviews ?? true,
     },
     {
       key: "push",
-      label: t("prefPushLabel", { defaultValue: "Browser-Push-Mitteilungen" }),
-      description: t("prefPushDesc", { defaultValue: "Direkte Desktop-Mitteilungen bei neuen Ereignissen empfangen" }),
+      label: t("prefPushLabel", { defaultValue: "Browser Push Notifications" }),
+      description: t("prefPushDesc", { defaultValue: "Receive instant desktop alerts for new events" }),
       icon: "send",
       color: "#f59e0b",
       value: preferences.push ?? true,
@@ -154,8 +154,8 @@ export function NotificationPreferencesCard({
     },
     {
       key: "sound",
-      label: t("prefSoundLabel", { defaultValue: "Hinweiston" }),
-      description: t("prefSoundDesc", { defaultValue: "Akustisches Signal bei neuen Meldungen im Admin-Bereich abspielen" }),
+      label: t("prefSoundLabel", { defaultValue: "Sound Alert" }),
+      description: t("prefSoundDesc", { defaultValue: "Play an audio chime when new alerts arrive in admin" }),
       icon: "volume-2",
       color: "#22c55e",
       value: preferences.sound ?? true,
@@ -164,7 +164,7 @@ export function NotificationPreferencesCard({
 
   return (
     <AdminSectionCard
-      title={t("notificationPreferences", { defaultValue: "Benachrichtigungseinstellungen" })}
+      title={t("notificationPreferences", { defaultValue: "Notification Preferences" })}
       className={className}
       style={{ ...style }}
     >
@@ -203,7 +203,7 @@ export function NotificationPreferencesCard({
               </div>
 
               <div>
-                <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-admin-text, #ffffff)" }}>
+                <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--color-admin-text, #0f172a)" }}>
                   {item.label}
                 </div>
                 <div style={{ fontSize: "12px", color: "var(--color-admin-muted, #94a3b8)", marginTop: "2px", lineHeight: 1.4 }}>
@@ -215,12 +215,12 @@ export function NotificationPreferencesCard({
                   <div style={{ marginTop: "8px", display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                     {!pushSupported ? (
                       <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #94a3b8)" }}>
-                        {t("pushNotSupported", { defaultValue: "Ihr Browser unterstützt keine Web-Push-Benachrichtigungen." })}
+                        {t("pushNotSupported", { defaultValue: "Your browser does not support web push notifications." })}
                       </span>
                     ) : pushPermission === "granted" ? (
                       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <span style={{ fontSize: "11px", color: "#4ade80", fontWeight: 600 }}>
-                          ● {t("pushPermissionGranted", { defaultValue: "Push-Berechtigung erteilt" })}
+                          ● {t("pushPermissionGranted", { defaultValue: "Push permission granted" })}
                         </span>
                         <Button
                           variant="ghost"
@@ -229,12 +229,12 @@ export function NotificationPreferencesCard({
                           onClick={handleDisablePush}
                           style={{ fontSize: "11px", padding: "2px 8px", height: "26px" }}
                         >
-                          {t("disablePush", { defaultValue: "Push deaktivieren" })}
+                          {t("disablePush", { defaultValue: "Disable push" })}
                         </Button>
                       </div>
                     ) : pushPermission === "denied" ? (
                       <span style={{ fontSize: "11px", color: "var(--color-error, #ef4444)" }}>
-                        {t("pushPermissionDenied", { defaultValue: "Push im Browser blockiert" })}
+                        {t("pushPermissionDenied", { defaultValue: "Push blocked in browser" })}
                       </span>
                     ) : (
                       <Button
@@ -244,7 +244,7 @@ export function NotificationPreferencesCard({
                         onClick={handleRequestPushPermission}
                         style={{ fontSize: "11px", padding: "2px 10px", height: "28px" }}
                       >
-                        <Icon name="bell" size={12} /> {t("enablePush", { defaultValue: "Push im Browser aktivieren" })}
+                        <Icon name="bell" size={12} /> {t("enablePush", { defaultValue: "Enable push in browser" })}
                       </Button>
                     )}
 

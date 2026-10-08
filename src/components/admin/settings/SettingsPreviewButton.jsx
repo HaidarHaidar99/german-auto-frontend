@@ -37,7 +37,7 @@ export function SettingsPreviewButton({
       }}
     >
       <Icon name="eye" size={14} style={{ marginRight: "6px" }} />
-      {label || t("previewPage", { defaultValue: "Vorschau öffnen" })}
+      {label || t("previewPage", { defaultValue: "Open Preview" })}
     </Button>
   );
 }

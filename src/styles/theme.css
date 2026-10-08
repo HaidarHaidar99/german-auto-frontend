@@ -71,6 +71,23 @@
   --scrollbar-thumb: rgba(255, 255, 255, 0.2);
   --scrollbar-thumb-hover: rgba(255, 255, 255, 0.35);
 
+  /* Admin CMS Tokens in Dark Mode */
+  --color-admin-bg: #090d16;
+  --color-admin-sidebar: #111827;
+  --color-admin-card: #111827;
+  --color-admin-border: #1f2937;
+  --color-admin-border-subtle: #1e293b;
+  --color-admin-text: #f8fafc;
+  --color-admin-text-secondary: #cbd5e1;
+  --color-admin-muted: #94a3b8;
+  --color-admin-accent: #38bdf8;
+  --color-admin-accent-hover: #0ea5e9;
+  --color-admin-accent-subtle: rgba(56, 189, 248, 0.12);
+  --color-admin-nav-active-border: #38bdf8;
+  --color-admin-pill-bg: #1f2937;
+  --color-admin-logout-bg: rgba(239, 68, 68, 0.12);
+  --color-admin-logout-text: #f87171;
+
   /* Typography Tokens */
   --font-family-display: "DM Serif Display", serif;
   --font-family-heading: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -218,6 +235,23 @@
 
   --scrollbar-thumb: rgba(0, 0, 0, 0.2);
   --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+
+  /* Admin CMS Tokens in Light Mode */
+  --color-admin-bg: #f0f4f8;
+  --color-admin-sidebar: #ffffff;
+  --color-admin-card: #ffffff;
+  --color-admin-border: #e2e8f0;
+  --color-admin-border-subtle: #f8fafc;
+  --color-admin-text: #0f172a;
+  --color-admin-text-secondary: #334155;
+  --color-admin-muted: #64748b;
+  --color-admin-accent: #0284c7;
+  --color-admin-accent-hover: #0369a1;
+  --color-admin-accent-subtle: #eff6ff;
+  --color-admin-nav-active-border: #2563eb;
+  --color-admin-pill-bg: #f1f5f9;
+  --color-admin-logout-bg: #fef2f2;
+  --color-admin-logout-text: #ef4444;
 }
 
 /* ==========================================================================

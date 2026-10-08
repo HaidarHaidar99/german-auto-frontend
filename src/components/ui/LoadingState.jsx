@@ -3,15 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useSettings, DEFAULT_LOGO_URL, DEFAULT_BRAND_NAME } from "../../contexts/SettingsContext";
 import { useTheme } from "../../contexts/ThemeContext";
 
-export function LoadingState({ message = null, minHeight = "240px", showBrand = false }) {
+export function LoadingState({ message = null, minHeight = "240px" }) {
   const { t } = useTranslation("common");
-  const { settings } = useSettings?.() || {};
-  const { isDark } = useTheme?.() || { isDark: true };
-
-  const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const logoUrl = (!isDark && settings?.branding?.logo_light_url)
-    ? settings.branding.logo_light_url
-    : (settings?.branding?.logo_url || DEFAULT_LOGO_URL);
 
   return (
     <div
@@ -27,36 +20,6 @@ export function LoadingState({ message = null, minHeight = "240px", showBrand = 
       role="status"
       aria-live="polite"
     >
-      {showBrand && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
-          <span
-            style={{
-              fontSize: "17px",
-              fontWeight: 800,
-              letterSpacing: "-0.2px",
-              color: "var(--color-text, #ffffff)",
-              textAlign: "center",
-            }}
-          >
-            {brandName}
-          </span>
-          {logoUrl && (
-            <img
-              src={logoUrl}
-              alt={brandName}
-              style={{
-                width: "90px",
-                maxHeight: "50px",
-                objectFit: "contain",
-                filter: "drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5))",
-              }}
-              onError={(e) => {
-                e.currentTarget.style.display = "none";
-              }}
-            />
-          )}
-        </div>
-      )}
 
       <div
         style={{

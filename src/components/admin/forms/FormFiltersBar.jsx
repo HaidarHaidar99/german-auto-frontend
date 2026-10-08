@@ -28,23 +28,23 @@ export function FormFiltersBar({
   );
 
   const typeOptions = [
-    { value: "ALL", label: t("filterAllTypes", { defaultValue: "Alle Formulararten" }) },
-    { value: "CONTACT", label: t("formTypeContact", { defaultValue: "Kontaktanfragen" }) },
-    { value: "SELL_CAR", label: t("formTypeSellCar", { defaultValue: "Fahrzeugankauf" }) },
+    { value: "ALL", label: t("filterAllTypes", { defaultValue: "All Form Types" }) },
+    { value: "CONTACT", label: t("formTypeContact", { defaultValue: "Contact Inquiries" }) },
+    { value: "SELL_CAR", label: t("formTypeSellCar", { defaultValue: "Vehicle Purchase" }) },
   ];
 
   const statusOptions = [
-    { value: "ALL", label: t("filterAllStatuses", { defaultValue: "Alle Status" }) },
-    { value: "NEW", label: t("statusNew", { defaultValue: "Neu" }) },
-    { value: "READ", label: t("statusRead", { defaultValue: "Gelesen" }) },
-    { value: "IN_PROGRESS", label: t("statusInProgress", { defaultValue: "In Bearbeitung" }) },
-    { value: "COMPLETED", label: t("statusCompleted", { defaultValue: "Abgeschlossen" }) },
-    { value: "ARCHIVED", label: t("statusArchived", { defaultValue: "Archiviert" }) },
+    { value: "ALL", label: t("filterAllStatuses", { defaultValue: "All Statuses" }) },
+    { value: "NEW", label: t("statusNew", { defaultValue: "New" }) },
+    { value: "READ", label: t("statusRead", { defaultValue: "Read" }) },
+    { value: "IN_PROGRESS", label: t("statusInProgress", { defaultValue: "In Progress" }) },
+    { value: "COMPLETED", label: t("statusCompleted", { defaultValue: "Completed" }) },
+    { value: "ARCHIVED", label: t("statusArchived", { defaultValue: "Archived" }) },
   ];
 
   const sortOptions = [
-    { value: "newest", label: t("sortNewest", { defaultValue: "Neueste zuerst" }) },
-    { value: "oldest", label: t("sortOldest", { defaultValue: "Älteste zuerst" }) },
+    { value: "newest", label: t("sortNewest", { defaultValue: "Newest first" }) },
+    { value: "oldest", label: t("sortOldest", { defaultValue: "Oldest first" }) },
   ];
 
   return (
@@ -56,9 +56,9 @@ export function FormFiltersBar({
         flexWrap: "wrap",
         gap: "var(--space-sm)",
         padding: "var(--space-md) var(--space-lg)",
-        backgroundColor: "var(--color-admin-card, #121418)",
+        backgroundColor: "var(--color-admin-card, #ffffff)",
         borderRadius: "var(--radius-md, 8px)",
-        border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+        border: "1px solid var(--color-admin-border, #e2e8f0)",
         ...style,
       }}
     >
@@ -67,7 +67,7 @@ export function FormFiltersBar({
         <Input
           value={filters.search || ""}
           onChange={(e) => handleFieldChange("search", e.target.value)}
-          placeholder={t("searchFormsPlaceholder", { defaultValue: "Name, E-Mail, Telefon, Marke, Modell, FIN durchsuchen..." })}
+          placeholder={t("searchFormsPlaceholder", { defaultValue: "Search by name, email, phone, brand, model, VIN..." })}
           startIcon="search"
           style={{ height: "38px" }}
         />
@@ -111,12 +111,12 @@ export function FormFiltersBar({
           onClick={onReset}
           style={{
             height: "38px",
-            color: "var(--color-admin-muted, #94a3b8)",
-            fontSize: "var(--font-size-xs)",
+            color: "var(--color-admin-muted, #64748b)",
+            fontSize: "var(--font-size-xs, 12px)",
             whiteSpace: "nowrap",
           }}
         >
-          {t("resetFilters", { defaultValue: "Filter zurücksetzen" })}
+          {t("resetFilters", { defaultValue: "Reset filters" })}
         </Button>
       )}
     </div>

@@ -99,9 +99,9 @@ export function LocationsSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.locations", { defaultValue: "Standorte & Showrooms" })}
+      title={t("settingsSections.locations", { defaultValue: "Locations & Showrooms" })}
       subtitle={t("locationsSubtitle", {
-        defaultValue: "Verwalten Sie Ihre Standorte, Adressen, Koordinaten und Routenplaner-Verknüpfungen.",
+        defaultValue: "Manage your locations, addresses, coordinates, and route planner links.",
       })}
       sectionKey="locations"
       onReset={onReset}
@@ -113,23 +113,23 @@ export function LocationsSettingsEditor({
         onReorder={(newItems) => onChange?.(newItems)}
         onAdd={handleOpenAdd}
         onRemove={handleRemove}
-        addLabel={t("addLocation", { defaultValue: "Neuen Standort anlegen" })}
-        emptyMessage={t("noLocationsConfigured", { defaultValue: "Bisher wurden keine Standorte hinterlegt." })}
+        addLabel={t("addLocation", { defaultValue: "Add new location" })}
+        emptyMessage={t("noLocationsConfigured", { defaultValue: "No locations configured yet." })}
         renderItem={(item, index) => (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-md)" }}>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-                <h4 style={{ margin: 0, fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-                  {item.name || `Standort #${index + 1}`}
+                <h4 style={{ margin: 0, fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
+                  {item.name || `${t("location", { defaultValue: "Location" })} #${index + 1}`}
                 </h4>
                 {item.is_primary && (
                   <Badge variant="secondary" size="sm">
-                    Hauptstandort
+                    {t("primaryLocation", { defaultValue: "Primary Location" })}
                   </Badge>
                 )}
               </div>
-              <p style={{ margin: "2px 0 0", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted, var(--color-text-muted))" }}>
-                {[item.address, item.postal_code, item.city].filter(Boolean).join(", ") || "Keine Adresse angegeben"}
+              <p style={{ margin: "2px 0 0", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted, #64748b)" }}>
+                {[item.address, item.postal_code, item.city].filter(Boolean).join(", ") || t("noAddressSpecified", { defaultValue: "No address specified" })}
               </p>
             </div>
 
@@ -139,7 +139,7 @@ export function LocationsSettingsEditor({
               onClick={() => handleOpenEdit(index)}
               style={{ fontSize: "var(--font-size-xs)", padding: "4px 12px" }}
             >
-              {t("edit", { defaultValue: "Bearbeiten" })}
+              {t("edit", { defaultValue: "Edit" })}
             </Button>
           </div>
         )}
@@ -149,27 +149,27 @@ export function LocationsSettingsEditor({
       <Modal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={editingIndex !== null ? "Standort bearbeiten" : "Neuen Standort anlegen"}
+        title={editingIndex !== null ? t("editLocation", { defaultValue: "Edit Location" }) : t("addLocation", { defaultValue: "Add New Location" })}
         size="md"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-          <SettingsField label="Standort-Name" required error={editingIndex !== null ? errors[`locations[${editingIndex}].name`] : null}>
+          <SettingsField label={t("locationName", { defaultValue: "Location Name" })} required error={editingIndex !== null ? errors[`locations[${editingIndex}].name`] : null}>
             <Input
               value={draftLocation.name || ""}
               onChange={(e) => setDraftLocation({ ...draftLocation, name: e.target.value })}
-              placeholder="z. B. Showroom München"
+              placeholder="e.g. Showroom Munich"
             />
           </SettingsField>
 
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Straße & Hausnummer" error={editingIndex !== null ? errors[`locations[${editingIndex}].address`] : null}>
+            <SettingsField label={t("streetAndNumber", { defaultValue: "Street & Number" })} error={editingIndex !== null ? errors[`locations[${editingIndex}].address`] : null}>
               <Input
                 value={draftLocation.address || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, address: e.target.value })}
                 placeholder="Maximilianstraße 1"
               />
             </SettingsField>
-            <SettingsField label="PLZ" error={editingIndex !== null ? errors[`locations[${editingIndex}].postal_code`] : null}>
+            <SettingsField label={t("postalCode", { defaultValue: "Postal Code" })} error={editingIndex !== null ? errors[`locations[${editingIndex}].postal_code`] : null}>
               <Input
                 value={draftLocation.postal_code || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, postal_code: e.target.value })}
@@ -179,14 +179,14 @@ export function LocationsSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Stadt" error={editingIndex !== null ? errors[`locations[${editingIndex}].city`] : null}>
+            <SettingsField label={t("city", { defaultValue: "City" })} error={editingIndex !== null ? errors[`locations[${editingIndex}].city`] : null}>
               <Input
                 value={draftLocation.city || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, city: e.target.value })}
-                placeholder="München"
+                placeholder="Munich"
               />
             </SettingsField>
-            <SettingsField label="Telefon" error={editingIndex !== null ? errors[`locations[${editingIndex}].phone`] : null}>
+            <SettingsField label={t("phone", { defaultValue: "Phone" })} error={editingIndex !== null ? errors[`locations[${editingIndex}].phone`] : null}>
               <Input
                 value={draftLocation.phone || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, phone: e.target.value })}
@@ -196,15 +196,15 @@ export function LocationsSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="E-Mail" error={editingIndex !== null ? errors[`locations[${editingIndex}].email`] : null}>
+            <SettingsField label={t("email", { defaultValue: "Email" })} error={editingIndex !== null ? errors[`locations[${editingIndex}].email`] : null}>
               <Input
                 type="email"
                 value={draftLocation.email || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, email: e.target.value })}
-                placeholder="muenchen@example.de"
+                placeholder="munich@example.de"
               />
             </SettingsField>
-            <SettingsField label="Google Maps Link" error={editingIndex !== null ? errors[`locations[${editingIndex}].map_url`] : null}>
+            <SettingsField label={t("googleMapsLink", { defaultValue: "Google Maps Link" })} error={editingIndex !== null ? errors[`locations[${editingIndex}].map_url`] : null}>
               <Input
                 value={draftLocation.map_url || ""}
                 onChange={(e) => setDraftLocation({ ...draftLocation, map_url: e.target.value })}
@@ -214,7 +214,7 @@ export function LocationsSettingsEditor({
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
-            <SettingsField label="Breitengrad (Latitude)" helper="-90 bis 90" error={editingIndex !== null ? errors[`locations[${editingIndex}].latitude`] : null}>
+            <SettingsField label={t("latitude", { defaultValue: "Latitude" })} helper="-90 to 90" error={editingIndex !== null ? errors[`locations[${editingIndex}].latitude`] : null}>
               <Input
                 type="number"
                 step="any"
@@ -223,7 +223,7 @@ export function LocationsSettingsEditor({
                 placeholder="48.137154"
               />
             </SettingsField>
-            <SettingsField label="Längengrad (Longitude)" helper="-180 bis 180" error={editingIndex !== null ? errors[`locations[${editingIndex}].longitude`] : null}>
+            <SettingsField label={t("longitude", { defaultValue: "Longitude" })} helper="-180 to 180" error={editingIndex !== null ? errors[`locations[${editingIndex}].longitude`] : null}>
               <Input
                 type="number"
                 step="any"
@@ -235,18 +235,18 @@ export function LocationsSettingsEditor({
           </div>
 
           <SettingsToggle
-            label="Als Hauptstandort markieren"
-            description="Wird bevorzugt im Header, Footer und auf der Kontaktseite hervorgehoben."
+            label={t("markPrimaryLocation", { defaultValue: "Mark as primary location" })}
+            description={t("markPrimaryLocationDesc", { defaultValue: "Featured prominently in header, footer, and contact page." })}
             checked={Boolean(draftLocation.is_primary)}
             onChange={(checked) => setDraftLocation({ ...draftLocation, is_primary: checked })}
           />
 
           <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-sm)", marginTop: "var(--space-md)" }}>
             <Button variant="outline" size="sm" onClick={() => setModalOpen(false)}>
-              Abbrechen
+              {t("cancel", { defaultValue: "Cancel" })}
             </Button>
             <Button variant="primary" size="sm" onClick={handleSaveModal}>
-              Standort übernehmen
+              {t("saveLocation", { defaultValue: "Save Location" })}
             </Button>
           </div>
         </div>

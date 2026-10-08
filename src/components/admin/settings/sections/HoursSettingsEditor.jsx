@@ -5,13 +5,13 @@ import SettingsToggle from "../SettingsToggle";
 import Input from "../../../forms/Input";
 
 const DAYS = [
-  { key: "monday", label: "Montag" },
-  { key: "tuesday", label: "Dienstag" },
-  { key: "wednesday", label: "Mittwoch" },
-  { key: "thursday", label: "Donnerstag" },
-  { key: "friday", label: "Freitag" },
-  { key: "saturday", label: "Samstag" },
-  { key: "sunday", label: "Sonntag" },
+  { key: "monday", labelKey: "days.monday", defaultLabel: "Monday" },
+  { key: "tuesday", labelKey: "days.tuesday", defaultLabel: "Tuesday" },
+  { key: "wednesday", labelKey: "days.wednesday", defaultLabel: "Wednesday" },
+  { key: "thursday", labelKey: "days.thursday", defaultLabel: "Thursday" },
+  { key: "friday", labelKey: "days.friday", defaultLabel: "Friday" },
+  { key: "saturday", labelKey: "days.saturday", defaultLabel: "Saturday" },
+  { key: "sunday", labelKey: "days.sunday", defaultLabel: "Sunday" },
 ];
 
 export function HoursSettingsEditor({
@@ -36,9 +36,9 @@ export function HoursSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.hours", { defaultValue: "Öffnungszeiten" })}
+      title={t("settingsSections.hours", { defaultValue: "Opening Hours" })}
       subtitle={t("hoursSubtitle", {
-        defaultValue: "Legen Sie Ihre täglichen Showroom- und Werkstatt-Öffnungszeiten im 24h-Format (HH:MM) fest.",
+        defaultValue: "Set your daily showroom and workshop opening hours in 24h format (HH:MM).",
       })}
       sectionKey="hours"
       onReset={onReset}
@@ -46,7 +46,7 @@ export function HoursSettingsEditor({
       previewUrl="/contact"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-        {DAYS.map(({ key, label }) => {
+        {DAYS.map(({ key, labelKey, defaultLabel }) => {
           const dayConfig = data[key] || { enabled: false, open: "", close: "" };
           const openError = errors[`hours.${key}.open`];
           const closeError = errors[`hours.${key}.close`];
@@ -61,9 +61,9 @@ export function HoursSettingsEditor({
                 gap: "var(--space-md)",
                 padding: "var(--space-sm) var(--space-md)",
                 backgroundColor: dayConfig.enabled
-                  ? "rgba(255, 255, 255, 0.03)"
-                  : "rgba(255, 255, 255, 0.01)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                  ? "var(--color-admin-card-inner, rgba(0, 0, 0, 0.02))"
+                  : "transparent",
+                border: "1px solid var(--color-admin-border, #cbd5e1)",
                 borderRadius: "var(--radius-sm, 6px)",
               }}
             >
@@ -73,12 +73,12 @@ export function HoursSettingsEditor({
                     fontSize: "var(--font-size-sm)",
                     fontWeight: 500,
                     color: dayConfig.enabled
-                      ? "var(--color-admin-text, #ffffff)"
-                      : "var(--color-admin-muted, var(--color-text-muted))",
+                      ? "var(--color-admin-text, #0f172a)"
+                      : "var(--color-admin-muted, #64748b)",
                     display: "block",
                   }}
                 >
-                  {label}
+                  {t(labelKey, { defaultValue: defaultLabel })}
                 </span>
                 <span
                   style={{
@@ -86,7 +86,7 @@ export function HoursSettingsEditor({
                     color: dayConfig.enabled ? "#22c55e" : "var(--color-admin-muted)",
                   }}
                 >
-                  {dayConfig.enabled ? "Geöffnet" : "Geschlossen"}
+                  {dayConfig.enabled ? t("open", { defaultValue: "Open" }) : t("closed", { defaultValue: "Closed" })}
                 </span>
               </div>
 
@@ -108,7 +108,7 @@ export function HoursSettingsEditor({
                     error={openError}
                     style={{ minWidth: "100px" }}
                   />
-                  <span style={{ color: "var(--color-admin-muted)", fontSize: "var(--font-size-xs)" }}>bis</span>
+                  <span style={{ color: "var(--color-admin-muted)", fontSize: "var(--font-size-xs)" }}>{t("to", { defaultValue: "to" })}</span>
                   <Input
                     type="time"
                     value={dayConfig.close || ""}
@@ -119,7 +119,7 @@ export function HoursSettingsEditor({
                 </div>
               ) : (
                 <div style={{ color: "var(--color-admin-muted)", fontSize: "var(--font-size-xs)", fontStyle: "italic" }}>
-                  Geschlossen / Nach Vereinbarung
+                  {t("closedOrByAppointment", { defaultValue: "Closed / By appointment" })}
                 </div>
               )}
             </div>

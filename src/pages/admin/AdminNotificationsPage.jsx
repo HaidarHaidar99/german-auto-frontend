@@ -59,7 +59,7 @@ export function AdminNotificationsPage() {
   };
 
   useEffect(() => {
-    document.title = `${t("notifications", { defaultValue: "Benachrichtigungen" })} | ADMINCORE`;
+    document.title = `${t("notifications", { defaultValue: "Notifications" })} | ADMINCORE`;
   }, [t]);
 
   // ─── Fetch Notifications ────────────────────────────────────────────────────
@@ -83,13 +83,13 @@ export function AdminNotificationsPage() {
         if (res?.meta) setMeta(res.meta);
         setError(null);
       } catch (err) {
-        setError(err?.message || "Fehler beim Laden der Benachrichtigungen.");
+        setError(err?.message || t("errorLoadingNotifications", { defaultValue: "Failed to load notifications." }));
       } finally {
         setLoading(false);
         setRefreshing(false);
       }
     },
-    [statusFilter, typeFilter, sort, currentPage]
+    [statusFilter, typeFilter, sort, currentPage, t]
   );
 
   // ─── Fetch Preferences ──────────────────────────────────────────────────────
@@ -149,7 +149,7 @@ export function AdminNotificationsPage() {
         if (selectedNotif && selectedNotif.id === id) {
           setSelectedNotif((prev) => ({ ...prev, is_read: false }));
         }
-        showToast("success", t("notificationMarkedUnread", { defaultValue: "Als ungelesen markiert." }));
+        showToast("success", t("notificationMarkedUnread", { defaultValue: "Marked as unread." }));
       } else {
         await notificationsService.markRead(id);
         setNotifications((prev) =>
@@ -160,10 +160,10 @@ export function AdminNotificationsPage() {
           setSelectedNotif((prev) => ({ ...prev, is_read: true }));
         }
         window.dispatchEvent(new CustomEvent("notificationsUpdated", { detail: { unreadCount: Math.max(0, unreadCount - 1) } }));
-        showToast("success", t("notificationMarkedRead", { defaultValue: "Als gelesen markiert." }));
+        showToast("success", t("notificationMarkedRead", { defaultValue: "Marked as read." }));
       }
     } catch (err) {
-      showToast("error", err?.message || "Fehler beim Aktualisieren des Status.");
+      showToast("error", err?.message || t("errorUpdatingStatus", { defaultValue: "Failed to update notification status." }));
     } finally {
       setUpdatingId(null);
     }
@@ -179,7 +179,7 @@ export function AdminNotificationsPage() {
       setNotifications((prev) => prev.map((n) => ({ ...n, is_read: true })));
       setUnreadCount(0);
       window.dispatchEvent(new CustomEvent("notificationsUpdated", { detail: { unreadCount: 0 } }));
-      showToast("success", t("allMarkedAsRead", { defaultValue: "Alle Benachrichtigungen wurden als gelesen markiert." }));
+      showToast("success", t("allMarkedAsRead", { defaultValue: "All notifications marked as read." }));
     }
   };
 
@@ -211,9 +211,9 @@ export function AdminNotificationsPage() {
         setIsDrawerOpen(false);
         setSelectedNotif(null);
       }
-      showToast("success", t("notificationDismissed", { defaultValue: "Mitteilung wurde verworfen." }));
+      showToast("success", t("notificationDismissed", { defaultValue: "Notification dismissed." }));
     } catch (err) {
-      showToast("error", err?.message || "Fehler beim Verwerfen der Mitteilung.");
+      showToast("error", err?.message || t("errorDismissingNotification", { defaultValue: "Failed to dismiss notification." }));
     } finally {
       setUpdatingId(null);
     }
@@ -229,11 +229,11 @@ export function AdminNotificationsPage() {
       } else {
         setPreferences(newPrefs);
       }
-      showToast("success", t("preferencesSaved", { defaultValue: "Einstellungen erfolgreich aktualisiert." }));
+      showToast("success", t("preferencesSaved", { defaultValue: "Preferences updated successfully." }));
       // Re-fetch notifications in case forms/reviews toggle altered visible items
       fetchNotifications(true, 1);
     } catch (err) {
-      showToast("error", err?.message || "Fehler beim Speichern der Einstellungen.");
+      showToast("error", err?.message || t("errorSavingPreferences", { defaultValue: "Failed to save preferences." }));
     } finally {
       setSavingPrefs(false);
     }
@@ -296,18 +296,18 @@ export function AdminNotificationsPage() {
 
       {/* Header */}
       <AdminPageHeader
-        title={t("notifications", { defaultValue: "Benachrichtigungen" })}
+        title={t("notifications", { defaultValue: "Notifications" })}
         subtitle={t("notificationsSubtitle", {
-          defaultValue: "Ereignis-Feed für Lead-Eingänge, Reviews und Systemmeldungen",
+          defaultValue: "Activity feed for lead submissions, reviews, and system alerts",
         })}
         badge={
           unreadCount > 0 ? (
             <Badge variant="secondary" size="sm">
-              {unreadCount} {t("filterUnread", { defaultValue: "Ungelesen" })}
+              {unreadCount} {t("filterUnread", { defaultValue: "Unread" })}
             </Badge>
           ) : (
             <Badge variant="outline" size="sm">
-              {t("current", { defaultValue: "Aktuell" })}
+              {t("current", { defaultValue: "Current" })}
             </Badge>
           )
         }
@@ -320,7 +320,7 @@ export function AdminNotificationsPage() {
               style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
             >
               <Icon name="check-circle" size={14} />
-              <span>{t("markAllAsRead", { defaultValue: "Alle als gelesen markieren" })}</span>
+              <span>{t("markAllAsRead", { defaultValue: "Mark all as read" })}</span>
             </Button>
           ) : null
         }
@@ -374,19 +374,19 @@ export function AdminNotificationsPage() {
 
         {/* Notification Feed States */}
         {loading ? (
-          <AdminLoadingState message="Lade Benachrichtigungen..." />
+          <AdminLoadingState message={t("loadingNotifications", { defaultValue: "Loading notifications..." })} />
         ) : error ? (
           <ErrorState
-            title="Fehler beim Laden"
+            title={t("errorLoading", { defaultValue: "Failed to load" })}
             message={error}
             onRetry={() => fetchNotifications(false, currentPage)}
           />
         ) : notifications.length === 0 ? (
           <AdminEmptyState
             icon="bell"
-            title={hasActiveFilters ? t("noFilteredNotificationsTitle", { defaultValue: "Keine passenden Benachrichtigungen" }) : t("noRecentNotifications", { defaultValue: "Keine Benachrichtigungen" })}
-            message={hasActiveFilters ? t("noFilteredNotificationsDesc", { defaultValue: "Zu den gewählten Filterkriterien liegen keine Mitteilungen vor." }) : t("noNotificationsDesc", { defaultValue: "Es liegen derzeit keine aktiven Mitteilungen in Ihrem Feed vor." })}
-            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Filter zurücksetzen" }) : undefined}
+            title={hasActiveFilters ? t("noFilteredNotificationsTitle", { defaultValue: "No matching notifications" }) : t("noRecentNotifications", { defaultValue: "No notifications" })}
+            message={hasActiveFilters ? t("noFilteredNotificationsDesc", { defaultValue: "No notifications found matching your filter criteria." }) : t("noNotificationsDesc", { defaultValue: "No active notifications in your feed right now." })}
+            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Reset filters" }) : undefined}
             onAction={hasActiveFilters ? handleResetFilters : undefined}
           />
         ) : (
@@ -402,11 +402,11 @@ export function AdminNotificationsPage() {
               }}
             >
               <span>
-                {notifications.length} von {meta.total} Mitteilungen angezeigt
+                {notifications.length} {t("ofCountNotifications", { defaultValue: "of" })} {meta.total} {t("notificationsShown", { defaultValue: "notifications shown" })}
               </span>
               {unreadCount > 0 && (
                 <span style={{ color: "var(--color-admin-accent, #2563eb)", fontWeight: 700 }}>
-                  {unreadCount} ungelese(n)
+                  {unreadCount} {t("unread", { defaultValue: "unread" })}
                 </span>
               )}
             </div>
@@ -437,11 +437,11 @@ export function AdminNotificationsPage() {
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   style={{ fontSize: "12px" }}
                 >
-                  <Icon name="chevron-left" size={14} /> Zurück
+                  <Icon name="chevron-left" size={14} /> {t("previous", { defaultValue: "Previous" })}
                 </Button>
 
                 <span style={{ fontSize: "12px", color: "var(--color-admin-muted, #94a3b8)", padding: "0 8px" }}>
-                  Seite {meta.page} von {meta.pages}
+                  {t("pageOf", { defaultValue: "Page {{page}} of {{pages}}", page: meta.page, pages: meta.pages })}
                 </span>
 
                 <Button
@@ -451,7 +451,7 @@ export function AdminNotificationsPage() {
                   onClick={() => setCurrentPage((p) => Math.min(meta.pages, p + 1))}
                   style={{ fontSize: "12px" }}
                 >
-                  Weiter <Icon name="chevron-right" size={14} />
+                  {t("next", { defaultValue: "Next" })} <Icon name="chevron-right" size={14} />
                 </Button>
               </div>
             )}

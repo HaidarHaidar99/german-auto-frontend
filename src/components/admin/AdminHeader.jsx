@@ -17,7 +17,7 @@ export function AdminHeader({
   const { user, role } = useAdminAuth();
   const { settings } = useSettings();
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation(["admin", "common"]);
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
@@ -332,12 +332,12 @@ export function AdminHeader({
                 fontSize: "clamp(1.25rem, 2vw, 1.5rem)",
                 fontWeight: 800,
                 letterSpacing: "-0.4px",
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 margin: 0,
                 lineHeight: 1.25,
               }}
             >
-              Welcome, {displayName}
+              {t("welcomeUser", { defaultValue: "Welcome, {{name}}", name: displayName })}
             </h1>
             <div
               style={{
@@ -347,7 +347,7 @@ export function AdminHeader({
                 marginTop: "3px",
               }}
             >
-              Role:{" "}
+              {t("role", { defaultValue: "Role" })}:{" "}
               <span style={{ color: isSuperAdmin ? "#d97706" : "var(--color-admin-accent)", fontWeight: 700 }}>
                 {displayRole}
               </span>
@@ -442,8 +442,8 @@ export function AdminHeader({
                   setNotificationsOpen((prev) => !prev);
                   if (!notificationsOpen) fetchNotifications();
                 }}
-                title="Notifications"
-                aria-label="Notifications"
+                title={t("nav.notifications", { defaultValue: "Notifications" })}
+                aria-label={t("nav.notifications", { defaultValue: "Notifications" })}
                 style={{
                   position: "relative",
                   display: "flex",
@@ -518,7 +518,7 @@ export function AdminHeader({
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <Icon name="bell" size={16} style={{ color: "var(--color-admin-accent)" }} />
                       <span style={{ fontWeight: 700, fontSize: "13px", color: "var(--color-admin-text)" }}>
-                        Notifications
+                        {t("nav.notifications", { defaultValue: "Notifications" })}
                       </span>
                       {unreadCount > 0 && (
                         <span
@@ -531,7 +531,7 @@ export function AdminHeader({
                             padding: "2px 6px",
                           }}
                         >
-                          {unreadCount} new
+                          {unreadCount} {t("new", { defaultValue: "new" })}
                         </span>
                       )}
                     </div>
@@ -550,7 +550,7 @@ export function AdminHeader({
                           padding: 0,
                         }}
                       >
-                        Mark all read
+                        {t("notificationsPage.markAllRead", { defaultValue: "Mark all read" })}
                       </button>
                     )}
                   </div>
@@ -559,12 +559,12 @@ export function AdminHeader({
                   <div style={{ maxHeight: "280px", overflowY: "auto" }}>
                     {notificationsLoading && notificationsList.length === 0 ? (
                       <div style={{ padding: "20px", textAlign: "center", fontSize: "12px", color: "var(--color-admin-muted)" }}>
-                        Loading notifications...
+                        {t("loadingNotifications", { defaultValue: "Loading notifications..." })}
                       </div>
                     ) : notificationsList.length === 0 ? (
                       <div style={{ padding: "28px 16px", textAlign: "center", color: "var(--color-admin-muted)", fontSize: "13px" }}>
                         <Icon name="check-circle" size={24} style={{ color: "#10b981", marginBottom: "6px" }} />
-                        <div>All caught up! No notifications.</div>
+                        <div>{t("noNotifications", { defaultValue: "All caught up! No notifications." })}</div>
                       </div>
                     ) : (
                       notificationsList.map((item) => (
@@ -621,7 +621,7 @@ export function AdminHeader({
                       display: "block",
                     }}
                   >
-                    View All Notifications →
+                    {t("viewAllNotifications", { defaultValue: "View All Notifications →" })}
                   </Link>
                 </div>
               )}
@@ -631,7 +631,7 @@ export function AdminHeader({
             <button
               type="button"
               onClick={() => navigate("/admincoresecure/profile")}
-              title="View and edit profile"
+              title={t("viewProfile", { defaultValue: "View and edit profile" })}
               style={{
                 backgroundColor: "var(--color-admin-pill-bg)",
                 borderRadius: "9999px",

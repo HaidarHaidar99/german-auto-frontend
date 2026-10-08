@@ -200,7 +200,7 @@ export function AdminCarsPage() {
         });
       }
     } catch (err) {
-      setError(err?.message || t("fetchCarsError", { defaultValue: "Fehler beim Laden des Fahrzeugbestands." }));
+      setError(err?.message || t("fetchCarsError", { defaultValue: "Error loading vehicle inventory." }));
       setCars([]);
     } finally {
       setLoading(false);
@@ -296,7 +296,7 @@ export function AdminCarsPage() {
     try {
       setStatusModalLoading(true);
       await carsService.adminSetStatus(carId, nextStatus);
-      showToast("success", t("statusUpdatedSuccess", { defaultValue: `Fahrzeugstatus auf ${nextStatus} geändert.` }));
+      showToast("success", t("statusUpdatedSuccess", { defaultValue: `Vehicle status updated to ${nextStatus}.` }));
       setStatusModalOpen(false);
       setCarForStatusModal(null);
 
@@ -306,7 +306,7 @@ export function AdminCarsPage() {
       );
       fetchSummaryCounts();
     } catch (err) {
-      showToast("error", err?.message || t("statusUpdateError", { defaultValue: "Fehler beim Ändern des Fahrzeugstatus." }));
+      showToast("error", err?.message || t("statusUpdateError", { defaultValue: "Error updating vehicle status." }));
     } finally {
       setStatusModalLoading(false);
     }
@@ -320,10 +320,10 @@ export function AdminCarsPage() {
 
       if (editingCar) {
         await carsService.adminUpdateCar(editingCar.id, payload);
-        showToast("success", t("vehicleUpdatedSuccess", { defaultValue: "Fahrzeug erfolgreich aktualisiert." }));
+        showToast("success", t("vehicleUpdatedSuccess", { defaultValue: "Vehicle updated successfully." }));
       } else {
         await carsService.adminCreateCar(payload);
-        showToast("success", t("vehicleCreatedSuccess", { defaultValue: "Fahrzeug erfolgreich angelegt." }));
+        showToast("success", t("vehicleCreatedSuccess", { defaultValue: "Vehicle created successfully." }));
       }
 
       setEditorOpen(false);
@@ -334,7 +334,7 @@ export function AdminCarsPage() {
       if (err?.errors && typeof err.errors === "object") {
         setEditorErrors(err.errors);
       }
-      showToast("error", err?.message || t("vehicleSaveError", { defaultValue: "Fehler beim Speichern des Fahrzeugs." }));
+      showToast("error", err?.message || t("vehicleSaveError", { defaultValue: "Error saving vehicle." }));
     } finally {
       setEditorSaving(false);
     }
@@ -351,7 +351,7 @@ export function AdminCarsPage() {
     try {
       setDeleteLoading(true);
       await carsService.adminDeleteCar(carToDelete.id);
-      showToast("success", t("vehicleDeletedSuccess", { defaultValue: "Fahrzeug erfolgreich gelöscht." }));
+      showToast("success", t("vehicleDeletedSuccess", { defaultValue: "Vehicle deleted successfully." }));
       setDeleteModalOpen(false);
       setCarToDelete(null);
 
@@ -363,7 +363,7 @@ export function AdminCarsPage() {
       }
       fetchSummaryCounts();
     } catch (err) {
-      showToast("error", err?.message || t("vehicleDeleteError", { defaultValue: "Fehler beim Löschen des Fahrzeugs." }));
+      showToast("error", err?.message || t("vehicleDeleteError", { defaultValue: "Error deleting vehicle." }));
     } finally {
       setDeleteLoading(false);
     }
@@ -376,15 +376,15 @@ export function AdminCarsPage() {
       showToast(
         "success",
         nextFeatured
-          ? t("featuredActivated", { defaultValue: "Fahrzeug wird nun auf der Startseite hervorgehoben." })
-          : t("featuredDeactivated", { defaultValue: "Hervorhebung für Fahrzeug aufgehoben." })
+          ? t("featuredActivated", { defaultValue: "Vehicle is now featured on the homepage." })
+          : t("featuredDeactivated", { defaultValue: "Vehicle featured highlight removed." })
       );
       setCars((prev) =>
         prev.map((c) => (c.id === carId ? { ...c, is_featured: nextFeatured } : c))
       );
       fetchSummaryCounts();
     } catch (err) {
-      showToast("error", err?.message || t("featuredUpdateError", { defaultValue: "Fehler beim Aktualisieren der Hervorhebung." }));
+      showToast("error", err?.message || t("featuredUpdateError", { defaultValue: "Error updating featured status." }));
     }
   };
 
@@ -394,15 +394,15 @@ export function AdminCarsPage() {
       showToast(
         "success",
         nextVisible
-          ? t("visibilityVisible", { defaultValue: "Fahrzeug ist nun öffentlich sichtbar." })
-          : t("visibilityHidden", { defaultValue: "Fahrzeug wurde für Besucher ausgeblendet." })
+          ? t("visibilityVisible", { defaultValue: "Vehicle is now publicly visible." })
+          : t("visibilityHidden", { defaultValue: "Vehicle has been hidden from visitors." })
       );
       setCars((prev) =>
         prev.map((c) => (c.id === carId ? { ...c, is_visible: nextVisible } : c))
       );
       fetchSummaryCounts();
     } catch (err) {
-      showToast("error", err?.message || t("visibilityUpdateError", { defaultValue: "Fehler beim Aktualisieren der Sichtbarkeit." }));
+      showToast("error", err?.message || t("visibilityUpdateError", { defaultValue: "Error updating visibility." }));
     }
   };
 
@@ -456,11 +456,11 @@ export function AdminCarsPage() {
 
       {/* Page Header */}
       <AdminPageHeader
-        title={t("inventory")}
-        subtitle={t("inventorySubtitle", { defaultValue: "Verwaltung aller aktiven, reservierten und verkauften Fahrzeuge im System" })}
+        title={t("inventory", { defaultValue: "Vehicle Inventory" })}
+        subtitle={t("inventorySubtitle", { defaultValue: "Manage all active, reserved, and sold vehicles" })}
         badge={
           <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-            {pagination.total} {t("statTotalVehicles", { defaultValue: "Fahrzeuge" })}
+            {pagination.total} {t("statTotalVehicles", { defaultValue: "Vehicles" })}
           </span>
         }
         actions={
@@ -471,13 +471,13 @@ export function AdminCarsPage() {
             style={{ fontSize: "var(--font-size-xs)" }}
           >
             <Icon name="plus" size={14} style={{ marginRight: "6px" }} />
-            {t("addVehicle", { defaultValue: "Fahrzeug anlegen" })}
+            {t("addVehicle", { defaultValue: "Add Vehicle" })}
           </Button>
         }
       />
 
       {loading ? (
-        <AdminLoadingState message={t("loadingCarsDatabase", { defaultValue: "Lade Fahrzeugbestand aus der Datenbank..." })} />
+        <AdminLoadingState message={t("loadingCarsDatabase", { defaultValue: "Loading vehicle inventory from database..." })} />
       ) : error ? (
         <ErrorState message={error} onRetry={() => fetchCars()} />
       ) : (
@@ -502,11 +502,11 @@ export function AdminCarsPage() {
           {cars.length === 0 && !hasActiveFilters ? (
             <AdminEmptyState
               icon="car"
-              title={t("emptyInventoryTitle", { defaultValue: "Keine Fahrzeuge im Bestand" })}
+              title={t("emptyInventoryTitle", { defaultValue: "No vehicles in inventory" })}
               description={t("emptyInventoryDescription", {
-                defaultValue: "Es sind derzeit keine Fahrzeuge in der Datenbank angelegt. Erstellen Sie das erste Fahrzeug mit dem Button oben.",
+                defaultValue: "There are currently no vehicles stored in the database. Add the first vehicle using the button above.",
               })}
-              actionLabel={t("addFirstVehicle", { defaultValue: "Jetzt Fahrzeug anlegen" })}
+              actionLabel={t("addFirstVehicle", { defaultValue: "Add vehicle now" })}
               onAction={handleOpenCreate}
             />
           ) : cars.length === 0 && hasActiveFilters ? (
@@ -520,14 +520,14 @@ export function AdminCarsPage() {
               }}
             >
               <Icon name="search" size={32} style={{ color: "var(--color-admin-muted)", marginBottom: "var(--space-sm)" }} />
-              <h3 style={{ margin: "0 0 6px", fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #ffffff)" }}>
-                {t("noCarsMatchFiltersTitle", { defaultValue: "Keine passenden Fahrzeuge gefunden" })}
+              <h3 style={{ margin: "0 0 6px", fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #0f172a)" }}>
+                {t("noCarsMatchFiltersTitle", { defaultValue: "No matching vehicles found" })}
               </h3>
               <p style={{ margin: "0 0 var(--space-md)", fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)" }}>
-                {t("noCarsMatchFiltersDesc", { defaultValue: "Kein Fahrzeug entspricht den ausgewählten Filterkriterien." })}
+                {t("noCarsMatchFiltersDesc", { defaultValue: "No vehicles match your selected filter criteria." })}
               </p>
               <Button variant="outline" size="sm" onClick={handleResetFilters}>
-                {t("resetFilters", { defaultValue: "Filter zurücksetzen" })}
+                {t("resetFilters", { defaultValue: "Reset Filters" })}
               </Button>
             </div>
           ) : (

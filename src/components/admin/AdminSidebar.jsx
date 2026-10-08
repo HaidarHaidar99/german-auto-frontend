@@ -57,14 +57,14 @@ export function AdminSidebar({ className = "", style = {} }) {
   };
 
   const navItems = [
-    { to: "/admincoresecure", end: true, label: "Dashboard", icon: "layout" },
-    { to: "/admincoresecure/cars", end: false, label: "Inventory", icon: "car" },
-    { to: "/admincoresecure/forms", end: false, label: "Forms", icon: "mail" },
-    { to: "/admincoresecure/reviews", end: false, label: "Reviews", icon: "star" },
+    { to: "/admincoresecure", end: true, label: t("dashboard", { defaultValue: "Dashboard" }), icon: "layout" },
+    { to: "/admincoresecure/cars", end: false, label: t("inventory", { defaultValue: "Inventory" }), icon: "car" },
+    { to: "/admincoresecure/forms", end: false, label: t("forms", { defaultValue: "Forms" }), icon: "mail" },
+    { to: "/admincoresecure/reviews", end: false, label: t("reviews", { defaultValue: "Reviews" }), icon: "star" },
     {
       to: "/admincoresecure/notifications",
       end: false,
-      label: "Notifications",
+      label: t("notifications", { defaultValue: "Notifications" }),
       icon: "bell",
       badgeCount: unreadCount,
     },
@@ -73,13 +73,13 @@ export function AdminSidebar({ className = "", style = {} }) {
           {
             to: "/admincoresecure/users",
             end: false,
-            label: "User Management",
+            label: t("userManagement", { defaultValue: "User Management" }),
             icon: "users",
           },
         ]
       : []),
-    { to: "/admincoresecure/profile", end: false, label: "Profile", icon: "user" },
-    { to: "/admincoresecure/settings", end: false, label: "Settings", icon: "settings" },
+    { to: "/admincoresecure/profile", end: false, label: t("profile", { defaultValue: "Profile" }), icon: "user" },
+    { to: "/admincoresecure/settings", end: false, label: t("settings", { defaultValue: "Settings" }), icon: "settings" },
   ];
 
   return (
@@ -138,7 +138,7 @@ export function AdminSidebar({ className = "", style = {} }) {
                 fontSize: "13px",
                 fontWeight: 800,
                 letterSpacing: "-0.2px",
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 lineHeight: 1.25,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -242,7 +242,7 @@ export function AdminSidebar({ className = "", style = {} }) {
             }}
           >
             <Icon name="log-out" size={16} />
-            <span>Logout</span>
+            <span>{t("logout", { defaultValue: "Logout" })}</span>
           </button>
         </div>
       </aside>

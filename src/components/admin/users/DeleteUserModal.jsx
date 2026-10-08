@@ -33,7 +33,7 @@ export function DeleteUserModal({
     } catch (err) {
       setServerError(
         err?.message ||
-        t("errorDeleteUserFailed", { defaultValue: "Fehler beim Löschen des Benutzerkontos." })
+        t("errorDeleteUserFailed", { defaultValue: "Failed to delete user account." })
       );
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ export function DeleteUserModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={t("deleteUserTitle", { defaultValue: "Benutzerkonto dauerhaft löschen?" })}
+      title={t("deleteUserTitle", { defaultValue: "Permanently Delete User Account?" })}
       size="sm"
       className={className}
     >
@@ -66,7 +66,10 @@ export function DeleteUserModal({
         >
           <Icon name="trash" size={18} style={{ flexShrink: 0, marginTop: "2px" }} />
           <div>
-            <strong>Unwiderrufliche Aktion:</strong> Das Konto wird vollständig und permanent aus der Datenbank entfernt. Es handelt sich nicht um eine Deaktivierung.
+            <strong>{t("irreversibleAction", { defaultValue: "Irreversible Action:" })}</strong>{" "}
+            {t("irreversibleActionNotice", {
+              defaultValue: "This account will be completely and permanently removed from the database. This is not a deactivation.",
+            })}
           </div>
         </div>
 
@@ -83,12 +86,12 @@ export function DeleteUserModal({
             gap: "4px",
           }}
         >
-          <div style={{ fontWeight: 600, color: "var(--color-admin-text)", fontSize: "var(--font-size-sm)" }}>
+          <div style={{ fontWeight: 600, color: "var(--color-admin-text, #0f172a)", fontSize: "var(--font-size-sm)" }}>
             {user.full_name || "—"}
           </div>
           <div style={{ color: "var(--color-admin-muted)", wordBreak: "break-all" }}>{user.email}</div>
           <div style={{ color: "var(--color-admin-muted)", marginTop: "2px" }}>
-            Rolle: <strong style={{ color: "var(--color-admin-text)" }}>{user.role}</strong>
+            {t("role", { defaultValue: "Role" })}: <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{user.role}</strong>
           </div>
         </div>
 
@@ -122,7 +125,9 @@ export function DeleteUserModal({
               color: "#fbbf24",
             }}
           >
-            Sie können Ihr eigenes Konto nicht über die administrative Benutzerverwaltung löschen.
+            {t("cannotDeleteSelfNotice", {
+              defaultValue: "You cannot delete your own account through the administrative user panel.",
+            })}
           </div>
         ) : (
           <p
@@ -133,7 +138,10 @@ export function DeleteUserModal({
               lineHeight: 1.5,
             }}
           >
-            Möchten Sie das Konto von <strong>{user.full_name || user.email}</strong> wirklich unwiderruflich löschen?
+            {t("confirmDeleteUserPrompt", {
+              defaultValue: "Are you sure you want to permanently delete the account of {{name}}?",
+              name: user.full_name || user.email,
+            })}
           </p>
         )}
 
@@ -149,7 +157,7 @@ export function DeleteUserModal({
           }}
         >
           <Button variant="ghost" onClick={onClose} disabled={loading}>
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
 
           <Button
@@ -163,8 +171,8 @@ export function DeleteUserModal({
             }}
           >
             {loading
-              ? t("deleting", { defaultValue: "Wird gelöscht..." })
-              : t("confirmDeleteUser", { defaultValue: "Konto endgültig löschen" })}
+              ? t("deleting", { defaultValue: "Deleting..." })
+              : t("confirmDeleteUser", { defaultValue: "Delete Account Permanently" })}
           </Button>
         </div>
       </div>

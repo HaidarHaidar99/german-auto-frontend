@@ -24,9 +24,9 @@ export function ContactFormSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.contactForm", { defaultValue: "Kontaktformular-Konfiguration" })}
+      title={t("settingsSections.contactForm", { defaultValue: "Contact Form Configuration" })}
       subtitle={t("contactFormSubtitle", {
-        defaultValue: "Verwalten Sie Empfänger-E-Mail, Begrüßungstexte und Erfolgsmeldungen für Kundenanfragen.",
+        defaultValue: "Manage recipient email, introductory texts, and success messages for customer inquiries.",
       })}
       sectionKey="contact_form"
       onReset={onReset}
@@ -35,15 +35,15 @@ export function ContactFormSettingsEditor({
     >
       <div style={{ marginBottom: "var(--space-lg)" }}>
         <SettingsToggle
-          label="Kontaktformular aktivieren"
-          description="Erlaubt Kunden das Absenden von Nachrichten und Fahrzeuganfragen über die Kontaktseite."
+          label={t("enableContactForm", { defaultValue: "Enable Contact Form" })}
+          description={t("enableContactFormDesc", { defaultValue: "Allows customers to submit messages and vehicle inquiries via the contact page." })}
           checked={data.enabled !== false}
           onChange={(checked) => handleChange("enabled", checked)}
         />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-        <SettingsField label="Formular-Überschrift (DE)" locale="de" error={errors["contact_form.title_de"]}>
+        <SettingsField label={`${t("formTitle", { defaultValue: "Form Title" })} (DE)`} locale="de" error={errors["contact_form.title_de"]}>
           <Input
             value={data.title_de || ""}
             onChange={(e) => handleChange("title_de", e.target.value)}
@@ -51,7 +51,7 @@ export function ContactFormSettingsEditor({
           />
         </SettingsField>
 
-        <SettingsField label="Formular-Überschrift (EN)" locale="en" error={errors["contact_form.title_en"]}>
+        <SettingsField label={`${t("formTitle", { defaultValue: "Form Title" })} (EN)`} locale="en" error={errors["contact_form.title_en"]}>
           <Input
             value={data.title_en || ""}
             onChange={(e) => handleChange("title_en", e.target.value)}
@@ -61,7 +61,7 @@ export function ContactFormSettingsEditor({
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
-        <SettingsField label="Einleitungstext (DE)" locale="de" error={errors["contact_form.description_de"]}>
+        <SettingsField label={`${t("introText", { defaultValue: "Introductory Text" })} (DE)`} locale="de" error={errors["contact_form.description_de"]}>
           <Textarea
             value={data.description_de || ""}
             onChange={(e) => handleChange("description_de", e.target.value)}
@@ -70,7 +70,7 @@ export function ContactFormSettingsEditor({
           />
         </SettingsField>
 
-        <SettingsField label="Einleitungstext (EN)" locale="en" error={errors["contact_form.description_en"]}>
+        <SettingsField label={`${t("introText", { defaultValue: "Introductory Text" })} (EN)`} locale="en" error={errors["contact_form.description_en"]}>
           <Textarea
             value={data.description_en || ""}
             onChange={(e) => handleChange("description_en", e.target.value)}
@@ -82,21 +82,21 @@ export function ContactFormSettingsEditor({
 
       <div style={{ marginTop: "var(--space-md)" }}>
         <SettingsField
-          label="Interner E-Mail-Empfänger für Einsendungen"
-          helper="Wird im öffentlichen Frontend nicht offengelegt. Neue Kundenanfragen werden an diese Adresse weitergeleitet."
+          label={t("recipientEmail", { defaultValue: "Internal Recipient Email for Submissions" })}
+          helper={t("recipientEmailHelper", { defaultValue: "Not displayed in public frontend. New customer inquiries are forwarded to this address." })}
           error={errors["contact_form.recipient_email"]}
         >
           <Input
             type="email"
             value={data.recipient_email || ""}
             onChange={(e) => handleChange("recipient_email", e.target.value)}
-            placeholder="anfragen@german-auto.de"
+            placeholder="inquiries@german-auto.de"
           />
         </SettingsField>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
-        <SettingsField label="Erfolgsmeldung nach Absenden (DE)" locale="de" error={errors["contact_form.success_message_de"]}>
+        <SettingsField label={`${t("successMessage", { defaultValue: "Success Message After Submission" })} (DE)`} locale="de" error={errors["contact_form.success_message_de"]}>
           <Input
             value={data.success_message_de || ""}
             onChange={(e) => handleChange("success_message_de", e.target.value)}
@@ -104,7 +104,7 @@ export function ContactFormSettingsEditor({
           />
         </SettingsField>
 
-        <SettingsField label="Erfolgsmeldung nach Absenden (EN)" locale="en" error={errors["contact_form.success_message_en"]}>
+        <SettingsField label={`${t("successMessage", { defaultValue: "Success Message After Submission" })} (EN)`} locale="en" error={errors["contact_form.success_message_en"]}>
           <Input
             value={data.success_message_en || ""}
             onChange={(e) => handleChange("success_message_en", e.target.value)}

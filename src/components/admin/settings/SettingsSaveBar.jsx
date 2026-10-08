@@ -68,18 +68,18 @@ export function SettingsSaveBar({
           <span
             style={{
               color: hasChanges
-                ? "var(--color-admin-text, #ffffff)"
+                ? "var(--color-admin-text, #0f172a)"
                 : saveSuccess
                 ? "#22c55e"
-                : "var(--color-admin-muted, var(--color-text-muted))",
+                : "var(--color-admin-muted, #64748b)",
               fontWeight: hasChanges ? 500 : 400,
             }}
           >
             {hasChanges
-              ? t("unsavedChangesPresent", { defaultValue: "Ungespeicherte Änderungen vorhanden" })
+              ? t("unsavedChangesPresent", { defaultValue: "Unsaved changes present" })
               : saveSuccess
-              ? t("changesSavedSuccessfully", { defaultValue: "Änderungen erfolgreich gespeichert" })
-              : t("allChangesSaved", { defaultValue: "Alle Änderungen gespeichert" })}
+              ? t("changesSavedSuccessfully", { defaultValue: "Changes saved successfully" })
+              : t("allChangesSaved", { defaultValue: "All changes saved" })}
           </span>
         </div>
 
@@ -106,10 +106,10 @@ export function SettingsSaveBar({
             disabled={saving}
             onClick={onDiscard}
             style={{
-              color: "var(--color-admin-muted, var(--color-text-muted))",
+              color: "var(--color-admin-muted, #64748b)",
             }}
           >
-            {t("discardChanges", { defaultValue: "Verwerfen" })}
+            {t("discardChanges", { defaultValue: "Discard" })}
           </Button>
         )}
 
@@ -125,8 +125,8 @@ export function SettingsSaveBar({
         >
           <Icon name="save" size={16} style={{ marginRight: "6px" }} />
           {saving
-            ? t("saving", { defaultValue: "Speichern..." })
-            : t("saveChanges", { defaultValue: "Speichern" })}
+            ? t("saving", { defaultValue: "Saving..." })
+            : t("saveChanges", { defaultValue: "Save Changes" })}
         </Button>
       </div>
     </div>

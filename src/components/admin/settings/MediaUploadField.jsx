@@ -91,7 +91,7 @@ export function MediaUploadField({
   return (
     <SettingsField
       label={label}
-      helper={helper || `Erlaubt: ${accept} (max. ${maxSizeMB} MB)`}
+      helper={helper || `${t("allowed", { defaultValue: "Allowed" })}: ${accept} (${t("max", { defaultValue: "max." })} ${maxSizeMB} MB)`}
       error={error || uploadError}
       required={required}
       className={className}
@@ -112,8 +112,8 @@ export function MediaUploadField({
               alignItems: "center",
               gap: "var(--space-md)",
               padding: "var(--space-md)",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.12))",
+              backgroundColor: "var(--color-admin-card-inner, rgba(0, 0, 0, 0.02))",
+              border: "1px solid var(--color-admin-border, #cbd5e1)",
               borderRadius: "var(--radius-sm, 6px)",
               overflow: "hidden",
             }}
@@ -130,7 +130,7 @@ export function MediaUploadField({
                 alignItems: "center",
                 justifyContent: "center",
                 flexShrink: 0,
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                border: "1px solid rgba(0, 0, 0, 0.1)",
               }}
             >
               {isVideo ? (
@@ -157,7 +157,7 @@ export function MediaUploadField({
                 style={{
                   margin: 0,
                   fontSize: "var(--font-size-xs)",
-                  color: "var(--color-admin-text, #ffffff)",
+                  color: "var(--color-admin-text, #0f172a)",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
@@ -169,12 +169,12 @@ export function MediaUploadField({
               <span
                 style={{
                   fontSize: "11px",
-                  color: "var(--color-admin-muted, var(--color-text-muted))",
+                  color: "var(--color-admin-muted, #64748b)",
                   display: "block",
                   marginTop: "2px",
                 }}
               >
-                {uploading ? t("uploading", { defaultValue: "Wird hochgeladen..." }) : t("configuredAsset", { defaultValue: "Aktives Medium" })}
+                {uploading ? t("uploading", { defaultValue: "Uploading..." }) : t("configuredAsset", { defaultValue: "Active media" })}
               </span>
             </div>
 
@@ -186,7 +186,7 @@ export function MediaUploadField({
                 onClick={() => fileInputRef.current?.click()}
                 style={{ fontSize: "var(--font-size-xs)", padding: "4px 10px" }}
               >
-                {t("replace", { defaultValue: "Ersetzen" })}
+                {t("replace", { defaultValue: "Replace" })}
               </Button>
               <Button
                 variant="ghost"
@@ -214,7 +214,7 @@ export function MediaUploadField({
             }}
             tabIndex={0}
             role="button"
-            aria-label={`${label} Datei hochladen`}
+            aria-label={`${label} ${t("uploadFile", { defaultValue: "Upload file" })}`}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -222,8 +222,8 @@ export function MediaUploadField({
               justifyContent: "center",
               gap: "var(--space-xs)",
               padding: "var(--space-lg) var(--space-md)",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-              border: "1px dashed var(--color-admin-border, rgba(255, 255, 255, 0.2))",
+              backgroundColor: "var(--color-admin-card-inner, rgba(0, 0, 0, 0.02))",
+              border: "1px dashed var(--color-admin-border, #cbd5e1)",
               borderRadius: "var(--radius-sm, 6px)",
               cursor: uploading ? "wait" : "pointer",
               transition: "border-color 0.2s, background-color 0.2s",
@@ -238,17 +238,17 @@ export function MediaUploadField({
               style={{
                 fontSize: "var(--font-size-sm)",
                 fontWeight: 500,
-                color: "var(--color-admin-text, #ffffff)",
+                color: "var(--color-admin-text, #0f172a)",
               }}
             >
               {uploading
-                ? t("uploading", { defaultValue: "Wird hochgeladen..." })
-                : t("clickToUploadMedia", { defaultValue: "Datei auswählen oder ablegen" })}
+                ? t("uploading", { defaultValue: "Uploading..." })
+                : t("clickToUploadMedia", { defaultValue: "Choose file or drag & drop" })}
             </span>
             <span
               style={{
                 fontSize: "var(--font-size-xs)",
-                color: "var(--color-admin-muted, var(--color-text-muted))",
+                color: "var(--color-admin-muted, #64748b)",
               }}
             >
               {maxSizeMB} MB max. • {accept}

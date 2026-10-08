@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import Badge from "../../ui/Badge";
 import IconButton from "../../ui/IconButton";
 import Icon from "../../common/Icon";
 import Button from "../../ui/Button";
-import ReviewImageModal from "./ReviewImageModal";
 
 export function ReviewTable({
   reviews = [],
@@ -17,9 +16,7 @@ export function ReviewTable({
   style = {},
 }) {
   const { t, i18n } = useTranslation(["admin", "common"]);
-  const currentLang = i18n.language || "de";
-
-  const [activeModalImage, setActiveModalImage] = useState(null);
+  const currentLang = i18n.language || "en";
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
@@ -36,37 +33,37 @@ export function ReviewTable({
     switch (status) {
       case "PUBLISHED":
         return {
-          color: "#4ade80",
+          color: "#16a34a",
           bg: "rgba(34, 197, 94, 0.12)",
           border: "rgba(34, 197, 94, 0.3)",
-          label: t("statusPublished", { defaultValue: "Veröffentlicht" }),
+          label: t("statusPublished", { defaultValue: "Published" }),
         };
       case "PENDING":
         return {
-          color: "#fbbf24",
+          color: "#d97706",
           bg: "rgba(245, 158, 11, 0.12)",
           border: "rgba(245, 158, 11, 0.3)",
-          label: t("statusPending", { defaultValue: "Ausstehend" }),
+          label: t("statusPending", { defaultValue: "Pending" }),
         };
       case "HIDDEN":
         return {
-          color: "#22d3ee",
+          color: "#0891b2",
           bg: "rgba(6, 182, 212, 0.12)",
           border: "rgba(6, 182, 212, 0.3)",
-          label: t("statusHidden", { defaultValue: "Ausgeblendet" }),
+          label: t("statusHidden", { defaultValue: "Hidden" }),
         };
       case "DELETED":
         return {
-          color: "#94a3b8",
-          bg: "rgba(148, 163, 184, 0.12)",
-          border: "rgba(148, 163, 184, 0.3)",
-          label: t("statusDeleted", { defaultValue: "Gelöscht" }),
+          color: "#dc2626",
+          bg: "rgba(239, 68, 68, 0.12)",
+          border: "rgba(239, 68, 68, 0.3)",
+          label: t("statusDeleted", { defaultValue: "Deleted" }),
         };
       default:
         return {
-          color: "#e2e8f0",
-          bg: "rgba(255, 255, 255, 0.08)",
-          border: "rgba(255, 255, 255, 0.15)",
+          color: "var(--color-admin-text, #0f172a)",
+          bg: "var(--color-admin-accent-subtle, rgba(0, 0, 0, 0.04))",
+          border: "var(--color-admin-border, #e2e8f0)",
           label: status,
         };
     }
@@ -80,14 +77,14 @@ export function ReviewTable({
           <span
             key={i}
             style={{
-              color: i <= r ? "var(--color-primary, var(--color-text))" : "rgba(255, 255, 255, 0.15)",
-              fontSize: "13px",
+              color: i <= r ? "#f59e0b" : "var(--color-admin-border, #cbd5e1)",
+              fontSize: "14px",
             }}
           >
             ★
           </span>
         ))}
-        <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #94a3b8)", marginLeft: "4px" }}>
+        <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)", marginLeft: "4px" }}>
           ({r})
         </span>
       </div>
@@ -102,9 +99,9 @@ export function ReviewTable({
         style={{
           width: "100%",
           overflowX: "auto",
-          backgroundColor: "var(--color-admin-card, #121418)",
+          backgroundColor: "var(--color-admin-card, #ffffff)",
           borderRadius: "var(--radius-md, 8px)",
-          border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+          border: "1px solid var(--color-admin-border, #e2e8f0)",
         }}
       >
         <table
@@ -118,21 +115,20 @@ export function ReviewTable({
           <thead>
             <tr
               style={{
-                borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
-                backgroundColor: "rgba(255, 255, 255, 0.02)",
-                color: "var(--color-admin-muted, #94a3b8)",
+                borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
+                backgroundColor: "var(--color-admin-border-subtle, #f8fafc)",
+                color: "var(--color-admin-muted, #64748b)",
                 textTransform: "uppercase",
                 fontSize: "11px",
                 letterSpacing: "0.06em",
               }}
             >
-              <th style={{ padding: "12px 16px", minWidth: "160px" }}>{t("columns.author", { defaultValue: "Verfasser" })}</th>
-              <th style={{ padding: "12px 16px", width: "140px" }}>{t("columns.rating", { defaultValue: "Bewertung" })}</th>
-              <th style={{ padding: "12px 16px", minWidth: "260px" }}>{t("reviewText", { defaultValue: "Erfahrungsbericht" })}</th>
-              <th style={{ padding: "12px 16px", width: "110px", textAlign: "center" }}>Foto</th>
+              <th style={{ padding: "12px 16px", minWidth: "160px" }}>{t("columns.author", { defaultValue: "Author" })}</th>
+              <th style={{ padding: "12px 16px", width: "140px" }}>{t("columns.rating", { defaultValue: "Rating" })}</th>
+              <th style={{ padding: "12px 16px", minWidth: "280px" }}>{t("reviewText", { defaultValue: "Review Content" })}</th>
               <th style={{ padding: "12px 16px", width: "160px" }}>{t("columns.status", { defaultValue: "Status" })}</th>
-              <th style={{ padding: "12px 16px", width: "150px" }}>{t("columns.date", { defaultValue: "Eingangsdatum" })}</th>
-              <th style={{ padding: "12px 16px", textAlign: "right", width: "150px" }}>{t("actions", { defaultValue: "Aktionen" })}</th>
+              <th style={{ padding: "12px 16px", width: "150px" }}>{t("columns.date", { defaultValue: "Date" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "right", width: "150px" }}>{t("actions", { defaultValue: "Actions" })}</th>
             </tr>
           </thead>
           <tbody>
@@ -147,11 +143,11 @@ export function ReviewTable({
                 <tr
                   key={rev.id}
                   style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                    borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
                     transition: "background-color 0.15s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
+                    e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, #f1f5f9)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
@@ -166,24 +162,25 @@ export function ReviewTable({
                       onKeyDown={(e) => e.key === "Enter" && onViewDetail?.(rev)}
                       style={{
                         fontWeight: 600,
-                        color: "var(--color-admin-text, #ffffff)",
+                        color: "var(--color-admin-text, #0f172a)",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         gap: "6px",
                       }}
-                      title={t("viewFullReview", { defaultValue: "Rezension prüfen" })}
+                      title={t("viewFullReview", { defaultValue: "View Review Details" })}
                     >
                       <span>{rev.name || "—"}</span>
                       {rev.user_id && (
                         <span
-                          title={t("userAccount", { defaultValue: "Verknüpftes Kundenkonto" })}
+                          title={t("userAccount", { defaultValue: "Linked Customer Account" })}
                           style={{
                             fontSize: "10px",
                             padding: "1px 4px",
                             borderRadius: "3px",
-                            backgroundColor: "rgba(255, 255, 255, 0.15)",
-                            color: "var(--color-primary, var(--color-text))",
+                            backgroundColor: "var(--color-admin-accent-subtle, #e0f2fe)",
+                            color: "var(--color-admin-accent, #0284c7)",
+                            fontWeight: 600,
                           }}
                         >
                           User
@@ -202,12 +199,12 @@ export function ReviewTable({
                     <p
                       style={{
                         margin: 0,
-                        color: "var(--color-admin-muted, #cbd5e1)",
+                        color: "var(--color-admin-text, #334155)",
                         fontSize: "12px",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
-                        maxWidth: "320px",
+                        maxWidth: "340px",
                         cursor: "pointer",
                       }}
                       onClick={() => onViewDetail?.(rev)}
@@ -215,52 +212,6 @@ export function ReviewTable({
                     >
                       {rev.text || "—"}
                     </p>
-                  </td>
-
-                  {/* Attached Image */}
-                  <td style={{ padding: "12px 16px", verticalAlign: "middle", textAlign: "center" }}>
-                    {rev.image_url ? (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveModalImage({
-                            url: rev.image_url,
-                            name: rev.name,
-                          })
-                        }
-                        title={t("clickToEnlarge", { defaultValue: "Klicken zum Vergrößern" })}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          padding: 0,
-                          cursor: "pointer",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderRadius: "var(--radius-xs, 4px)",
-                            overflow: "hidden",
-                            border: "1px solid rgba(255, 255, 255, 0.4)",
-                            backgroundColor: "#000",
-                          }}
-                        >
-                          <img
-                            src={rev.image_url}
-                            alt=""
-                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                          />
-                        </div>
-                      </button>
-                    ) : (
-                      <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}>
-                        —
-                      </span>
-                    )}
                   </td>
 
                   {/* Status Badge */}
@@ -282,19 +233,19 @@ export function ReviewTable({
                         {statusCfg.label}
                       </span>
                       {isPublished && (
-                        <span style={{ fontSize: "10px", color: "#4ade80", opacity: 0.85 }}>
-                          ● {t("publicVisibilityActive", { defaultValue: "Öffentlich sichtbar" })}
+                        <span style={{ fontSize: "10px", color: "#16a34a", fontWeight: 500 }}>
+                          ● {t("publicVisibilityActive", { defaultValue: "Publicly visible" })}
                         </span>
                       )}
                     </div>
                   </td>
 
                   {/* Date */}
-                  <td style={{ padding: "12px 16px", verticalAlign: "middle", color: "var(--color-admin-muted, #94a3b8)" }}>
+                  <td style={{ padding: "12px 16px", verticalAlign: "middle", color: "var(--color-admin-muted, #64748b)" }}>
                     <div>{formatDate(rev.created_at)}</div>
                     {rev.updated_at && rev.updated_at !== rev.created_at && (
-                      <div style={{ fontSize: "10px", opacity: 0.65, marginTop: "2px" }}>
-                        {t("updatedShort", { defaultValue: "Aktualisiert" })}: {formatDate(rev.updated_at)}
+                      <div style={{ fontSize: "10px", opacity: 0.75, marginTop: "2px" }}>
+                        {t("updatedShort", { defaultValue: "Updated" })}: {formatDate(rev.updated_at)}
                       </div>
                     )}
                   </td>
@@ -309,11 +260,11 @@ export function ReviewTable({
                           size="sm"
                           variant="secondary"
                           disabled={isUpdatingThis}
-                          ariaLabel={t("publishReview", { defaultValue: "Veröffentlichen" })}
-                          title={t("publishReview", { defaultValue: "Veröffentlichen" })}
+                          ariaLabel={t("publishReview", { defaultValue: "Publish" })}
+                          title={t("publishReview", { defaultValue: "Publish" })}
                           onClick={() => onPublish?.(rev.id)}
                           style={{
-                            color: "#4ade80",
+                            color: "#16a34a",
                             backgroundColor: "rgba(34, 197, 94, 0.12)",
                             borderColor: "rgba(34, 197, 94, 0.3)",
                             width: "30px",
@@ -328,11 +279,11 @@ export function ReviewTable({
                           size="sm"
                           variant="secondary"
                           disabled={isUpdatingThis}
-                          ariaLabel={t("hideReview", { defaultValue: "Ausblenden" })}
-                          title={t("hideReview", { defaultValue: "Ausblenden" })}
+                          ariaLabel={t("hideReview", { defaultValue: "Hide" })}
+                          title={t("hideReview", { defaultValue: "Hide" })}
                           onClick={() => onHide?.(rev.id)}
                           style={{
-                            color: "#22d3ee",
+                            color: "#0891b2",
                             width: "30px",
                             height: "30px",
                           }}
@@ -345,11 +296,11 @@ export function ReviewTable({
                           size="sm"
                           variant="secondary"
                           disabled={isUpdatingThis}
-                          ariaLabel={t("publishReview", { defaultValue: "Veröffentlichen" })}
-                          title={t("publishReview", { defaultValue: "Veröffentlichen" })}
+                          ariaLabel={t("publishReview", { defaultValue: "Publish" })}
+                          title={t("publishReview", { defaultValue: "Publish" })}
                           onClick={() => onPublish?.(rev.id)}
                           style={{
-                            color: "#4ade80",
+                            color: "#16a34a",
                             width: "30px",
                             height: "30px",
                           }}
@@ -361,8 +312,8 @@ export function ReviewTable({
                         icon="eye"
                         size="sm"
                         variant="secondary"
-                        ariaLabel={t("viewFullReview", { defaultValue: "Rezension prüfen" })}
-                        title={t("viewFullReview", { defaultValue: "Rezension prüfen" })}
+                        ariaLabel={t("viewFullReview", { defaultValue: "View Review Details" })}
+                        title={t("viewFullReview", { defaultValue: "View Review Details" })}
                         onClick={() => onViewDetail?.(rev)}
                         style={{ width: "30px", height: "30px" }}
                       />
@@ -374,8 +325,8 @@ export function ReviewTable({
                           size="sm"
                           variant="ghost"
                           disabled={isUpdatingThis}
-                          ariaLabel={t("deleteReview", { defaultValue: "Löschen" })}
-                          title={t("deleteReview", { defaultValue: "Löschen" })}
+                          ariaLabel={t("deleteReview", { defaultValue: "Delete" })}
+                          title={t("deleteReview", { defaultValue: "Delete" })}
                           onClick={() => onDelete?.(rev)}
                           style={{
                             width: "30px",
@@ -413,9 +364,9 @@ export function ReviewTable({
             <div
               key={rev.id}
               style={{
-                backgroundColor: "var(--color-admin-card, #121418)",
+                backgroundColor: "var(--color-admin-card, #ffffff)",
                 borderRadius: "var(--radius-md, 8px)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                border: "1px solid var(--color-admin-border, #e2e8f0)",
                 padding: "var(--space-md, 16px)",
                 display: "flex",
                 flexDirection: "column",
@@ -433,7 +384,7 @@ export function ReviewTable({
                 }}
               >
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: "15px", color: "var(--color-admin-text, #ffffff)" }}>
+                  <div style={{ fontWeight: 700, fontSize: "15px", color: "var(--color-admin-text, #0f172a)" }}>
                     {rev.name || "—"}
                   </div>
                   <div style={{ marginTop: "2px" }}>{renderStars(rev.rating)}</div>
@@ -449,43 +400,12 @@ export function ReviewTable({
                 style={{
                   margin: 0,
                   fontSize: "13px",
-                  color: "var(--color-admin-text, #e2e8f0)",
+                  color: "var(--color-admin-text, #0f172a)",
                   lineHeight: 1.5,
                 }}
               >
                 {rev.text || "—"}
               </p>
-
-              {/* Optional Photo Attachment */}
-              {rev.image_url && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "6px 8px",
-                    backgroundColor: "rgba(255, 255, 255, 0.03)",
-                    borderRadius: "var(--radius-xs, 4px)",
-                    cursor: "pointer",
-                    width: "fit-content",
-                  }}
-                  onClick={() =>
-                    setActiveModalImage({
-                      url: rev.image_url,
-                      name: rev.name,
-                    })
-                  }
-                >
-                  <img
-                    src={rev.image_url}
-                    alt=""
-                    style={{ width: "28px", height: "28px", objectFit: "cover", borderRadius: "3px" }}
-                  />
-                  <span style={{ fontSize: "11px", color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
-                    {t("attachedPhoto", { defaultValue: "Foto ansehen" })}
-                  </span>
-                </div>
-              )}
 
               {/* Footer: Date & Moderation Buttons */}
               <div
@@ -494,12 +414,12 @@ export function ReviewTable({
                   alignItems: "center",
                   justifyContent: "space-between",
                   paddingTop: "var(--space-xs, 8px)",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderTop: "1px solid var(--color-admin-border, #e2e8f0)",
                   flexWrap: "wrap",
                   gap: "8px",
                 }}
               >
-                <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #94a3b8)" }}>
+                <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}>
                   {formatDate(rev.created_at)}
                 </span>
 
@@ -517,24 +437,7 @@ export function ReviewTable({
                         borderColor: "rgba(34, 197, 94, 1)",
                       }}
                     >
-                      <Icon name="check" size={12} /> {t("publishReview", { defaultValue: "Freigeben" })}
-                    </Button>
-                  )}
-
-                  {isHidden && (
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      disabled={isUpdatingThis}
-                      onClick={() => onPublish?.(rev.id)}
-                      style={{
-                        fontSize: "11px",
-                        padding: "4px 8px",
-                        backgroundColor: "rgba(34, 197, 94, 0.9)",
-                        borderColor: "rgba(34, 197, 94, 1)",
-                      }}
-                    >
-                      <Icon name="check" size={12} /> {t("publishReview", { defaultValue: "Freigeben" })}
+                      <Icon name="check" size={12} /> {t("publishReview", { defaultValue: "Publish" })}
                     </Button>
                   )}
 
@@ -546,18 +449,30 @@ export function ReviewTable({
                       onClick={() => onHide?.(rev.id)}
                       style={{ fontSize: "11px", padding: "4px 8px" }}
                     >
-                      <Icon name="eye-off" size={12} /> {t("hideReview", { defaultValue: "Ausblenden" })}
+                      <Icon name="eye-off" size={12} /> {t("hideReview", { defaultValue: "Hide" })}
                     </Button>
                   )}
 
-                  <Button
-                    variant="ghost"
+                  {isHidden && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      disabled={isUpdatingThis}
+                      onClick={() => onPublish?.(rev.id)}
+                      style={{ fontSize: "11px", padding: "4px 8px" }}
+                    >
+                      <Icon name="check" size={12} /> {t("publishReview", { defaultValue: "Publish" })}
+                    </Button>
+                  )}
+
+                  <IconButton
+                    icon="eye"
                     size="sm"
+                    variant="secondary"
+                    ariaLabel={t("viewFullReview", { defaultValue: "View Review Details" })}
                     onClick={() => onViewDetail?.(rev)}
-                    style={{ fontSize: "11px", padding: "4px 8px" }}
-                  >
-                    <Icon name="eye" size={12} /> {t("viewDetails", { defaultValue: "Details" })}
-                  </Button>
+                    style={{ width: "28px", height: "28px" }}
+                  />
 
                   {!isDeleted && (
                     <IconButton
@@ -565,7 +480,7 @@ export function ReviewTable({
                       size="sm"
                       variant="ghost"
                       disabled={isUpdatingThis}
-                      ariaLabel={t("deleteReview", { defaultValue: "Löschen" })}
+                      ariaLabel={t("deleteReview", { defaultValue: "Delete" })}
                       onClick={() => onDelete?.(rev)}
                       style={{ width: "28px", height: "28px", color: "var(--color-error, #ef4444)" }}
                     />
@@ -576,16 +491,6 @@ export function ReviewTable({
           );
         })}
       </div>
-
-      {/* Lightbox Modal */}
-      {activeModalImage && (
-        <ReviewImageModal
-          isOpen={Boolean(activeModalImage)}
-          imageUrl={activeModalImage.url}
-          reviewerName={activeModalImage.name}
-          onClose={() => setActiveModalImage(null)}
-        />
-      )}
 
       {/* Responsive Breakpoint CSS */}
       <style>{`

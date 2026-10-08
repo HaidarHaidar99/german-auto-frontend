@@ -35,9 +35,9 @@ export function FooterSettingsEditor({
 
   return (
     <SettingsSection
-      title={t("settingsSections.footer", { defaultValue: "Footer & Rechtliches" })}
+      title={t("settingsSections.footer", { defaultValue: "Footer & Legal" })}
       subtitle={t("footerSubtitle", {
-        defaultValue: "Gestalten Sie den Seitenabschluss, Copyright-Vermerke, Sektionstoggles und Unternehmensbeschreibung.",
+        defaultValue: "Customize the page footer, copyright notices, section toggles, and company description.",
       })}
       sectionKey="footer"
       onReset={onReset}
@@ -47,20 +47,20 @@ export function FooterSettingsEditor({
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
         {/* Footer Logo Field */}
         <MediaUploadField
-          label={t("footerLogo", { defaultValue: "Footer-Logo (Unten auf der Website)" })}
+          label={t("footerLogo", { defaultValue: "Footer Logo (Bottom of Website)" })}
           value={data.footer_logo_url || ""}
           accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
           maxSizeMB={5}
           onChange={(val) => handleChange("footer_logo_url", val)}
           onUpload={handleUploadFooterLogo}
           helper={t("footerLogoHelper", {
-            defaultValue: "Optional. Ersetzt das Standard-Hauptlogo im Footer-Bereich. SVG, PNG oder JPEG empfohlen.",
+            defaultValue: "Optional. Replaces the default main logo in the footer section. SVG, PNG or JPEG recommended.",
           })}
           error={errors["footer.footer_logo_url"]}
         />
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-        <SettingsField label="Copyright-Hinweis (DE)" locale="de" error={errors["footer.copyright_de"]}>
+        <SettingsField label={`${t("copyrightNotice", { defaultValue: "Copyright Notice" })} (DE)`} locale="de" error={errors["footer.copyright_de"]}>
           <Input
             value={data.copyright_de || ""}
             onChange={(e) => handleChange("copyright_de", e.target.value)}
@@ -68,7 +68,7 @@ export function FooterSettingsEditor({
           />
         </SettingsField>
 
-        <SettingsField label="Copyright-Hinweis (EN)" locale="en" error={errors["footer.copyright_en"]}>
+        <SettingsField label={`${t("copyrightNotice", { defaultValue: "Copyright Notice" })} (EN)`} locale="en" error={errors["footer.copyright_en"]}>
           <Input
             value={data.copyright_en || ""}
             onChange={(e) => handleChange("copyright_en", e.target.value)}
@@ -78,7 +78,7 @@ export function FooterSettingsEditor({
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
-        <SettingsField label="Footer-Beschreibung (DE)" locale="de" error={errors["footer.description_de"]}>
+        <SettingsField label={`${t("footerDescription", { defaultValue: "Footer Description" })} (DE)`} locale="de" error={errors["footer.description_de"]}>
           <Textarea
             value={data.description_de || ""}
             onChange={(e) => handleChange("description_de", e.target.value)}
@@ -87,7 +87,7 @@ export function FooterSettingsEditor({
           />
         </SettingsField>
 
-        <SettingsField label="Footer-Beschreibung (EN)" locale="en" error={errors["footer.description_en"]}>
+        <SettingsField label={`${t("footerDescription", { defaultValue: "Footer Description" })} (EN)`} locale="en" error={errors["footer.description_en"]}>
           <Textarea
             value={data.description_en || ""}
             onChange={(e) => handleChange("description_en", e.target.value)}
@@ -101,7 +101,7 @@ export function FooterSettingsEditor({
         style={{
           marginTop: "var(--space-lg)",
           paddingTop: "var(--space-md)",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          borderTop: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
         }}
       >
         <h4
@@ -109,30 +109,30 @@ export function FooterSettingsEditor({
             margin: "0 0 var(--space-md)",
             fontSize: "var(--font-size-sm)",
             fontWeight: 600,
-            color: "var(--color-admin-text, #ffffff)",
+            color: "var(--color-admin-text, #0f172a)",
           }}
         >
-          {t("footerWidgets", { defaultValue: "Sichtbarkeit im Footer" })}
+          {t("footerWidgets", { defaultValue: "Footer Visibility & Widgets" })}
         </h4>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
           <SettingsToggle
-            label={t("showContactInFooter", { defaultValue: "Kontaktdaten im Footer einblenden" })}
-            description={t("showContactInFooterDesc", { defaultValue: "Zeigt Telefonnummer, E-Mail und WhatsApp im Fußbereich an." })}
+            label={t("showContactInFooter", { defaultValue: "Show contact information in footer" })}
+            description={t("showContactInFooterDesc", { defaultValue: "Displays phone number, email, and WhatsApp in the footer." })}
             checked={data.show_contact !== false}
             onChange={(checked) => handleChange("show_contact", checked)}
           />
 
           <SettingsToggle
-            label={t("showSocialInFooter", { defaultValue: "Social-Media-Icons im Footer einblenden" })}
-            description={t("showSocialInFooterDesc", { defaultValue: "Zeigt aktive Verknüpfungen zu Instagram, YouTube etc. an." })}
+            label={t("showSocialInFooter", { defaultValue: "Show social media icons in footer" })}
+            description={t("showSocialInFooterDesc", { defaultValue: "Displays active links to Instagram, YouTube, etc." })}
             checked={data.show_social !== false}
             onChange={(checked) => handleChange("show_social", checked)}
           />
 
           <SettingsToggle
-            label={t("showLocationsInFooter", { defaultValue: "Standort-Schnellübersicht im Footer einblenden" })}
-            description={t("showLocationsInFooterDesc", { defaultValue: "Führt die hinterlegten Showroom-Adressen auf." })}
+            label={t("showLocationsInFooter", { defaultValue: "Show locations overview in footer" })}
+            description={t("showLocationsInFooterDesc", { defaultValue: "Lists showroom and dealership addresses." })}
             checked={data.show_locations !== false}
             onChange={(checked) => handleChange("show_locations", checked)}
           />

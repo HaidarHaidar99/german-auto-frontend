@@ -22,16 +22,16 @@ export function NotificationFiltersBar({
   );
 
   const typeOptions = [
-    { value: "", label: t("filterAllTypes", { defaultValue: "Alle Arten" }) },
-    { value: "CONTACT_FORM", label: t("filterContactForms", { defaultValue: "Kontaktanfragen" }) },
-    { value: "SELL_CAR_FORM", label: t("filterSellCarForms", { defaultValue: "Fahrzeugankauf" }) },
-    { value: "NEW_REVIEW", label: t("filterReviews", { defaultValue: "Kundenbewertungen" }) },
-    { value: "SYSTEM", label: t("filterSystem", { defaultValue: "Systemmeldungen" }) },
+    { value: "", label: t("filterAllTypes", { defaultValue: "All Types" }) },
+    { value: "CONTACT_FORM", label: t("filterContactForms", { defaultValue: "Contact Inquiries" }) },
+    { value: "SELL_CAR_FORM", label: t("filterSellCarForms", { defaultValue: "Car Submissions" }) },
+    { value: "NEW_REVIEW", label: t("filterReviews", { defaultValue: "Customer Reviews" }) },
+    { value: "SYSTEM", label: t("filterSystem", { defaultValue: "System Alerts" }) },
   ];
 
   const sortOptions = [
-    { value: "newest", label: t("sortNewest", { defaultValue: "Neueste zuerst" }) },
-    { value: "oldest", label: t("sortOldest", { defaultValue: "Älteste zuerst" }) },
+    { value: "newest", label: t("sortNewest", { defaultValue: "Newest first" }) },
+    { value: "oldest", label: t("sortOldest", { defaultValue: "Oldest first" }) },
   ];
 
   return (
@@ -43,9 +43,9 @@ export function NotificationFiltersBar({
         flexWrap: "wrap",
         gap: "var(--space-sm, 12px)",
         padding: "var(--space-md, 16px) var(--space-lg, 20px)",
-        backgroundColor: "var(--color-admin-card, #121418)",
+        backgroundColor: "var(--color-admin-card, #ffffff)",
         borderRadius: "var(--radius-md, 8px)",
-        border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+        border: "1px solid var(--color-admin-border, rgba(0, 0, 0, 0.08))",
         ...style,
       }}
     >
@@ -76,7 +76,7 @@ export function NotificationFiltersBar({
             transition: "all 0.15s ease",
           }}
         >
-          {t("filterAll", { defaultValue: "Alle" })}
+          {t("filterAll", { defaultValue: "All" })}
         </button>
 
         <button
@@ -97,7 +97,7 @@ export function NotificationFiltersBar({
             gap: "6px",
           }}
         >
-          <span>{t("filterUnread", { defaultValue: "Ungelesen" })}</span>
+          <span>{t("filterUnread", { defaultValue: "Unread" })}</span>
           {unreadCount > 0 && (
             <span
               style={{
@@ -130,7 +130,7 @@ export function NotificationFiltersBar({
             transition: "all 0.15s ease",
           }}
         >
-          {t("filterRead", { defaultValue: "Gelesen" })}
+          {t("filterRead", { defaultValue: "Read" })}
         </button>
       </div>
 
@@ -167,7 +167,7 @@ export function NotificationFiltersBar({
             whiteSpace: "nowrap",
           }}
         >
-          {t("resetFilters", { defaultValue: "Filter zurücksetzen" })}
+          {t("resetFilters", { defaultValue: "Reset filters" })}
         </Button>
       )}
     </div>

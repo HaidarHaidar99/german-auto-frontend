@@ -85,7 +85,7 @@ export function AdminSettingsPage() {
       setFormData(JSON.parse(JSON.stringify(rawSettings)));
       setValidationErrors({});
     } catch (err) {
-      setError(err?.message || "Fehler beim Laden der CMS-Einstellungen.");
+      setError(err?.message || t("settingsLoadError", { defaultValue: "Error loading CMS settings." }));
     } finally {
       setLoading(false);
     }
@@ -215,9 +215,9 @@ export function AdminSettingsPage() {
         const details = Object.entries(errs)
           .map(([f, msg]) => `${f}: ${msg}`)
           .join(" • ");
-        setError(`${err?.message || "Validierung fehlgeschlagen"} (${details})`);
+        setError(`${err?.message || t("validationFailed", { defaultValue: "Validation failed" })} (${details})`);
       } else {
-        setError(err?.message || "Fehler beim Speichern der Einstellungen.");
+        setError(err?.message || t("settingsSaveError", { defaultValue: "Error saving settings." }));
       }
     } finally {
       setSaving(false);
@@ -264,7 +264,7 @@ export function AdminSettingsPage() {
       setValidationErrors({});
       setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err) {
-      setError(err?.message || "Fehler beim Zurücksetzen des Bereichs.");
+      setError(err?.message || t("sectionResetError", { defaultValue: "Error resetting section." }));
     } finally {
       setResetLoading(false);
     }
@@ -315,7 +315,7 @@ export function AdminSettingsPage() {
       case "about":
         return <AboutSettingsEditor {...commonProps} />;
       default:
-        return <div>{t("selectSectionToEdit", "Wählen Sie einen Bereich zur Bearbeitung aus.")}</div>;
+        return <div>{t("selectSectionToEdit", { defaultValue: "Select a section to edit." })}</div>;
     }
   };
 
@@ -323,7 +323,9 @@ export function AdminSettingsPage() {
     <div ref={pageContainerRef} className="admin-settings-page">
       <AdminPageHeader
         title={t("settings")}
-        subtitle={t("settingsSubtitle", "Zentrales Content-Management-System & Konfiguration aller 16 Website-Bereiche")}
+        subtitle={t("settingsSubtitle", {
+          defaultValue: "Centralized Content Management System & configuration across all 16 website sections",
+        })}
         badge={
           <span
             style={{
@@ -344,7 +346,7 @@ export function AdminSettingsPage() {
       />
 
       {loading ? (
-        <AdminLoadingState message={t("loadingSettings", { defaultValue: "Lade CMS-Einstellungen aus der Datenbank..." })} />
+        <AdminLoadingState message={t("loadingSettings", { defaultValue: "Loading CMS settings from database..." })} />
       ) : error && !serverSettings ? (
         <ErrorState message={error} onRetry={fetchSettings} />
       ) : (
@@ -366,7 +368,7 @@ export function AdminSettingsPage() {
                 marginBottom: "var(--space-xs)",
               }}
             >
-              {t("selectSection", { defaultValue: "Bereich auswählen:" })}
+              {t("selectSection", { defaultValue: "Select section:" })}
             </label>
             <select
               id="mobile-section-select"
@@ -375,9 +377,9 @@ export function AdminSettingsPage() {
               style={{
                 width: "100%",
                 padding: "var(--space-sm) var(--space-md)",
-                backgroundColor: "var(--color-admin-card, #121418)",
-                color: "var(--color-admin-text, #ffffff)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.15))",
+                backgroundColor: "var(--color-admin-card, #ffffff)",
+                color: "var(--color-admin-text, #0f172a)",
+                border: "1px solid var(--color-admin-border, #cbd5e1)",
                 borderRadius: "var(--radius-sm, 6px)",
                 fontSize: "var(--font-size-sm)",
                 outline: "none",
@@ -385,7 +387,7 @@ export function AdminSettingsPage() {
             >
               {SECTIONS.map((sec) => (
                 <option key={sec.key} value={sec.key}>
-                  {t(`settingsSections.${sec.labelKey}`)} {isSectionDirty(sec.key) ? "(*)" : ""}
+                  {t(`settingsSections.${sec.labelKey}`, { defaultValue: sec.labelKey })} {isSectionDirty(sec.key) ? "(*)" : ""}
                 </option>
               ))}
             </select>
@@ -431,7 +433,7 @@ export function AdminSettingsPage() {
                   marginBottom: "6px",
                 }}
               >
-                {t("cmsSections", { defaultValue: "CMS Sektionen" })} ({SECTIONS.length})
+                {t("cmsSections", { defaultValue: "CMS Sections" })} ({SECTIONS.length})
               </div>
 
               {SECTIONS.map((sec) => {
@@ -482,7 +484,7 @@ export function AdminSettingsPage() {
 
                     {isDirty && (
                       <span
-                        title={t("unsavedChangesPresent", { defaultValue: "Ungespeicherte Änderungen" })}
+                        title={t("unsavedChangesPresent", { defaultValue: "Unsaved changes" })}
                         style={{
                           width: "7px",
                           height: "7px",
@@ -519,7 +521,7 @@ export function AdminSettingsPage() {
       <Modal
         isOpen={unsavedModalOpen}
         onClose={() => setUnsavedModalOpen(false)}
-        title={t("warning", { defaultValue: "Ungespeicherte Änderungen" })}
+        title={t("warning", { defaultValue: "Unsaved Changes" })}
         size="sm"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
@@ -533,7 +535,7 @@ export function AdminSettingsPage() {
           >
             {t("switchSectionConfirm", {
               defaultValue:
-                "Sie haben ungespeicherte Änderungen im aktuellen Bereich. Möchten Sie diesen Bereich wirklich verlassen und die Änderungen verwerfen?",
+                "You have unsaved changes in this section. Are you sure you want to discard them and switch sections?",
             })}
           </p>
 
@@ -550,7 +552,7 @@ export function AdminSettingsPage() {
               size="sm"
               onClick={() => setUnsavedModalOpen(false)}
             >
-              {t("cancel", { defaultValue: "Abbrechen" })}
+              {t("cancel", { defaultValue: "Cancel" })}
             </Button>
             <Button
               variant="primary"
@@ -562,7 +564,7 @@ export function AdminSettingsPage() {
                 color: "#ffffff",
               }}
             >
-              {t("discardChanges", { defaultValue: "Verwerfen & Wechseln" })}
+              {t("discardChanges", { defaultValue: "Discard & Switch" })}
             </Button>
           </div>
         </div>

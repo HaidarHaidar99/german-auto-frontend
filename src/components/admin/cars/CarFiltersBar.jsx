@@ -17,53 +17,53 @@ export function CarFiltersBar({
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const FUEL_OPTIONS = [
-    { value: "", label: t("allFuels", { defaultValue: "Alle Kraftstoffe" }) },
-    { value: "PETROL", label: t("fuelPetrol", { defaultValue: "Benzin" }) },
+    { value: "", label: t("allFuels", { defaultValue: "All Fuels" }) },
+    { value: "PETROL", label: t("fuelPetrol", { defaultValue: "Petrol" }) },
     { value: "DIESEL", label: t("fuelDiesel", { defaultValue: "Diesel" }) },
-    { value: "ELECTRIC", label: t("fuelElectric", { defaultValue: "Elektro" }) },
+    { value: "ELECTRIC", label: t("fuelElectric", { defaultValue: "Electric" }) },
     { value: "HYBRID", label: t("fuelHybrid", { defaultValue: "Hybrid" }) },
     { value: "PLUGIN_HYBRID", label: t("fuelPluginHybrid", { defaultValue: "Plug-in Hybrid" }) },
-    { value: "LPG", label: t("fuelLpg", { defaultValue: "Autogas / LPG" }) },
-    { value: "HYDROGEN", label: t("fuelHydrogen", { defaultValue: "Wasserstoff" }) },
-    { value: "OTHER", label: t("fuelOther", { defaultValue: "Sonstige" }) },
+    { value: "LPG", label: t("fuelLpg", { defaultValue: "LPG / Autogas" }) },
+    { value: "HYDROGEN", label: t("fuelHydrogen", { defaultValue: "Hydrogen" }) },
+    { value: "OTHER", label: t("fuelOther", { defaultValue: "Other" }) },
   ];
 
   const TRANSMISSION_OPTIONS = [
-    { value: "", label: t("allTransmissions", { defaultValue: "Alle Getriebe" }) },
-    { value: "AUTOMATIC", label: t("transmissionAutomatic", { defaultValue: "Automatik" }) },
-    { value: "MANUAL", label: t("transmissionManual", { defaultValue: "Schaltgetriebe" }) },
-    { value: "SEMI_AUTOMATIC", label: t("transmissionSemiAutomatic", { defaultValue: "Halbautomatik" }) },
+    { value: "", label: t("allTransmissions", { defaultValue: "All Transmissions" }) },
+    { value: "AUTOMATIC", label: t("transmissionAutomatic", { defaultValue: "Automatic" }) },
+    { value: "MANUAL", label: t("transmissionManual", { defaultValue: "Manual" }) },
+    { value: "SEMI_AUTOMATIC", label: t("transmissionSemiAutomatic", { defaultValue: "Semi-Automatic" }) },
   ];
 
   const CONDITION_OPTIONS = [
-    { value: "", label: t("allConditions", { defaultValue: "Alle Zustände" }) },
-    { value: "NEW", label: t("conditionNew", { defaultValue: "Neufahrzeug" }) },
-    { value: "USED", label: t("conditionUsed", { defaultValue: "Gebrauchtfahrzeug" }) },
+    { value: "", label: t("allConditions", { defaultValue: "All Conditions" }) },
+    { value: "NEW", label: t("conditionNew", { defaultValue: "New" }) },
+    { value: "USED", label: t("conditionUsed", { defaultValue: "Used" }) },
   ];
 
   const CATEGORY_OPTIONS = [
-    { value: "", label: t("allCategories", { defaultValue: "Alle Fahrzeugklassen" }) },
-    { value: "SEDAN", label: t("catSedan", { defaultValue: "Limousine" }) },
-    { value: "SUV", label: t("catSuv", { defaultValue: "SUV / Geländewagen" }) },
-    { value: "COUPE", label: t("catCoupe", { defaultValue: "Coupé" }) },
-    { value: "CONVERTIBLE", label: t("catConvertible", { defaultValue: "Cabriolet" }) },
-    { value: "WAGON", label: t("catWagon", { defaultValue: "Kombi" }) },
-    { value: "HATCHBACK", label: t("catHatchback", { defaultValue: "Schrägheck" }) },
+    { value: "", label: t("allCategories", { defaultValue: "All Categories" }) },
+    { value: "SEDAN", label: t("catSedan", { defaultValue: "Sedan" }) },
+    { value: "SUV", label: t("catSuv", { defaultValue: "SUV / Off-road" }) },
+    { value: "COUPE", label: t("catCoupe", { defaultValue: "Coupe" }) },
+    { value: "CONVERTIBLE", label: t("catConvertible", { defaultValue: "Convertible" }) },
+    { value: "WAGON", label: t("catWagon", { defaultValue: "Station Wagon" }) },
+    { value: "HATCHBACK", label: t("catHatchback", { defaultValue: "Hatchback" }) },
     { value: "VAN", label: t("catVan", { defaultValue: "Van" }) },
-    { value: "TRUCK", label: t("catTruck", { defaultValue: "Nutzfahrzeug" }) },
-    { value: "MOTORCYCLE", label: t("catMotorcycle", { defaultValue: "Motorrad" }) },
-    { value: "OTHER", label: t("catOther", { defaultValue: "Sonstige" }) },
+    { value: "TRUCK", label: t("catTruck", { defaultValue: "Commercial / Truck" }) },
+    { value: "MOTORCYCLE", label: t("catMotorcycle", { defaultValue: "Motorcycle" }) },
+    { value: "OTHER", label: t("catOther", { defaultValue: "Other" }) },
   ];
 
   const SORT_OPTIONS = [
-    { value: "newest", label: t("sortNewest", { defaultValue: "Neueste zuerst" }) },
-    { value: "oldest", label: t("sortOldest", { defaultValue: "Älteste zuerst" }) },
-    { value: "price_asc", label: t("sortPriceAsc", { defaultValue: "Preis: Niedrig → Hoch" }) },
-    { value: "price_desc", label: t("sortPriceDesc", { defaultValue: "Preis: Hoch → Niedrig" }) },
-    { value: "mileage_asc", label: t("sortMileageAsc", { defaultValue: "Kilometer: Niedrig → Hoch" }) },
-    { value: "mileage_desc", label: t("sortMileageDesc", { defaultValue: "Kilometer: Hoch → Niedrig" }) },
-    { value: "az", label: t("sortAz", { defaultValue: "Alphabetisch: A → Z" }) },
-    { value: "za", label: t("sortZa", { defaultValue: "Alphabetisch: Z → A" }) },
+    { value: "newest", label: t("sortNewest", { defaultValue: "Newest first" }) },
+    { value: "oldest", label: t("sortOldest", { defaultValue: "Oldest first" }) },
+    { value: "price_asc", label: t("sortPriceAsc", { defaultValue: "Price: Low → High" }) },
+    { value: "price_desc", label: t("sortPriceDesc", { defaultValue: "Price: High → Low" }) },
+    { value: "mileage_asc", label: t("sortMileageAsc", { defaultValue: "Mileage: Low → High" }) },
+    { value: "mileage_desc", label: t("sortMileageDesc", { defaultValue: "Mileage: High → Low" }) },
+    { value: "az", label: t("sortAz", { defaultValue: "Alphabetical: A → Z" }) },
+    { value: "za", label: t("sortZa", { defaultValue: "Alphabetical: Z → A" }) },
   ];
 
   const handleFieldChange = (field, val) => {
@@ -89,7 +89,7 @@ export function CarFiltersBar({
   );
 
   const brandOptions = [
-    { value: "", label: t("allBrands", { defaultValue: "Alle Marken" }) },
+    { value: "", label: t("allBrands", { defaultValue: "All Brands" }) },
     ...availableBrands.map((b) => ({ value: b, label: b })),
   ];
 
@@ -121,7 +121,7 @@ export function CarFiltersBar({
           <Input
             value={filters.search || ""}
             onChange={(e) => handleFieldChange("search", e.target.value)}
-            placeholder={t("searchPlaceholder", { defaultValue: "Marke, Modell oder Titel durchsuchen..." })}
+            placeholder={t("searchPlaceholder", { defaultValue: "Search make, model, or title..." })}
             startIcon="search"
             style={{ height: "38px" }}
           />
@@ -143,11 +143,11 @@ export function CarFiltersBar({
             value={filters.status || "ALL"}
             onChange={(e) => handleFieldChange("status", e.target.value)}
             options={[
-              { value: "ALL", label: t("allStatuses", { defaultValue: "Alle Status" }) },
-              { value: "AVAILABLE", label: t("statusAvailable", { defaultValue: "Verfügbar" }) },
-              { value: "RESERVED", label: t("statusReserved", { defaultValue: "Reserviert" }) },
-              { value: "SOLD", label: t("statusSold", { defaultValue: "Verkauft" }) },
-              { value: "HIDDEN", label: t("statusHidden", { defaultValue: "Ausgeblendet" }) },
+              { value: "ALL", label: t("allStatuses", { defaultValue: "All Statuses" }) },
+              { value: "AVAILABLE", label: t("statusAvailable", { defaultValue: "Available" }) },
+              { value: "RESERVED", label: t("statusReserved", { defaultValue: "Reserved" }) },
+              { value: "SOLD", label: t("statusSold", { defaultValue: "Sold" }) },
+              { value: "HIDDEN", label: t("statusHidden", { defaultValue: "Hidden" }) },
             ]}
             style={{ height: "38px" }}
           />
@@ -171,7 +171,7 @@ export function CarFiltersBar({
           style={{ height: "38px", padding: "0 14px", fontSize: "var(--font-size-xs)" }}
         >
           <Icon name="sliders" size={14} style={{ marginRight: "6px" }} />
-          {showAdvanced ? t("lessFilters", { defaultValue: "Weniger Filter" }) : t("filters", { defaultValue: "Filter" })}
+          {showAdvanced ? t("lessFilters", { defaultValue: "Fewer Filters" }) : t("filters", { defaultValue: "Filters" })}
           {hasActiveFilters && (
             <span
               style={{
@@ -193,7 +193,7 @@ export function CarFiltersBar({
             onClick={onReset}
             style={{ height: "38px", color: "var(--color-admin-muted)", fontSize: "var(--font-size-xs)" }}
           >
-            {t("resetFilters", { defaultValue: "Zurücksetzen" })}
+            {t("resetFilters", { defaultValue: "Reset Filters" })}
           </Button>
         )}
       </div>
@@ -206,12 +206,12 @@ export function CarFiltersBar({
             gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
             gap: "var(--space-sm)",
             paddingTop: "var(--space-sm)",
-            borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+            borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
           }}
         >
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("fuelType", { defaultValue: "Kraftstoffart" })}
+              {t("fuelType", { defaultValue: "Fuel Type" })}
             </label>
             <Select
               value={filters.fuel_type || ""}
@@ -223,7 +223,7 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("transmission", { defaultValue: "Getriebe" })}
+              {t("transmission", { defaultValue: "Transmission" })}
             </label>
             <Select
               value={filters.transmission || ""}
@@ -235,7 +235,7 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("condition", { defaultValue: "Zustand" })}
+              {t("condition", { defaultValue: "Condition" })}
             </label>
             <Select
               value={filters.condition || ""}
@@ -247,7 +247,7 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("category", { defaultValue: "Fahrzeugklasse" })}
+              {t("category", { defaultValue: "Vehicle Category" })}
             </label>
             <Select
               value={filters.category || ""}
@@ -259,15 +259,15 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("featured", { defaultValue: "Hervorgehoben" })}
+              {t("featured", { defaultValue: "Featured" })}
             </label>
             <Select
               value={filters.is_featured || ""}
               onChange={(e) => handleFieldChange("is_featured", e.target.value)}
               options={[
-                { value: "", label: t("all", { defaultValue: "Alle" }) },
-                { value: "true", label: t("featuredOnly", { defaultValue: "Nur Featured" }) },
-                { value: "false", label: t("standardOnly", { defaultValue: "Nur Standard" }) },
+                { value: "", label: t("all", { defaultValue: "All" }) },
+                { value: "true", label: t("featuredOnly", { defaultValue: "Featured Only" }) },
+                { value: "false", label: t("standardOnly", { defaultValue: "Standard Only" }) },
               ]}
               style={{ height: "34px", fontSize: "12px" }}
             />
@@ -275,15 +275,15 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("visibility", { defaultValue: "Sichtbarkeit" })}
+              {t("visibility", { defaultValue: "Visibility" })}
             </label>
             <Select
               value={filters.is_visible || ""}
               onChange={(e) => handleFieldChange("is_visible", e.target.value)}
               options={[
-                { value: "", label: t("all", { defaultValue: "Alle" }) },
-                { value: "true", label: t("visibleOnly", { defaultValue: "Nur Sichtbare" }) },
-                { value: "false", label: t("hiddenOnly", { defaultValue: "Nur Ausgeblendete" }) },
+                { value: "", label: t("all", { defaultValue: "All" }) },
+                { value: "true", label: t("visibleOnly", { defaultValue: "Visible Only" }) },
+                { value: "false", label: t("hiddenOnly", { defaultValue: "Hidden Only" }) },
               ]}
               style={{ height: "34px", fontSize: "12px" }}
             />
@@ -291,7 +291,7 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("filterMinPrice", { defaultValue: "Min. Preis (€)" })}
+              {t("filterMinPrice", { defaultValue: "Min. Price (€)" })}
             </label>
             <Input
               type="number"
@@ -304,7 +304,7 @@ export function CarFiltersBar({
 
           <div>
             <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginBottom: "4px", display: "block" }}>
-              {t("filterMaxPrice", { defaultValue: "Max. Preis (€)" })}
+              {t("filterMaxPrice", { defaultValue: "Max. Price (€)" })}
             </label>
             <Input
               type="number"

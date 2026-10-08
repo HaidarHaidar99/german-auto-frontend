@@ -15,6 +15,7 @@ export function Drawer({
   children,
   position = "right",
   className = "",
+  size = "md",
   closeOnBackdropClick = false,
 }) {
   useEffect(() => {
@@ -42,6 +43,7 @@ export function Drawer({
   }
 
   const isLeft = position === "left";
+  const sizeClass = size === "lg" ? "drawer-panel-lg" : "";
 
   const drawerNode = (
     <div
@@ -57,7 +59,7 @@ export function Drawer({
         role="dialog"
         aria-modal="true"
         aria-label={title || "Panel"}
-        className={`drawer-panel ${isLeft ? "drawer-panel-left" : ""} ${className}`.trim()}
+        className={`drawer-panel ${isLeft ? "drawer-panel-left" : ""} ${sizeClass} ${className}`.trim()}
         style={{
           left: isLeft ? 0 : "auto",
           right: isLeft ? "auto" : 0,

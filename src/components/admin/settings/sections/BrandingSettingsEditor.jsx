@@ -41,7 +41,7 @@ export function BrandingSettingsEditor({
     <SettingsSection
       title={t("settingsSections.branding", { defaultValue: "Branding & Logos" })}
       subtitle={t("brandingSubtitle", {
-        defaultValue: "Verwalten Sie Ihr offizielles Logo, Light- und Dark-Mode-Varianten und das Browser-Favicon.",
+        defaultValue: "Manage your official logo, light and dark mode variants, and browser favicon.",
       })}
       sectionKey="branding"
       onReset={onReset}
@@ -60,28 +60,28 @@ export function BrandingSettingsEditor({
         >
           {/* Current Logo / Dark Mode Version */}
           <MediaUploadField
-            label={t("darkModeLogo", { defaultValue: "Dark-Mode Logo (Standard)" })}
+            label={t("darkModeLogo", { defaultValue: "Dark Mode Logo (Default)" })}
             value={data.logo_url || ""}
             accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
             maxSizeMB={5}
             onChange={(val) => onChange?.({ ...data, logo_url: val, logo_dark_url: val })}
             onUpload={(file) => handleUploadAsset(file, "logo")}
             helper={t("darkModeLogoHelper", {
-              defaultValue: "Wird im standardmäßigen dunklen Design verwendet. SVG, PNG oder JPEG empfohlen.",
+              defaultValue: "Used in the default dark theme. SVG, PNG or JPEG recommended.",
             })}
             error={errors["branding.logo_url"]}
           />
 
           {/* Light Mode Logo Upload Beside Current Logo */}
           <MediaUploadField
-            label={t("lightModeLogo", { defaultValue: "Light-Mode Logo" })}
+            label={t("lightModeLogo", { defaultValue: "Light Mode Logo" })}
             value={data.logo_light_url || ""}
             accept="image/png, image/jpeg, image/webp, image/svg+xml, .png, .jpg, .jpeg, .webp, .svg"
             maxSizeMB={5}
             onChange={(val) => onChange?.({ ...data, logo_light_url: val })}
             onUpload={(file) => handleUploadAsset(file, "logo_light")}
             helper={t("lightModeLogoHelper", {
-              defaultValue: "Wird im hellen Design verwendet. Fällt automatisch auf das Dark-Mode-Logo zurück, wenn nicht hochgeladen.",
+              defaultValue: "Used in the light theme. Automatically falls back to dark mode logo if not uploaded.",
             })}
             error={errors["branding.logo_light_url"]}
           />
@@ -89,14 +89,14 @@ export function BrandingSettingsEditor({
 
         {/* Browser Favicon */}
         <MediaUploadField
-          label={t("favicon", { defaultValue: "Browser-Favicon" })}
+          label={t("favicon", { defaultValue: "Browser Favicon" })}
           value={data.favicon_url || ""}
           accept="image/x-icon, image/png, image/jpeg, image/webp, image/svg+xml, .ico, .png, .jpg, .jpeg, .svg"
           maxSizeMB={2}
           onChange={(val) => onChange?.({ ...data, favicon_url: val })}
           onUpload={(file) => handleUploadAsset(file, "favicon")}
           helper={t("faviconHelper", {
-            defaultValue: "Wird im Browser-Tab angezeigt. Quadratisches Format (32x32px oder 64x64px, .ico / .png / .jpg / .jpeg / .svg).",
+            defaultValue: "Displayed in browser tab. Square format (32x32px or 64x64px, .ico / .png / .jpg / .jpeg / .svg).",
           })}
           error={errors["branding.favicon_url"]}
         />

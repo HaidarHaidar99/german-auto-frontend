@@ -47,23 +47,23 @@ export function CreateAdminModal({
     const errors = {};
 
     if (!fullName || fullName.trim().length < 2) {
-      errors.fullName = t("errorFullNameRequired", { defaultValue: "Vollständiger Name erforderlich (mind. 2 Zeichen)." });
+      errors.fullName = t("errorFullNameRequired", { defaultValue: "Full name required (at least 2 characters)." });
     }
 
     if (!email || !EMAIL_REGEX.test(email.trim())) {
-      errors.email = t("errorEmailInvalid", { defaultValue: "Bitte eine gültige E-Mail-Adresse eingeben." });
+      errors.email = t("errorEmailInvalid", { defaultValue: "Please enter a valid email address." });
     }
 
     if (!password || password.length < 8) {
-      errors.password = t("errorPasswordLength", { defaultValue: "Das Passwort muss mindestens 8 Zeichen lang sein." });
+      errors.password = t("errorPasswordLength", { defaultValue: "Password must be at least 8 characters long." });
     }
 
     if (password !== confirmPassword) {
-      errors.confirmPassword = t("errorPasswordMismatch", { defaultValue: "Passwörter stimmen nicht überein." });
+      errors.confirmPassword = t("errorPasswordMismatch", { defaultValue: "Passwords do not match." });
     }
 
     if (!["ADMIN", "SUPER_ADMIN"].includes(role)) {
-      errors.role = t("errorRoleInvalid", { defaultValue: "Rolle muss ADMIN oder SUPER_ADMIN sein." });
+      errors.role = t("errorRoleInvalid", { defaultValue: "Role must be ADMIN or SUPER_ADMIN." });
     }
 
     setFieldErrors(errors);
@@ -91,7 +91,7 @@ export function CreateAdminModal({
     } catch (err) {
       setServerError(
         err?.message ||
-        t("errorCreateAdminFailed", { defaultValue: "Fehler beim Erstellen des Administrator-Kontos." })
+        t("errorCreateAdminFailed", { defaultValue: "Failed to create administrator account." })
       );
     } finally {
       setLoading(false);
@@ -102,7 +102,7 @@ export function CreateAdminModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t("createAdminTitle", { defaultValue: "Neuen Administrator anlegen" })}
+      title={t("createAdminTitle", { defaultValue: "Create New Administrator" })}
       size="md"
       className={className}
     >
@@ -118,7 +118,7 @@ export function CreateAdminModal({
         >
           {t("createAdminNotice", {
             defaultValue:
-              "Erstellen Sie ein neues administratives Zugangskonto. Das Konto ist sofort aktiv und verifiziert.",
+              "Create a new administrative account. The account will be active immediately and verified.",
           })}
         </p>
 
@@ -145,9 +145,9 @@ export function CreateAdminModal({
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label
             htmlFor="create-admin-fullname"
-            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text)" }}
+            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}
           >
-            {t("fullName", { defaultValue: "Vollständiger Name" })} *
+            {t("fullName", { defaultValue: "Full Name" })} *
           </label>
           <input
             id="create-admin-fullname"
@@ -158,14 +158,14 @@ export function CreateAdminModal({
               setFullName(e.target.value);
               if (fieldErrors.fullName) setFieldErrors((prev) => ({ ...prev, fullName: null }));
             }}
-            placeholder="z. B. Max Mustermann"
+            placeholder={t("namePlaceholder", { defaultValue: "e.g. John Doe" })}
             style={{
               height: "40px",
               padding: "0 12px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
               border: `1px solid ${fieldErrors.fullName ? "var(--color-error)" : "var(--color-admin-border)"}`,
               borderRadius: "var(--radius-md)",
-              color: "var(--color-admin-text)",
+              color: "var(--color-admin-text, #0f172a)",
               fontSize: "var(--font-size-sm)",
               outline: "none",
             }}
@@ -179,9 +179,9 @@ export function CreateAdminModal({
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label
             htmlFor="create-admin-email"
-            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text)" }}
+            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}
           >
-            {t("email", { defaultValue: "E-Mail-Adresse" })} *
+            {t("email", { defaultValue: "Email Address" })} *
           </label>
           <input
             id="create-admin-email"
@@ -196,10 +196,10 @@ export function CreateAdminModal({
             style={{
               height: "40px",
               padding: "0 12px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
               border: `1px solid ${fieldErrors.email ? "var(--color-error)" : "var(--color-admin-border)"}`,
               borderRadius: "var(--radius-md)",
-              color: "var(--color-admin-text)",
+              color: "var(--color-admin-text, #0f172a)",
               fontSize: "var(--font-size-sm)",
               outline: "none",
             }}
@@ -213,9 +213,9 @@ export function CreateAdminModal({
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label
             htmlFor="create-admin-password"
-            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text)" }}
+            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}
           >
-            {t("password", { defaultValue: "Passwort" })} * (mind. 8 Zeichen)
+            {t("password", { defaultValue: "Password" })} * ({t("minChars", { defaultValue: "min. 8 characters" })})
           </label>
           <div style={{ position: "relative" }}>
             <input
@@ -232,10 +232,10 @@ export function CreateAdminModal({
                 width: "100%",
                 height: "40px",
                 padding: "0 40px 0 12px",
-                backgroundColor: "rgba(255, 255, 255, 0.04)",
+                backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 border: `1px solid ${fieldErrors.password ? "var(--color-error)" : "var(--color-admin-border)"}`,
                 borderRadius: "var(--radius-md)",
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 fontSize: "var(--font-size-sm)",
                 outline: "none",
               }}
@@ -243,7 +243,7 @@ export function CreateAdminModal({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+              aria-label={showPassword ? t("hidePassword", { defaultValue: "Hide password" }) : t("showPassword", { defaultValue: "Show password" })}
               style={{
                 position: "absolute",
                 right: "10px",
@@ -270,9 +270,9 @@ export function CreateAdminModal({
         <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
           <label
             htmlFor="create-admin-confirm-password"
-            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text)" }}
+            style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}
           >
-            {t("confirmPassword", { defaultValue: "Passwort wiederholen" })} *
+            {t("confirmPassword", { defaultValue: "Confirm Password" })} *
           </label>
           <input
             id="create-admin-confirm-password"
@@ -287,10 +287,10 @@ export function CreateAdminModal({
             style={{
               height: "40px",
               padding: "0 12px",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
               border: `1px solid ${fieldErrors.confirmPassword ? "var(--color-error)" : "var(--color-admin-border)"}`,
               borderRadius: "var(--radius-md)",
-              color: "var(--color-admin-text)",
+              color: "var(--color-admin-text, #0f172a)",
               fontSize: "var(--font-size-sm)",
               outline: "none",
             }}
@@ -302,8 +302,8 @@ export function CreateAdminModal({
 
         {/* Role Selection */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
-          <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text)" }}>
-            {t("administrativeRole", { defaultValue: "Administrative Rolle" })} *
+          <label style={{ fontSize: "var(--font-size-xs)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
+            {t("administrativeRole", { defaultValue: "Administrative Role" })} *
           </label>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
             {/* ADMIN */}
@@ -315,7 +315,7 @@ export function CreateAdminModal({
                 padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
                 border: `1px solid ${role === "ADMIN" ? "var(--color-admin-accent)" : "var(--color-admin-border)"}`,
-                backgroundColor: role === "ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                backgroundColor: role === "ADMIN" ? "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.08))" : "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 cursor: "pointer",
                 transition: "all var(--transition-fast)",
               }}
@@ -328,12 +328,12 @@ export function CreateAdminModal({
                   checked={role === "ADMIN"}
                   onChange={() => setRole("ADMIN")}
                 />
-                <span style={{ fontWeight: 700, fontSize: "var(--font-size-xs)", color: "var(--color-admin-text)" }}>
+                <span style={{ fontWeight: 700, fontSize: "var(--font-size-xs)", color: "var(--color-admin-text, #0f172a)" }}>
                   ADMIN
                 </span>
               </div>
               <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", paddingLeft: "24px" }}>
-                Verwaltung von Fahrzeugen, Formularen und Rezensionen
+                {t("adminRoleDesc", { defaultValue: "Management of vehicles, forms, and reviews" })}
               </span>
             </label>
 
@@ -346,7 +346,7 @@ export function CreateAdminModal({
                 padding: "10px 12px",
                 borderRadius: "var(--radius-md)",
                 border: `1px solid ${role === "SUPER_ADMIN" ? "var(--color-admin-accent)" : "var(--color-admin-border)"}`,
-                backgroundColor: role === "SUPER_ADMIN" ? "rgba(255, 255, 255, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                backgroundColor: role === "SUPER_ADMIN" ? "var(--color-admin-accent-subtle, rgba(37, 99, 235, 0.08))" : "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 cursor: "pointer",
                 transition: "all var(--transition-fast)",
               }}
@@ -364,7 +364,7 @@ export function CreateAdminModal({
                 </span>
               </div>
               <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", paddingLeft: "24px" }}>
-                Vollzugriff inkl. Benutzerverwaltung und CMS-Konfiguration
+                {t("superAdminRoleDesc", { defaultValue: "Full access including user management and system settings" })}
               </span>
             </label>
           </div>
@@ -383,13 +383,13 @@ export function CreateAdminModal({
           }}
         >
           <Button type="button" variant="ghost" onClick={handleClose} disabled={loading}>
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
 
           <Button type="submit" variant="primary" disabled={loading}>
             {loading
-              ? t("creating", { defaultValue: "Wird angelegt..." })
-              : t("createAccountButton", { defaultValue: "Konto anlegen" })}
+              ? t("creating", { defaultValue: "Creating..." })
+              : t("createAccountButton", { defaultValue: "Create Account" })}
           </Button>
         </div>
       </form>

@@ -148,7 +148,7 @@ export function AdminDashboardPage() {
             </span>
           </div>
           <Button onClick={() => loadData(false)} variant="outline" size="sm">
-            {t("retry", { defaultValue: "Erneut versuchen" })}
+            {t("retry", { defaultValue: "Try again" })}
           </Button>
         </div>
       )}

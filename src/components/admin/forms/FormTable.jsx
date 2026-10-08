@@ -15,7 +15,7 @@ export function FormTable({
   style = {},
 }) {
   const { t, i18n } = useTranslation(["admin", "forms", "common"]);
-  const currentLang = i18n.language || "de";
+  const currentLang = i18n.language || "en";
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
@@ -45,20 +45,19 @@ export function FormTable({
   const getStatusColor = (status) => {
     switch (status) {
       case "NEW":
-        return { color: "#60a5fa", bg: "rgba(59, 130, 246, 0.12)", border: "rgba(59, 130, 246, 0.3)" };
+        return { color: "#2563eb", bg: "rgba(37, 99, 235, 0.12)", border: "rgba(37, 99, 235, 0.3)" };
       case "READ":
-        return { color: "#22d3ee", bg: "rgba(6, 182, 212, 0.12)", border: "rgba(6, 182, 212, 0.3)" };
+        return { color: "#0891b2", bg: "rgba(6, 182, 212, 0.12)", border: "rgba(6, 182, 212, 0.3)" };
       case "IN_PROGRESS":
-        return { color: "#fbbf24", bg: "rgba(245, 158, 11, 0.12)", border: "rgba(245, 158, 11, 0.3)" };
+        return { color: "#d97706", bg: "rgba(245, 158, 11, 0.12)", border: "rgba(245, 158, 11, 0.3)" };
       case "COMPLETED":
-        return { color: "#4ade80", bg: "rgba(34, 197, 94, 0.12)", border: "rgba(34, 197, 94, 0.3)" };
+        return { color: "#16a34a", bg: "rgba(34, 197, 94, 0.12)", border: "rgba(34, 197, 94, 0.3)" };
       case "ARCHIVED":
-        return { color: "#94a3b8", bg: "rgba(148, 163, 184, 0.12)", border: "rgba(148, 163, 184, 0.3)" };
+        return { color: "#64748b", bg: "rgba(100, 116, 139, 0.12)", border: "rgba(100, 116, 139, 0.3)" };
       default:
-        return { color: "#e2e8f0", bg: "rgba(255, 255, 255, 0.08)", border: "rgba(255, 255, 255, 0.15)" };
+        return { color: "var(--color-admin-text, #0f172a)", bg: "var(--color-admin-accent-subtle, rgba(0, 0, 0, 0.05))", border: "var(--color-admin-border, #e2e8f0)" };
     }
   };
-
 
   const sanitizePhoneForWa = (phone) => {
     if (!phone) return "";
@@ -73,9 +72,9 @@ export function FormTable({
         style={{
           width: "100%",
           overflowX: "auto",
-          backgroundColor: "var(--color-admin-card, #121418)",
+          backgroundColor: "var(--color-admin-card, #ffffff)",
           borderRadius: "var(--radius-md, 8px)",
-          border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+          border: "1px solid var(--color-admin-border, #e2e8f0)",
         }}
       >
         <table
@@ -89,20 +88,20 @@ export function FormTable({
           <thead>
             <tr
               style={{
-                borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
-                backgroundColor: "rgba(255, 255, 255, 0.02)",
-                color: "var(--color-admin-muted, #94a3b8)",
+                borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
+                backgroundColor: "var(--color-admin-border-subtle, #f8fafc)",
+                color: "var(--color-admin-muted, #64748b)",
                 textTransform: "uppercase",
                 fontSize: "11px",
                 letterSpacing: "0.06em",
               }}
             >
-              <th style={{ padding: "12px 16px", width: "130px" }}>{t("columns.type", { defaultValue: "Typ" })}</th>
-              <th style={{ padding: "12px 16px", minWidth: "170px" }}>{t("columns.sender", { defaultValue: "Absender" })}</th>
-              <th style={{ padding: "12px 16px", minWidth: "260px" }}>{t("submissionDetails", { defaultValue: "Betreff / Fahrzeug" })}</th>
+              <th style={{ padding: "12px 16px", width: "130px" }}>{t("columns.type", { defaultValue: "Type" })}</th>
+              <th style={{ padding: "12px 16px", minWidth: "170px" }}>{t("columns.sender", { defaultValue: "Sender" })}</th>
+              <th style={{ padding: "12px 16px", minWidth: "260px" }}>{t("submissionDetails", { defaultValue: "Subject / Vehicle" })}</th>
               <th style={{ padding: "12px 16px", width: "160px" }}>{t("columns.status", { defaultValue: "Status" })}</th>
-              <th style={{ padding: "12px 16px", width: "150px" }}>{t("columns.date", { defaultValue: "Eingangsdatum" })}</th>
-              <th style={{ padding: "12px 16px", textAlign: "right", width: "130px" }}>{t("actions", { defaultValue: "Aktionen" })}</th>
+              <th style={{ padding: "12px 16px", width: "150px" }}>{t("columns.date", { defaultValue: "Date" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "right", width: "130px" }}>{t("actions", { defaultValue: "Actions" })}</th>
             </tr>
           </thead>
           <tbody>
@@ -121,11 +120,11 @@ export function FormTable({
                 <tr
                   key={item.id}
                   style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.04)",
+                    borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
                     transition: "background-color 0.15s ease",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.02)";
+                    e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, #f1f5f9)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = "transparent";
@@ -139,7 +138,7 @@ export function FormTable({
                         size="sm"
                         style={{
                           backgroundColor: "rgba(168, 85, 247, 0.12)",
-                          color: "#c084fc",
+                          color: "#9333ea",
                           border: "1px solid rgba(168, 85, 247, 0.3)",
                           display: "inline-flex",
                           alignItems: "center",
@@ -147,7 +146,7 @@ export function FormTable({
                         }}
                       >
                         <Icon name="message-square" size={11} />
-                        {t("formTypeContact", { defaultValue: "Kontakt" })}
+                        {t("formTypeContact", { defaultValue: "Contact" })}
                       </Badge>
                     ) : (
                       <Badge
@@ -155,7 +154,7 @@ export function FormTable({
                         size="sm"
                         style={{
                           backgroundColor: "rgba(249, 115, 22, 0.12)",
-                          color: "#fb923c",
+                          color: "#ea580c",
                           border: "1px solid rgba(249, 115, 22, 0.3)",
                           display: "inline-flex",
                           alignItems: "center",
@@ -163,7 +162,7 @@ export function FormTable({
                         }}
                       >
                         <Icon name="car" size={11} />
-                        {t("formTypeSellCar", { defaultValue: "Ankauf" })}
+                        {t("formTypeSellCar", { defaultValue: "Sell Car" })}
                       </Badge>
                     )}
                   </td>
@@ -177,24 +176,25 @@ export function FormTable({
                       onKeyDown={(e) => e.key === "Enter" && onViewDetail?.(item)}
                       style={{
                         fontWeight: 600,
-                        color: "var(--color-admin-text, #ffffff)",
+                        color: "var(--color-admin-text, #0f172a)",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
                         gap: "6px",
                       }}
-                      title={t("viewDetails", { defaultValue: "Details anzeigen" })}
+                      title={t("viewDetails", { defaultValue: "View Details" })}
                     >
                       <span>{senderName}</span>
                       {item.user_id && (
                         <span
-                          title={t("registeredUser", { defaultValue: "Registrierter Benutzer" })}
+                          title={t("registeredUser", { defaultValue: "Registered User" })}
                           style={{
                             fontSize: "10px",
                             padding: "1px 4px",
                             borderRadius: "3px",
-                            backgroundColor: "rgba(255, 255, 255, 0.15)",
-                            color: "var(--color-primary, var(--color-text))",
+                            backgroundColor: "var(--color-admin-accent-subtle, #e0f2fe)",
+                            color: "var(--color-admin-accent, #0284c7)",
+                            fontWeight: 600,
                           }}
                         >
                           User
@@ -205,7 +205,7 @@ export function FormTable({
                       <div
                         style={{
                           fontSize: "11px",
-                          color: "var(--color-admin-muted, #94a3b8)",
+                          color: "var(--color-admin-muted, #64748b)",
                           marginTop: "2px",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -221,7 +221,7 @@ export function FormTable({
                       <div
                         style={{
                           fontSize: "11px",
-                          color: "var(--color-admin-muted, #94a3b8)",
+                          color: "var(--color-admin-muted, #64748b)",
                           marginTop: "1px",
                         }}
                       >
@@ -230,8 +230,8 @@ export function FormTable({
                     )}
                   </td>
 
-                  {/* Details / Vehicle / Message */}
-                  <td style={{ padding: "12px 16px", verticalAlign: "middle", maxWidth: "340px" }}>
+                  {/* Context: Subject & Preview (Contact) OR Vehicle specs (Sell) */}
+                  <td style={{ padding: "12px 16px", verticalAlign: "middle" }}>
                     {isContact ? (
                       <div>
                         {data.regarding && (
@@ -239,7 +239,7 @@ export function FormTable({
                             style={{
                               fontSize: "11px",
                               fontWeight: 600,
-                              color: "var(--color-primary, var(--color-text))",
+                              color: "var(--color-admin-accent, #0284c7)",
                               marginBottom: "3px",
                             }}
                           >
@@ -249,7 +249,7 @@ export function FormTable({
                         <p
                           style={{
                             margin: 0,
-                            color: "var(--color-admin-muted, #cbd5e1)",
+                            color: "var(--color-admin-text, #334155)",
                             fontSize: "12px",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
@@ -266,7 +266,7 @@ export function FormTable({
                         <div
                           style={{
                             fontWeight: 600,
-                            color: "var(--color-admin-text, #ffffff)",
+                            color: "var(--color-admin-text, #0f172a)",
                             fontSize: "13px",
                             display: "flex",
                             alignItems: "center",
@@ -282,8 +282,8 @@ export function FormTable({
                               style={{
                                 fontSize: "10px",
                                 padding: "1px 5px",
-                                borderColor: "rgba(255, 255, 255, 0.4)",
-                                color: "var(--color-primary, var(--color-text))",
+                                borderColor: "var(--color-admin-border, #e2e8f0)",
+                                color: "var(--color-admin-accent, #0284c7)",
                               }}
                             >
                               📸 {data.images.length}
@@ -299,7 +299,7 @@ export function FormTable({
                             marginTop: "3px",
                             flexWrap: "wrap",
                             fontSize: "11px",
-                            color: "var(--color-admin-muted, #94a3b8)",
+                            color: "var(--color-admin-muted, #64748b)",
                           }}
                         >
                           {data.mileage_km != null && (
@@ -309,7 +309,7 @@ export function FormTable({
                             <span>EZ: {data.first_registration}</span>
                           )}
                           {data.min_price != null && (
-                            <span style={{ color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
+                            <span style={{ color: "var(--color-admin-accent, #0284c7)", fontWeight: 600 }}>
                               {formatPrice(data.min_price)}
                             </span>
                           )}
@@ -318,7 +318,7 @@ export function FormTable({
                               style={{
                                 fontFamily: "monospace",
                                 fontSize: "10px",
-                                opacity: 0.75,
+                                opacity: 0.85,
                               }}
                               title={`VIN: ${data.vin}`}
                             >
@@ -334,9 +334,9 @@ export function FormTable({
                   <td style={{ padding: "12px 16px", verticalAlign: "middle" }}>
                     <div style={{ position: "relative", display: "inline-block" }}>
                       <select
-                        value={item.status}
+                        value={item.status || "NEW"}
                         disabled={isUpdatingThis}
-                        aria-label={t("statusChangeAria", { defaultValue: "Status ändern" })}
+                        aria-label={t("statusChangeAria", { defaultValue: "Change status" })}
                         onChange={(e) => onChangeStatus?.(item.id, e.target.value)}
                         style={{
                           padding: "4px 8px",
@@ -351,31 +351,31 @@ export function FormTable({
                           opacity: isUpdatingThis ? 0.6 : 1,
                         }}
                       >
-                        <option value="NEW" style={{ backgroundColor: "#121418", color: "#60a5fa" }}>
-                          {t("statusNew", { defaultValue: "Neu" })}
+                        <option value="NEW" style={{ backgroundColor: "#ffffff", color: "#2563eb" }}>
+                          {t("statusNew", { defaultValue: "New" })}
                         </option>
-                        <option value="READ" style={{ backgroundColor: "#121418", color: "#22d3ee" }}>
-                          {t("statusRead", { defaultValue: "Gelesen" })}
+                        <option value="READ" style={{ backgroundColor: "#ffffff", color: "#0891b2" }}>
+                          {t("statusRead", { defaultValue: "Read" })}
                         </option>
-                        <option value="IN_PROGRESS" style={{ backgroundColor: "#121418", color: "#fbbf24" }}>
-                          {t("statusInProgress", { defaultValue: "In Bearbeitung" })}
+                        <option value="IN_PROGRESS" style={{ backgroundColor: "#ffffff", color: "#d97706" }}>
+                          {t("statusInProgress", { defaultValue: "In Progress" })}
                         </option>
-                        <option value="COMPLETED" style={{ backgroundColor: "#121418", color: "#4ade80" }}>
-                          {t("statusCompleted", { defaultValue: "Abgeschlossen" })}
+                        <option value="COMPLETED" style={{ backgroundColor: "#ffffff", color: "#16a34a" }}>
+                          {t("statusCompleted", { defaultValue: "Completed" })}
                         </option>
-                        <option value="ARCHIVED" style={{ backgroundColor: "#121418", color: "#94a3b8" }}>
-                          {t("statusArchived", { defaultValue: "Archiviert" })}
+                        <option value="ARCHIVED" style={{ backgroundColor: "#ffffff", color: "#64748b" }}>
+                          {t("statusArchived", { defaultValue: "Archived" })}
                         </option>
                       </select>
                     </div>
                   </td>
 
                   {/* Created Date */}
-                  <td style={{ padding: "12px 16px", verticalAlign: "middle", color: "var(--color-admin-muted, #94a3b8)" }}>
+                  <td style={{ padding: "12px 16px", verticalAlign: "middle", color: "var(--color-admin-muted, #64748b)" }}>
                     <div>{formatDate(item.created_at)}</div>
                     {item.updated_at && item.updated_at !== item.created_at && (
-                      <div style={{ fontSize: "10px", opacity: 0.65, marginTop: "2px" }}>
-                        {t("updatedShort", { defaultValue: "Aktualisiert" })}: {formatDate(item.updated_at)}
+                      <div style={{ fontSize: "10px", opacity: 0.75, marginTop: "2px" }}>
+                        {t("updatedShort", { defaultValue: "Updated" })}: {formatDate(item.updated_at)}
                       </div>
                     )}
                   </td>
@@ -388,9 +388,9 @@ export function FormTable({
                         icon="eye"
                         size="sm"
                         variant="secondary"
-                        ariaLabel={t("viewDetails", { defaultValue: "Details anzeigen" })}
+                        ariaLabel={t("viewDetails", { defaultValue: "View Details" })}
                         onClick={() => onViewDetail?.(item)}
-                        title={t("viewDetails", { defaultValue: "Details anzeigen" })}
+                        title={t("viewDetails", { defaultValue: "View Details" })}
                         style={{ width: "30px", height: "30px" }}
                       />
 
@@ -399,10 +399,10 @@ export function FormTable({
                         <a
                           href={`mailto:${encodeURIComponent(senderEmail)}?subject=${encodeURIComponent(
                             isContact
-                              ? `German Auto: Ihre Anfrage bezüglich ${data.regarding || "unseren Service"}`
-                              : `German Auto: Ihr Fahrzeug ${data.brand || ""} ${data.model || ""}`
+                              ? `German Auto: Your inquiry regarding ${data.regarding || "our services"}`
+                              : `German Auto: Your vehicle ${data.brand || ""} ${data.model || ""}`
                           )}`}
-                          title={`E-Mail an ${senderEmail}`}
+                          title={`Email to ${senderEmail}`}
                           style={{
                             display: "inline-flex",
                             alignItems: "center",
@@ -410,9 +410,9 @@ export function FormTable({
                             width: "30px",
                             height: "30px",
                             borderRadius: "var(--radius-sm, 4px)",
-                            backgroundColor: "rgba(255, 255, 255, 0.05)",
-                            color: "var(--color-admin-text, #ffffff)",
-                            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                            backgroundColor: "var(--color-admin-accent-subtle, #f1f5f9)",
+                            color: "var(--color-admin-text, #0f172a)",
+                            border: "1px solid var(--color-admin-border, #e2e8f0)",
                             textDecoration: "none",
                             transition: "background-color 0.2s",
                           }}
@@ -427,13 +427,13 @@ export function FormTable({
                           icon="archive"
                           size="sm"
                           variant="ghost"
-                          ariaLabel={t("archive", { defaultValue: "Archivieren" })}
+                          ariaLabel={t("archive", { defaultValue: "Archive" })}
                           onClick={() => onArchive?.(item)}
-                          title={t("archive", { defaultValue: "Archivieren" })}
+                          title={t("archive", { defaultValue: "Archive" })}
                           style={{
                             width: "30px",
                             height: "30px",
-                            color: "var(--color-admin-muted, #94a3b8)",
+                            color: "var(--color-admin-muted, #64748b)",
                           }}
                         />
                       )}
@@ -471,9 +471,9 @@ export function FormTable({
             <div
               key={item.id}
               style={{
-                backgroundColor: "var(--color-admin-card, #121418)",
+                backgroundColor: "var(--color-admin-card, #ffffff)",
                 borderRadius: "var(--radius-md, 8px)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                border: "1px solid var(--color-admin-border, #e2e8f0)",
                 padding: "var(--space-md, 16px)",
                 display: "flex",
                 flexDirection: "column",
@@ -497,11 +497,11 @@ export function FormTable({
                       size="sm"
                       style={{
                         backgroundColor: "rgba(168, 85, 247, 0.12)",
-                        color: "#c084fc",
+                        color: "#9333ea",
                         border: "1px solid rgba(168, 85, 247, 0.3)",
                       }}
                     >
-                      <Icon name="message-square" size={11} /> {t("formTypeContact", { defaultValue: "Kontakt" })}
+                      <Icon name="message-square" size={11} /> {t("formTypeContact", { defaultValue: "Contact" })}
                     </Badge>
                   ) : (
                     <Badge
@@ -509,16 +509,16 @@ export function FormTable({
                       size="sm"
                       style={{
                         backgroundColor: "rgba(249, 115, 22, 0.12)",
-                        color: "#fb923c",
+                        color: "#ea580c",
                         border: "1px solid rgba(249, 115, 22, 0.3)",
                       }}
                     >
-                      <Icon name="car" size={11} /> {t("formTypeSellCar", { defaultValue: "Ankauf" })}
+                      <Icon name="car" size={11} /> {t("formTypeSellCar", { defaultValue: "Sell Car" })}
                     </Badge>
                   )}
 
                   <select
-                    value={item.status}
+                    value={item.status || "NEW"}
                     disabled={isUpdatingThis}
                     onChange={(e) => onChangeStatus?.(item.id, e.target.value)}
                     style={{
@@ -533,25 +533,15 @@ export function FormTable({
                       outline: "none",
                     }}
                   >
-                    <option value="NEW" style={{ backgroundColor: "#121418", color: "#60a5fa" }}>
-                      {t("statusNew", { defaultValue: "Neu" })}
-                    </option>
-                    <option value="READ" style={{ backgroundColor: "#121418", color: "#22d3ee" }}>
-                      {t("statusRead", { defaultValue: "Gelesen" })}
-                    </option>
-                    <option value="IN_PROGRESS" style={{ backgroundColor: "#121418", color: "#fbbf24" }}>
-                      {t("statusInProgress", { defaultValue: "In Bearbeitung" })}
-                    </option>
-                    <option value="COMPLETED" style={{ backgroundColor: "#121418", color: "#4ade80" }}>
-                      {t("statusCompleted", { defaultValue: "Abgeschlossen" })}
-                    </option>
-                    <option value="ARCHIVED" style={{ backgroundColor: "#121418", color: "#94a3b8" }}>
-                      {t("statusArchived", { defaultValue: "Archiviert" })}
-                    </option>
+                    <option value="NEW">{t("statusNew", { defaultValue: "New" })}</option>
+                    <option value="READ">{t("statusRead", { defaultValue: "Read" })}</option>
+                    <option value="IN_PROGRESS">{t("statusInProgress", { defaultValue: "In Progress" })}</option>
+                    <option value="COMPLETED">{t("statusCompleted", { defaultValue: "Completed" })}</option>
+                    <option value="ARCHIVED">{t("statusArchived", { defaultValue: "Archived" })}</option>
                   </select>
                 </div>
 
-                <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #94a3b8)" }}>
+                <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}>
                   {formatDate(item.created_at)}
                 </span>
               </div>
@@ -562,7 +552,7 @@ export function FormTable({
                   style={{
                     fontSize: "var(--font-size-base, 15px)",
                     fontWeight: 700,
-                    color: "var(--color-admin-text, #ffffff)",
+                    color: "var(--color-admin-text, #0f172a)",
                     display: "flex",
                     alignItems: "center",
                     gap: "6px",
@@ -575,8 +565,8 @@ export function FormTable({
                         fontSize: "10px",
                         padding: "1px 4px",
                         borderRadius: "3px",
-                        backgroundColor: "rgba(255, 255, 255, 0.15)",
-                        color: "var(--color-primary, var(--color-text))",
+                        backgroundColor: "var(--color-admin-accent-subtle, #e0f2fe)",
+                        color: "var(--color-admin-accent, #0284c7)",
                       }}
                     >
                       User
@@ -591,7 +581,7 @@ export function FormTable({
                         style={{
                           fontSize: "11px",
                           fontWeight: 600,
-                          color: "var(--color-primary, var(--color-text))",
+                          color: "var(--color-admin-accent, #0284c7)",
                           marginBottom: "2px",
                         }}
                       >
@@ -601,7 +591,7 @@ export function FormTable({
                     <p
                       style={{
                         margin: 0,
-                        color: "var(--color-admin-muted, #94a3b8)",
+                        color: "var(--color-admin-muted, #64748b)",
                         fontSize: "12px",
                         lineHeight: 1.4,
                       }}
@@ -614,7 +604,7 @@ export function FormTable({
                     <div
                       style={{
                         fontWeight: 600,
-                        color: "var(--color-admin-text, #ffffff)",
+                        color: "var(--color-admin-text, #0f172a)",
                         fontSize: "13px",
                         display: "flex",
                         alignItems: "center",
@@ -623,8 +613,8 @@ export function FormTable({
                     >
                       <span>{`${data.brand || ""} ${data.model || ""}`.trim() || "—"}</span>
                       {Array.isArray(data.images) && data.images.length > 0 && (
-                        <span style={{ fontSize: "11px", color: "var(--color-primary, var(--color-text))" }}>
-                          ({data.images.length} Fotos)
+                        <span style={{ fontSize: "11px", color: "var(--color-admin-accent, #0284c7)" }}>
+                          ({data.images.length} photos)
                         </span>
                       )}
                     </div>
@@ -634,14 +624,14 @@ export function FormTable({
                         gap: "8px",
                         flexWrap: "wrap",
                         fontSize: "11px",
-                        color: "var(--color-admin-muted, #94a3b8)",
+                        color: "var(--color-admin-muted, #64748b)",
                         marginTop: "2px",
                       }}
                     >
                       {data.mileage_km != null && <span>{formatMileage(data.mileage_km)}</span>}
                       {data.first_registration && <span>EZ: {data.first_registration}</span>}
                       {data.min_price != null && (
-                        <span style={{ color: "var(--color-primary, var(--color-text))", fontWeight: 600 }}>
+                        <span style={{ color: "var(--color-admin-accent, #0284c7)", fontWeight: 600 }}>
                           {formatPrice(data.min_price)}
                         </span>
                       )}
@@ -657,7 +647,7 @@ export function FormTable({
                   alignItems: "center",
                   justifyContent: "space-between",
                   paddingTop: "var(--space-xs, 8px)",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.06)",
+                  borderTop: "1px solid var(--color-admin-border, #e2e8f0)",
                   flexWrap: "wrap",
                   gap: "8px",
                 }}
@@ -666,7 +656,7 @@ export function FormTable({
                   {senderEmail && (
                     <a
                       href={`mailto:${encodeURIComponent(senderEmail)}`}
-                      title={`E-Mail an ${senderEmail}`}
+                      title={`Email to ${senderEmail}`}
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -674,8 +664,9 @@ export function FormTable({
                         width: "32px",
                         height: "32px",
                         borderRadius: "var(--radius-sm, 4px)",
-                        backgroundColor: "rgba(255, 255, 255, 0.06)",
-                        color: "#ffffff",
+                        backgroundColor: "var(--color-admin-accent-subtle, #f1f5f9)",
+                        color: "var(--color-admin-text, #0f172a)",
+                        border: "1px solid var(--color-admin-border, #e2e8f0)",
                         textDecoration: "none",
                       }}
                     >
@@ -686,7 +677,7 @@ export function FormTable({
                   {senderPhone && (
                     <a
                       href={`tel:${senderPhone}`}
-                      title={`Anrufen: ${senderPhone}`}
+                      title={`Call: ${senderPhone}`}
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -694,8 +685,9 @@ export function FormTable({
                         width: "32px",
                         height: "32px",
                         borderRadius: "var(--radius-sm, 4px)",
-                        backgroundColor: "rgba(255, 255, 255, 0.06)",
-                        color: "#22c55e",
+                        backgroundColor: "rgba(34, 197, 94, 0.12)",
+                        color: "#16a34a",
+                        border: "1px solid rgba(34, 197, 94, 0.3)",
                         textDecoration: "none",
                       }}
                     >
@@ -708,7 +700,7 @@ export function FormTable({
                       href={`https://wa.me/${cleanWa}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      title="WhatsApp Chat starten"
+                      title="WhatsApp Chat"
                       style={{
                         display: "inline-flex",
                         alignItems: "center",
@@ -717,7 +709,8 @@ export function FormTable({
                         height: "32px",
                         borderRadius: "var(--radius-sm, 4px)",
                         backgroundColor: "rgba(37, 211, 102, 0.15)",
-                        color: "#25D366",
+                        color: "#16a34a",
+                        border: "1px solid rgba(37, 211, 102, 0.3)",
                         textDecoration: "none",
                       }}
                     >
@@ -733,12 +726,12 @@ export function FormTable({
                       size="sm"
                       onClick={() => onArchive?.(item)}
                       style={{
-                        color: "var(--color-admin-muted, #94a3b8)",
+                        color: "var(--color-admin-muted, #64748b)",
                         fontSize: "11px",
                         padding: "4px 8px",
                       }}
                     >
-                      <Icon name="archive" size={12} /> {t("archive", { defaultValue: "Archivieren" })}
+                      <Icon name="archive" size={12} /> {t("archive", { defaultValue: "Archive" })}
                     </Button>
                   )}
 

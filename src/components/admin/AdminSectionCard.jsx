@@ -41,7 +41,7 @@ export function AdminSectionCard({
                 style={{
                   fontSize: "var(--font-size-base)",
                   fontWeight: 700,
-                  color: "var(--color-admin-text)",
+                  color: "var(--color-admin-text, #0f172a)",
                   margin: 0,
                   letterSpacing: "-0.2px",
                 }}

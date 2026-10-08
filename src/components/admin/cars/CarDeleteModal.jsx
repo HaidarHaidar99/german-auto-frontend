@@ -17,7 +17,7 @@ export function CarDeleteModal({
 
   if (!car) return null;
 
-  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || "Fahrzeug";
+  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || t("vehicle", { defaultValue: "Vehicle" });
   const formattedPrice = car.price != null
     ? new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(car.price)
     : "";
@@ -26,7 +26,7 @@ export function CarDeleteModal({
     <Modal
       isOpen={isOpen}
       onClose={() => !loading && onClose?.()}
-      title={t("deleteVehicleConfirmTitle", { defaultValue: "Fahrzeug unwiderruflich löschen?" })}
+      title={t("deleteVehicleConfirmTitle", { defaultValue: "Permanently delete vehicle?" })}
       size="sm"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
@@ -39,7 +39,7 @@ export function CarDeleteModal({
           }}
         >
           {t("deleteVehicleConfirmMessage", {
-            defaultValue: `Möchten Sie das Fahrzeug "${vehicleName}" wirklich löschen? Diese Aktion entfernt den Datensatz und alle zugehörigen Daten dauerhaft aus der Datenbank.`,
+            defaultValue: `Are you sure you want to delete vehicle "${vehicleName}"? This permanently removes the record and all associated data from the database.`,
             name: vehicleName,
           })}
         </p>
@@ -54,7 +54,7 @@ export function CarDeleteModal({
             fontSize: "var(--font-size-xs)",
           }}
         >
-          <div style={{ fontWeight: 600, color: "var(--color-admin-text, #ffffff)", marginBottom: "2px" }}>
+          <div style={{ fontWeight: 600, color: "var(--color-admin-text, #0f172a)", marginBottom: "2px" }}>
             {vehicleName}
           </div>
           <div style={{ color: "var(--color-admin-muted)" }}>
@@ -71,7 +71,7 @@ export function CarDeleteModal({
           }}
         >
           <Button variant="outline" size="sm" disabled={loading} onClick={onClose}>
-            {t("cancel", { defaultValue: "Abbrechen" })}
+            {t("cancel", { defaultValue: "Cancel" })}
           </Button>
           <Button
             variant="primary"
@@ -84,7 +84,7 @@ export function CarDeleteModal({
               color: "#ffffff",
             }}
           >
-            {t("deleteVehicle", { defaultValue: "Fahrzeug löschen" })}
+            {t("deleteVehicle", { defaultValue: "Delete Vehicle" })}
           </Button>
         </div>
       </div>

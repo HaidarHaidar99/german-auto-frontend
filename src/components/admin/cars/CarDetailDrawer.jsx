@@ -11,17 +11,18 @@ export function CarDetailDrawer({
   onClose,
   onEdit,
 }) {
-  const { t } = useTranslation(["admin", "cars", "common"]);
+  const { t, i18n } = useTranslation(["admin", "cars", "common"]);
+  const currentLang = i18n?.language?.startsWith("en") ? "en" : "de";
 
   if (!car) return null;
 
-  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || t("colCar", { defaultValue: "Fahrzeug" });
+  const vehicleName = car.title || `${car.brand || ""} ${car.model || ""}`.trim() || t("colCar", { defaultValue: "Vehicle" });
   const formattedPrice = car.price != null
-    ? new Intl.NumberFormat(i18n.language === "en" ? "en-US" : "de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(car.price)
-    : t("priceOnRequest", { defaultValue: "Auf Anfrage" });
+    ? new Intl.NumberFormat(currentLang === "en" ? "en-US" : "de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(car.price)
+    : t("priceOnRequest", { defaultValue: "Price on request" });
 
   const formattedMileage = car.mileage_km != null
-    ? `${new Intl.NumberFormat(i18n.language === "en" ? "en-US" : "de-DE").format(car.mileage_km)} km`
+    ? `${new Intl.NumberFormat(currentLang === "en" ? "en-US" : "de-DE").format(car.mileage_km)} km`
     : null;
 
   const media = car.media || {};
@@ -60,7 +61,7 @@ export function CarDetailDrawer({
             )}
             {!car.is_visible && (
               <Badge variant="outline" size="sm" style={{ borderColor: "#ef4444", color: "#ef4444" }}>
-                {t("statHidden", { defaultValue: "Versteckt" })}
+                {t("statHidden", { defaultValue: "Hidden" })}
               </Badge>
             )}
           </div>
@@ -68,11 +69,11 @@ export function CarDetailDrawer({
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
             <Button variant="outline" size="sm" onClick={handleOpenPublicView}>
               <Icon name="external-link" size={14} style={{ marginRight: "6px" }} />
-              {t("previewPublicVehicle", { defaultValue: "Öffentliche Ansicht" })}
+              {t("previewPublicVehicle", { defaultValue: "Public View" })}
             </Button>
             <Button variant="primary" size="sm" onClick={() => onEdit?.(car)}>
               <Icon name="edit" size={14} style={{ marginRight: "6px" }} />
-              {t("edit", { defaultValue: "Bearbeiten" })}
+              {t("edit", { defaultValue: "Edit" })}
             </Button>
           </div>
         </div>
@@ -105,43 +106,43 @@ export function CarDetailDrawer({
             gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))",
             gap: "var(--space-sm)",
             padding: "var(--space-md)",
-            backgroundColor: "rgba(255, 255, 255, 0.03)",
+            backgroundColor: "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.05))",
             borderRadius: "var(--radius-sm, 6px)",
-            border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+            border: "1px solid var(--color-admin-border, #e2e8f0)",
           }}
         >
           <div>
-            <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("price", { defaultValue: "Preis" })}</span>
-            <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-primary, var(--color-text))" }}>{formattedPrice}</strong>
+            <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("price", { defaultValue: "Price" })}</span>
+            <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-secondary, #D4AF37)" }}>{formattedPrice}</strong>
           </div>
           {formattedMileage && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("mileage", { defaultValue: "Kilometerstand" })}</span>
-              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{formattedMileage}</strong>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("mileage", { defaultValue: "Mileage" })}</span>
+              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #0f172a)" }}>{formattedMileage}</strong>
             </div>
           )}
           {car.performance_hp && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("powerHp", { defaultValue: "Leistung" })}</span>
-              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.performance_hp} PS</strong>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("powerHp", { defaultValue: "Power" })}</span>
+              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #0f172a)" }}>{car.performance_hp} HP</strong>
             </div>
           )}
           {car.fuel_type && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("fuelType", { defaultValue: "Kraftstoff" })}</span>
-              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.fuel_type}</strong>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("fuelType", { defaultValue: "Fuel" })}</span>
+              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #0f172a)" }}>{car.fuel_type}</strong>
             </div>
           )}
           {car.transmission && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("transmission", { defaultValue: "Getriebe" })}</span>
-              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.transmission}</strong>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("transmission", { defaultValue: "Transmission" })}</span>
+              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #0f172a)" }}>{car.transmission}</strong>
             </div>
           )}
           {car.first_registration && (
             <div>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("firstRegistration", { defaultValue: "Erstzulassung" })}</span>
-              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #fff)" }}>{car.first_registration}</strong>
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)", display: "block" }}>{t("firstRegistration", { defaultValue: "First Registration" })}</span>
+              <strong style={{ fontSize: "var(--font-size-md)", color: "var(--color-admin-text, #0f172a)" }}>{car.first_registration}</strong>
             </div>
           )}
         </div>
@@ -152,9 +153,9 @@ export function CarDetailDrawer({
             {car.description_de && (
               <div>
                 <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted)", textTransform: "uppercase" }}>
-                  Beschreibung (DE)
+                  {t("descriptionDe", { defaultValue: "Description (DE)" })}
                 </span>
-                <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #ffffff)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
+                <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
                   {car.description_de}
                 </p>
               </div>
@@ -162,9 +163,9 @@ export function CarDetailDrawer({
             {car.description_en && (
               <div style={{ marginTop: "var(--space-sm)" }}>
                 <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted)", textTransform: "uppercase" }}>
-                  Description (EN)
+                  {t("descriptionEn", { defaultValue: "Description (EN)" })}
                 </span>
-                <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #ffffff)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
+                <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
                   {car.description_en}
                 </p>
               </div>
@@ -175,8 +176,8 @@ export function CarDetailDrawer({
         {/* Equipment Badges */}
         {equipment.length > 0 && (
           <div>
-            <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-              {t("equipmentTab", { defaultValue: "Ausstattung" })} ({equipment.length})
+            <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
+              {t("equipmentTab", { defaultValue: "Equipment" })} ({equipment.length})
             </h4>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
               {equipment.map((item, idx) => (
@@ -191,8 +192,8 @@ export function CarDetailDrawer({
         {/* Custom Fields */}
         {Object.keys(customFields).length > 0 && (
           <div>
-            <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-              {t("customFields", { defaultValue: "Benutzerdefinierte Felder" })}
+            <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
+              {t("customFields", { defaultValue: "Custom Fields" })}
             </h4>
             <div
               style={{
@@ -200,15 +201,15 @@ export function CarDetailDrawer({
                 gridTemplateColumns: "1fr 1fr",
                 gap: "6px",
                 padding: "var(--space-sm)",
-                backgroundColor: "rgba(255, 255, 255, 0.02)",
+                backgroundColor: "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.05))",
                 borderRadius: "var(--radius-sm, 6px)",
-                border: "1px solid rgba(255, 255, 255, 0.06)",
+                border: "1px solid var(--color-admin-border, #e2e8f0)",
               }}
             >
               {Object.entries(customFields).map(([k, v]) => (
                 <div key={k} style={{ fontSize: "var(--font-size-xs)" }}>
                   <span style={{ color: "var(--color-admin-muted)" }}>{k}:</span>{" "}
-                  <span style={{ color: "var(--color-admin-text, #fff)" }}>{String(v)}</span>
+                  <span style={{ color: "var(--color-admin-text, #0f172a)" }}>{String(v)}</span>
                 </div>
               ))}
             </div>
@@ -218,8 +219,8 @@ export function CarDetailDrawer({
         {/* Gallery Thumbnails */}
         {gallery.length > 0 && (
           <div>
-            <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #ffffff)" }}>
-              {t("galleryImages", { defaultValue: "Galeriebilder" })} ({gallery.length})
+            <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-sm)", fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
+              {t("galleryImages", { defaultValue: "Gallery Photos" })} ({gallery.length})
             </h4>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))", gap: "var(--space-xs)" }}>
               {gallery.map((imgUrl, idx) => (

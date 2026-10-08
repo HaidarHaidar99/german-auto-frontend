@@ -4,11 +4,11 @@ import Drawer from "../../ui/Drawer";
 import Button from "../../ui/Button";
 import Icon from "../../common/Icon";
 
-function formatDateTime(isoString) {
+function formatDateTime(isoString, lang = "en") {
   if (!isoString) return "—";
   try {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat("de-DE", {
+    return new Intl.DateTimeFormat(lang === "de" ? "de-DE" : "en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -31,7 +31,8 @@ export function UserDetailDrawer({
   onDeleteUser,
   className = "",
 }) {
-  const { t } = useTranslation(["admin", "common"]);
+  const { t, i18n } = useTranslation(["admin", "common"]);
+  const currentLang = i18n.language || "en";
   const [copiedId, setCopiedId] = useState(false);
 
   if (!user) return null;
@@ -49,7 +50,7 @@ export function UserDetailDrawer({
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
-      title={t("userDetails", { defaultValue: "Benutzerdetails" })}
+      title={t("userDetails", { defaultValue: "User Details" })}
       className={className}
     >
       <div
@@ -96,7 +97,7 @@ export function UserDetailDrawer({
                 margin: "0 0 4px 0",
                 fontSize: "var(--font-size-base)",
                 fontWeight: 700,
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 wordBreak: "break-word",
               }}
             >
@@ -122,7 +123,7 @@ export function UserDetailDrawer({
                   textTransform: "uppercase",
                 }}
               >
-                (Aktuell angemeldeter Super-Admin)
+                {t("currentlyLoggedInSuperAdmin", { defaultValue: "(Currently logged-in Super Admin)" })}
               </span>
             )}
           </div>
@@ -141,13 +142,13 @@ export function UserDetailDrawer({
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
-              {t("userId", { defaultValue: "Benutzer-ID (UUID)" })}
+              {t("userId", { defaultValue: "User ID (UUID)" })}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <code
                 style={{
                   fontSize: "12px",
-                  color: "var(--color-admin-text)",
+                  color: "var(--color-admin-text, #0f172a)",
                   backgroundColor: "var(--color-admin-border-subtle)",
                   padding: "4px 8px",
                   borderRadius: "var(--radius-sm)",
@@ -165,7 +166,7 @@ export function UserDetailDrawer({
                 style={{ padding: "4px 8px", fontSize: "11px" }}
               >
                 <Icon name={copiedId ? "check" : "share-2"} size={12} />
-                <span style={{ marginLeft: "4px" }}>{copiedId ? "Kopiert" : "Kopieren"}</span>
+                <span style={{ marginLeft: "4px" }}>{copiedId ? t("copied", { defaultValue: "Copied" }) : t("copy", { defaultValue: "Copy" })}</span>
               </Button>
             </div>
           </div>
@@ -181,7 +182,7 @@ export function UserDetailDrawer({
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
-              {t("role", { defaultValue: "Rolle" })}
+              {t("role", { defaultValue: "Role" })}
             </span>
             <span
               style={{
@@ -224,7 +225,7 @@ export function UserDetailDrawer({
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
-              {t("verificationStatus", { defaultValue: "Verifizierungsstatus" })}
+              {t("verificationStatus", { defaultValue: "Verification Status" })}
             </span>
             <span
               style={{
@@ -238,8 +239,8 @@ export function UserDetailDrawer({
             >
               <Icon name={user.is_verified ? "check" : "alert-circle"} size={14} />
               {user.is_verified
-                ? t("verified", { defaultValue: "E-Mail Verifiziert" })
-                : t("unverified", { defaultValue: "Nicht Verifiziert" })}
+                ? t("verified", { defaultValue: "Email Verified" })
+                : t("unverified", { defaultValue: "Not Verified" })}
             </span>
           </div>
 
@@ -254,10 +255,10 @@ export function UserDetailDrawer({
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
-              {t("createdAt", { defaultValue: "Registrierungsdatum" })}
+              {t("createdAt", { defaultValue: "Registration Date" })}
             </span>
-            <span style={{ fontSize: "12px", color: "var(--color-admin-text)" }}>
-              {formatDateTime(user.created_at)}
+            <span style={{ fontSize: "12px", color: "var(--color-admin-text, #0f172a)" }}>
+              {formatDateTime(user.created_at, currentLang)}
             </span>
           </div>
 
@@ -272,10 +273,10 @@ export function UserDetailDrawer({
             }}
           >
             <span style={{ fontSize: "11px", textTransform: "uppercase", color: "var(--color-admin-muted)", fontWeight: 600 }}>
-              {t("updatedAt", { defaultValue: "Letzte Änderung" })}
+              {t("updatedAt", { defaultValue: "Last Modified" })}
             </span>
-            <span style={{ fontSize: "12px", color: "var(--color-admin-text)" }}>
-              {formatDateTime(user.updated_at)}
+            <span style={{ fontSize: "12px", color: "var(--color-admin-text, #0f172a)" }}>
+              {formatDateTime(user.updated_at, currentLang)}
             </span>
           </div>
         </div>
@@ -294,9 +295,9 @@ export function UserDetailDrawer({
         >
           <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#60a5fa", fontWeight: 600, marginBottom: "2px" }}>
             <Icon name="info" size={14} />
-            <span>Sicherheitsverwaltung</span>
+            <span>{t("securityManagement", { defaultValue: "Security Management" })}</span>
           </div>
-          Rollenänderungen und Sitzungsbeendigungen invalidieren sofort alle aktiven Anmelde-Token dieses Benutzers.
+          {t("securityNoticeDesc", { defaultValue: "Role updates and session revocation immediately invalidate all active authentication tokens for this user." })}
         </div>
 
         {/* Action Buttons */}
@@ -315,7 +316,7 @@ export function UserDetailDrawer({
             }}
           >
             <Icon name="shield" size={16} />
-            <span>{t("changeRole", { defaultValue: "Benutzerrolle anpassen" })}</span>
+            <span>{t("changeRole", { defaultValue: "Update User Role" })}</span>
           </Button>
 
           <Button
@@ -332,7 +333,7 @@ export function UserDetailDrawer({
             }}
           >
             <Icon name="refresh-cw" size={16} />
-            <span>{t("revokeUserSessions", { defaultValue: "Aktive Sitzungen beenden" })}</span>
+            <span>{t("revokeUserSessions", { defaultValue: "Revoke Active Sessions" })}</span>
           </Button>
 
           <Button
@@ -349,16 +350,16 @@ export function UserDetailDrawer({
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
-              color: isSelf ? "rgba(255, 255, 255, 0.2)" : "var(--color-error)",
-              borderColor: isSelf ? "rgba(255, 255, 255, 0.1)" : "rgba(239, 68, 68, 0.4)",
+              color: isSelf ? "rgba(0, 0, 0, 0.2)" : "var(--color-error)",
+              borderColor: isSelf ? "rgba(0, 0, 0, 0.1)" : "rgba(239, 68, 68, 0.4)",
               cursor: isSelf ? "not-allowed" : "pointer",
             }}
           >
             <Icon name="trash" size={16} />
             <span>
               {isSelf
-                ? t("cannotDeleteOwnAccount", { defaultValue: "Eigenes Konto kann nicht gelöscht werden" })
-                : t("deleteUserAccount", { defaultValue: "Benutzerkonto unwiderruflich löschen" })}
+                ? t("cannotDeleteOwnAccount", { defaultValue: "Cannot delete own account" })
+                : t("deleteUserAccount", { defaultValue: "Permanently Delete User Account" })}
             </span>
           </Button>
         </div>

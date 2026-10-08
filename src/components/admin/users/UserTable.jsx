@@ -5,11 +5,11 @@ import IconButton from "../../ui/IconButton";
 import Icon from "../../common/Icon";
 import AdminEmptyState from "../AdminEmptyState";
 
-function formatDateTime(isoString) {
+function formatDateTime(isoString, lang = "en") {
   if (!isoString) return "—";
   try {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat("de-DE", {
+    return new Intl.DateTimeFormat(lang === "de" ? "de-DE" : "en-US", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -92,7 +92,7 @@ function RoleBadge({ role }) {
   );
 }
 
-function VerificationBadge({ isVerified }) {
+function VerificationBadge({ isVerified, t }) {
   if (isVerified) {
     return (
       <span
@@ -106,7 +106,7 @@ function VerificationBadge({ isVerified }) {
         }}
       >
         <Icon name="check" size={14} />
-        Verifiziert
+        {t ? t("verified", { defaultValue: "Verified" }) : "Verified"}
       </span>
     );
   }
@@ -123,7 +123,7 @@ function VerificationBadge({ isVerified }) {
       }}
     >
       <Icon name="alert-circle" size={14} />
-      Unverifiziert
+      {t ? t("unverified", { defaultValue: "Unverified" }) : "Unverified"}
     </span>
   );
 }
@@ -141,14 +141,15 @@ export function UserTable({
   className = "",
   style = {},
 }) {
-  const { t } = useTranslation(["admin", "common"]);
+  const { t, i18n } = useTranslation(["admin", "common"]);
+  const currentLang = i18n.language || "en";
 
   if (!loading && users.length === 0) {
     return (
       <AdminEmptyState
-        title={t("noUsersFoundTitle", { defaultValue: "Keine Benutzer gefunden" })}
+        title={t("noUsersFoundTitle", { defaultValue: "No users found" })}
         description={t("noUsersFoundDesc", {
-          defaultValue: "Es wurden keine Benutzerkonten gefunden, die Ihren Kriterien entsprechen.",
+          defaultValue: "No user accounts were found matching your criteria.",
         })}
         icon="users"
       />
@@ -197,18 +198,19 @@ export function UserTable({
                   letterSpacing: "0.6px",
                 }}
               >
-                <th style={{ padding: "14px 18px" }}>FULL NAME</th>
-                <th style={{ padding: "14px 18px" }}>EMAIL ADDRESS</th>
-                <th style={{ padding: "14px 18px" }}>ROLE</th>
-                <th style={{ padding: "14px 18px" }}>STATUS</th>
-                <th style={{ padding: "14px 18px" }}>CREATED DATE</th>
-                <th style={{ padding: "14px 18px" }}>UPDATED</th>
-                <th style={{ padding: "14px 18px", textAlign: "right" }}>ACTIONS</th>
+                <th style={{ padding: "14px 18px" }}>{t("tableFullName", { defaultValue: "FULL NAME" })}</th>
+                <th style={{ padding: "14px 18px" }}>{t("tableEmail", { defaultValue: "EMAIL ADDRESS" })}</th>
+                <th style={{ padding: "14px 18px" }}>{t("tableRole", { defaultValue: "ROLE" })}</th>
+                <th style={{ padding: "14px 18px" }}>{t("tableStatus", { defaultValue: "STATUS" })}</th>
+                <th style={{ padding: "14px 18px" }}>{t("tableCreatedDate", { defaultValue: "CREATED DATE" })}</th>
+                <th style={{ padding: "14px 18px" }}>{t("tableUpdated", { defaultValue: "UPDATED" })}</th>
+                <th style={{ padding: "14px 18px", textAlign: "right" }}>{t("tableActions", { defaultValue: "ACTIONS" })}</th>
               </tr>
             </thead>
             <tbody>
               {users.map((item, index) => {
                 const isSelf = item.id === currentUserId;
+                const isEven = index % 2 === 0;
 
                 return (
                   <tr
@@ -263,7 +265,7 @@ export function UserTable({
                           {(item.full_name || item.email || "U").charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, color: "var(--color-admin-text)" }}>
+                          <div style={{ fontWeight: 600, color: "var(--color-admin-text, #0f172a)" }}>
                             {item.full_name || "—"}
                           </div>
                           {isSelf && (
@@ -301,7 +303,7 @@ export function UserTable({
 
                     {/* Verification Status */}
                     <td style={{ padding: "14px 18px" }}>
-                      <VerificationBadge isVerified={item.is_verified} />
+                      <VerificationBadge isVerified={item.is_verified} t={t} />
                     </td>
 
                     {/* Created Date */}
@@ -313,7 +315,7 @@ export function UserTable({
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {formatDateTime(item.created_at)}
+                      {formatDateTime(item.created_at, currentLang)}
                     </td>
 
                     {/* Updated Date */}
@@ -325,7 +327,7 @@ export function UserTable({
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {formatDateTime(item.updated_at)}
+                      {formatDateTime(item.updated_at, currentLang)}
                     </td>
 
                     {/* Actions */}
@@ -341,8 +343,8 @@ export function UserTable({
                         {/* View Details */}
                         <IconButton
                           icon="eye"
-                          ariaLabel={t("viewUserDetails", { defaultValue: "Details anzeigen" })}
-                          title={t("viewUserDetails", { defaultValue: "Details anzeigen" })}
+                          ariaLabel={t("viewUserDetails", { defaultValue: "View details" })}
+                          title={t("viewUserDetails", { defaultValue: "View details" })}
                           variant="ghost"
                           size="sm"
                           onClick={() => onViewDetails(item)}
@@ -351,8 +353,8 @@ export function UserTable({
                         {/* Change Role */}
                         <IconButton
                           icon="shield"
-                          ariaLabel={t("changeRole", { defaultValue: "Rolle ändern" })}
-                          title={t("changeRole", { defaultValue: "Rolle ändern" })}
+                          ariaLabel={t("changeRole", { defaultValue: "Change role" })}
+                          title={t("changeRole", { defaultValue: "Change role" })}
                           variant="ghost"
                           size="sm"
                           onClick={() => onChangeRole(item)}
@@ -361,8 +363,8 @@ export function UserTable({
                         {/* Revoke Sessions */}
                         <IconButton
                           icon="refresh-cw"
-                          ariaLabel={t("revokeSessions", { defaultValue: "Sitzungen beenden" })}
-                          title={t("revokeSessions", { defaultValue: "Sitzungen beenden" })}
+                          ariaLabel={t("revokeSessions", { defaultValue: "Revoke sessions" })}
+                          title={t("revokeSessions", { defaultValue: "Revoke sessions" })}
                           variant="ghost"
                           size="sm"
                           onClick={() => onRevokeSessions(item)}
@@ -373,19 +375,19 @@ export function UserTable({
                           icon="trash"
                           ariaLabel={
                             isSelf
-                              ? t("cannotDeleteOwnAccount", { defaultValue: "Eigenes Konto kann nicht gelöscht werden" })
-                              : t("deleteUser", { defaultValue: "Benutzer löschen" })
+                              ? t("cannotDeleteOwnAccount", { defaultValue: "Cannot delete your own account" })
+                              : t("deleteUser", { defaultValue: "Delete user" })
                           }
                           title={
                             isSelf
-                              ? t("cannotDeleteOwnAccount", { defaultValue: "Eigenes Konto kann nicht gelöscht werden" })
-                              : t("deleteUser", { defaultValue: "Benutzer löschen" })
+                              ? t("cannotDeleteOwnAccount", { defaultValue: "Cannot delete your own account" })
+                              : t("deleteUser", { defaultValue: "Delete user" })
                           }
                           variant="ghost"
                           size="sm"
                           disabled={isSelf}
                           style={{
-                            color: isSelf ? "rgba(255, 255, 255, 0.2)" : "var(--color-error)",
+                            color: isSelf ? "rgba(0, 0, 0, 0.2)" : "var(--color-error)",
                             cursor: isSelf ? "not-allowed" : "pointer",
                           }}
                           onClick={() => !isSelf && onDeleteUser(item)}
@@ -456,7 +458,7 @@ export function UserTable({
                     {(item.full_name || item.email || "U").charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: "var(--font-size-base)", color: "var(--color-admin-text)" }}>
+                    <div style={{ fontWeight: 700, fontSize: "var(--font-size-base)", color: "var(--color-admin-text, #0f172a)" }}>
                       {item.full_name || "—"}
                     </div>
                     {isSelf && (
@@ -500,14 +502,14 @@ export function UserTable({
                   justifyContent: "space-between",
                   gap: "var(--space-xs)",
                   padding: "8px 0",
-                  borderTop: "1px solid rgba(255, 255, 255, 0.05)",
-                  borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+                  borderTop: "1px solid var(--color-admin-border)",
+                  borderBottom: "1px solid var(--color-admin-border)",
                   fontSize: "11px",
                   color: "var(--color-admin-muted)",
                 }}
               >
-                <VerificationBadge isVerified={item.is_verified} />
-                <span>Erstellt: {formatDateTime(item.created_at)}</span>
+                <VerificationBadge isVerified={item.is_verified} t={t} />
+                <span>{t("created", { defaultValue: "Created" })}: {formatDateTime(item.created_at, currentLang)}</span>
               </div>
 
               {/* Card Actions */}
@@ -527,7 +529,7 @@ export function UserTable({
                   style={{ fontSize: "12px", padding: "6px 10px" }}
                 >
                   <Icon name="eye" size={14} />
-                  <span style={{ marginLeft: "4px" }}>Details</span>
+                  <span style={{ marginLeft: "4px" }}>{t("viewDetails", { defaultValue: "Details" })}</span>
                 </Button>
 
                 <Button
@@ -537,7 +539,7 @@ export function UserTable({
                   style={{ fontSize: "12px", padding: "6px 10px" }}
                 >
                   <Icon name="shield" size={14} />
-                  <span style={{ marginLeft: "4px" }}>Rolle</span>
+                  <span style={{ marginLeft: "4px" }}>{t("role", { defaultValue: "Role" })}</span>
                 </Button>
 
                 <Button
@@ -547,7 +549,7 @@ export function UserTable({
                   style={{ fontSize: "12px", padding: "6px 10px" }}
                 >
                   <Icon name="refresh-cw" size={14} />
-                  <span style={{ marginLeft: "4px" }}>Sitzungen</span>
+                  <span style={{ marginLeft: "4px" }}>{t("sessions", { defaultValue: "Sessions" })}</span>
                 </Button>
 
                 <Button
@@ -558,11 +560,11 @@ export function UserTable({
                   style={{
                     fontSize: "12px",
                     padding: "6px 10px",
-                    color: isSelf ? "rgba(255, 255, 255, 0.2)" : "var(--color-error)",
+                    color: isSelf ? "rgba(0, 0, 0, 0.2)" : "var(--color-error)",
                   }}
                 >
                   <Icon name="trash" size={14} />
-                  <span style={{ marginLeft: "4px" }}>{t("delete")}</span>
+                  <span style={{ marginLeft: "4px" }}>{t("delete", { defaultValue: "Delete" })}</span>
                 </Button>
               </div>
             </div>
@@ -592,7 +594,7 @@ export function UserTable({
               page: pagination.page,
               pages: pagination.pages,
               total: pagination.total,
-              defaultValue: "Seite {{page}} von {{pages}} ({{total}} Konten)",
+              defaultValue: "Page {{page}} of {{pages}} ({{total}} accounts)",
             })}
           </div>
 
@@ -605,14 +607,14 @@ export function UserTable({
               style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
               <Icon name="chevron-left" size={14} />
-              <span>{t("previous", { defaultValue: "Zurück" })}</span>
+              <span>{t("previous", { defaultValue: "Previous" })}</span>
             </Button>
 
             <span
               style={{
                 padding: "0 10px",
                 fontWeight: 600,
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
               }}
             >
               {pagination.page} / {pagination.pages}
@@ -625,7 +627,7 @@ export function UserTable({
               onClick={() => onPageChange(pagination.page + 1)}
               style={{ display: "flex", alignItems: "center", gap: "6px" }}
             >
-              <span>{t("next", { defaultValue: "Weiter" })}</span>
+              <span>{t("next", { defaultValue: "Next" })}</span>
               <Icon name="chevron-right" size={14} />
             </Button>
           </div>

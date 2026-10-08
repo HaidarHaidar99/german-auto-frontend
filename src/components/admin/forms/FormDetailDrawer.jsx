@@ -16,7 +16,7 @@ export function FormDetailDrawer({
   onArchive,
 }) {
   const { t, i18n } = useTranslation(["admin", "forms", "common"]);
-  const currentLang = i18n.language || "de";
+  const currentLang = i18n.language || "en";
 
   const [notesText, setNotesText] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
@@ -80,7 +80,7 @@ export function FormDetailDrawer({
       setUpdatingStatus(true);
       await onUpdateStatus?.(form.id, newStatus);
     } catch (err) {
-      alert(err?.message || "Fehler beim Aktualisieren des Status.");
+      alert(err?.message || t("errorUpdatingStatus", { defaultValue: "Error updating status." }));
     } finally {
       setUpdatingStatus(false);
     }
@@ -94,7 +94,7 @@ export function FormDetailDrawer({
       setNotesSuccess(true);
       setTimeout(() => setNotesSuccess(false), 3500);
     } catch (err) {
-      alert(err?.message || "Fehler beim Speichern der Notiz.");
+      alert(err?.message || t("errorSavingNotes", { defaultValue: "Error saving notes." }));
     } finally {
       setSavingNotes(false);
     }
@@ -106,7 +106,7 @@ export function FormDetailDrawer({
       await onArchive?.(form.id);
       setShowArchiveConfirm(false);
     } catch (err) {
-      alert(err?.message || "Fehler beim Archivieren des Eingangs.");
+      alert(err?.message || t("errorArchiving", { defaultValue: "Error archiving submission." }));
     } finally {
       setUpdatingStatus(false);
     }
@@ -115,9 +115,9 @@ export function FormDetailDrawer({
   // Safe external URLs
   const cleanPhone = contactPhone.replace(/[^0-9+]/g, "");
   const mailSubject = isContact
-    ? `German Auto: Ihre Anfrage bezüglich "${data.regarding || "Anfrage"}"`
-    : `German Auto: Ihr Fahrzeugangebot ${data.brand || ""} ${data.model || ""}`.trim();
-  const mailBody = `Guten Tag ${contactName},\n\nvielen Dank für Ihre Kontaktaufnahme mit German Auto.\n\nMit freundlichen Grüßen,\nIhr German Auto Team`;
+    ? `German Auto: ${data.regarding || "Inquiry"}`
+    : `German Auto: Vehicle Offer ${data.brand || ""} ${data.model || ""}`.trim();
+  const mailBody = `Hello ${contactName},\n\nThank you for reaching out to König Automobile Rheinberg.\n\nBest regards,\nGerman Auto Team`;
   const mailtoUrl = contactEmail
     ? `mailto:${contactEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`
     : null;
@@ -131,7 +131,7 @@ export function FormDetailDrawer({
       <Drawer
         isOpen={isOpen}
         onClose={onClose}
-        title={isContact ? t("formTypeContact", { defaultValue: "Kontaktanfrage" }) : t("formTypeSellCar", { defaultValue: "Fahrzeugankauf" })}
+        title={isContact ? t("formTypeContact", { defaultValue: "Contact Inquiry" }) : t("formTypeSellCar", { defaultValue: "Vehicle Purchase Offer" })}
         size="lg"
         position="right"
       >
@@ -145,24 +145,24 @@ export function FormDetailDrawer({
               flexWrap: "wrap",
               gap: "var(--space-sm)",
               paddingBottom: "var(--space-sm)",
-              borderBottom: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+              borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
               <Badge variant={isContact ? "outline" : "secondary"} size="sm">
                 {isContact ? "CONTACT" : "SELL_CAR"}
               </Badge>
-              <Badge variant={getStatusBadgeVariant(form.status)} size="sm">
-                {t(`status${form.status.charAt(0) + form.status.slice(1).toLowerCase().replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`, { defaultValue: form.status })}
+              <Badge variant={getStatusBadgeVariant(form.status || "NEW")} size="sm">
+                {form.status ? t(`status${form.status.charAt(0) + form.status.slice(1).toLowerCase().replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`, { defaultValue: form.status }) : "NEW"}
               </Badge>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
-              <label style={{ fontSize: "11px", color: "var(--color-admin-muted)", marginRight: "4px" }}>
-                Status ändern:
+              <label style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)", marginRight: "4px" }}>
+                {t("changeStatus", { defaultValue: "Change status" })}:
               </label>
               <select
-                value={form.status}
+                value={form.status || "NEW"}
                 disabled={updatingStatus}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 style={{
@@ -170,18 +170,18 @@ export function FormDetailDrawer({
                   fontSize: "11px",
                   fontWeight: 600,
                   borderRadius: "var(--radius-sm, 4px)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  color: "#ffffff",
+                  border: "1px solid var(--color-admin-border, #e2e8f0)",
+                  backgroundColor: "var(--color-admin-card, #ffffff)",
+                  color: "var(--color-admin-text, #0f172a)",
                   cursor: updatingStatus ? "wait" : "pointer",
                   outline: "none",
                 }}
               >
-                <option value="NEW" style={{ backgroundColor: "#1a1d24" }}>Neu (NEW)</option>
-                <option value="READ" style={{ backgroundColor: "#1a1d24" }}>Gelesen (READ)</option>
-                <option value="IN_PROGRESS" style={{ backgroundColor: "#1a1d24" }}>In Bearbeitung (IN_PROGRESS)</option>
-                <option value="COMPLETED" style={{ backgroundColor: "#1a1d24" }}>Abgeschlossen (COMPLETED)</option>
-                <option value="ARCHIVED" style={{ backgroundColor: "#1a1d24" }}>Archiviert (ARCHIVED)</option>
+                <option value="NEW">{t("statusNew", { defaultValue: "New (NEW)" })}</option>
+                <option value="READ">{t("statusRead", { defaultValue: "Read (READ)" })}</option>
+                <option value="IN_PROGRESS">{t("statusInProgress", { defaultValue: "In Progress (IN_PROGRESS)" })}</option>
+                <option value="COMPLETED">{t("statusCompleted", { defaultValue: "Completed (COMPLETED)" })}</option>
+                <option value="ARCHIVED">{t("statusArchived", { defaultValue: "Archived (ARCHIVED)" })}</option>
               </select>
 
               {form.status !== "ARCHIVED" && !showArchiveConfirm && (
@@ -189,10 +189,10 @@ export function FormDetailDrawer({
                   variant="outline"
                   size="sm"
                   onClick={() => setShowArchiveConfirm(true)}
-                  style={{ height: "28px", fontSize: "11px", color: "var(--color-admin-muted)" }}
+                  style={{ height: "28px", fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}
                 >
                   <Icon name="archive" size={12} style={{ marginRight: "4px" }} />
-                  Archivieren
+                  {t("archive", { defaultValue: "Archive" })}
                 </Button>
               )}
             </div>
@@ -212,15 +212,15 @@ export function FormDetailDrawer({
                 gap: "var(--space-sm)",
               }}
             >
-              <div style={{ fontSize: "var(--font-size-xs)", color: "#eab308" }}>
-                {t("archiveConfirmMessage", { defaultValue: "Möchten Sie diesen Eingang wirklich archivieren?" })}
+              <div style={{ fontSize: "var(--font-size-xs)", color: "#b45309", fontWeight: 500 }}>
+                {t("archiveConfirmMessage", { defaultValue: "Are you sure you want to archive this submission?" })}
               </div>
               <div style={{ display: "flex", gap: "6px" }}>
                 <Button variant="ghost" size="sm" onClick={() => setShowArchiveConfirm(false)} style={{ height: "26px", fontSize: "11px" }}>
-                  Abbrechen
+                  {t("cancel", { defaultValue: "Cancel" })}
                 </Button>
                 <Button variant="primary" size="sm" loading={updatingStatus} onClick={handleArchive} style={{ height: "26px", fontSize: "11px" }}>
-                  Bestätigen
+                  {t("confirm", { defaultValue: "Confirm" })}
                 </Button>
               </div>
             </div>
@@ -233,14 +233,14 @@ export function FormDetailDrawer({
               alignItems: "center",
               gap: "var(--space-xs)",
               padding: "var(--space-sm) var(--space-md)",
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              backgroundColor: "var(--color-admin-accent-subtle, #f8fafc)",
               borderRadius: "var(--radius-sm, 6px)",
-              border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+              border: "1px solid var(--color-admin-border, #e2e8f0)",
               flexWrap: "wrap",
             }}
           >
-            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted)", marginRight: "6px" }}>
-              {t("contactCustomer", { defaultValue: "Kunden kontaktieren" })}:
+            <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted, #64748b)", marginRight: "6px" }}>
+              {t("contactCustomer", { defaultValue: "Contact customer" })}:
             </span>
 
             {mailtoUrl && (
@@ -251,7 +251,7 @@ export function FormDetailDrawer({
                 style={{ fontSize: "11px", height: "30px" }}
               >
                 <Icon name="mail" size={13} style={{ marginRight: "4px" }} />
-                {t("sendEmail", { defaultValue: "E-Mail senden" })}
+                {t("sendEmail", { defaultValue: "Send Email" })}
               </Button>
             )}
 
@@ -263,7 +263,7 @@ export function FormDetailDrawer({
                 style={{ fontSize: "11px", height: "30px" }}
               >
                 <Icon name="phone" size={13} style={{ marginRight: "4px" }} />
-                {t("callPhone", { defaultValue: "Anrufen" })}
+                {t("callPhone", { defaultValue: "Call Phone" })}
               </Button>
             )}
 
@@ -272,7 +272,7 @@ export function FormDetailDrawer({
                 variant="outline"
                 size="sm"
                 onClick={() => window.open(waUrl, "_blank", "noopener,noreferrer")}
-                style={{ fontSize: "11px", height: "30px", borderColor: "rgba(34, 197, 94, 0.4)", color: "#22c55e" }}
+                style={{ fontSize: "11px", height: "30px", borderColor: "rgba(34, 197, 94, 0.4)", color: "#16a34a" }}
               >
                 <Icon name="whatsapp" size={13} style={{ marginRight: "4px" }} />
                 {t("chatWhatsApp", { defaultValue: "WhatsApp" })}
@@ -284,47 +284,47 @@ export function FormDetailDrawer({
           <div
             style={{
               padding: "var(--space-md)",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
+              backgroundColor: "var(--color-admin-card, #ffffff)",
               borderRadius: "var(--radius-sm, 6px)",
-              border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+              border: "1px solid var(--color-admin-border, #e2e8f0)",
             }}
           >
-            <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
-              {t("customerInformation", { defaultValue: "Kundendaten" })}
+            <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
+              {t("customerInformation", { defaultValue: "Customer Information" })}
             </h4>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)", fontSize: "var(--font-size-xs)" }}>
               <div>
-                <span style={{ color: "var(--color-admin-muted)", display: "block" }}>Name</span>
-                <strong style={{ color: "#ffffff" }}>{contactName}</strong>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("name", { defaultValue: "Name" })}</span>
+                <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{contactName}</strong>
               </div>
 
               <div>
-                <span style={{ color: "var(--color-admin-muted)", display: "block" }}>E-Mail</span>
-                <strong style={{ color: "#ffffff" }}>{contactEmail || "—"}</strong>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("email", { defaultValue: "Email" })}</span>
+                <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{contactEmail || "—"}</strong>
               </div>
 
               <div>
-                <span style={{ color: "var(--color-admin-muted)", display: "block" }}>Telefon</span>
-                <strong style={{ color: "#ffffff" }}>{contactPhone || "—"}</strong>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("phone", { defaultValue: "Phone" })}</span>
+                <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{contactPhone || "—"}</strong>
               </div>
 
               {!isContact && data.preferred_contact && (
                 <div>
-                  <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("preferredContact", { defaultValue: "Bevorzugte Kontaktaufnahme" })}</span>
+                  <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("preferredContact", { defaultValue: "Preferred Contact" })}</span>
                   <Badge variant="outline" size="sm">{data.preferred_contact}</Badge>
                 </div>
               )}
 
               <div>
-                <span style={{ color: "var(--color-admin-muted)", display: "block" }}>Eingegangen am</span>
-                <span style={{ color: "var(--color-admin-text, #ffffff)" }}>{formatDate(form.created_at)}</span>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("submittedOn", { defaultValue: "Submitted on" })}</span>
+                <span style={{ color: "var(--color-admin-text, #0f172a)", fontWeight: 500 }}>{formatDate(form.created_at)}</span>
               </div>
 
               <div>
-                <span style={{ color: "var(--color-admin-muted)", display: "block" }}>Kundenkonto</span>
-                <span style={{ color: form.user_id ? "var(--color-primary, var(--color-text))" : "var(--color-admin-muted)" }}>
-                  {form.user_id ? `Registrierter Benutzer (${form.user_id.substring(0, 8)}...)` : t("guestSubmission", { defaultValue: "Gast-Einsendung" })}
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("customerAccount", { defaultValue: "Customer Account" })}</span>
+                <span style={{ color: form.user_id ? "var(--color-admin-accent, #0284c7)" : "var(--color-admin-muted, #64748b)", fontWeight: 500 }}>
+                  {form.user_id ? t("registeredUserWithId", { id: form.user_id.substring(0, 8), defaultValue: `Registered User (${form.user_id.substring(0, 8)}...)` }) : t("guestSubmission", { defaultValue: "Guest Submission" })}
                 </span>
               </div>
             </div>
@@ -335,34 +335,35 @@ export function FormDetailDrawer({
             <div
               style={{
                 padding: "var(--space-md)",
-                backgroundColor: "rgba(255, 255, 255, 0.02)",
+                backgroundColor: "var(--color-admin-card, #ffffff)",
                 borderRadius: "var(--radius-sm, 6px)",
-                border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+                border: "1px solid var(--color-admin-border, #e2e8f0)",
               }}
             >
-              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
-                {t("regarding", { defaultValue: "Betreff / Anliegen" })}
+              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
+                {t("regarding", { defaultValue: "Subject / Topic" })}
               </h4>
-              <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "#ffffff", marginBottom: "var(--space-md)" }}>
-                {data.regarding || "Allgemeine Anfrage"}
+              <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", marginBottom: "var(--space-md)" }}>
+                {data.regarding || t("generalInquiry", { defaultValue: "General inquiry" })}
               </div>
 
-              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
-                {t("message", { defaultValue: "Nachricht" })}
+              <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
+                {t("message", { defaultValue: "Message" })}
               </h4>
               <div
                 style={{
                   padding: "var(--space-md)",
-                  backgroundColor: "rgba(0, 0, 0, 0.3)",
+                  backgroundColor: "var(--color-admin-accent-subtle, #f8fafc)",
                   borderRadius: "4px",
                   fontSize: "var(--font-size-sm)",
-                  color: "#ffffff",
+                  color: "var(--color-admin-text, #0f172a)",
                   lineHeight: 1.6,
                   whiteSpace: "pre-line",
-                  borderLeft: "3px solid var(--color-primary, var(--color-text))",
+                  border: "1px solid var(--color-admin-border, #e2e8f0)",
+                  borderLeft: "3px solid var(--color-admin-accent, #0284c7)",
                 }}
               >
-                {data.message || "Kein Nachrichtentext hinterlegt."}
+                {data.message || t("noMessageContent", { defaultValue: "No message text provided." })}
               </div>
             </div>
           )}
@@ -374,76 +375,76 @@ export function FormDetailDrawer({
               <div
                 style={{
                   padding: "var(--space-md)",
-                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  backgroundColor: "var(--color-admin-card, #ffffff)",
                   borderRadius: "var(--radius-sm, 6px)",
-                  border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+                  border: "1px solid var(--color-admin-border, #e2e8f0)",
                 }}
               >
-                <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
-                  {t("vehicleDetails", { defaultValue: "Fahrzeugdaten" })}
+                <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
+                  {t("vehicleDetails", { defaultValue: "Vehicle Details" })}
                 </h4>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)", fontSize: "var(--font-size-xs)" }}>
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", display: "block" }}>Marke & Modell</span>
-                    <strong style={{ color: "#ffffff", fontSize: "var(--font-size-sm)" }}>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("brandAndModel", { defaultValue: "Brand & Model" })}</span>
+                    <strong style={{ color: "var(--color-admin-text, #0f172a)", fontSize: "var(--font-size-sm)" }}>
                       {data.brand || "—"} {data.model || ""}
                     </strong>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("firstRegistration", { defaultValue: "Erstzulassung" })}</span>
-                    <strong style={{ color: "#ffffff" }}>{data.first_registration || "—"}</strong>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("firstRegistration", { defaultValue: "First Registration" })}</span>
+                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{data.first_registration || "—"}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("vin", { defaultValue: "Fahrgestellnummer (FIN)" })}</span>
-                    <code style={{ color: "var(--color-primary, var(--color-text))", fontSize: "12px", fontFamily: "monospace" }}>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("vin", { defaultValue: "VIN (Chassis No.)" })}</span>
+                    <code style={{ color: "var(--color-admin-accent, #0284c7)", fontSize: "12px", fontFamily: "monospace", fontWeight: 600 }}>
                       {data.vin || "—"}
                     </code>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("postalCode", { defaultValue: "Standort / PLZ" })}</span>
-                    <strong style={{ color: "#ffffff" }}>{data.postal_code || "—"}</strong>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("postalCode", { defaultValue: "Location / Postal Code" })}</span>
+                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{data.postal_code || "—"}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("mileage", { defaultValue: "Kilometerstand" })}</span>
-                    <strong style={{ color: "#ffffff" }}>
-                      {data.mileage_km != null ? `${new Intl.NumberFormat("de-DE").format(data.mileage_km)} km` : "—"}
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("mileage", { defaultValue: "Mileage" })}</span>
+                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>
+                      {data.mileage_km != null ? `${new Intl.NumberFormat(currentLang === "de" ? "de-DE" : "en-US").format(data.mileage_km)} km` : "—"}
                     </strong>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", display: "block" }}>{t("minPrice", { defaultValue: "Mindestpreisvorstellung" })}</span>
-                    <strong style={{ color: "var(--color-primary, var(--color-text))", fontSize: "var(--font-size-sm)" }}>
-                      {data.min_price != null ? `${new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(data.min_price)}` : "Keine Angabe"}
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("minPrice", { defaultValue: "Asking Price" })}</span>
+                    <strong style={{ color: "var(--color-admin-accent, #0284c7)", fontSize: "var(--font-size-sm)", fontWeight: 700 }}>
+                      {data.min_price != null ? `${new Intl.NumberFormat(currentLang === "de" ? "de-DE" : "en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(data.min_price)}` : t("notSpecified", { defaultValue: "Not specified" })}
                     </strong>
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: "var(--space-lg)", marginTop: "var(--space-md)", paddingTop: "var(--space-sm)", borderTop: "1px solid rgba(255, 255, 255, 0.06)", fontSize: "var(--font-size-xs)" }}>
+                <div style={{ display: "flex", gap: "var(--space-lg)", marginTop: "var(--space-md)", paddingTop: "var(--space-sm)", borderTop: "1px solid var(--color-admin-border, #e2e8f0)", fontSize: "var(--font-size-xs)" }}>
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", marginRight: "6px" }}>{t("accidentFree", { defaultValue: "Unfallfrei" })}:</span>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", marginRight: "6px" }}>{t("accidentFree", { defaultValue: "Accident-free" })}:</span>
                     <Badge variant={data.accident_free ? "success" : "warning"} size="sm">
-                      {data.accident_free ? "Ja" : "Nein"}
+                      {data.accident_free ? t("yes", { defaultValue: "Yes" }) : t("no", { defaultValue: "No" })}
                     </Badge>
                   </div>
                   <div>
-                    <span style={{ color: "var(--color-admin-muted)", marginRight: "6px" }}>{t("repainted", { defaultValue: "Nachlackiert" })}:</span>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", marginRight: "6px" }}>{t("repainted", { defaultValue: "Repainted" })}:</span>
                     <Badge variant={data.repainting ? "warning" : "neutral"} size="sm">
-                      {data.repainting ? "Ja" : "Nein"}
+                      {data.repainting ? t("yes", { defaultValue: "Yes" }) : t("no", { defaultValue: "No" })}
                     </Badge>
                   </div>
                 </div>
 
                 {data.additional_info && (
-                  <div style={{ marginTop: "var(--space-sm)", paddingTop: "var(--space-sm)", borderTop: "1px solid rgba(255, 255, 255, 0.06)" }}>
-                    <span style={{ color: "var(--color-admin-muted)", fontSize: "11px", display: "block", marginBottom: "4px" }}>
-                      Zusätzliche Angaben:
+                  <div style={{ marginTop: "var(--space-sm)", paddingTop: "var(--space-sm)", borderTop: "1px solid var(--color-admin-border, #e2e8f0)" }}>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", fontSize: "11px", display: "block", marginBottom: "4px" }}>
+                      {t("additionalInformation", { defaultValue: "Additional Information:" })}
                     </span>
-                    <div style={{ fontSize: "var(--font-size-xs)", color: "#ffffff", lineHeight: 1.5, whiteSpace: "pre-line" }}>
+                    <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.5, whiteSpace: "pre-line" }}>
                       {data.additional_info}
                     </div>
                   </div>
@@ -454,13 +455,13 @@ export function FormDetailDrawer({
               <div
                 style={{
                   padding: "var(--space-md)",
-                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  backgroundColor: "var(--color-admin-card, #ffffff)",
                   borderRadius: "var(--radius-sm, 6px)",
-                  border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+                  border: "1px solid var(--color-admin-border, #e2e8f0)",
                 }}
               >
-                <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
-                  {t("submittedImages", { defaultValue: "Eingereichte Bilder" })} ({Array.isArray(data.images) ? data.images.length : 0})
+                <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
+                  {t("submittedImages", { defaultValue: "Submitted Photos" })} ({Array.isArray(data.images) ? data.images.length : 0})
                 </h4>
 
                 {Array.isArray(data.images) && data.images.length > 0 ? (
@@ -474,7 +475,7 @@ export function FormDetailDrawer({
                   >
                     {data.images.map((img, idx) => {
                       const imgUrl = typeof img === "string" ? img : img.public_url || "";
-                      const imgName = typeof img === "object" && img.name ? img.name : `Foto ${idx + 1}`;
+                      const imgName = typeof img === "object" && img.name ? img.name : t("photoNumber", { num: idx + 1, defaultValue: `Photo ${idx + 1}` });
 
                       return (
                         <div
@@ -486,10 +487,10 @@ export function FormDetailDrawer({
                             borderRadius: "4px",
                             overflow: "hidden",
                             backgroundColor: "#000",
-                            border: "1px solid rgba(255, 255, 255, 0.12)",
+                            border: "1px solid var(--color-admin-border, #e2e8f0)",
                             cursor: "pointer",
                           }}
-                          title="Klicken zum Vergrößern"
+                          title={t("clickToEnlarge", { defaultValue: "Click to enlarge" })}
                         >
                           <img
                             src={imgUrl}
@@ -517,8 +518,8 @@ export function FormDetailDrawer({
                     })}
                   </div>
                 ) : (
-                  <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)", marginTop: "4px" }}>
-                    {t("noImagesSubmitted", { defaultValue: "Keine Bilder zu diesem Fahrzeug eingereicht." })}
+                  <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted, #64748b)", marginTop: "4px" }}>
+                    {t("noImagesSubmitted", { defaultValue: "No images submitted for this vehicle." })}
                   </div>
                 )}
               </div>
@@ -529,33 +530,33 @@ export function FormDetailDrawer({
           <div
             style={{
               padding: "var(--space-md)",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
+              backgroundColor: "var(--color-admin-card, #ffffff)",
               borderRadius: "var(--radius-sm, 6px)",
-              border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+              border: "1px solid var(--color-admin-border, #e2e8f0)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
-              <h4 style={{ margin: 0, fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-primary, var(--color-text))" }}>
-                {t("adminNotes", { defaultValue: "Admin-Notizen" })}
+              <h4 style={{ margin: 0, fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
+                {t("adminNotes", { defaultValue: "Internal Admin Notes" })}
               </h4>
-              <span style={{ fontSize: "11px", color: "var(--color-admin-muted)" }}>
-                Nur für Administratoren sichtbar
+              <span style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}>
+                {t("adminOnlyVisible", { defaultValue: "Visible to administrators only" })}
               </span>
             </div>
 
             <Textarea
               value={notesText}
               onChange={(e) => setNotesText(e.target.value)}
-              placeholder={t("adminNotesPlaceholder", { defaultValue: "Interne Notizen zu dieser Anfrage (nur für Administratoren sichtbar)..." })}
+              placeholder={t("adminNotesPlaceholder", { defaultValue: "Internal notes on this inquiry (visible only to admins)..." })}
               rows={4}
               style={{ fontSize: "var(--font-size-xs)", marginBottom: "var(--space-sm)" }}
             />
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               {notesSuccess ? (
-                <span style={{ fontSize: "var(--font-size-xs)", color: "#22c55e", display: "flex", alignItems: "center", gap: "4px" }}>
+                <span style={{ fontSize: "var(--font-size-xs)", color: "#16a34a", display: "flex", alignItems: "center", gap: "4px" }}>
                   <Icon name="check" size={14} />
-                  {t("notesSaved", { defaultValue: "Notizen erfolgreich gespeichert." })}
+                  {t("notesSaved", { defaultValue: "Notes saved successfully." })}
                 </span>
               ) : (
                 <span />
@@ -568,7 +569,7 @@ export function FormDetailDrawer({
                 onClick={handleSaveNotes}
               >
                 <Icon name="save" size={14} style={{ marginRight: "6px" }} />
-                {t("saveNotes", { defaultValue: "Notiz speichern" })}
+                {t("saveNotes", { defaultValue: "Save notes" })}
               </Button>
             </div>
           </div>

@@ -327,13 +327,13 @@ export function AdminFormsPage() {
 
       {/* Header */}
       <AdminPageHeader
-        title={t("forms", { defaultValue: "Formulareingänge" })}
+        title={t("forms", { defaultValue: "Form Submissions" })}
         subtitle={t("formsSubtitle", {
-          defaultValue: "Verwaltung aller Kontaktanfragen und Fahrzeugankauf-Einsendungen",
+          defaultValue: "Management of all contact inquiries and vehicle appraisal submissions",
         })}
         badge={
           <Badge variant="secondary" size="sm">
-            {forms.length} {t("statTotalForms", { defaultValue: "Eingänge" })}
+            {forms.length} {t("statTotalForms", { defaultValue: "Submissions" })}
           </Badge>
         }
       />
@@ -368,30 +368,30 @@ export function AdminFormsPage() {
 
         {/* Data View States */}
         {loading ? (
-          <AdminLoadingState message="Lade Formulareingänge aus der Datenbank..." />
+          <AdminLoadingState message={t("loadingForms", { defaultValue: "Loading form submissions from database..." })} />
         ) : error ? (
           <ErrorState
-            title="Fehler beim Laden"
+            title={t("errorLoading", { defaultValue: "Error loading" })}
             message={error}
             onRetry={() => fetchForms(false)}
           />
         ) : forms.length === 0 ? (
           <AdminEmptyState
             icon="mail"
-            title={t("noFormsTitle", { defaultValue: "Keine Formulareingänge vorhanden" })}
+            title={t("noFormsTitle", { defaultValue: "No form submissions available" })}
             message={t("noFormsDesc", {
               defaultValue:
-                "Es sind derzeit keine Anfragen oder Fahrzeugbewertungen in der Datenbank gespeichert.",
+                "There are currently no inquiries or vehicle evaluations stored in the database.",
             })}
           />
         ) : filteredForms.length === 0 ? (
           <AdminEmptyState
             icon="search"
-            title={t("noMatchingFormsTitle", { defaultValue: "Keine passenden Eingänge gefunden" })}
+            title={t("noMatchingFormsTitle", { defaultValue: "No matching submissions found" })}
             message={t("noMatchingFormsDesc", {
-              defaultValue: "Zu den gewählten Filterkriterien liegen keine Formulareingänge vor.",
+              defaultValue: "No form submissions match the selected filter criteria.",
             })}
-            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Filter zurücksetzen" }) : undefined}
+            actionLabel={hasActiveFilters ? t("resetFilters", { defaultValue: "Reset filters" }) : undefined}
             onAction={handleResetFilters}
           />
         ) : (
@@ -407,7 +407,11 @@ export function AdminFormsPage() {
               }}
             >
               <span>
-                {filteredForms.length} von {forms.length} Eingängen angezeigt
+                {t("formsShownCount", {
+                  count: filteredForms.length,
+                  total: forms.length,
+                  defaultValue: `${filteredForms.length} of ${forms.length} submissions displayed`,
+                })}
               </span>
             </div>
 

@@ -89,7 +89,7 @@ export function AdminStatCard({
                 fontSize: "2rem",
                 fontWeight: 800,
                 letterSpacing: "-0.5px",
-                color: "var(--color-admin-text)",
+                color: "var(--color-admin-text, #0f172a)",
                 lineHeight: 1.1,
               }}
             >

@@ -20,7 +20,7 @@ export function InventoryOverview({ inventory, loading = false }) {
 
   const statusItems = [
     {
-      label: t("statusAvailable", { defaultValue: "Verfügbar" }),
+      label: t("statusAvailable", { defaultValue: "Available" }),
       count: available,
       percentage: pct(available),
       color: "var(--color-success, #22c55e)",
@@ -29,7 +29,7 @@ export function InventoryOverview({ inventory, loading = false }) {
       query: "status=AVAILABLE",
     },
     {
-      label: t("statusSold", { defaultValue: "Verkauft" }),
+      label: t("statusSold", { defaultValue: "Sold" }),
       count: sold,
       percentage: pct(sold),
       color: "var(--color-admin-muted, #94a3b8)",
@@ -38,7 +38,7 @@ export function InventoryOverview({ inventory, loading = false }) {
       query: "status=SOLD",
     },
     {
-      label: t("statusReserved", { defaultValue: "Reserviert" }),
+      label: t("statusReserved", { defaultValue: "Reserved" }),
       count: reserved,
       percentage: pct(reserved),
       color: "var(--color-admin-accent, var(--color-admin-text))",
@@ -47,7 +47,7 @@ export function InventoryOverview({ inventory, loading = false }) {
       query: "status=RESERVED",
     },
     {
-      label: t("statusHidden", { defaultValue: "Ausgeblendet" }),
+      label: t("statusHidden", { defaultValue: "Hidden" }),
       count: hidden,
       percentage: pct(hidden),
       color: "var(--color-warning, #f59e0b)",
@@ -59,9 +59,9 @@ export function InventoryOverview({ inventory, loading = false }) {
 
   return (
     <AdminSectionCard
-      title={t("inventoryOverview", { defaultValue: "Bestandsübersicht & Statusverteilung" })}
+      title={t("inventoryOverview", { defaultValue: "Inventory Overview & Status Distribution" })}
       subtitle={t("inventorySubtitle", {
-        defaultValue: "{{total}} Fahrzeuge im Gesamtsystem registriert (davon {{featured}} besonders hervorgehoben)",
+        defaultValue: "{{total}} total vehicles registered (including {{featured}} featured highlights)",
         total,
         featured,
       })}
@@ -73,7 +73,7 @@ export function InventoryOverview({ inventory, loading = false }) {
           size="sm"
           iconRight="arrow-right"
         >
-          {t("manageVehicles", { defaultValue: "Fahrzeuge verwalten" })}
+          {t("manageVehicles", { defaultValue: "Manage Inventory" })}
         </Button>
       }
     >
@@ -119,7 +119,7 @@ export function InventoryOverview({ inventory, loading = false }) {
               color: "var(--color-admin-muted)",
             }}
           >
-            {t("noInventoryRegistered", { defaultValue: "Noch keine Fahrzeuge im System angelegt." })}
+            {t("noInventoryRegistered", { defaultValue: "No vehicles registered in the system yet." })}
           </div>
         )}
 
@@ -198,7 +198,7 @@ export function InventoryOverview({ inventory, loading = false }) {
             <Icon name="star" size={14} style={{ color: "var(--color-admin-accent)" }} />
             <span style={{ color: "var(--color-admin-text)", fontWeight: 500 }}>
               {t("featuredShowcaseNotice", {
-                defaultValue: "{{count}} Fahrzeuge sind aktuell als Highlight-Fahrzeuge markiert.",
+                defaultValue: "{{count}} vehicles are currently highlighted in the showcase.",
                 count: featured,
               })}
             </span>
@@ -213,7 +213,7 @@ export function InventoryOverview({ inventory, loading = false }) {
               fontSize: "var(--font-size-xs)",
             }}
           >
-            {t("filterFeatured", { defaultValue: "Highlights filtern" })} →
+            {t("filterFeatured", { defaultValue: "Filter Highlights" })} →
           </Link>
         </div>
       </div>

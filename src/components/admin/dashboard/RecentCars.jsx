@@ -23,13 +23,13 @@ export function RecentCars({ cars = [], loading = false }) {
   const getStatusBadge = (status) => {
     switch (status) {
       case "AVAILABLE":
-        return <Badge variant="success" size="sm">{t("statusAvailable", { defaultValue: "Verfügbar" })}</Badge>;
+        return <Badge variant="success" size="sm">{t("statusAvailable", { defaultValue: "Available" })}</Badge>;
       case "SOLD":
-        return <Badge variant="neutral" size="sm">{t("statusSold", { defaultValue: "Verkauft" })}</Badge>;
+        return <Badge variant="neutral" size="sm">{t("statusSold", { defaultValue: "Sold" })}</Badge>;
       case "RESERVED":
-        return <Badge variant="secondary" size="sm">{t("statusReserved", { defaultValue: "Reserviert" })}</Badge>;
+        return <Badge variant="secondary" size="sm">{t("statusReserved", { defaultValue: "Reserved" })}</Badge>;
       case "HIDDEN":
-        return <Badge variant="warning" size="sm">{t("statusHidden", { defaultValue: "Ausgeblendet" })}</Badge>;
+        return <Badge variant="warning" size="sm">{t("statusHidden", { defaultValue: "Hidden" })}</Badge>;
       default:
         return <Badge variant="neutral" size="sm">{status || "—"}</Badge>;
     }
@@ -37,8 +37,8 @@ export function RecentCars({ cars = [], loading = false }) {
 
   return (
     <AdminSectionCard
-      title={t("recentVehicles", { defaultValue: "Neueste Fahrzeuge im Bestand" })}
-      subtitle={t("recentVehiclesSubtitle", { defaultValue: "Zuletzt erfasste Fahrzeuge im Bestand" })}
+      title={t("recentVehicles", { defaultValue: "Recent Vehicles" })}
+      subtitle={t("recentVehiclesSubtitle", { defaultValue: "Recently added vehicles" })}
       actions={
         <Button
           as={Link}
@@ -47,15 +47,15 @@ export function RecentCars({ cars = [], loading = false }) {
           size="sm"
           iconRight="arrow-right"
         >
-          {t("viewAll", { defaultValue: "Alle anzeigen" })}
+          {t("viewAll", { defaultValue: "View All" })}
         </Button>
       }
     >
       {cars.length === 0 ? (
         <AdminEmptyState
           icon="car"
-          title={t("noRecentVehicles", { defaultValue: "Derzeit keine Fahrzeuge im System angelegt." })}
-          actionLabel={t("manageVehicles", { defaultValue: "Fahrzeuge anlegen" })}
+          title={t("noRecentVehicles", { defaultValue: "No vehicles registered in the system yet." })}
+          actionLabel={t("manageVehicles", { defaultValue: "Add Vehicle" })}
           actionTo="/admincoresecure/cars"
         />
       ) : (
