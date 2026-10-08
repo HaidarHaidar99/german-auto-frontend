@@ -318,13 +318,6 @@ export function WelcomeImpactSection() {
                 lineHeight: 1.2,
                 letterSpacing: "0.04em",
                 textTransform: "uppercase",
-                background: isDark
-                  ? "linear-gradient(135deg, #FFF4CC 0%, #F5D77F 25%, #D4AF37 60%, #AA771C 100%)"
-                  : "linear-gradient(135deg, #996515 0%, #B8860B 35%, #D4AF37 70%, #855509 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                filter: isDark ? "drop-shadow(0 4px 18px rgba(212, 175, 55, 0.45))" : "none",
-                textShadow: "none",
                 textAlign: "center",
               }}
             >
@@ -334,6 +327,7 @@ export function WelcomeImpactSection() {
             {/* Decorative Gold Accent Lines with Website Star */}
             <div
               ref={accentLinesRef}
+              className="gold-phrase-accents"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -344,16 +338,15 @@ export function WelcomeImpactSection() {
               }}
             >
               <div
+                className="gold-accent-line left"
                 style={{
                   width: "45px",
                   height: "1px",
-                  background:
-                    "linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8))",
                 }}
               />
               <span
+                className="gold-accent-star"
                 style={{
-                  color: "#D4AF37",
                   fontSize: "12px",
                   letterSpacing: "0.2em",
                   textTransform: "uppercase",
@@ -363,11 +356,10 @@ export function WelcomeImpactSection() {
                 ✦
               </span>
               <div
+                className="gold-accent-line right"
                 style={{
                   width: "45px",
                   height: "1px",
-                  background:
-                    "linear-gradient(90deg, rgba(212, 175, 55, 0.8), transparent)",
                 }}
               />
             </div>
@@ -379,6 +371,52 @@ export function WelcomeImpactSection() {
         /* Interactive subtle zoom on individual quadrant image on hover */
         .quadrant-cell:hover img {
           transform: scale(1.05);
+        }
+
+        /* Gold Phrase Title - robust cross-theme gradient text */
+        .gold-phrase-title {
+          background: linear-gradient(135deg, #FFF4CC 0%, #F5D77F 25%, #D4AF37 60%, #AA771C 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: #D4AF37;
+          filter: none !important;
+          text-shadow: none !important;
+        }
+
+        [data-theme="light"] .gold-phrase-title,
+        .theme-light .gold-phrase-title {
+          background: linear-gradient(135deg, #8A5A00 0%, #B37D14 30%, #C99726 65%, #7A4E00 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          color: #8A5A00;
+          filter: none !important;
+          text-shadow: none !important;
+        }
+
+        /* Gold Accents */
+        .gold-accent-line.left {
+          background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.8));
+        }
+        .gold-accent-line.right {
+          background: linear-gradient(90deg, rgba(212, 175, 55, 0.8), transparent);
+        }
+        .gold-accent-star {
+          color: #D4AF37;
+        }
+
+        [data-theme="light"] .gold-accent-line.left,
+        .theme-light .gold-accent-line.left {
+          background: linear-gradient(90deg, transparent, rgba(184, 134, 11, 0.8));
+        }
+        [data-theme="light"] .gold-accent-line.right,
+        .theme-light .gold-accent-line.right {
+          background: linear-gradient(90deg, rgba(184, 134, 11, 0.8), transparent);
+        }
+        [data-theme="light"] .gold-accent-star,
+        .theme-light .gold-accent-star {
+          color: #B8860B;
         }
 
         @media (max-width: 768px) {

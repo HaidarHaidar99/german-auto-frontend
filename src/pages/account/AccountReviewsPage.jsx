@@ -159,7 +159,7 @@ export function AccountReviewsPage() {
         {/* Section Heading */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "var(--space-xl)", flexWrap: "wrap", gap: "var(--space-md)" }}>
           <div>
-            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "#ffffff", margin: "0 0 4px 0" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--color-text)", margin: "0 0 4px 0" }}>
               {currentLang === "en" ? "My Reviews" : "Meine Bewertungen"}
             </h2>
             <p style={{ color: "var(--color-text-muted)", fontSize: "0.875rem", margin: 0 }}>
@@ -186,8 +186,8 @@ export function AccountReviewsPage() {
           <div
             style={{
               padding: "var(--space-3xl) var(--space-xl)",
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
-              border: "1px dashed rgba(212, 175, 55, 0.3)",
+              backgroundColor: "var(--color-surface)",
+              border: "1px dashed rgba(212, 175, 55, 0.4)",
               borderRadius: "var(--radius-lg)",
               textAlign: "center",
             }}
@@ -195,7 +195,7 @@ export function AccountReviewsPage() {
             <div style={{ color: "#D4AF37", fontSize: "2rem", marginBottom: "var(--space-sm)" }}>
               ★★★★★
             </div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "#ffffff", margin: "0 0 var(--space-xs)" }}>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text)", margin: "0 0 var(--space-xs)" }}>
               {currentLang === "en" ? "No Reviews Yet" : "Noch keine Bewertungen abgegeben"}
             </h3>
             <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem", maxWidth: "420px", margin: "0 auto var(--space-xl)", lineHeight: 1.5 }}>
@@ -218,13 +218,14 @@ export function AccountReviewsPage() {
                 <div
                   key={rev.id}
                   style={{
-                    backgroundColor: "#0a0a0a",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    backgroundColor: "var(--color-card)",
+                    border: "1px solid var(--color-border)",
                     borderRadius: "var(--radius-md)",
                     padding: "var(--space-xl)",
                     display: "flex",
                     flexDirection: "column",
                     gap: "var(--space-md)",
+                    boxShadow: "var(--shadow-elevation-1)",
                     transition: "border-color 0.2s ease",
                   }}
                 >
@@ -232,7 +233,7 @@ export function AccountReviewsPage() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "var(--space-sm)" }}>
                     <div>
                       {/* Name */}
-                      <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "#ffffff", marginBottom: "4px" }}>
+                      <div style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-text)", marginBottom: "4px" }}>
                         {rev.name}
                       </div>
                       {/* Date d/m/y */}
@@ -273,14 +274,14 @@ export function AccountReviewsPage() {
                   {/* Rating Stars */}
                   <div style={{ display: "flex", gap: "3px", color: "#D4AF37", fontSize: "1.2rem" }}>
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <span key={i} style={{ opacity: i < (rev.rating || 5) ? 1 : 0.2 }}>
+                      <span key={i} style={{ opacity: i < (rev.rating || 5) ? 1 : 0.25 }}>
                         ★
                       </span>
                     ))}
                   </div>
 
                   {/* Review Text */}
-                  <p style={{ margin: 0, color: "rgba(255, 255, 255, 0.9)", fontSize: "0.95rem", lineHeight: 1.6, fontStyle: "italic" }}>
+                  <p style={{ margin: 0, color: "var(--color-text)", fontSize: "0.95rem", lineHeight: 1.6, fontStyle: "italic", opacity: 0.9 }}>
                     "{rev.text}"
                   </p>
                 </div>
@@ -307,7 +308,7 @@ export function AccountReviewsPage() {
             <form onSubmit={handleSaveEdit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
               {/* Star Rating */}
               <div>
-                <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
+                <label style={{ display: "block", marginBottom: "var(--space-xs)", fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                   {currentLang === "en" ? "Rating" : "Bewertung"}
                 </label>
                 <div style={{ display: "flex", gap: "6px" }}>
@@ -322,7 +323,7 @@ export function AccountReviewsPage() {
                         fontSize: "2rem",
                         lineHeight: 1,
                         cursor: "pointer",
-                        color: editRating >= star ? "#D4AF37" : "rgba(255, 255, 255, 0.2)",
+                        color: editRating >= star ? "#D4AF37" : "var(--color-border)",
                         transition: "transform 0.15s ease",
                       }}
                     >
@@ -335,7 +336,7 @@ export function AccountReviewsPage() {
               {/* Review Text */}
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "var(--space-xs)" }}>
-                  <label htmlFor="edit-review-text" style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "#ffffff" }}>
+                  <label htmlFor="edit-review-text" style={{ margin: 0, fontSize: "0.875rem", fontWeight: 600, color: "var(--color-text)" }}>
                     {currentLang === "en" ? "Review Text" : "Rezensionstext"}
                   </label>
                   <span style={{ fontSize: "0.8rem", color: editText.length > 300 ? "#ef4444" : "var(--color-text-muted)" }}>
@@ -353,10 +354,10 @@ export function AccountReviewsPage() {
                   style={{
                     width: "100%",
                     padding: "12px 14px",
-                    backgroundColor: "#000000",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                    backgroundColor: "var(--color-input-bg, var(--color-surface))",
+                    border: "1px solid var(--color-border)",
                     borderRadius: "var(--radius-sm)",
-                    color: "#ffffff",
+                    color: "var(--color-text)",
                     fontSize: "0.95rem",
                     lineHeight: 1.5,
                     resize: "none",
@@ -364,7 +365,7 @@ export function AccountReviewsPage() {
                     boxSizing: "border-box",
                   }}
                   onFocus={(e) => (e.target.style.borderColor = "#D4AF37")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(255, 255, 255, 0.2)")}
+                  onBlur={(e) => (e.target.style.borderColor = "var(--color-border)")}
                 />
               </div>
 

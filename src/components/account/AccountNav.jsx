@@ -42,34 +42,73 @@ export function AccountNav({ className = "", style = {} }) {
             className={({ isActive }) =>
               `account-nav-link ${isActive ? "is-active" : ""}`
             }
-            style={({ isActive }) => ({
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "4px",
-              padding: "10px 4px",
-              borderRadius: "10px",
-              fontSize: "clamp(10px, 2.6vw, 12px)",
-              fontWeight: 600,
-              textDecoration: "none",
-              color: isActive ? "#D4AF37" : "rgba(255, 255, 255, 0.85)",
-              backgroundColor: isActive ? "rgba(212, 175, 55, 0.18)" : "rgba(212, 175, 55, 0.06)",
-              border: isActive ? "1px solid rgba(212, 175, 55, 0.6)" : "1px solid rgba(212, 175, 55, 0.2)",
-              transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-              textAlign: "center",
-              whiteSpace: "normal",
-              wordBreak: "break-word",
-              lineHeight: 1.15,
-              minWidth: 0,
-              boxSizing: "border-box",
-            })}
           >
             <Icon name={item.icon} size={16} />
             <span style={{ display: "block", maxWidth: "100%" }}>{item.label}</span>
           </NavLink>
         ))}
       </div>
+
+      <style>{`
+        .account-nav-link {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          padding: 10px 4px;
+          border-radius: 10px;
+          font-size: clamp(10px, 2.6vw, 12px);
+          font-weight: 600;
+          text-decoration: none;
+          color: rgba(255, 255, 255, 0.75);
+          background-color: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          text-align: center;
+          white-space: normal;
+          word-break: break-word;
+          line-height: 1.15;
+          min-width: 0;
+          box-sizing: border-box;
+        }
+
+        .account-nav-link:hover {
+          color: #D4AF37;
+          border-color: rgba(212, 175, 55, 0.4);
+          background-color: rgba(212, 175, 55, 0.08);
+        }
+
+        .account-nav-link.is-active {
+          color: #D4AF37;
+          background-color: rgba(212, 175, 55, 0.18);
+          border-color: rgba(212, 175, 55, 0.6);
+        }
+
+        /* Light Theme Overrides */
+        [data-theme="light"] .account-nav-link,
+        .theme-light .account-nav-link {
+          color: #334155;
+          background-color: #ffffff;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        [data-theme="light"] .account-nav-link:hover,
+        .theme-light .account-nav-link:hover {
+          color: #8A5A00;
+          border-color: rgba(184, 134, 11, 0.45);
+          background-color: rgba(212, 175, 55, 0.08);
+        }
+
+        [data-theme="light"] .account-nav-link.is-active,
+        .theme-light .account-nav-link.is-active {
+          color: #8A5A00;
+          background-color: rgba(212, 175, 55, 0.14);
+          border-color: rgba(184, 134, 11, 0.6);
+          font-weight: 700;
+        }
+      `}</style>
     </nav>
   );
 }

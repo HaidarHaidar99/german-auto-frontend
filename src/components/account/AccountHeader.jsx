@@ -77,13 +77,11 @@ export function AccountHeader({ user, className = "", style = {} }) {
         <div style={{ display: "flex", alignItems: "center", gap: "var(--space-md)" }}>
           {/* Monogram Avatar */}
           <div
+            className="account-avatar-badge"
             style={{
               width: "56px",
               height: "56px",
               borderRadius: "50%",
-              backgroundColor: "rgba(255, 255, 255, 0.15)",
-              border: "1px solid rgba(255, 255, 255, 0.4)",
-              color: "var(--color-secondary)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -240,6 +238,23 @@ export function AccountHeader({ user, className = "", style = {} }) {
           </button>
         </div>
       </div>
+
+      <style>{`
+        .account-avatar-badge {
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.08) 100%);
+          border: 1.5px solid rgba(212, 175, 55, 0.5);
+          color: #D4AF37;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        [data-theme="light"] .account-avatar-badge,
+        .theme-light .account-avatar-badge {
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+          border: 2px solid #D4AF37;
+          color: #F5D77F;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+        }
+      `}</style>
     </header>
   );
 }
