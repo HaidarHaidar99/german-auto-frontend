@@ -61,14 +61,6 @@
   -webkit-tap-highlight-color: transparent !important;
 }
 
-.car-card-base:has(.favorite-button:hover),
-.car-card-base:has(.favorite-button:active),
-.car-card-base:has(.favorite-button:focus),
-.car-card-base:has(.favorite-button:focus-within) {
-  box-shadow: none !important;
-  transform: none !important;
-  border-color: rgba(255, 255, 255, 0.09) !important;
-}
 
 .surface-glass {
   background: var(--glass-background);

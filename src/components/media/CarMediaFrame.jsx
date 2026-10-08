@@ -49,9 +49,11 @@ export function CarMediaFrame({
         <div
           style={{
             position: "absolute",
-            top: "var(--space-md)",
-            left: "var(--space-md)",
+            top: "12px",
+            left: "12px",
             zIndex: 10,
+            display: "inline-flex",
+            alignItems: "center",
           }}
         >
           {badge}
@@ -72,15 +74,12 @@ export function CarMediaFrame({
           onPointerUp={(e) => e.stopPropagation()}
           style={{
             position: "absolute",
-            top: "var(--space-md)",
-            right: "var(--space-md)",
+            top: "12px",
+            right: "12px",
             zIndex: 10,
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
-            width: "36px",
-            height: "36px",
-            borderRadius: "50%",
             boxShadow: "none",
             background: "transparent",
             WebkitTapHighlightColor: "transparent",

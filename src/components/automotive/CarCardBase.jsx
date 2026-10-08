@@ -182,38 +182,12 @@ export function CarCardBase({
           aspectRatio="16-9"
           badge={statusBadge}
           action={
-            <div
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-              onMouseDown={(e) => e.stopPropagation()}
-              onTouchStart={(e) => e.stopPropagation()}
-              onTouchEnd={(e) => e.stopPropagation()}
-              onPointerDown={(e) => e.stopPropagation()}
-              onPointerUp={(e) => e.stopPropagation()}
-              onMouseEnter={(e) => e.stopPropagation()}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "36px",
-                height: "36px",
-                borderRadius: "50%",
-                padding: 0,
-                margin: 0,
-                boxShadow: "none",
-                background: "transparent",
-                border: "none",
-                WebkitTapHighlightColor: "transparent",
-              }}
-            >
-              <FavoriteButton
-                isFavorite={isFavorite}
-                onToggle={onFavoriteToggle}
-                ariaLabel={`${brand} ${displayName}`.trim() + " zu Favoriten hinzufügen"}
-              />
-            </div>
+            <FavoriteButton
+              size={38}
+              isFavorite={isFavorite}
+              onToggle={onFavoriteToggle}
+              ariaLabel={`${brand} ${displayName}`.trim() + " zu Favoriten hinzufügen"}
+            />
           }
         >
           <CinematicImage
