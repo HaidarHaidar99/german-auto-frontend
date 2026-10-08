@@ -24,32 +24,40 @@ export function UserFiltersBar({
       className={`admin-user-filters-bar surface-card ${className}`.trim()}
       style={{
         backgroundColor: "var(--color-admin-card)",
-        borderRadius: "var(--radius-xl)",
+        borderRadius: "var(--radius-xl, 14px)",
         border: "1px solid var(--color-admin-border)",
-        padding: "var(--space-md) var(--space-lg)",
-        marginBottom: "var(--space-xl)",
+        padding: "var(--space-md, 16px)",
+        marginBottom: "var(--space-xl, 24px)",
         display: "flex",
         flexDirection: "column",
-        gap: "var(--space-md)",
+        gap: "var(--space-md, 14px)",
+        boxSizing: "border-box",
+        width: "100%",
+        maxWidth: "100%",
+        overflow: "hidden",
         ...style,
       }}
     >
       <div
+        className="admin-user-filters-row"
         style={{
           display: "flex",
           flexWrap: "wrap",
           alignItems: "center",
-          gap: "var(--space-md)",
-          justifyContent: "space-between",
+          gap: "12px",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {/* Search Input */}
         <div
+          className="admin-user-search-wrapper"
           style={{
             position: "relative",
-            flex: "1 1 280px",
-            minWidth: "220px",
-            maxWidth: "420px",
+            flex: "1 1 240px",
+            minWidth: 0,
+            maxWidth: "100%",
+            boxSizing: "border-box",
           }}
         >
           <span
@@ -74,14 +82,15 @@ export function UserFiltersBar({
             aria-label={t("searchUsersPlaceholder", { defaultValue: "Search name or email..." })}
             style={{
               width: "100%",
-              height: "40px",
+              height: "38px",
               padding: "0 36px 0 38px",
               backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
               border: "1px solid var(--color-admin-border)",
-              borderRadius: "var(--radius-md)",
+              borderRadius: "var(--radius-md, 8px)",
               color: "var(--color-admin-text, #0f172a)",
-              fontSize: "var(--font-size-sm)",
+              fontSize: "var(--font-size-xs, 12px)",
               outline: "none",
+              boxSizing: "border-box",
               transition: "border-color var(--transition-fast)",
             }}
             onFocus={(e) => {
@@ -117,21 +126,39 @@ export function UserFiltersBar({
 
         {/* Filter Controls Row */}
         <div
+          className="admin-user-filters-controls"
           style={{
             display: "flex",
             flexWrap: "wrap",
             alignItems: "center",
-            gap: "var(--space-sm)",
+            gap: "10px",
+            flex: "1 1 auto",
+            minWidth: 0,
+            maxWidth: "100%",
+            boxSizing: "border-box",
           }}
         >
           {/* Role Filter */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            className="admin-user-filter-item"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              minWidth: 0,
+              flex: "1 1 140px",
+              maxWidth: "100%",
+              boxSizing: "border-box",
+            }}
+          >
             <label
               htmlFor="filter-role-select"
               style={{
-                fontSize: "var(--font-size-xs)",
+                fontSize: "var(--font-size-xs, 12px)",
                 color: "var(--color-admin-muted)",
-                fontWeight: 500,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
               }}
             >
               {t("role", { defaultValue: "Role" })}:
@@ -141,32 +168,52 @@ export function UserFiltersBar({
               value={filters.role}
               onChange={(e) => onChange({ role: e.target.value })}
               style={{
-                height: "40px",
-                padding: "0 var(--space-md)",
+                height: "38px",
+                padding: "0 8px",
                 backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 border: "1px solid var(--color-admin-border)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "var(--radius-md, 8px)",
                 color: "var(--color-admin-text, #0f172a)",
-                fontSize: "var(--font-size-sm)",
+                fontSize: "var(--font-size-xs, 12px)",
                 outline: "none",
                 cursor: "pointer",
+                width: "100%",
+                maxWidth: "100%",
+                minWidth: 0,
+                boxSizing: "border-box",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
               }}
             >
               <option value="ALL">{t("filterAllRoles", { defaultValue: "All Roles" })}</option>
-              <option value="CUSTOMER">Customer (CUSTOMER)</option>
-              <option value="ADMIN">Administrator (ADMIN)</option>
-              <option value="SUPER_ADMIN">Super Administrator (SUPER_ADMIN)</option>
+              <option value="CUSTOMER">{t("roleCustomer", { defaultValue: "Customer" })}</option>
+              <option value="ADMIN">{t("roleAdmin", { defaultValue: "Administrator" })}</option>
+              <option value="SUPER_ADMIN">{t("roleSuperAdmin", { defaultValue: "Super Admin" })}</option>
             </select>
           </div>
 
           {/* Verification Status Filter */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div
+            className="admin-user-filter-item"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              minWidth: 0,
+              flex: "1 1 140px",
+              maxWidth: "100%",
+              boxSizing: "border-box",
+            }}
+          >
             <label
               htmlFor="filter-verified-select"
               style={{
-                fontSize: "var(--font-size-xs)",
+                fontSize: "var(--font-size-xs, 12px)",
                 color: "var(--color-admin-muted)",
-                fontWeight: 500,
+                fontWeight: 600,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
               }}
             >
               {t("status", { defaultValue: "Status" })}:
@@ -176,15 +223,22 @@ export function UserFiltersBar({
               value={filters.is_verified}
               onChange={(e) => onChange({ is_verified: e.target.value })}
               style={{
-                height: "40px",
-                padding: "0 var(--space-md)",
+                height: "38px",
+                padding: "0 8px",
                 backgroundColor: "var(--color-admin-surface-muted, rgba(0, 0, 0, 0.02))",
                 border: "1px solid var(--color-admin-border)",
-                borderRadius: "var(--radius-md)",
+                borderRadius: "var(--radius-md, 8px)",
                 color: "var(--color-admin-text, #0f172a)",
-                fontSize: "var(--font-size-sm)",
+                fontSize: "var(--font-size-xs, 12px)",
                 outline: "none",
                 cursor: "pointer",
+                width: "100%",
+                maxWidth: "100%",
+                minWidth: 0,
+                boxSizing: "border-box",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
               }}
             >
               <option value="ALL">{t("filterAllStatuses", { defaultValue: "All Statuses" })}</option>
@@ -201,12 +255,16 @@ export function UserFiltersBar({
               onClick={onReset}
               style={{
                 color: "var(--color-admin-muted)",
-                display: "flex",
+                display: "inline-flex",
                 alignItems: "center",
-                gap: "6px",
+                gap: "4px",
+                height: "38px",
+                padding: "0 10px",
+                fontSize: "11px",
+                flexShrink: 0,
               }}
             >
-              <Icon name="close" size={14} />
+              <Icon name="close" size={13} />
               <span>{t("resetFilters", { defaultValue: "Reset" })}</span>
             </Button>
           )}
@@ -219,10 +277,12 @@ export function UserFiltersBar({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          fontSize: "var(--font-size-xs)",
+          fontSize: "var(--font-size-xs, 11px)",
           color: "var(--color-admin-muted)",
           borderTop: "1px solid var(--color-admin-border)",
-          paddingTop: "var(--space-xs)",
+          paddingTop: "var(--space-xs, 6px)",
+          boxSizing: "border-box",
+          width: "100%",
         }}
       >
         <span>
@@ -230,7 +290,7 @@ export function UserFiltersBar({
             ? t("loadingUsers", { defaultValue: "Loading users list..." })
             : t("usersFoundCount", {
                 count: totalResults,
-                defaultValue: "{{count}} users found",
+                defaultValue: `${totalResults} users found`,
               })}
         </span>
       </div>

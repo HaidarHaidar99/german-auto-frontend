@@ -113,7 +113,7 @@ export function FormTable({
               <th style={{ padding: "12px 16px", minWidth: "260px" }}>{t("submissionDetails", { defaultValue: "Subject / Vehicle" })}</th>
               <th style={{ padding: "12px 16px", width: "160px" }}>{t("columns.status", { defaultValue: "Status" })}</th>
               <th style={{ padding: "12px 16px", width: "150px" }}>{t("columns.date", { defaultValue: "Date" })}</th>
-              <th style={{ padding: "12px 16px", textAlign: "right", width: "130px" }}>{t("actions", { defaultValue: "Actions" })}</th>
+              <th style={{ padding: "12px 16px", textAlign: "right", width: "190px", minWidth: "190px" }}>{t("actions", { defaultValue: "Actions" })}</th>
             </tr>
           </thead>
           <tbody>
@@ -126,6 +126,8 @@ export function FormTable({
                 : `${data.first_name || ""} ${data.last_name || ""}`.trim() || item.name || "—";
               const senderEmail = data.email || item.email || "";
               const senderPhone = data.phone || item.phone || "";
+              const cleanPhone = senderPhone ? senderPhone.replace(/[^0-9+]/g, "") : "";
+              const cleanWa = sanitizePhoneForWa(senderPhone);
               const statusCfg = getStatusColor(item.status);
               const isUpdatingThis = updatingStatusId === item.id;
 
@@ -243,10 +245,25 @@ export function FormTable({
                         style={{
                           fontSize: "11px",
                           color: "var(--color-admin-muted, #64748b)",
-                          marginTop: "1px",
+                          marginTop: "2px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
                         }}
                       >
-                        {senderPhone}
+                        <a
+                          href={`tel:${cleanPhone}`}
+                          style={{
+                            color: "inherit",
+                            textDecoration: "none",
+                            transition: "color 0.15s",
+                          }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = "#16a34a")}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-admin-muted, #64748b)")}
+                          title={`Call: ${senderPhone}`}
+                        >
+                          {senderPhone}
+                        </a>
                       </div>
                     )}
                   </td>
@@ -403,7 +420,7 @@ export function FormTable({
 
                   {/* Actions */}
                   <td style={{ padding: "12px 16px", textAlign: "right", verticalAlign: "middle" }}>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: "5px", justifyContent: "flex-end" }}>
                       {/* View Detail Drawer */}
                       <IconButton
                         icon="eye"
@@ -415,7 +432,7 @@ export function FormTable({
                         style={{ width: "30px", height: "30px" }}
                       />
 
-                      {/* Quick Contact Link if available */}
+                      {/* Direct Email Link */}
                       {senderEmail && (
                         <a
                           href={`mailto:${encodeURIComponent(senderEmail)}?subject=${encodeURIComponent(
@@ -423,7 +440,7 @@ export function FormTable({
                               ? `German Auto: Your inquiry regarding ${data.regarding || "our services"}`
                               : `German Auto: Your vehicle ${data.brand || ""} ${data.model || ""}`
                           )}`}
-                          title={`Email to ${senderEmail}`}
+                          title={`Email: ${senderEmail}`}
                           style={{
                             display: "inline-flex",
                             alignItems: "center",
@@ -432,13 +449,85 @@ export function FormTable({
                             height: "30px",
                             borderRadius: "var(--radius-sm, 4px)",
                             backgroundColor: "var(--color-admin-accent-subtle, #f1f5f9)",
-                            color: "var(--color-admin-text, #0f172a)",
+                            color: "var(--color-admin-accent, #0284c7)",
                             border: "1px solid var(--color-admin-border, #e2e8f0)",
                             textDecoration: "none",
-                            transition: "background-color 0.2s",
+                            transition: "background-color 0.2s, transform 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "rgba(2, 132, 199, 0.15)";
+                            e.currentTarget.style.transform = "scale(1.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "var(--color-admin-accent-subtle, #f1f5f9)";
+                            e.currentTarget.style.transform = "scale(1)";
                           }}
                         >
-                          <Icon name="mail" size={14} />
+                          <Icon name="mail" size={13} />
+                        </a>
+                      )}
+
+                      {/* Direct Phone Call Link */}
+                      {cleanPhone && (
+                        <a
+                          href={`tel:${cleanPhone}`}
+                          title={`Call: ${senderPhone}`}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "var(--radius-sm, 4px)",
+                            backgroundColor: "rgba(34, 197, 94, 0.12)",
+                            color: "#16a34a",
+                            border: "1px solid rgba(34, 197, 94, 0.3)",
+                            textDecoration: "none",
+                            transition: "background-color 0.2s, transform 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "rgba(34, 197, 94, 0.25)";
+                            e.currentTarget.style.transform = "scale(1.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "rgba(34, 197, 94, 0.12)";
+                            e.currentTarget.style.transform = "scale(1)";
+                          }}
+                        >
+                          <Icon name="phone" size={13} />
+                        </a>
+                      )}
+
+                      {/* Direct WhatsApp Link */}
+                      {cleanWa && (
+                        <a
+                          href={`https://wa.me/${cleanWa}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`WhatsApp: ${senderPhone}`}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "30px",
+                            height: "30px",
+                            borderRadius: "var(--radius-sm, 4px)",
+                            backgroundColor: "rgba(37, 211, 102, 0.15)",
+                            color: "#16a34a",
+                            border: "1px solid rgba(37, 211, 102, 0.3)",
+                            textDecoration: "none",
+                            transition: "background-color 0.2s, transform 0.15s",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = "rgba(37, 211, 102, 0.3)";
+                            e.currentTarget.style.transform = "scale(1.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = "rgba(37, 211, 102, 0.15)";
+                            e.currentTarget.style.transform = "scale(1)";
+                          }}
+                        >
+                          <Icon name="whatsapp" size={13} />
                         </a>
                       )}
 

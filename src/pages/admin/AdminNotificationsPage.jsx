@@ -208,6 +208,35 @@ export function AdminNotificationsPage() {
     }
   };
 
+  // Clear all notifications
+  const handleClearAll = async () => {
+    if (notifications.length === 0) return;
+    const confirmed = window.confirm(
+      t("confirmClearAllNotifications", {
+        defaultValue: "Delete all notifications? This cannot be undone.",
+      })
+    );
+    if (!confirmed) return;
+
+    const idsToClear = notifications.map((n) => n.id);
+    setNotifications([]);
+    setUnreadCount(0);
+    setMeta((prev) => ({ ...prev, total: 0 }));
+    if (selectedNotif) {
+      setIsDrawerOpen(false);
+      setSelectedNotif(null);
+    }
+    window.dispatchEvent(new CustomEvent("notificationsUpdated", { detail: { unreadCount: 0 } }));
+
+    try {
+      await notificationsService.clearAllNotifications();
+    } catch {
+      await Promise.allSettled(idsToClear.map((id) => notificationsService.dismissNotification(id)));
+    }
+    showToast("success", t("allNotificationsCleared", { defaultValue: "All notifications cleared." }));
+    fetchNotifications(true, 1);
+  };
+
   // Update preferences
   const handleUpdatePreferences = async (newPrefs) => {
     try {
@@ -301,17 +330,36 @@ export function AdminNotificationsPage() {
           )
         }
         actions={
-          unreadCount > 0 ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleMarkAllAsRead}
-              style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
-            >
-              <Icon name="check-circle" size={14} />
-              <span>{t("markAllAsRead", { defaultValue: "Mark all as read" })}</span>
-            </Button>
-          ) : null
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+            {unreadCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMarkAllAsRead}
+                style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+              >
+                <Icon name="check-circle" size={14} />
+                <span>{t("markAllAsRead", { defaultValue: "Mark all as read" })}</span>
+              </Button>
+            )}
+            {notifications.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearAll}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  borderColor: "rgba(239, 68, 68, 0.45)",
+                  color: "#ef4444",
+                }}
+              >
+                <Icon name="trash-2" size={14} />
+                <span>{t("clearAll", { defaultValue: "Clear all" })}</span>
+              </Button>
+            )}
+          </div>
         }
       />
 

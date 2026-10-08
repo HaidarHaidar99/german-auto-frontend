@@ -99,8 +99,8 @@
   .review-summary-grid,
   .notification-summary-grid,
   .admin-user-summary-cards {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
-    gap: 12px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 
   .admin-stat-card,
@@ -108,8 +108,10 @@
   .form-summary-grid button,
   .review-summary-grid button,
   .notification-summary-grid button {
-    padding: 12px 14px !important;
+    padding: 12px !important;
     gap: 10px !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
   }
 
   .admin-stat-card > div:first-child,
@@ -117,14 +119,84 @@
   .form-summary-grid button > div:first-child,
   .review-summary-grid button > div:first-child,
   .notification-summary-grid button > div:first-child {
-    width: 40px !important;
-    height: 40px !important;
+    width: 38px !important;
+    height: 38px !important;
     border-radius: 10px !important;
+    flex-shrink: 0 !important;
   }
 
   .admin-header-card {
     padding: 12px 16px !important;
     margin-bottom: 16px !important;
+  }
+
+  .admin-user-filters-bar {
+    padding: 12px 14px !important;
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .admin-user-filter-item {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .admin-user-filter-item select {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-user-summary-cards {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .admin-stat-card {
+    padding: 10px 8px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .admin-stat-card > div:first-child {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+  }
+
+  .admin-stat-card span {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    font-size: 10px !important;
+  }
+
+  .admin-user-filters-controls {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .admin-user-filter-item {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+
+  .admin-user-filter-item select {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
+
+  .role-badge {
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+    gap: 3px !important;
+    letter-spacing: 0.2px !important;
+    white-space: nowrap !important;
+    max-width: 110px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 }
 

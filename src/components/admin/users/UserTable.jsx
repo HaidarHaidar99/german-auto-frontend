@@ -25,6 +25,7 @@ function RoleBadge({ role }) {
   if (role === "SUPER_ADMIN") {
     return (
       <span
+        className="role-badge"
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -49,6 +50,7 @@ function RoleBadge({ role }) {
   if (role === "ADMIN") {
     return (
       <span
+        className="role-badge"
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -72,6 +74,7 @@ function RoleBadge({ role }) {
 
   return (
     <span
+      className="role-badge"
       style={{
         display: "inline-flex",
         alignItems: "center",

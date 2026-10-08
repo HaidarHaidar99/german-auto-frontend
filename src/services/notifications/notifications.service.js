@@ -18,6 +18,7 @@ export const notificationsService = {
   markAllRead: () => apiClient.patch("/notifications/read-all", {}),
   markUnread: (id) => apiClient.patch(`/notifications/${id}/unread`, {}),
   dismissNotification: (id) => apiClient.delete(`/notifications/${id}`),
+  clearAllNotifications: () => apiClient.delete("/notifications/clear-all"),
   getPreferences: () => apiClient.get("/notifications/preferences"),
   updatePreferences: (prefs) => apiClient.patch("/notifications/preferences", prefs),
   subscribePush: (subscription) => apiClient.post("/notifications/push/subscribe", subscription),

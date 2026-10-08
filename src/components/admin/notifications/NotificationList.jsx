@@ -264,19 +264,30 @@ export function NotificationList({
                 style={{ width: "28px", height: "28px" }}
               />
 
-              {/* Dismiss / Delete with Confirmation */}
+              {/* Delete / Dismiss with Confirmation */}
               {!isDismissConfirm ? (
                 <IconButton
-                  icon="x"
+                  icon="trash-2"
                   size="sm"
                   variant="ghost"
-                  ariaLabel={t("dismiss", { defaultValue: "Dismiss" })}
-                  title={t("dismiss", { defaultValue: "Dismiss" })}
+                  ariaLabel={t("deleteNotification", { defaultValue: "Delete notification" })}
+                  title={t("deleteNotification", { defaultValue: "Delete notification" })}
                   onClick={() => setConfirmDismissId(notif.id)}
                   style={{
-                    width: "28px",
-                    height: "28px",
+                    width: "30px",
+                    height: "30px",
                     color: "var(--color-admin-muted, #94a3b8)",
+                    transition: "color 0.15s, background-color 0.15s, transform 0.15s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--color-error, #ef4444)";
+                    e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+                    e.currentTarget.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "var(--color-admin-muted, #94a3b8)";
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.transform = "scale(1)";
                   }}
                 />
               ) : (
@@ -287,14 +298,18 @@ export function NotificationList({
                     disabled={isUpdating}
                     onClick={() => handleDismiss(notif.id)}
                     style={{
-                      fontSize: "10px",
-                      padding: "2px 6px",
-                      height: "26px",
+                      fontSize: "11px",
+                      padding: "2px 8px",
+                      height: "28px",
                       backgroundColor: "var(--color-error, #ef4444)",
                       borderColor: "var(--color-error, #ef4444)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
                     }}
                   >
-                    {t("dismiss", { defaultValue: "Dismiss" })}
+                    <Icon name="trash-2" size={12} />
+                    <span>{t("delete", { defaultValue: "Löschen" })}</span>
                   </Button>
                   <IconButton
                     icon="x"
@@ -302,7 +317,7 @@ export function NotificationList({
                     variant="ghost"
                     ariaLabel={t("cancel", { defaultValue: "Cancel" })}
                     onClick={() => setConfirmDismissId(null)}
-                    style={{ width: "26px", height: "26px" }}
+                    style={{ width: "28px", height: "28px" }}
                   />
                 </div>
               )}
