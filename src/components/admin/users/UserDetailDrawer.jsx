@@ -350,8 +350,10 @@ export function UserDetailDrawer({
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
-              color: isSelf ? "rgba(0, 0, 0, 0.2)" : "var(--color-error)",
-              borderColor: isSelf ? "rgba(0, 0, 0, 0.1)" : "rgba(239, 68, 68, 0.4)",
+              color: isSelf ? "var(--color-admin-muted)" : "var(--color-error, #ef4444)",
+              borderColor: isSelf ? "var(--color-admin-border)" : "rgba(239, 68, 68, 0.35)",
+              backgroundColor: isSelf ? "transparent" : "rgba(239, 68, 68, 0.06)",
+              opacity: isSelf ? 0.35 : 1,
               cursor: isSelf ? "not-allowed" : "pointer",
             }}
           >

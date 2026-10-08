@@ -8,8 +8,6 @@ import QuickActions from "../../components/admin/dashboard/QuickActions";
 import Badge from "../../components/ui/Badge";
 import Button from "../../components/ui/Button";
 import Icon from "../../components/common/Icon";
-import { useGsapContext } from "../../hooks/useAnimation";
-import { gsap, isReducedMotion } from "../../utils/animation";
 
 export function AdminDashboardPage() {
   const { t } = useTranslation(["admin", "common"]);
@@ -79,30 +77,16 @@ export function AdminDashboardPage() {
     loadData();
   }, [loadData]);
 
-  // ── GSAP Staggered Entrance ─────────────────────────────────────────────────
-  useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion() || loading) return;
-
-    gsap.from(".admin-stat-card", {
-      opacity: 0,
-      y: 12,
-      duration: 0.4,
-      stagger: 0.06,
-      ease: "power2.out",
-    });
-
-    gsap.from(".admin-dashboard-section", {
-      opacity: 0,
-      y: 16,
-      duration: 0.5,
-      stagger: 0.08,
-      ease: "power2.out",
-      delay: 0.08,
-    });
-  });
-
   return (
-    <div ref={pageContainerRef} className="admin-dashboard-page" style={{ width: "100%", maxWidth: "1600px" }}>
+    <div
+      ref={pageContainerRef}
+      className="admin-dashboard-page"
+      style={{
+        width: "100%",
+        maxWidth: "1600px",
+        animation: "adminContentFadeIn 0.25s ease forwards",
+      }}
+    >
       {/* ── Page Header ─────────────────────────────────────────────────────── */}
       <AdminPageHeader
         title={t("dashboard", { defaultValue: "Dashboard" })}

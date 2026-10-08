@@ -91,14 +91,11 @@ export function DeleteReviewModal({
             {t("cancel", { defaultValue: "Cancel" })}
           </Button>
           <Button
-            variant="primary"
+            variant="destructive"
             size="sm"
             loading={loading}
             onClick={onConfirm}
             style={{
-              backgroundColor: "var(--color-error, #ef4444)",
-              borderColor: "var(--color-error, #ef4444)",
-              color: "#ffffff",
               display: "flex",
               alignItems: "center",
               gap: "6px",

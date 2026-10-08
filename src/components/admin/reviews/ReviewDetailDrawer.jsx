@@ -164,15 +164,11 @@ export function ReviewDetailDrawer({
               ) : (
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                   <Button
-                    variant="primary"
+                    variant="destructive"
                     size="sm"
                     disabled={isUpdating}
                     onClick={handleDeleteClick}
-                    style={{
-                      backgroundColor: "var(--color-error, #ef4444)",
-                      borderColor: "var(--color-error, #ef4444)",
-                      fontSize: "11px",
-                    }}
+                    style={{ fontSize: "11px" }}
                   >
                     {t("confirmDelete", { defaultValue: "Delete permanently" })}
                   </Button>

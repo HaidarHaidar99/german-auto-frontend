@@ -10,8 +10,6 @@ import ErrorState from "../../components/ui/ErrorState";
 import Modal from "../../components/ui/Modal";
 import Button from "../../components/ui/Button";
 import { useSettings } from "../../contexts/SettingsContext";
-import { useGsapContext } from "../../hooks/useAnimation";
-import { gsap, isReducedMotion } from "../../utils/animation";
 
 // Section Editors
 import SiteSettingsEditor from "../../components/admin/settings/sections/SiteSettingsEditor";
@@ -94,16 +92,6 @@ export function AdminSettingsPage() {
   useEffect(() => {
     fetchSettings();
   }, [fetchSettings]);
-
-  useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion()) return;
-    gsap.from(".admin-settings-layout", {
-      opacity: 0,
-      y: 16,
-      duration: 0.5,
-      ease: "power2.out",
-    });
-  });
 
   // Check if current active section has unsaved edits
   const isSectionDirty = (secKey) => {

@@ -368,6 +368,20 @@ body[data-admin-theme="light"],
   --color-admin-stat-icon-bg-3: #0284c7;
   --color-admin-stat-icon-bg-4: #059669;
   --admin-sidebar-width: 260px;
+
+  /* Standard Design System Tokens mapped for Admin Light Mode */
+  --color-card: #ffffff;
+  --color-surface: #ffffff;
+  --color-background: #f0f4f8;
+  --color-text: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748b;
+  --color-text-subtle: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-input-bg: #ffffff;
+  --color-accent: #0284c7;
+  --color-accent-subtle: #eff6ff;
 }
 
 /* Admin Panel Dark Mode (Driven strictly by data-admin-theme="dark") */
@@ -395,10 +409,26 @@ body[data-admin-theme="dark"],
   --color-admin-stat-icon-bg-2: #059669;
   --color-admin-stat-icon-bg-3: #0284c7;
   --color-admin-stat-icon-bg-4: #10b981;
+
+  /* Standard Design System Tokens mapped for Admin Dark Mode */
+  --color-card: #111827;
+  --color-surface: #111827;
+  --color-background: #090d16;
+  --color-text: #f8fafc;
+  --color-text-secondary: #cbd5e1;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-border: #1f2937;
+  --color-border-subtle: #1e293b;
+  --color-input-bg: #111827;
+  --color-accent: #38bdf8;
+  --color-accent-subtle: rgba(56, 189, 248, 0.12);
 }
 
-/* Admin Button Specific Overrides */
-.admin-layout .btn-primary {
+/* Admin Button Specific Overrides (Supports Admin Layout & Portalled Modals) */
+.admin-layout .btn-primary,
+[data-admin-theme] .btn-primary,
+body[data-admin-theme] .btn-primary {
   background-color: var(--color-admin-accent) !important;
   color: #ffffff !important;
   border-color: var(--color-admin-accent) !important;
@@ -406,47 +436,100 @@ body[data-admin-theme="dark"],
   font-weight: 600 !important;
 }
 
-.admin-layout .btn-primary:hover:not(:disabled) {
+.admin-layout .btn-primary:hover:not(:disabled),
+[data-admin-theme] .btn-primary:hover:not(:disabled),
+body[data-admin-theme] .btn-primary:hover:not(:disabled) {
   background-color: var(--color-admin-accent-hover) !important;
   border-color: var(--color-admin-accent-hover) !important;
   color: #ffffff !important;
 }
 
-.admin-layout .btn-outline {
+.admin-layout .btn-destructive,
+[data-admin-theme] .btn-destructive,
+body[data-admin-theme] .btn-destructive {
+  background-color: var(--color-error, #ef4444) !important;
+  color: #ffffff !important;
+  border-color: var(--color-error, #ef4444) !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+.admin-layout .btn-destructive:hover:not(:disabled),
+[data-admin-theme] .btn-destructive:hover:not(:disabled),
+body[data-admin-theme] .btn-destructive:hover:not(:disabled) {
+  background-color: #dc2626 !important;
+  border-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+.admin-layout .btn-outline,
+[data-admin-theme] .btn-outline,
+body[data-admin-theme] .btn-outline {
   background-color: transparent !important;
   color: var(--color-admin-text) !important;
-  border-color: var(--color-admin-border) !important;
+  border: 1px solid var(--color-admin-border) !important;
   border-radius: 8px !important;
 }
 
-.admin-layout .btn-outline:hover:not(:disabled) {
+.admin-layout .btn-outline:hover:not(:disabled),
+[data-admin-theme] .btn-outline:hover:not(:disabled),
+body[data-admin-theme] .btn-outline:hover:not(:disabled) {
   background-color: var(--color-admin-border-subtle) !important;
   border-color: var(--color-admin-border) !important;
+  color: var(--color-admin-text) !important;
 }
 
-.admin-layout .btn-secondary {
-  background-color: var(--color-admin-card) !important;
-  color: var(--color-admin-text) !important;
-  border-color: var(--color-admin-border) !important;
+.admin-layout .btn-ghost,
+[data-admin-theme] .btn-ghost,
+body[data-admin-theme] .btn-ghost {
+  background-color: transparent !important;
+  color: var(--color-admin-text-secondary, #334155) !important;
+  border-color: transparent !important;
   border-radius: 8px !important;
 }
 
-.admin-layout .btn-secondary:hover:not(:disabled) {
+.admin-layout .btn-ghost:hover:not(:disabled),
+[data-admin-theme] .btn-ghost:hover:not(:disabled),
+body[data-admin-theme] .btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-admin-border-subtle, rgba(0, 0, 0, 0.05)) !important;
+  color: var(--color-admin-text, #0f172a) !important;
+}
+
+.admin-layout .btn-secondary,
+[data-admin-theme] .btn-secondary,
+body[data-admin-theme] .btn-secondary {
+  background-color: var(--color-admin-card) !important;
+  color: var(--color-admin-text) !important;
+  border: 1px solid var(--color-admin-border) !important;
+  border-radius: 8px !important;
+}
+
+.admin-layout .btn-secondary:hover:not(:disabled),
+[data-admin-theme] .btn-secondary:hover:not(:disabled),
+body[data-admin-theme] .btn-secondary:hover:not(:disabled) {
   background-color: var(--color-admin-border-subtle) !important;
   color: var(--color-admin-accent) !important;
   border-color: var(--color-admin-accent) !important;
 }
 
-.admin-layout .badge-secondary {
+.admin-layout .badge-secondary,
+[data-admin-theme] .badge-secondary,
+body[data-admin-theme] .badge-secondary {
   background-color: var(--color-admin-accent-subtle) !important;
   color: var(--color-admin-accent) !important;
   border-color: var(--color-admin-accent) !important;
 }
 
 /* Admin Input and Form Field Styling */
-.admin-layout input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+.admin-layout input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="file"]),
 .admin-layout select,
-.admin-layout textarea {
+.admin-layout textarea,
+[data-admin-theme] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="file"]),
+[data-admin-theme] select,
+[data-admin-theme] textarea,
+body[data-admin-theme] input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="file"]),
+body[data-admin-theme] select,
+body[data-admin-theme] textarea {
   background-color: var(--color-admin-card) !important;
   color: var(--color-admin-text) !important;
   border: 1px solid var(--color-admin-border) !important;
@@ -456,8 +539,35 @@ body[data-admin-theme="dark"],
 
 .admin-layout input:focus,
 .admin-layout select:focus,
-.admin-layout textarea:focus {
+.admin-layout textarea:focus,
+[data-admin-theme] input:focus,
+[data-admin-theme] select:focus,
+[data-admin-theme] textarea:focus,
+body[data-admin-theme] input:focus,
+body[data-admin-theme] select:focus,
+body[data-admin-theme] textarea:focus {
   border-color: var(--color-admin-accent) !important;
   outline: none !important;
   box-shadow: 0 0 0 3px var(--color-admin-accent-subtle) !important;
+}
+
+/* Admin Modals & Dialogs */
+.admin-layout .dialog-modal,
+[data-admin-theme] .dialog-modal,
+body[data-admin-theme] .dialog-modal {
+  background-color: var(--color-admin-card) !important;
+  color: var(--color-admin-text) !important;
+  border: 1px solid var(--color-admin-border) !important;
+}
+
+[data-admin-theme="light"] .dialog-modal {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-admin-theme="dark"] .dialog-modal {
+  background-color: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #1f2937 !important;
 }

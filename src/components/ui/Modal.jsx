@@ -51,9 +51,19 @@ export function Modal({
     xl: "900px",
   }[size] || "560px";
 
+  const adminTheme =
+    typeof document !== "undefined"
+      ? document.documentElement.getAttribute("data-admin-theme") ||
+        document.body.getAttribute("data-admin-theme") ||
+        (typeof window !== "undefined" && window.location.pathname.includes("/admin")
+          ? localStorage.getItem("admin_theme") || "light"
+          : "")
+      : "";
+
   const modalNode = (
     <div
       className="dialog-backdrop"
+      data-admin-theme={adminTheme || undefined}
       role="presentation"
       onClick={(e) => {
         if (closeOnBackdropClick && e.target === e.currentTarget && onClose) {
@@ -67,7 +77,17 @@ export function Modal({
         aria-modal="true"
         aria-label={title || "Dialog"}
         className={`dialog-modal ${className}`.trim()}
-        style={{ maxWidth }}
+        data-admin-theme={adminTheme || undefined}
+        style={{
+          maxWidth,
+          ...(adminTheme
+            ? {
+                backgroundColor: "var(--color-admin-card)",
+                color: "var(--color-admin-text)",
+                borderColor: "var(--color-admin-border)",
+              }
+            : {}),
+        }}
       >
         {/* Header */}
         <div

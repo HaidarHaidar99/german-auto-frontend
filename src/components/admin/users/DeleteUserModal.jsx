@@ -161,14 +161,9 @@ export function DeleteUserModal({
           </Button>
 
           <Button
-            variant="primary"
+            variant="destructive"
             onClick={handleDelete}
             disabled={loading || isSelf}
-            style={{
-              backgroundColor: "var(--color-error)",
-              borderColor: "var(--color-error)",
-              color: "#ffffff",
-            }}
           >
             {loading
               ? t("deleting", { defaultValue: "Deleting..." })

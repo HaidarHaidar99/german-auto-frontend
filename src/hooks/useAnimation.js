@@ -35,7 +35,13 @@ export function useGsapContext(scopeRef, animationFn, deps = []) {
       animationFn();
     }, scopeRef);
 
-    return () => ctx.revert();
+    return () => {
+      try {
+        ctx.revert();
+      } catch (err) {
+        // Safe catch if nodes were already unmounted or detached
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

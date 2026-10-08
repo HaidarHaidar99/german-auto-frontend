@@ -387,7 +387,8 @@ export function UserTable({
                           size="sm"
                           disabled={isSelf}
                           style={{
-                            color: isSelf ? "rgba(0, 0, 0, 0.2)" : "var(--color-error)",
+                            color: isSelf ? "var(--color-admin-muted)" : "var(--color-error, #ef4444)",
+                            opacity: isSelf ? 0.35 : 1,
                             cursor: isSelf ? "not-allowed" : "pointer",
                           }}
                           onClick={() => !isSelf && onDeleteUser(item)}
@@ -422,26 +423,30 @@ export function UserTable({
                 backgroundColor: "var(--color-admin-card)",
                 borderRadius: "var(--radius-lg)",
                 border: "1px solid var(--color-admin-border)",
-                padding: "var(--space-md)",
+                padding: "12px 14px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "var(--space-sm)",
+                gap: "8px",
+                minWidth: 0,
+                overflow: "hidden",
               }}
             >
               {/* Card Header: Name, Self Indicator, Role */}
               <div
                 style={{
                   display: "flex",
-                  alignItems: "flex-start",
+                  alignItems: "center",
                   justifyContent: "space-between",
-                  gap: "var(--space-sm)",
+                  gap: "8px",
+                  minWidth: 0,
+                  width: "100%",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", minWidth: 0, flex: 1, overflow: "hidden" }}>
                   <div
                     style={{
-                      width: "34px",
-                      height: "34px",
+                      width: "32px",
+                      height: "32px",
                       borderRadius: "50%",
                       backgroundColor: "var(--color-admin-card, #ffffff)",
                       border: "1.5px solid var(--color-admin-border, #e2e8f0)",
@@ -457,40 +462,61 @@ export function UserTable({
                   >
                     {(item.full_name || item.email || "U").charAt(0).toUpperCase()}
                   </div>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: "var(--font-size-base)", color: "var(--color-admin-text, #0f172a)" }}>
+                  <div style={{ minWidth: 0, flex: 1, overflow: "hidden" }}>
+                    <div
+                      style={{
+                        fontWeight: 700,
+                        fontSize: "13px",
+                        color: "var(--color-admin-text, #0f172a)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
                       {item.full_name || "—"}
                     </div>
                     {isSelf && (
                       <span
                         style={{
-                          fontSize: "11px",
+                          fontSize: "10px",
                           color: "var(--color-admin-accent)",
                           fontStyle: "italic",
                           fontWeight: 600,
                         }}
                       >
-                        {" "}(You)
+                        (You)
                       </span>
                     )}
                   </div>
                 </div>
-                <RoleBadge role={item.role} />
+                <div style={{ flexShrink: 0 }}>
+                  <RoleBadge role={item.role} />
+                </div>
               </div>
 
               {/* Email */}
               <div
                 style={{
-                  fontSize: "var(--font-size-xs)",
+                  fontSize: "11px",
                   color: "var(--color-admin-muted)",
-                  wordBreak: "break-all",
                   display: "flex",
                   alignItems: "center",
                   gap: "6px",
+                  minWidth: 0,
+                  overflow: "hidden",
                 }}
               >
-                <Icon name="mail" size={14} />
-                <span>{item.email}</span>
+                <Icon name="mail" size={12} style={{ flexShrink: 0 }} />
+                <span
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                  }}
+                >
+                  {item.email}
+                </span>
               </div>
 
               {/* Status and Dates */}
@@ -500,72 +526,147 @@ export function UserTable({
                   flexWrap: "wrap",
                   alignItems: "center",
                   justifyContent: "space-between",
-                  gap: "var(--space-xs)",
-                  padding: "8px 0",
+                  gap: "6px",
+                  padding: "6px 0",
                   borderTop: "1px solid var(--color-admin-border)",
                   borderBottom: "1px solid var(--color-admin-border)",
-                  fontSize: "11px",
+                  fontSize: "10px",
                   color: "var(--color-admin-muted)",
                 }}
               >
                 <VerificationBadge isVerified={item.is_verified} t={t} />
-                <span>{t("created", { defaultValue: "Created" })}: {formatDateTime(item.created_at, currentLang)}</span>
+                <span style={{ fontSize: "10px", whiteSpace: "nowrap" }}>
+                  {t("created", { defaultValue: "Created" })}: {formatDateTime(item.created_at, currentLang)}
+                </span>
               </div>
 
               {/* Card Actions */}
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                  gap: "var(--space-xs)",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(4, 1fr)",
+                  gap: "6px",
                   paddingTop: "4px",
+                  width: "100%",
                 }}
               >
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={() => onViewDetails(item)}
-                  style={{ fontSize: "12px", padding: "6px 10px" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "2px",
+                    padding: "6px 2px",
+                    borderRadius: "6px",
+                    backgroundColor: "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.03))",
+                    border: "1px solid var(--color-admin-border)",
+                    color: "var(--color-admin-text, #0f172a)",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    minWidth: 0,
+                  }}
+                  title={t("viewDetails", { defaultValue: "Details" })}
                 >
                   <Icon name="eye" size={14} />
-                  <span style={{ marginLeft: "4px" }}>{t("viewDetails", { defaultValue: "Details" })}</span>
-                </Button>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                    {t("viewDetails", { defaultValue: "Details" })}
+                  </span>
+                </button>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={() => onChangeRole(item)}
-                  style={{ fontSize: "12px", padding: "6px 10px" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "2px",
+                    padding: "6px 2px",
+                    borderRadius: "6px",
+                    backgroundColor: "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.03))",
+                    border: "1px solid var(--color-admin-border)",
+                    color: "var(--color-admin-text, #0f172a)",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    minWidth: 0,
+                  }}
+                  title={t("role", { defaultValue: "Role" })}
                 >
                   <Icon name="shield" size={14} />
-                  <span style={{ marginLeft: "4px" }}>{t("role", { defaultValue: "Role" })}</span>
-                </Button>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                    {t("role", { defaultValue: "Role" })}
+                  </span>
+                </button>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   onClick={() => onRevokeSessions(item)}
-                  style={{ fontSize: "12px", padding: "6px 10px" }}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "2px",
+                    padding: "6px 2px",
+                    borderRadius: "6px",
+                    backgroundColor: "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.03))",
+                    border: "1px solid var(--color-admin-border)",
+                    color: "var(--color-admin-text, #0f172a)",
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                    minWidth: 0,
+                  }}
+                  title={t("sessions", { defaultValue: "Sessions" })}
                 >
                   <Icon name="refresh-cw" size={14} />
-                  <span style={{ marginLeft: "4px" }}>{t("sessions", { defaultValue: "Sessions" })}</span>
-                </Button>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                    {t("sessions", { defaultValue: "Sessions" })}
+                  </span>
+                </button>
 
-                <Button
-                  variant="ghost"
-                  size="sm"
+                <button
+                  type="button"
                   disabled={isSelf}
                   onClick={() => !isSelf && onDeleteUser(item)}
                   style={{
-                    fontSize: "12px",
-                    padding: "6px 10px",
-                    color: isSelf ? "rgba(0, 0, 0, 0.2)" : "var(--color-error)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "2px",
+                    padding: "6px 2px",
+                    borderRadius: "6px",
+                    backgroundColor: isSelf ? "transparent" : "rgba(239, 68, 68, 0.08)",
+                    border: isSelf ? "1px solid var(--color-admin-border)" : "1px solid rgba(239, 68, 68, 0.25)",
+                    color: isSelf ? "var(--color-admin-muted)" : "var(--color-error, #ef4444)",
+                    opacity: isSelf ? 0.35 : 1,
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    cursor: isSelf ? "not-allowed" : "pointer",
+                    transition: "all 0.15s ease",
+                    minWidth: 0,
                   }}
+                  title={
+                    isSelf
+                      ? t("cannotDeleteOwnAccount", { defaultValue: "Cannot delete your own account" })
+                      : t("delete", { defaultValue: "Delete" })
+                  }
                 >
                   <Icon name="trash" size={14} />
-                  <span style={{ marginLeft: "4px" }}>{t("delete", { defaultValue: "Delete" })}</span>
-                </Button>
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "100%" }}>
+                    {t("delete", { defaultValue: "Delete" })}
+                  </span>
+                </button>
               </div>
             </div>
           );

@@ -73,15 +73,6 @@ export function FormFiltersBar({
         />
       </div>
 
-      {/* Form Type Select */}
-      <div style={{ flex: 1, minWidth: "160px" }}>
-        <Select
-          value={filters.form_type || "ALL"}
-          onChange={(e) => handleFieldChange("form_type", e.target.value)}
-          options={typeOptions}
-          style={{ height: "38px" }}
-        />
-      </div>
 
       {/* Status Select */}
       <div style={{ flex: 1, minWidth: "150px" }}>

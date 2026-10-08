@@ -16,8 +16,6 @@ import UnauthorizedState from "../../components/ui/UnauthorizedState";
 import ErrorState from "../../components/ui/ErrorState";
 import Button from "../../components/ui/Button";
 import Icon from "../../components/common/Icon";
-import { useGsapContext } from "../../hooks/useAnimation";
-import { gsap, isReducedMotion } from "../../utils/animation";
 
 const PAGE_SIZE = 10;
 
@@ -195,16 +193,7 @@ export function AdminUsersPage() {
     };
   }, [fetchUsers, fetchStats, isAdmin]);
 
-  // Subtle GSAP entrance animation
-  useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion()) return;
-    gsap.from(".admin-users-animated-content", {
-      opacity: 0,
-      y: 16,
-      duration: 0.45,
-      ease: "power2.out",
-    });
-  });
+  // Modal Actions Handlers
 
   // ─── Modal Actions Handlers ─────────────────────────────────────────────────
 

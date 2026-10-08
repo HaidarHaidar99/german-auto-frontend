@@ -12,8 +12,6 @@ import ErrorState from "../../components/ui/ErrorState";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import Icon from "../../components/common/Icon";
-import { useGsapContext } from "../../hooks/useAnimation";
-import { gsap, isReducedMotion } from "../../utils/animation";
 
 export function AdminFormsPage() {
   const { t } = useTranslation(["admin", "forms", "common"]);
@@ -28,7 +26,7 @@ export function AdminFormsPage() {
   // Filters: search query, form_type, status, sort
   const [filters, setFilters] = useState({
     search: "",
-    form_type: "ALL",
+    form_type: "SELL_CAR",
     status: "ALL",
     sort: "newest",
   });
@@ -96,16 +94,7 @@ export function AdminFormsPage() {
     fetchForms();
   }, [fetchForms]);
 
-  // Animation on load
-  useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion()) return;
-    gsap.from(".admin-forms-animated-content", {
-      opacity: 0,
-      y: 18,
-      duration: 0.5,
-      ease: "power2.out",
-    });
-  });
+  // Handlers
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
 
@@ -445,44 +434,6 @@ export function AdminFormsPage() {
               }}
             >
               {forms.filter((f) => f.form_type === "CONTACT").length}
-            </span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setFilters((prev) => ({ ...prev, form_type: "ALL" }))}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "9px 18px",
-              borderRadius: "9999px",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-              border: filters.form_type === "ALL"
-                ? "1px solid var(--color-admin-accent, #0284c7)"
-                : "1px solid var(--color-admin-border, #e2e8f0)",
-              backgroundColor: filters.form_type === "ALL"
-                ? "var(--color-admin-accent, #0284c7)"
-                : "var(--color-admin-card, #ffffff)",
-              color: filters.form_type === "ALL" ? "#ffffff" : "var(--color-admin-text, #0f172a)",
-              transition: "all 0.15s ease",
-            }}
-          >
-            <Icon name="inbox" size={15} />
-            <span>{t("allForms", { defaultValue: "All Submissions" })}</span>
-            <span
-              style={{
-                fontSize: "11px",
-                padding: "1px 7px",
-                borderRadius: "9999px",
-                backgroundColor: filters.form_type === "ALL" ? "rgba(255, 255, 255, 0.25)" : "var(--color-admin-accent-subtle, #f1f5f9)",
-                color: filters.form_type === "ALL" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
-                fontWeight: 700,
-              }}
-            >
-              {forms.length}
             </span>
           </button>
         </div>

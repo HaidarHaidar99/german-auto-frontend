@@ -13,8 +13,6 @@ import ErrorState from "../../components/ui/ErrorState";
 import Button from "../../components/ui/Button";
 import Badge from "../../components/ui/Badge";
 import Icon from "../../components/common/Icon";
-import { useGsapContext } from "../../hooks/useAnimation";
-import { gsap, isReducedMotion } from "../../utils/animation";
 
 export function AdminNotificationsPage() {
   const { t } = useTranslation(["admin", "common"]);
@@ -123,16 +121,7 @@ export function AdminNotificationsPage() {
     return () => clearInterval(timer);
   }, [fetchNotifications, currentPage]);
 
-  // GSAP animation
-  useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion()) return;
-    gsap.from(".admin-notifs-animated-content", {
-      opacity: 0,
-      y: 18,
-      duration: 0.5,
-      ease: "power2.out",
-    });
-  });
+  // Handlers
 
   // ─── Handlers ───────────────────────────────────────────────────────────────
 

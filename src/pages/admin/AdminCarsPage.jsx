@@ -7,8 +7,6 @@ import AdminEmptyState from "../../components/admin/AdminEmptyState";
 import ErrorState from "../../components/ui/ErrorState";
 import Button from "../../components/ui/Button";
 import Icon from "../../components/common/Icon";
-import { useGsapContext } from "../../hooks/useAnimation";
-import { gsap, isReducedMotion } from "../../utils/animation";
 
 // Car Admin Components
 import CarInventorySummary from "../../components/admin/cars/CarInventorySummary";
@@ -218,15 +216,6 @@ export function AdminCarsPage() {
     fetchSummaryCounts();
   }, [fetchSummaryCounts]);
 
-  useGsapContext(pageContainerRef, () => {
-    if (isReducedMotion()) return;
-    gsap.from(".admin-cars-content", {
-      opacity: 0,
-      y: 16,
-      duration: 0.5,
-      ease: "power2.out",
-    });
-  });
 
   // Filter change handler — resets to page 1
   const handleFiltersChange = (newFilters) => {

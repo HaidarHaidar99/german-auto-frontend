@@ -943,10 +943,11 @@ export function CarEditorModal({
                         alignItems: "center",
                         justifyContent: "space-between",
                         padding: "6px 10px",
-                        backgroundColor: "rgba(255, 255, 255, 0.03)",
-                        border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.06))",
+                        backgroundColor: "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.03))",
+                        border: "1px solid var(--color-admin-border, #e2e8f0)",
                         borderRadius: "4px",
                         fontSize: "12px",
+                        color: "var(--color-admin-text, #0f172a)",
                       }}
                     >
                       <span><strong>{k}:</strong> {v}</span>
@@ -997,9 +998,9 @@ export function CarEditorModal({
                   maxHeight: "320px",
                   overflowY: "auto",
                   padding: "8px",
-                  backgroundColor: "rgba(255, 255, 255, 0.02)",
+                  backgroundColor: "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.02))",
                   borderRadius: "var(--radius-md)",
-                  border: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+                  border: "1px solid var(--color-admin-border, #e2e8f0)",
                 }}
               >
                 {form.equipment.map((item, idx) => (
@@ -1011,8 +1012,8 @@ export function CarEditorModal({
                       gap: "6px",
                       padding: "4px 10px",
                       borderRadius: "9999px",
-                      backgroundColor: "rgba(255, 255, 255, 0.08)",
-                      border: "1px solid rgba(255, 255, 255, 0.12)",
+                      backgroundColor: "var(--color-admin-pill-bg, var(--color-admin-border-subtle, #f1f5f9))",
+                      border: "1px solid var(--color-admin-border, #e2e8f0)",
                       fontSize: "12px",
                       color: "var(--color-admin-text, #0f172a)",
                     }}
@@ -1024,7 +1025,7 @@ export function CarEditorModal({
                       style={{
                         background: "none",
                         border: "none",
-                        color: "var(--color-admin-muted, rgba(255, 255, 255, 0.6))",
+                        color: "var(--color-admin-muted, #64748b)",
                         cursor: "pointer",
                         display: "flex",
                         alignItems: "center",
@@ -1100,11 +1101,11 @@ export function CarEditorModal({
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
                 style={{
-                  border: isDragOver ? "2px dashed #D4AF37" : "2px dashed rgba(255, 255, 255, 0.2)",
+                  border: isDragOver ? "2px dashed #D4AF37" : "2px dashed var(--color-admin-border, #cbd5e1)",
                   borderRadius: "var(--radius-lg, 12px)",
                   padding: "24px 16px",
                   textAlign: "center",
-                  backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "rgba(255, 255, 255, 0.02)",
+                  backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.02))",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                   display: "flex",
@@ -1119,7 +1120,7 @@ export function CarEditorModal({
                     width: "44px",
                     height: "44px",
                     borderRadius: "50%",
-                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    backgroundColor: "var(--color-admin-pill-bg, rgba(212, 175, 55, 0.12))",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -1419,7 +1420,7 @@ export function CarEditorModal({
                 style={{
                   padding: "var(--space-xl)",
                   textAlign: "center",
-                  border: "1px dashed var(--color-admin-border, rgba(255, 255, 255, 0.12))",
+                  border: "1px dashed var(--color-admin-border, #e2e8f0)",
                   borderRadius: "var(--radius-md)",
                   color: "var(--color-admin-muted)",
                   fontSize: "var(--font-size-xs)",
@@ -1440,7 +1441,7 @@ export function CarEditorModal({
             gap: "var(--space-sm)",
             marginTop: "var(--space-md)",
             paddingTop: "var(--space-md)",
-            borderTop: "1px solid var(--color-admin-border, rgba(255, 255, 255, 0.08))",
+            borderTop: "1px solid var(--color-admin-border, #e2e8f0)",
           }}
         >
           <Button variant="outline" size="sm" type="button" disabled={saving || isUploading} onClick={onClose}>

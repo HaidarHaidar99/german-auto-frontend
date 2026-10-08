@@ -45,9 +45,19 @@ export function Drawer({
   const isLeft = position === "left";
   const sizeClass = size === "lg" ? "drawer-panel-lg" : "";
 
+  const adminTheme =
+    typeof document !== "undefined"
+      ? document.documentElement.getAttribute("data-admin-theme") ||
+        document.body.getAttribute("data-admin-theme") ||
+        (typeof window !== "undefined" && window.location.pathname.includes("/admin")
+          ? localStorage.getItem("admin_theme") || "light"
+          : "")
+      : "";
+
   const drawerNode = (
     <div
       className="dialog-backdrop"
+      data-admin-theme={adminTheme || undefined}
       role="presentation"
       onClick={(e) => {
         if (closeOnBackdropClick && e.target === e.currentTarget && onClose) {
@@ -60,11 +70,18 @@ export function Drawer({
         aria-modal="true"
         aria-label={title || "Panel"}
         className={`drawer-panel ${isLeft ? "drawer-panel-left" : ""} ${sizeClass} ${className}`.trim()}
+        data-admin-theme={adminTheme || undefined}
         style={{
           left: isLeft ? 0 : "auto",
           right: isLeft ? "auto" : 0,
           borderLeft: isLeft ? "none" : "1px solid var(--color-admin-border, var(--color-border))",
           borderRight: isLeft ? "1px solid var(--color-admin-border, var(--color-border))" : "none",
+          ...(adminTheme
+            ? {
+                backgroundColor: "var(--color-admin-card)",
+                color: "var(--color-admin-text)",
+              }
+            : {}),
         }}
       >
         {/* Header */}
