@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../../contexts/ThemeContext";
 import { Container } from "../ui/Layout";
 import { gsap, ScrollTrigger, isReducedMotion } from "../../utils/animation";
 import img1 from "../../assets/4images/1.jpeg";
@@ -20,6 +21,7 @@ import img5 from "../../assets/4images/5.jpeg";
  * - One-way scroll-down animation that locks in place and does not disappear when scrolling up.
  */
 export function WelcomeImpactSection() {
+  const { isDark } = useTheme?.() || { isDark: true };
   const { t, i18n } = useTranslation(["common"]);
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
   const phraseText = t(
@@ -310,16 +312,19 @@ export function WelcomeImpactSection() {
               className="gold-phrase-title"
               style={{
                 margin: 0,
-                fontSize: "clamp(1.85rem, 4.5vw, 3.2rem)",
-                fontWeight: 800,
-                fontFamily: "var(--font-family-display, 'DM Serif Display', Georgia, serif)",
-                lineHeight: 1.15,
-                letterSpacing: "-0.01em",
-                background:
-                  "linear-gradient(135deg, #FFF4CC 0%, #F5D77F 25%, #D4AF37 60%, #AA771C 100%)",
+                fontSize: "clamp(1.75rem, 4.2vw, 3.1rem)",
+                fontWeight: 700,
+                fontFamily: "'Cinzel', 'Playfair Display', 'DM Serif Display', Georgia, serif",
+                lineHeight: 1.2,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                background: isDark
+                  ? "linear-gradient(135deg, #FFF4CC 0%, #F5D77F 25%, #D4AF37 60%, #AA771C 100%)"
+                  : "linear-gradient(135deg, #996515 0%, #B8860B 35%, #D4AF37 70%, #855509 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                filter: "drop-shadow(0 4px 18px rgba(212, 175, 55, 0.45))",
+                filter: isDark ? "drop-shadow(0 4px 18px rgba(212, 175, 55, 0.45))" : "none",
+                textShadow: "none",
                 textAlign: "center",
               }}
             >

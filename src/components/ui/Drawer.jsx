@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import IconButton from "./IconButton";
 
 /**
- * German Auto — Accessible Slide-Over Drawer
+ * German Auto — Accessible Slide-Over Drawer / Bottom Sheet
  * Used for responsive mobile navigation and mobile vehicle filtering.
+ * Uses React Portal to mount to document.body and prevent transform context clipping.
  */
 
 export function Drawer({
@@ -23,11 +25,13 @@ export function Drawer({
     }
 
     if (isOpen) {
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -39,7 +43,7 @@ export function Drawer({
 
   const isLeft = position === "left";
 
-  return (
+  const drawerNode = (
     <div
       className="dialog-backdrop"
       role="presentation"
@@ -102,6 +106,8 @@ export function Drawer({
       </div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(drawerNode, document.body) : drawerNode;
 }
 
 export default Drawer;

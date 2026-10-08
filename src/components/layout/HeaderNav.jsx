@@ -372,34 +372,34 @@ export function HeaderNav({
             <Link
               to="/"
               onClick={handleHomeClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
+              className="nav-desktop-link"
             >
               {t("home", { defaultValue: "Home" })}
             </Link>
-            <Link to="/cars" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}>
+            <Link to="/cars" className="nav-desktop-link">
               {t("cars", { defaultValue: "Cars" })}
             </Link>
-            <Link to="/sell-your-car" style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}>
+            <Link to="/sell-your-car" className="nav-desktop-link">
               {t("sellYourCar")}
             </Link>
             <Link
               to="/about"
               onClick={handleAboutClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
+              className="nav-desktop-link"
             >
               {t("about")}
             </Link>
             <Link
               to="/reviews"
               onClick={handleReviewsClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
+              className="nav-desktop-link"
             >
               {t("reviews", { defaultValue: "Bewertungen" })}
             </Link>
             <Link
               to="/contact"
               onClick={handleContactClick}
-              style={{ fontWeight: 700, fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-text)", transition: "color 0.3s ease" }}
+              className="nav-desktop-link"
             >
               {t("contact", { defaultValue: "Kontakt" })}
             </Link>
@@ -415,6 +415,7 @@ export function HeaderNav({
               <Link
                 to="/account/favorites"
                 title={t("favorites", { defaultValue: "Favoriten" })}
+                className="nav-desktop-icon-btn"
                 style={{
                   position: "relative",
                   width: "38px",
@@ -426,17 +427,26 @@ export function HeaderNav({
                   justifyContent: "center",
                   color: favorites.length > 0 ? "#ef4444" : "var(--color-text)",
                   border: favorites.length > 0 ? "1px solid rgba(239, 68, 68, 0.5)" : "1px solid var(--color-border)",
-                  transition: "all 0.25s ease",
+                  transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
                   textDecoration: "none",
                   flexShrink: 0,
+                  outline: "none",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--color-surface)";
-                  e.currentTarget.style.borderColor = "var(--color-secondary)";
+                  e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
+                  if (favorites.length === 0) {
+                    e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+                  }
+                  e.currentTarget.style.transform = "scale(1.05)";
+                  e.currentTarget.style.boxShadow = "0 0 12px rgba(212, 175, 55, 0.25)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
                   e.currentTarget.style.borderColor = favorites.length > 0 ? "rgba(239, 68, 68, 0.5)" : "var(--color-border)";
+                  e.currentTarget.style.color = favorites.length > 0 ? "#ef4444" : "var(--color-text)";
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "none";
                 }}
               >
                 <Icon name={favorites.length > 0 ? "heart-filled" : "heart"} size={18} color={favorites.length > 0 ? "#ef4444" : "currentColor"} />
@@ -471,25 +481,34 @@ export function HeaderNav({
                   <Link
                     to="/account"
                     title={t("profile", { ns: "account", defaultValue: "Profile" })}
+                    className="nav-desktop-icon-btn"
                     style={{
-                      width: "36px",
-                      height: "36px",
+                      width: "38px",
+                      height: "38px",
                       borderRadius: "50%",
                       backgroundColor: "var(--color-accent-subtle)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       color: "var(--color-text)",
-                      transition: "all 0.3s ease",
-                      border: "1px solid var(--color-border)"
+                      transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+                      border: "1px solid var(--color-border)",
+                      outline: "none",
+                      textDecoration: "none",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = "var(--color-text)";
-                      e.currentTarget.style.color = "var(--color-background)";
+                      e.currentTarget.style.backgroundColor = "var(--color-surface)";
+                      e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
+                      e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+                      e.currentTarget.style.transform = "scale(1.05)";
+                      e.currentTarget.style.boxShadow = "0 0 12px rgba(212, 175, 55, 0.25)";
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                      e.currentTarget.style.borderColor = "var(--color-border)";
                       e.currentTarget.style.color = "var(--color-text)";
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = "none";
                     }}
                   >
                     <Icon name="user" size={18} />
@@ -499,9 +518,43 @@ export function HeaderNav({
                 </div>
               ) : (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-                  <Button as={Link} to="/login" variant="secondary" size="sm" style={{ borderRadius: "0px" }}> {/* Sharper edges for premium feel */}
+                  <Link
+                    to="/login"
+                    className="nav-login-btn"
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "8px 16px",
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      textDecoration: "none",
+                      color: "var(--color-text)",
+                      backgroundColor: "var(--color-accent-subtle)",
+                      border: "1px solid var(--color-border)",
+                      borderRadius: "6px",
+                      transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+                      outline: "none",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--color-surface)";
+                      e.currentTarget.style.borderColor = "var(--color-secondary, #D4AF37)";
+                      e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+                      e.currentTarget.style.transform = "scale(1.05)";
+                      e.currentTarget.style.boxShadow = "0 0 14px rgba(212, 175, 55, 0.25)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
+                      e.currentTarget.style.borderColor = "var(--color-border)";
+                      e.currentTarget.style.color = "var(--color-text)";
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  >
                     {t("login")}
-                  </Button>
+                  </Link>
                   {/* Theme Switcher replaces Logout button spot on desktop */}
                   <ThemeToggle size="desktop" />
                 </div>

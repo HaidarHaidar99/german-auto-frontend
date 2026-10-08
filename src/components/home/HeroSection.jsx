@@ -288,7 +288,15 @@ export function HeroSection({ heroConfig, siteConfig }) {
 
           {subtitle && (
             <div>
-              <Text variant="lead" style={{ margin: 0, maxWidth: "620px" }}>
+              <Text
+                variant="lead"
+                style={{
+                  margin: 0,
+                  maxWidth: "620px",
+                  color: !isDark ? "#ffffff" : "var(--color-text-secondary, #cbd5e1)",
+                  textShadow: !isDark ? "0 2px 8px rgba(0, 0, 0, 0.5)" : "none",
+                }}
+              >
                 {subtitle}
               </Text>
             </div>

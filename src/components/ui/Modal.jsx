@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import IconButton from "./IconButton";
 
 /**
  * German Auto — Accessible Modal Dialog
  * Keyboard accessible (ESC closes, traps focus), backdrop blur, restrained luxury finish.
+ * Uses React Portal to mount directly into document.body.
  */
 
 export function Modal({
@@ -26,11 +28,13 @@ export function Modal({
     }
 
     if (isOpen) {
+      document.documentElement.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     }
 
     return () => {
+      document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -47,7 +51,7 @@ export function Modal({
     xl: "900px",
   }[size] || "560px";
 
-  return (
+  const modalNode = (
     <div
       className="dialog-backdrop"
       role="presentation"
@@ -104,6 +108,8 @@ export function Modal({
       </div>
     </div>
   );
+
+  return typeof document !== "undefined" ? createPortal(modalNode, document.body) : modalNode;
 }
 
 export default Modal;

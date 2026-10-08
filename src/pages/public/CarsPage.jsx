@@ -168,7 +168,7 @@ export function CarsPage() {
       <div ref={inventoryTopRef} />
 
       {/* 2. Main Inventory Content Section */}
-      <Section spacing="none" style={{ paddingTop: "var(--space-md)", paddingBottom: "clamp(24px, 4vw, 40px)", flex: 1 }}>
+      <Section spacing="none" style={{ paddingTop: "12px", paddingBottom: "clamp(16px, 3vw, 32px)", flex: 1 }}>
         <Container size="default">
           {/* 3. Search & Filter Bar with Mobile Drawer */}
           <div data-aos="fade-up" data-aos-delay="100">

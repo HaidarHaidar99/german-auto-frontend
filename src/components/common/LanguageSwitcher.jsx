@@ -33,7 +33,21 @@ export function LanguageSwitcher({ className = "" }) {
           fontWeight: 700,
           color: currentLang === "de" ? "var(--color-primary)" : "var(--color-text-secondary)",
           backgroundColor: currentLang === "de" ? "var(--color-secondary)" : "transparent",
-          transition: "all var(--transition-fast)",
+          transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+          border: "none",
+          cursor: "pointer",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.06)";
+          if (currentLang !== "de") {
+            e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          if (currentLang !== "de") {
+            e.currentTarget.style.color = "var(--color-text-secondary)";
+          }
         }}
         aria-pressed={currentLang === "de"}
       >
@@ -49,7 +63,21 @@ export function LanguageSwitcher({ className = "" }) {
           fontWeight: 700,
           color: currentLang === "en" ? "var(--color-primary)" : "var(--color-text-secondary)",
           backgroundColor: currentLang === "en" ? "var(--color-secondary)" : "transparent",
-          transition: "all var(--transition-fast)",
+          transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+          border: "none",
+          cursor: "pointer",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "scale(1.06)";
+          if (currentLang !== "en") {
+            e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "scale(1)";
+          if (currentLang !== "en") {
+            e.currentTarget.style.color = "var(--color-text-secondary)";
+          }
         }}
         aria-pressed={currentLang === "en"}
       >

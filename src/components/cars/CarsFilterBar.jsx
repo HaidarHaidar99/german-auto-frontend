@@ -121,7 +121,7 @@ export function CarsFilterBar({
         display: "flex",
         flexDirection: "column",
         gap: "var(--space-md)",
-        marginBottom: "var(--space-xl)",
+        marginBottom: "clamp(12px, 2.5vw, 20px)",
       }}
     >
       {/* Top Bar: Search Input, Filter Toggle, Sort Selector */}
