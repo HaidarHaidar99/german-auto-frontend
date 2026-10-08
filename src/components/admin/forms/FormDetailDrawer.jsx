@@ -8,6 +8,17 @@ import Icon from "../../common/Icon";
 import FormImageModal from "./FormImageModal";
 import formsService from "../../../services/forms/forms.service";
 
+/**
+ * Safely unwrap form object in case it was delivered nested as { form: { ... } }
+ */
+function normalizeForm(f) {
+  if (!f) return null;
+  if (f.form && typeof f.form === "object" && (f.form.id || f.form.form_type || f.form.data)) {
+    return f.form;
+  }
+  return f;
+}
+
 export function FormDetailDrawer({
   isOpen,
   form: initialForm = null,
@@ -17,9 +28,9 @@ export function FormDetailDrawer({
   onArchive,
 }) {
   const { t, i18n } = useTranslation(["admin", "forms", "common"]);
-  const currentLang = i18n.language || "en";
+  const currentLang = i18n.language || "de";
 
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(() => normalizeForm(initialForm));
   const [notesText, setNotesText] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
   const [notesSuccess, setNotesSuccess] = useState(false);
@@ -29,38 +40,119 @@ export function FormDetailDrawer({
 
   // Sync draft notes and load full data if missing
   useEffect(() => {
-    setForm(initialForm);
-    if (initialForm) {
-      setNotesText(initialForm.admin_notes || "");
-      setNotesSuccess(false);
-      setShowArchiveConfirm(false);
+    const resolvedInitial = normalizeForm(initialForm);
+    if (!resolvedInitial) {
+      setForm(null);
+      return;
+    }
 
-      // If form doesn't contain data blob, fetch detail from API
-      if (!initialForm.data || Object.keys(initialForm.data).length === 0) {
-        formsService.adminGetForm(initialForm.id)
-          .then((res) => {
-            const fetched = res?.data?.form || res?.data;
-            if (fetched) {
-              setForm(fetched);
-              if (fetched.admin_notes) setNotesText(fetched.admin_notes);
-            }
-          })
-          .catch(() => {});
-      }
+    setForm((prev) => {
+      const prevNorm = normalizeForm(prev);
+      const prevData = (prevNorm?.data && typeof prevNorm.data === "object") ? prevNorm.data : {};
+      const nextData = (resolvedInitial?.data && typeof resolvedInitial.data === "object") ? resolvedInitial.data : {};
+
+      // If incoming payload has richer data, use it; otherwise retain previous full data
+      const mergedData = Object.keys(nextData).length > 0 ? nextData : prevData;
+
+      return {
+        ...prevNorm,
+        ...resolvedInitial,
+        data: mergedData,
+      };
+    });
+
+    setNotesText(resolvedInitial.admin_notes || "");
+    setNotesSuccess(false);
+    setShowArchiveConfirm(false);
+
+    // Check if form data is already present
+    const rawData = resolvedInitial.data;
+    const hasData = rawData && (
+      (typeof rawData === "string" && rawData.trim().length > 2) ||
+      (typeof rawData === "object" && Object.keys(rawData).length > 0)
+    );
+
+    // Only fetch if form doesn't contain data blob and we have a valid ID
+    if (!hasData && resolvedInitial.id) {
+      formsService.adminGetForm(resolvedInitial.id)
+        .then((res) => {
+          const fetched = res?.data?.form || res?.data;
+          if (fetched && (fetched.id || fetched.data)) {
+            setForm((prev) => {
+              const prevNorm = normalizeForm(prev) || resolvedInitial;
+              const prevDataObj = (prevNorm?.data && typeof prevNorm.data === "object") ? prevNorm.data : {};
+              const freshDataObj = (fetched.data && typeof fetched.data === "object") ? fetched.data : {};
+              return {
+                ...prevNorm,
+                ...fetched,
+                data: Object.keys(freshDataObj).length > 0 ? freshDataObj : prevDataObj,
+              };
+            });
+            if (fetched.admin_notes) setNotesText(fetched.admin_notes);
+          }
+        })
+        .catch(() => {});
     }
   }, [initialForm]);
 
   if (!form) return null;
 
-  const isContact = form.form_type === "CONTACT";
-  const data = form.data || {};
+  const currentForm = normalizeForm(form) || {};
+  const isContact = currentForm.form_type === "CONTACT";
+
+  // Safely parse JSON if data was serialized as string
+  let parsedData = {};
+  if (typeof currentForm.data === "string") {
+    try {
+      parsedData = JSON.parse(currentForm.data);
+    } catch {
+      parsedData = {};
+    }
+  } else if (currentForm.data && typeof currentForm.data === "object") {
+    parsedData = currentForm.data;
+  }
+
+  // Merge top-level currentForm and parsedData so any field in either place is accessible
+  const data = {
+    ...currentForm,
+    ...parsedData,
+  };
 
   // Contact person details with robust field alias resolution
   const contactName = isContact
-    ? (data.name || data.full_name || data.customer_name || `${data.first_name || ""} ${data.last_name || ""}`.trim() || "—")
-    : (`${data.first_name || ""} ${data.last_name || ""}`.trim() || data.name || data.full_name || data.customer_name || "—");
-  const contactEmail = data.email || data.contact_email || "";
-  const contactPhone = data.phone || data.phone_number || data.mobile || "";
+    ? (data.name || data.full_name || data.customer_name || `${data.first_name || ""} ${data.last_name || ""}`.trim() || currentForm.name || "—")
+    : (`${data.first_name || ""} ${data.last_name || ""}`.trim() || data.name || data.full_name || data.customer_name || currentForm.name || "—");
+  const contactEmail = data.email || data.contact_email || currentForm.email || "";
+  const contactPhone = data.phone || data.phone_number || data.mobile || currentForm.phone || "";
+  const submittedDate = currentForm.created_at || data.submitted_at || data.created_at;
+  const currentStatus = currentForm.status || "NEW";
+
+  // Vehicle specifications
+  const vehicleBrand = data.brand || data.make || "—";
+  const vehicleModel = data.model || "";
+  const firstReg = data.first_registration || data.registration || data.ez || "—";
+  const vinNumber = data.vin || data.chassis_number || data.chassis || "—";
+  const postalCode = data.postal_code || data.zip || data.zip_code || data.plz || data.location || "—";
+
+  const rawMileage = data.mileage_km ?? data.mileage ?? data.km ?? data.kilometer;
+  const mileageDisplay = rawMileage != null && rawMileage !== ""
+    ? `${new Intl.NumberFormat(currentLang === "de" ? "de-DE" : "en-US").format(rawMileage)} km`
+    : "—";
+
+  const rawPrice = data.min_price ?? data.price ?? data.asking_price ?? data.price_eur;
+  const priceDisplay = rawPrice != null && rawPrice !== ""
+    ? `${new Intl.NumberFormat(currentLang === "de" ? "de-DE" : "en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(rawPrice)}`
+    : t("notSpecified", { defaultValue: "Nicht angegeben" });
+
+  const isAccidentFree = data.accident_free === true || data.accident_free === "true" || data.accident_free === 1 || data.accident_free === "yes";
+  const isRepainted = data.repainting === true || data.repainting === "true" || data.repainting === 1 || data.repainting === "yes";
+  const additionalInfo = data.additional_info || data.notes || data.description || data.comments;
+
+  const images = Array.isArray(data.images)
+    ? data.images
+    : Array.isArray(currentForm.images)
+      ? currentForm.images
+      : [];
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";
@@ -91,10 +183,11 @@ export function FormDetailDrawer({
   };
 
   const handleStatusChange = async (newStatus) => {
-    if (!newStatus || newStatus === form.status || updatingStatus) return;
+    if (!newStatus || newStatus === currentStatus || updatingStatus) return;
     try {
       setUpdatingStatus(true);
-      await onUpdateStatus?.(form.id, newStatus);
+      await onUpdateStatus?.(currentForm.id, newStatus);
+      setForm((prev) => ({ ...prev, status: newStatus }));
     } catch (err) {
       alert(err?.message || t("errorUpdatingStatus", { defaultValue: "Error updating status." }));
     } finally {
@@ -106,7 +199,8 @@ export function FormDetailDrawer({
     if (savingNotes) return;
     try {
       setSavingNotes(true);
-      await onUpdateNotes?.(form.id, notesText.trim());
+      await onUpdateNotes?.(currentForm.id, notesText.trim());
+      setForm((prev) => ({ ...prev, admin_notes: notesText.trim() }));
       setNotesSuccess(true);
       setTimeout(() => setNotesSuccess(false), 3500);
     } catch (err) {
@@ -119,8 +213,9 @@ export function FormDetailDrawer({
   const handleArchive = async () => {
     try {
       setUpdatingStatus(true);
-      await onArchive?.(form.id);
+      await onArchive?.(currentForm.id);
       setShowArchiveConfirm(false);
+      setForm((prev) => ({ ...prev, status: "ARCHIVED" }));
     } catch (err) {
       alert(err?.message || t("errorArchiving", { defaultValue: "Error archiving submission." }));
     } finally {
@@ -132,7 +227,7 @@ export function FormDetailDrawer({
   const cleanPhone = contactPhone.replace(/[^0-9+]/g, "");
   const mailSubject = isContact
     ? `German Auto: ${data.regarding || "Inquiry"}`
-    : `German Auto: Vehicle Offer ${data.brand || ""} ${data.model || ""}`.trim();
+    : `German Auto: Vehicle Offer ${vehicleBrand !== "—" ? vehicleBrand : ""} ${vehicleModel}`.trim();
   const mailBody = `Hello ${contactName},\n\nThank you for reaching out to König Automobile Rheinberg.\n\nBest regards,\nGerman Auto Team`;
   const mailtoUrl = contactEmail
     ? `mailto:${contactEmail}?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`
@@ -147,7 +242,7 @@ export function FormDetailDrawer({
       <Drawer
         isOpen={isOpen}
         onClose={onClose}
-        title={isContact ? t("formTypeContact", { defaultValue: "Contact Inquiry" }) : t("formTypeSellCar", { defaultValue: "Vehicle Purchase Offer" })}
+        title={isContact ? t("formTypeContact", { defaultValue: "Contact Inquiry" }) : t("vehicleAppraisal", { defaultValue: "Vehicle Appraisal" })}
         size="lg"
         position="right"
       >
@@ -168,17 +263,17 @@ export function FormDetailDrawer({
               <Badge variant={isContact ? "outline" : "secondary"} size="sm">
                 {isContact ? "CONTACT" : "SELL_CAR"}
               </Badge>
-              <Badge variant={getStatusBadgeVariant(form.status || "NEW")} size="sm">
-                {form.status ? t(`status${form.status.charAt(0) + form.status.slice(1).toLowerCase().replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`, { defaultValue: form.status }) : "NEW"}
+              <Badge variant={getStatusBadgeVariant(currentStatus)} size="sm">
+                {currentStatus ? t(`status${currentStatus.charAt(0) + currentStatus.slice(1).toLowerCase().replace(/_([a-z])/g, (_, c) => c.toUpperCase())}`, { defaultValue: currentStatus }) : "NEW"}
               </Badge>
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "var(--space-xs)" }}>
               <label style={{ fontSize: "11px", color: "var(--color-admin-muted, #64748b)", marginRight: "4px" }}>
-                {t("changeStatus", { defaultValue: "Change status" })}:
+                {t("changeStatus", { defaultValue: "Status ändern" })}:
               </label>
               <select
-                value={form.status || "NEW"}
+                value={currentStatus}
                 disabled={updatingStatus}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 style={{
@@ -193,14 +288,14 @@ export function FormDetailDrawer({
                   outline: "none",
                 }}
               >
-                <option value="NEW">{t("statusNew", { defaultValue: "New (NEW)" })}</option>
-                <option value="READ">{t("statusRead", { defaultValue: "Read (READ)" })}</option>
-                <option value="IN_PROGRESS">{t("statusInProgress", { defaultValue: "In Progress (IN_PROGRESS)" })}</option>
-                <option value="COMPLETED">{t("statusCompleted", { defaultValue: "Completed (COMPLETED)" })}</option>
-                <option value="ARCHIVED">{t("statusArchived", { defaultValue: "Archived (ARCHIVED)" })}</option>
+                <option value="NEW">{t("statusNew", { defaultValue: "New" })}</option>
+                <option value="READ">{t("statusRead", { defaultValue: "Read" })}</option>
+                <option value="IN_PROGRESS">{t("statusInProgress", { defaultValue: "In Progress" })}</option>
+                <option value="COMPLETED">{t("statusCompleted", { defaultValue: "Completed" })}</option>
+                <option value="ARCHIVED">{t("statusArchived", { defaultValue: "Archived" })}</option>
               </select>
 
-              {form.status !== "ARCHIVED" && !showArchiveConfirm && (
+              {currentStatus !== "ARCHIVED" && !showArchiveConfirm && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -208,7 +303,7 @@ export function FormDetailDrawer({
                   style={{ height: "28px", fontSize: "11px", color: "var(--color-admin-muted, #64748b)" }}
                 >
                   <Icon name="archive" size={12} style={{ marginRight: "4px" }} />
-                  {t("archive", { defaultValue: "Archive" })}
+                  {t("archive", { defaultValue: "ARCHIVE" })}
                 </Button>
               )}
             </div>
@@ -256,7 +351,7 @@ export function FormDetailDrawer({
             }}
           >
             <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted, #64748b)", marginRight: "6px" }}>
-              {t("contactCustomer", { defaultValue: "Contact customer" })}:
+              {t("contactCustomer", { defaultValue: "Contact Customer:" })}
             </span>
 
             {mailtoUrl && (
@@ -306,7 +401,7 @@ export function FormDetailDrawer({
             }}
           >
             <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
-              {t("customerInformation", { defaultValue: "Customer Information" })}
+              {t("customerInformation", { defaultValue: "CUSTOMER INFORMATION" })}
             </h4>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)", fontSize: "var(--font-size-xs)" }}>
@@ -316,12 +411,12 @@ export function FormDetailDrawer({
               </div>
 
               <div>
-                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("email", { defaultValue: "Email" })}</span>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("email", { defaultValue: "Email Address" })}</span>
                 <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{contactEmail || "—"}</strong>
               </div>
 
               <div>
-                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("phone", { defaultValue: "Phone" })}</span>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("phone", { defaultValue: "Phone Number" })}</span>
                 <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{contactPhone || "—"}</strong>
               </div>
 
@@ -333,14 +428,14 @@ export function FormDetailDrawer({
               )}
 
               <div>
-                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("submittedOn", { defaultValue: "Submitted on" })}</span>
-                <span style={{ color: "var(--color-admin-text, #0f172a)", fontWeight: 500 }}>{formatDate(form.created_at)}</span>
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("submittedOn", { defaultValue: "Eingegangen am" })}</span>
+                <span style={{ color: "var(--color-admin-text, #0f172a)", fontWeight: 500 }}>{formatDate(submittedDate)}</span>
               </div>
 
               <div>
-                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("customerAccount", { defaultValue: "Customer Account" })}</span>
-                <span style={{ color: form.user_id ? "var(--color-admin-accent, #0284c7)" : "var(--color-admin-muted, #64748b)", fontWeight: 500 }}>
-                  {form.user_id ? t("registeredUserWithId", { id: form.user_id.substring(0, 8), defaultValue: `Registered User (${form.user_id.substring(0, 8)}...)` }) : t("guestSubmission", { defaultValue: "Guest Submission" })}
+                <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("customerAccount", { defaultValue: "Kundenkonto" })}</span>
+                <span style={{ color: currentForm.user_id ? "var(--color-admin-accent, #0284c7)" : "var(--color-admin-muted, #64748b)", fontWeight: 500 }}>
+                  {currentForm.user_id ? t("registeredUserWithId", { id: String(currentForm.user_id).substring(0, 8), defaultValue: `Registered User (${String(currentForm.user_id).substring(0, 8)}...)` }) : t("guestSubmission", { defaultValue: "Guest Submission (not logged in)" })}
                 </span>
               </div>
             </div>
@@ -360,7 +455,7 @@ export function FormDetailDrawer({
                 {t("regarding", { defaultValue: "Subject / Topic" })}
               </h4>
               <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", marginBottom: "var(--space-md)" }}>
-                {data.regarding || t("generalInquiry", { defaultValue: "General inquiry" })}
+                {data.regarding || data.subject || t("generalInquiry", { defaultValue: "General inquiry" })}
               </div>
 
               <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
@@ -379,7 +474,7 @@ export function FormDetailDrawer({
                   borderLeft: "3px solid var(--color-admin-accent, #0284c7)",
                 }}
               >
-                {data.message || t("noMessageContent", { defaultValue: "No message text provided." })}
+                {data.message || data.message_text || data.comment || data.description || t("noMessageContent", { defaultValue: "No message text provided." })}
               </div>
             </div>
           )}
@@ -397,45 +492,45 @@ export function FormDetailDrawer({
                 }}
               >
                 <h4 style={{ margin: "0 0 var(--space-sm)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
-                  {t("vehicleDetails", { defaultValue: "Vehicle Details" })}
+                  {t("vehicleInformation", { defaultValue: "VEHICLE INFORMATION" })}
                 </h4>
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)", fontSize: "var(--font-size-xs)" }}>
                   <div>
-                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("brandAndModel", { defaultValue: "Brand & Model" })}</span>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("brandAndModel", { defaultValue: "Marke & Modell" })}</span>
                     <strong style={{ color: "var(--color-admin-text, #0f172a)", fontSize: "var(--font-size-sm)" }}>
-                      {data.brand || "—"} {data.model || ""}
+                      {vehicleBrand} {vehicleModel}
                     </strong>
                   </div>
 
                   <div>
                     <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("firstRegistration", { defaultValue: "First Registration" })}</span>
-                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{data.first_registration || "—"}</strong>
+                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{firstReg}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("vin", { defaultValue: "VIN (Chassis No.)" })}</span>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("vin", { defaultValue: "Vehicle Identification Number (VIN)" })}</span>
                     <code style={{ color: "var(--color-admin-accent, #0284c7)", fontSize: "12px", fontFamily: "monospace", fontWeight: 600 }}>
-                      {data.vin || "—"}
+                      {vinNumber}
                     </code>
                   </div>
 
                   <div>
                     <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("postalCode", { defaultValue: "Location / Postal Code" })}</span>
-                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{data.postal_code || "—"}</strong>
+                    <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>{postalCode}</strong>
                   </div>
 
                   <div>
                     <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("mileage", { defaultValue: "Mileage" })}</span>
                     <strong style={{ color: "var(--color-admin-text, #0f172a)" }}>
-                      {data.mileage_km != null ? `${new Intl.NumberFormat(currentLang === "de" ? "de-DE" : "en-US").format(data.mileage_km)} km` : "—"}
+                      {mileageDisplay}
                     </strong>
                   </div>
 
                   <div>
-                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("minPrice", { defaultValue: "Asking Price" })}</span>
+                    <span style={{ color: "var(--color-admin-muted, #64748b)", display: "block" }}>{t("minPrice", { defaultValue: "Minimum Asking Price" })}</span>
                     <strong style={{ color: "var(--color-admin-accent, #0284c7)", fontSize: "var(--font-size-sm)", fontWeight: 700 }}>
-                      {data.min_price != null ? `${new Intl.NumberFormat(currentLang === "de" ? "de-DE" : "en-US", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(data.min_price)}` : t("notSpecified", { defaultValue: "Not specified" })}
+                      {priceDisplay}
                     </strong>
                   </div>
                 </div>
@@ -443,25 +538,25 @@ export function FormDetailDrawer({
                 <div style={{ display: "flex", gap: "var(--space-lg)", marginTop: "var(--space-md)", paddingTop: "var(--space-sm)", borderTop: "1px solid var(--color-admin-border, #e2e8f0)", fontSize: "var(--font-size-xs)" }}>
                   <div>
                     <span style={{ color: "var(--color-admin-muted, #64748b)", marginRight: "6px" }}>{t("accidentFree", { defaultValue: "Accident-free" })}:</span>
-                    <Badge variant={data.accident_free ? "success" : "warning"} size="sm">
-                      {data.accident_free ? t("yes", { defaultValue: "Yes" }) : t("no", { defaultValue: "No" })}
+                    <Badge variant={isAccidentFree ? "success" : "warning"} size="sm">
+                      {isAccidentFree ? t("yes", { defaultValue: "JA" }) : t("no", { defaultValue: "NEIN" })}
                     </Badge>
                   </div>
                   <div>
                     <span style={{ color: "var(--color-admin-muted, #64748b)", marginRight: "6px" }}>{t("repainted", { defaultValue: "Repainted" })}:</span>
-                    <Badge variant={data.repainting ? "warning" : "neutral"} size="sm">
-                      {data.repainting ? t("yes", { defaultValue: "Yes" }) : t("no", { defaultValue: "No" })}
+                    <Badge variant={isRepainted ? "warning" : "neutral"} size="sm">
+                      {isRepainted ? t("yes", { defaultValue: "JA" }) : t("no", { defaultValue: "NEIN" })}
                     </Badge>
                   </div>
                 </div>
 
-                {data.additional_info && (
+                {additionalInfo && (
                   <div style={{ marginTop: "var(--space-sm)", paddingTop: "var(--space-sm)", borderTop: "1px solid var(--color-admin-border, #e2e8f0)" }}>
                     <span style={{ color: "var(--color-admin-muted, #64748b)", fontSize: "11px", display: "block", marginBottom: "4px" }}>
                       {t("additionalInformation", { defaultValue: "Additional Information:" })}
                     </span>
                     <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.5, whiteSpace: "pre-line" }}>
-                      {data.additional_info}
+                      {additionalInfo}
                     </div>
                   </div>
                 )}
@@ -477,10 +572,10 @@ export function FormDetailDrawer({
                 }}
               >
                 <h4 style={{ margin: "0 0 var(--space-xs)", fontSize: "var(--font-size-xs)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--color-admin-accent, #0284c7)" }}>
-                  {t("submittedImages", { defaultValue: "Submitted Photos" })} ({Array.isArray(data.images) ? data.images.length : 0})
+                  {t("submittedImages", { defaultValue: "Submitted Photos" })} ({images.length})
                 </h4>
 
-                {Array.isArray(data.images) && data.images.length > 0 ? (
+                {images.length > 0 ? (
                   <div
                     style={{
                       display: "grid",
@@ -489,8 +584,8 @@ export function FormDetailDrawer({
                       marginTop: "var(--space-xs)",
                     }}
                   >
-                    {data.images.map((img, idx) => {
-                      const imgUrl = typeof img === "string" ? img : img.public_url || "";
+                    {images.map((img, idx) => {
+                      const imgUrl = typeof img === "string" ? img : img.public_url || img.url || "";
                       const imgName = typeof img === "object" && img.name ? img.name : t("photoNumber", { num: idx + 1, defaultValue: `Photo ${idx + 1}` });
 
                       return (

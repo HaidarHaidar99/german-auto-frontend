@@ -61,27 +61,9 @@ export function AdminFormsPage() {
         limit: 100,
         sort: "newest",
       });
-      const items = res?.data?.forms || [];
+      const items = res?.data?.forms || res?.forms || [];
       setForms(items);
       setError(null);
-
-      // Concurrently enrich items with full details via GET /api/forms/admin/:id
-      if (items.length > 0) {
-        const details = await Promise.allSettled(
-          items.map((item) => formsService.adminGetForm(item.id))
-        );
-        setForms((prev) =>
-          prev.map((item) => {
-            const found = details.find(
-              (d) => d.status === "fulfilled" && d.value?.data?.id === item.id
-            );
-            if (found && found.value?.data) {
-              return { ...item, ...found.value.data };
-            }
-            return item;
-          })
-        );
-      }
     } catch (err) {
       setError(err?.message || "Fehler beim Laden der Formulareingänge.");
     } finally {
@@ -94,23 +76,34 @@ export function AdminFormsPage() {
     fetchForms();
   }, [fetchForms]);
 
-  // Handlers
-
   // ─── Handlers ───────────────────────────────────────────────────────────────
 
   // Open detail drawer and optionally refresh single form
   const handleOpenDetail = useCallback(async (formItem) => {
-    setSelectedForm(formItem);
+    if (!formItem) return;
+    const initial = formItem?.form || formItem;
+    setSelectedForm(initial);
     setIsDrawerOpen(true);
 
-    // Fetch fresh single record to ensure full payload
+    // Fetch fresh single record to ensure full payload & latest status
     try {
-      const freshRes = await formsService.adminGetForm(formItem.id);
-      if (freshRes?.data) {
-        setSelectedForm(freshRes.data);
+      const freshRes = await formsService.adminGetForm(initial.id);
+      const freshForm = freshRes?.data?.form || freshRes?.data;
+      if (freshForm && (freshForm.id || freshForm.data)) {
+        setSelectedForm((prev) => {
+          const prevItem = prev?.form || prev || initial;
+          const prevData = (prevItem.data && typeof prevItem.data === "object") ? prevItem.data : {};
+          const freshData = (freshForm.data && typeof freshForm.data === "object") ? freshForm.data : {};
+          return {
+            ...prevItem,
+            ...freshForm,
+            // Preserve rich data if already present
+            data: Object.keys(freshData).length > 0 ? freshData : prevData,
+          };
+        });
       }
     } catch {
-      // If single fetch fails, continue displaying the list row data
+      // If single fetch fails, continue displaying the existing row data
     }
   }, []);
 
@@ -126,19 +119,25 @@ export function AdminFormsPage() {
       try {
         setUpdatingStatusId(formId);
         const res = await formsService.adminUpdateForm(formId, { status: newStatus });
-        const updated = res?.data || { status: newStatus, updated_at: new Date().toISOString() };
+        const updated = res?.data?.form || res?.data || { status: newStatus, updated_at: new Date().toISOString() };
 
         // Update forms list immutably
         setForms((prev) =>
-          prev.map((item) =>
-            item.id === formId ? { ...item, ...updated, status: newStatus } : item
-          )
+          prev.map((item) => {
+            const currentItem = item?.form || item;
+            return currentItem.id === formId ? { ...currentItem, ...updated, status: newStatus } : item;
+          })
         );
 
         // Update active drawer form if open
-        setSelectedForm((prev) =>
-          prev && prev.id === formId ? { ...prev, ...updated, status: newStatus } : prev
-        );
+        setSelectedForm((prev) => {
+          if (!prev) return prev;
+          const current = prev?.form || prev;
+          if (current.id === formId) {
+            return { ...current, ...updated, status: newStatus };
+          }
+          return prev;
+        });
 
         showToast("success", t("formUpdated", { defaultValue: "Eingang erfolgreich aktualisiert." }));
       } catch (err) {
@@ -157,17 +156,23 @@ export function AdminFormsPage() {
       if (!formId) return;
       try {
         const res = await formsService.adminUpdateForm(formId, { admin_notes: notes });
-        const updated = res?.data || { admin_notes: notes, updated_at: new Date().toISOString() };
+        const updated = res?.data?.form || res?.data || { admin_notes: notes, updated_at: new Date().toISOString() };
 
         setForms((prev) =>
-          prev.map((item) =>
-            item.id === formId ? { ...item, ...updated, admin_notes: notes } : item
-          )
+          prev.map((item) => {
+            const currentItem = item?.form || item;
+            return currentItem.id === formId ? { ...currentItem, ...updated, admin_notes: notes } : item;
+          })
         );
 
-        setSelectedForm((prev) =>
-          prev && prev.id === formId ? { ...prev, ...updated, admin_notes: notes } : prev
-        );
+        setSelectedForm((prev) => {
+          if (!prev) return prev;
+          const current = prev?.form || prev;
+          if (current.id === formId) {
+            return { ...current, ...updated, admin_notes: notes };
+          }
+          return prev;
+        });
 
         showToast("success", t("notesSaved", { defaultValue: "Notizen erfolgreich gespeichert." }));
       } catch (err) {
@@ -178,10 +183,13 @@ export function AdminFormsPage() {
     [t]
   );
 
-  // Archive submission
+  // Archive submission (accepts either form object or formId string)
   const handleArchive = useCallback(
-    async (formItem) => {
-      if (!formItem) return;
+    async (formItemOrId) => {
+      if (!formItemOrId) return;
+      const targetId = typeof formItemOrId === "object" ? formItemOrId?.id : formItemOrId;
+      if (!targetId) return;
+
       const confirmed = window.confirm(
         t("archiveConfirmMessage", {
           defaultValue:
@@ -191,7 +199,7 @@ export function AdminFormsPage() {
       if (!confirmed) return;
 
       try {
-        await handleUpdateStatus(formItem.id, "ARCHIVED");
+        await handleUpdateStatus(targetId, "ARCHIVED");
         showToast("success", t("formArchived", { defaultValue: "Eingang erfolgreich archiviert." }));
       } catch (err) {
         showToast("error", err?.message || "Fehler beim Archivieren.");

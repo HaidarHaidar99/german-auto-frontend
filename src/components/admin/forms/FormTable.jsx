@@ -64,6 +64,18 @@ export function FormTable({
     return phone.replace(/[^0-9]/g, "");
   };
 
+  const parseFormData = (raw) => {
+    if (!raw) return {};
+    if (typeof raw === "string") {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return {};
+      }
+    }
+    return typeof raw === "object" ? raw : {};
+  };
+
   return (
     <div className={`form-table-wrapper ${className}`.trim()} style={{ width: "100%", ...style }}>
       {/* ─── Desktop Table View (>= 1024px) ─── */}
@@ -107,10 +119,11 @@ export function FormTable({
           <tbody>
             {forms.map((item) => {
               const isContact = item.form_type === "CONTACT";
-              const data = item.data || {};
+              const rawData = parseFormData(item.data);
+              const data = { ...item, ...rawData };
               const senderName = isContact
                 ? data.name || item.name || "—"
-                : `${data.first_name || ""} ${data.last_name || ""}`.trim() || "—";
+                : `${data.first_name || ""} ${data.last_name || ""}`.trim() || item.name || "—";
               const senderEmail = data.email || item.email || "";
               const senderPhone = data.phone || item.phone || "";
               const statusCfg = getStatusColor(item.status);
@@ -465,10 +478,11 @@ export function FormTable({
       >
         {forms.map((item) => {
           const isContact = item.form_type === "CONTACT";
-          const data = item.data || {};
+          const rawData = parseFormData(item.data);
+          const data = { ...item, ...rawData };
           const senderName = isContact
             ? data.name || item.name || "—"
-            : `${data.first_name || ""} ${data.last_name || ""}`.trim() || "—";
+            : `${data.first_name || ""} ${data.last_name || ""}`.trim() || item.name || "—";
           const senderEmail = data.email || item.email || "";
           const senderPhone = data.phone || item.phone || "";
           const statusCfg = getStatusColor(item.status);
