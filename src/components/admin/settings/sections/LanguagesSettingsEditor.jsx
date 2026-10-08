@@ -90,11 +90,13 @@ export function LanguagesSettingsEditor({
             label={t("germanSystemLang", { defaultValue: "German (de) — Primary System Language (Required)" })}
             checked={supported.includes("de")}
             disabled={true}
+            style={{ color: "var(--color-admin-text, #0f172a)" }}
           />
           <Checkbox
             label={t("englishSystemLang", { defaultValue: "English (en) — Secondary System Language (Required)" })}
             checked={supported.includes("en")}
             disabled={true}
+            style={{ color: "var(--color-admin-text, #0f172a)" }}
           />
         </div>
       </div>

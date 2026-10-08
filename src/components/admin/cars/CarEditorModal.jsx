@@ -579,10 +579,10 @@ export function CarEditorModal({
   ], [t]);
 
   const tabs = [
-    { key: "core", label: t("coreDataTab", { defaultValue: "Core Data & Required Fields *" }) },
-    { key: "specs", label: t("specsTab", { defaultValue: "Specifications & Details" }) },
-    { key: "equipment", label: `${t("equipmentTab", { defaultValue: "Equipment & Features" })} (${form.equipment.length})` },
-    { key: "media", label: `${t("mediaTab", { defaultValue: "Images" })} (${galleryImages.length}/20) *` },
+    { key: "core", label: t("coreDataTab", { defaultValue: "Core Data & Required Fields *" }), icon: "car" },
+    { key: "specs", label: t("specsTab", { defaultValue: "Specifications & Details" }), icon: "sliders" },
+    { key: "equipment", label: `${t("equipmentTab", { defaultValue: "Equipment & Features" })} (${form.equipment.length})`, icon: "layers" },
+    { key: "media", label: `${t("mediaTab", { defaultValue: "Images" })} (${galleryImages.length}/20) *`, icon: "image" },
   ];
 
   return (
@@ -595,6 +595,7 @@ export function CarEditorModal({
       <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
         {/* Navigation Tabs */}
         <div
+          className="car-editor-tabs-bar"
           style={{
             display: "flex",
             gap: "var(--space-xs)",
@@ -608,7 +609,14 @@ export function CarEditorModal({
               key={tItem.key}
               type="button"
               onClick={() => setActiveTab(tItem.key)}
+              title={tItem.label}
+              aria-label={tItem.label}
+              className={`car-editor-tab-btn ${activeTab === tItem.key ? "active" : ""}`}
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
                 padding: "8px 14px",
                 fontSize: "var(--font-size-xs)",
                 fontWeight: 600,
@@ -621,7 +629,8 @@ export function CarEditorModal({
                 transition: "all 0.15s ease",
               }}
             >
-              {tItem.label}
+              <Icon name={tItem.icon} size={16} />
+              <span className="car-editor-tab-label">{tItem.label}</span>
             </button>
           ))}
         </div>

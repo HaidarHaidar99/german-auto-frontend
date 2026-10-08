@@ -21,7 +21,9 @@ export function AdminHeader({
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const brandLogo = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
+  const brandLogo = (adminTheme === "light" && settings?.branding?.logo_light_url)
+    ? settings.branding.logo_light_url
+    : (settings?.branding?.logo_url || DEFAULT_LOGO_URL);
 
   const [unreadCount, setUnreadCount] = useState(0);
   const [notificationsList, setNotificationsList] = useState([]);
@@ -165,27 +167,24 @@ export function AdminHeader({
             onClick={onOpenMobileNav}
           />
 
-          {/* Middle: Brand Logo & Name */}
+          {/* Middle: Only Logo in Mobile (no company name) */}
           <Link
             to="/admincoresecure"
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              justifyContent: "center",
               textDecoration: "none",
-              minWidth: 0,
-              flex: 1,
             }}
           >
             <img
               src={brandLogo}
-              alt={brandName}
+              alt="Admin"
               style={{
-                width: "28px",
-                height: "28px",
-                borderRadius: "6px",
+                width: "32px",
+                height: "32px",
+                borderRadius: "8px",
                 objectFit: "contain",
-                backgroundColor: "#0d0f12",
                 flexShrink: 0,
               }}
               onError={(e) => {
@@ -193,19 +192,6 @@ export function AdminHeader({
                 e.target.src = DEFAULT_LOGO_URL;
               }}
             />
-            <span
-              style={{
-                fontWeight: 800,
-                fontSize: "14px",
-                color: "var(--color-admin-text)",
-                letterSpacing: "-0.3px",
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {brandName}
-            </span>
           </Link>
 
           {/* Right: Theme Toggle + Language Switcher */}
@@ -308,24 +294,9 @@ export function AdminHeader({
                 marginBottom: "4px",
               }}
             >
-              <img
-                src={brandLogo}
-                alt={brandName}
-                style={{
-                  width: "18px",
-                  height: "18px",
-                  borderRadius: "4px",
-                  objectFit: "contain",
-                  backgroundColor: "#0d0f12",
-                }}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = DEFAULT_LOGO_URL;
-                }}
-              />
-              <span>{brandName}</span>
-              <span style={{ opacity: 0.5 }}>•</span>
-              <span style={{ color: "var(--color-admin-accent)" }}>Admin Portal</span>
+              <span style={{ color: "var(--color-admin-accent)", fontWeight: 800, fontSize: "12px", letterSpacing: "1px" }}>
+                {currentLang === "de" ? "VERWALTUNG" : "ADMIN"}
+              </span>
             </div>
             <h1
               style={{

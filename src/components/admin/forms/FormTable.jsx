@@ -130,40 +130,48 @@ export function FormTable({
                     e.currentTarget.style.backgroundColor = "transparent";
                   }}
                 >
-                  {/* Type Badge */}
+                  {/* Type Badge - Luxury Rounded Pill */}
                   <td style={{ padding: "12px 16px", verticalAlign: "middle" }}>
                     {isContact ? (
-                      <Badge
-                        variant="secondary"
-                        size="sm"
+                      <span
                         style={{
-                          backgroundColor: "rgba(168, 85, 247, 0.12)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          padding: "4px 12px",
+                          borderRadius: "9999px",
+                          fontSize: "11px",
+                          fontWeight: 600,
+                          backgroundColor: "rgba(147, 51, 234, 0.1)",
                           color: "#9333ea",
-                          border: "1px solid rgba(168, 85, 247, 0.3)",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "4px",
+                          border: "1px solid rgba(147, 51, 234, 0.25)",
+                          boxShadow: "0 1px 2px rgba(147, 51, 234, 0.08)",
+                          letterSpacing: "0.02em",
                         }}
                       >
-                        <Icon name="message-square" size={11} />
-                        {t("formTypeContact", { defaultValue: "Contact" })}
-                      </Badge>
+                        <Icon name="message-square" size={12} />
+                        <span>{t("formTypeContact", { defaultValue: "Contact Inquiry" })}</span>
+                      </span>
                     ) : (
-                      <Badge
-                        variant="secondary"
-                        size="sm"
+                      <span
                         style={{
-                          backgroundColor: "rgba(249, 115, 22, 0.12)",
-                          color: "#ea580c",
-                          border: "1px solid rgba(249, 115, 22, 0.3)",
                           display: "inline-flex",
                           alignItems: "center",
-                          gap: "4px",
+                          gap: "5px",
+                          padding: "4px 12px",
+                          borderRadius: "9999px",
+                          fontSize: "11px",
+                          fontWeight: 600,
+                          backgroundColor: "rgba(249, 115, 22, 0.1)",
+                          color: "#ea580c",
+                          border: "1px solid rgba(249, 115, 22, 0.25)",
+                          boxShadow: "0 1px 2px rgba(249, 115, 22, 0.08)",
+                          letterSpacing: "0.02em",
                         }}
                       >
-                        <Icon name="car" size={11} />
-                        {t("formTypeSellCar", { defaultValue: "Sell Car" })}
-                      </Badge>
+                        <Icon name="car" size={12} />
+                        <span>{t("formTypeSellCar", { defaultValue: "Vehicle Inquiry" })}</span>
+                      </span>
                     )}
                   </td>
 
@@ -492,29 +500,41 @@ export function FormTable({
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                   {isContact ? (
-                    <Badge
-                      variant="secondary"
-                      size="sm"
+                    <span
                       style={{
-                        backgroundColor: "rgba(168, 85, 247, 0.12)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        padding: "3px 10px",
+                        borderRadius: "9999px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        backgroundColor: "rgba(147, 51, 234, 0.1)",
                         color: "#9333ea",
-                        border: "1px solid rgba(168, 85, 247, 0.3)",
+                        border: "1px solid rgba(147, 51, 234, 0.25)",
+                        letterSpacing: "0.02em",
                       }}
                     >
-                      <Icon name="message-square" size={11} /> {t("formTypeContact", { defaultValue: "Contact" })}
-                    </Badge>
+                      <Icon name="message-square" size={11} /> {t("formTypeContact", { defaultValue: "Contact Inquiry" })}
+                    </span>
                   ) : (
-                    <Badge
-                      variant="secondary"
-                      size="sm"
+                    <span
                       style={{
-                        backgroundColor: "rgba(249, 115, 22, 0.12)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        padding: "3px 10px",
+                        borderRadius: "9999px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        backgroundColor: "rgba(249, 115, 22, 0.1)",
                         color: "#ea580c",
-                        border: "1px solid rgba(249, 115, 22, 0.3)",
+                        border: "1px solid rgba(249, 115, 22, 0.25)",
+                        letterSpacing: "0.02em",
                       }}
                     >
-                      <Icon name="car" size={11} /> {t("formTypeSellCar", { defaultValue: "Sell Car" })}
-                    </Badge>
+                      <Icon name="car" size={11} /> {t("formTypeSellCar", { defaultValue: "Vehicle Inquiry" })}
+                    </span>
                   )}
 
                   <select

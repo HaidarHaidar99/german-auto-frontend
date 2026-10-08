@@ -346,7 +346,7 @@ export function AdminSettingsPage() {
       />
 
       {loading ? (
-        <AdminLoadingState message={t("loadingSettings", { defaultValue: "Loading CMS settings from database..." })} />
+        <AdminLoadingState message={t("loading", { defaultValue: "Loading..." })} />
       ) : error && !serverSettings ? (
         <ErrorState message={error} onRetry={fetchSettings} />
       ) : (

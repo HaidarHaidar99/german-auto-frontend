@@ -3,12 +3,26 @@ import { Outlet } from "react-router-dom";
 import AdminSidebar from "../components/admin/AdminSidebar";
 import AdminMobileNav from "../components/admin/AdminMobileNav";
 import AdminHeader from "../components/admin/AdminHeader";
+import AdminErrorBoundary from "../components/admin/AdminErrorBoundary";
 
 export function AdminLayout() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [adminTheme, setAdminTheme] = useState(() => {
     return localStorage.getItem("admin_theme") || "light";
   });
+
+  React.useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-admin-theme", adminTheme);
+      document.body.setAttribute("data-admin-theme", adminTheme);
+    }
+    return () => {
+      if (typeof document !== "undefined") {
+        document.documentElement.removeAttribute("data-admin-theme");
+        document.body.removeAttribute("data-admin-theme");
+      }
+    };
+  }, [adminTheme]);
 
   const toggleAdminTheme = () => {
     setAdminTheme((prev) => {
@@ -67,7 +81,9 @@ export function AdminLayout() {
             toggleAdminTheme={toggleAdminTheme}
           />
 
-          <Outlet />
+          <AdminErrorBoundary>
+            <Outlet />
+          </AdminErrorBoundary>
         </main>
       </div>
     </div>

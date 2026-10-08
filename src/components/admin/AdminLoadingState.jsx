@@ -31,7 +31,7 @@ export function AdminLoadingState({ message, minHeight = "300px", className = ""
         }}
       />
       <span style={{ fontSize: "var(--font-size-sm, 13px)", color: "var(--color-admin-muted, #94a3b8)", fontWeight: 500 }}>
-        {message || t("loadingData", { defaultValue: "Lade Daten..." })}
+        {message || t("loading", { defaultValue: "Loading..." })}
       </span>
     </div>
   );

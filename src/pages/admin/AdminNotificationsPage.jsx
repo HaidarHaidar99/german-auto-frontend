@@ -374,7 +374,7 @@ export function AdminNotificationsPage() {
 
         {/* Notification Feed States */}
         {loading ? (
-          <AdminLoadingState message={t("loadingNotifications", { defaultValue: "Loading notifications..." })} />
+          <AdminLoadingState message={t("loading", { defaultValue: "Loading..." })} />
         ) : error ? (
           <ErrorState
             title={t("errorLoading", { defaultValue: "Failed to load" })}

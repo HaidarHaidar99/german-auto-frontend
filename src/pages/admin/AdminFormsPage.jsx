@@ -359,6 +359,134 @@ export function AdminFormsPage() {
           }
         />
 
+        {/* Form Category Tabs (Cars vs Contacts vs All) */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            borderBottom: "1px solid var(--color-admin-border, #e2e8f0)",
+            paddingBottom: "12px",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setFilters((prev) => ({ ...prev, form_type: "SELL_CAR" }))}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "9px 18px",
+              borderRadius: "9999px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+              border: filters.form_type === "SELL_CAR"
+                ? "1px solid var(--color-admin-accent, #0284c7)"
+                : "1px solid var(--color-admin-border, #e2e8f0)",
+              backgroundColor: filters.form_type === "SELL_CAR"
+                ? "var(--color-admin-accent, #0284c7)"
+                : "var(--color-admin-card, #ffffff)",
+              color: filters.form_type === "SELL_CAR" ? "#ffffff" : "var(--color-admin-text, #0f172a)",
+              transition: "all 0.15s ease",
+              boxShadow: filters.form_type === "SELL_CAR" ? "0 2px 8px rgba(2, 132, 199, 0.25)" : "none",
+            }}
+          >
+            <Icon name="car" size={15} />
+            <span>{t("tabCarInquiries", { defaultValue: "Car Inquiries / Sell Your Car" })}</span>
+            <span
+              style={{
+                fontSize: "11px",
+                padding: "1px 7px",
+                borderRadius: "9999px",
+                backgroundColor: filters.form_type === "SELL_CAR" ? "rgba(255, 255, 255, 0.25)" : "var(--color-admin-accent-subtle, #f1f5f9)",
+                color: filters.form_type === "SELL_CAR" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
+                fontWeight: 700,
+              }}
+            >
+              {forms.filter((f) => f.form_type === "SELL_CAR").length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFilters((prev) => ({ ...prev, form_type: "CONTACT" }))}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "9px 18px",
+              borderRadius: "9999px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+              border: filters.form_type === "CONTACT"
+                ? "1px solid var(--color-admin-accent, #0284c7)"
+                : "1px solid var(--color-admin-border, #e2e8f0)",
+              backgroundColor: filters.form_type === "CONTACT"
+                ? "var(--color-admin-accent, #0284c7)"
+                : "var(--color-admin-card, #ffffff)",
+              color: filters.form_type === "CONTACT" ? "#ffffff" : "var(--color-admin-text, #0f172a)",
+              transition: "all 0.15s ease",
+              boxShadow: filters.form_type === "CONTACT" ? "0 2px 8px rgba(2, 132, 199, 0.25)" : "none",
+            }}
+          >
+            <Icon name="message-square" size={15} />
+            <span>{t("tabContactForms", { defaultValue: "Contact Forms" })}</span>
+            <span
+              style={{
+                fontSize: "11px",
+                padding: "1px 7px",
+                borderRadius: "9999px",
+                backgroundColor: filters.form_type === "CONTACT" ? "rgba(255, 255, 255, 0.25)" : "var(--color-admin-accent-subtle, #f1f5f9)",
+                color: filters.form_type === "CONTACT" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
+                fontWeight: 700,
+              }}
+            >
+              {forms.filter((f) => f.form_type === "CONTACT").length}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setFilters((prev) => ({ ...prev, form_type: "ALL" }))}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "9px 18px",
+              borderRadius: "9999px",
+              fontSize: "13px",
+              fontWeight: 600,
+              cursor: "pointer",
+              border: filters.form_type === "ALL"
+                ? "1px solid var(--color-admin-accent, #0284c7)"
+                : "1px solid var(--color-admin-border, #e2e8f0)",
+              backgroundColor: filters.form_type === "ALL"
+                ? "var(--color-admin-accent, #0284c7)"
+                : "var(--color-admin-card, #ffffff)",
+              color: filters.form_type === "ALL" ? "#ffffff" : "var(--color-admin-text, #0f172a)",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <Icon name="inbox" size={15} />
+            <span>{t("allForms", { defaultValue: "All Submissions" })}</span>
+            <span
+              style={{
+                fontSize: "11px",
+                padding: "1px 7px",
+                borderRadius: "9999px",
+                backgroundColor: filters.form_type === "ALL" ? "rgba(255, 255, 255, 0.25)" : "var(--color-admin-accent-subtle, #f1f5f9)",
+                color: filters.form_type === "ALL" ? "#ffffff" : "var(--color-admin-muted, #64748b)",
+                fontWeight: 700,
+              }}
+            >
+              {forms.length}
+            </span>
+          </button>
+        </div>
+
         {/* Filter & Search Bar */}
         <FormFiltersBar
           filters={filters}
@@ -368,7 +496,7 @@ export function AdminFormsPage() {
 
         {/* Data View States */}
         {loading ? (
-          <AdminLoadingState message={t("loadingForms", { defaultValue: "Loading form submissions from database..." })} />
+          <AdminLoadingState message={t("loading", { defaultValue: "Loading..." })} />
         ) : error ? (
           <ErrorState
             title={t("errorLoading", { defaultValue: "Error loading" })}

@@ -477,7 +477,7 @@ export function AdminCarsPage() {
       />
 
       {loading ? (
-        <AdminLoadingState message={t("loadingCarsDatabase", { defaultValue: "Loading vehicle inventory from database..." })} />
+        <AdminLoadingState message={t("loading", { defaultValue: "Loading..." })} />
       ) : error ? (
         <ErrorState message={error} onRetry={() => fetchCars()} />
       ) : (

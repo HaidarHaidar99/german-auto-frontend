@@ -132,14 +132,7 @@ export function AppRoutes() {
           <Route path="reviews" element={<AdminReviewsPage />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
           <Route path="profile" element={<AdminProfilePage />} />
-          <Route
-            path="users"
-            element={
-              <AdminRoute requireSuperAdmin>
-                <AdminUsersPage />
-              </AdminRoute>
-            }
-          />
+          <Route path="users" element={<AdminUsersPage />} />
         </Route>
       </Routes>
     </Suspense>

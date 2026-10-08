@@ -343,6 +343,10 @@ button[role="switch"] div {
 /* ==========================================================================
    5. ADMIN CMS DESIGN SYSTEM (Replicating Screenshot Layout & Palette)
    ========================================================================== */
+/* Admin Panel Light Mode (Default or explicit data-admin-theme="light") */
+:root[data-admin-theme="light"],
+body[data-admin-theme="light"],
+[data-admin-theme="light"],
 .admin-layout {
   --color-admin-bg: #f0f4f8;           /* Clean soft light-grey background */
   --color-admin-sidebar: #ffffff;      /* Pure white sidebar */
@@ -367,6 +371,9 @@ button[role="switch"] div {
 }
 
 /* Admin Panel Dark Mode (Driven strictly by data-admin-theme="dark") */
+:root[data-admin-theme="dark"],
+body[data-admin-theme="dark"],
+[data-admin-theme="dark"],
 .admin-layout[data-admin-theme="dark"],
 [data-admin-theme="dark"] .admin-layout {
   --color-admin-bg: #090d16;

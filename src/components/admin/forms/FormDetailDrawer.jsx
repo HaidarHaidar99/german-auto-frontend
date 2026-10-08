@@ -6,10 +6,11 @@ import Badge from "../../ui/Badge";
 import Textarea from "../../forms/Textarea";
 import Icon from "../../common/Icon";
 import FormImageModal from "./FormImageModal";
+import formsService from "../../../services/forms/forms.service";
 
 export function FormDetailDrawer({
   isOpen,
-  form = null,
+  form: initialForm = null,
   onClose,
   onUpdateStatus,
   onUpdateNotes,
@@ -18,6 +19,7 @@ export function FormDetailDrawer({
   const { t, i18n } = useTranslation(["admin", "forms", "common"]);
   const currentLang = i18n.language || "en";
 
+  const [form, setForm] = useState(initialForm);
   const [notesText, setNotesText] = useState("");
   const [savingNotes, setSavingNotes] = useState(false);
   const [notesSuccess, setNotesSuccess] = useState(false);
@@ -25,26 +27,40 @@ export function FormDetailDrawer({
   const [previewImage, setPreviewImage] = useState(null);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
 
-  // Sync draft notes whenever form changes
+  // Sync draft notes and load full data if missing
   useEffect(() => {
-    if (form) {
-      setNotesText(form.admin_notes || "");
+    setForm(initialForm);
+    if (initialForm) {
+      setNotesText(initialForm.admin_notes || "");
       setNotesSuccess(false);
       setShowArchiveConfirm(false);
+
+      // If form doesn't contain data blob, fetch detail from API
+      if (!initialForm.data || Object.keys(initialForm.data).length === 0) {
+        formsService.adminGetForm(initialForm.id)
+          .then((res) => {
+            const fetched = res?.data?.form || res?.data;
+            if (fetched) {
+              setForm(fetched);
+              if (fetched.admin_notes) setNotesText(fetched.admin_notes);
+            }
+          })
+          .catch(() => {});
+      }
     }
-  }, [form]);
+  }, [initialForm]);
 
   if (!form) return null;
 
   const isContact = form.form_type === "CONTACT";
   const data = form.data || {};
 
-  // Contact person details
+  // Contact person details with robust field alias resolution
   const contactName = isContact
-    ? data.name || "—"
-    : `${data.first_name || ""} ${data.last_name || ""}`.trim() || "—";
-  const contactEmail = data.email || "";
-  const contactPhone = data.phone || "";
+    ? (data.name || data.full_name || data.customer_name || `${data.first_name || ""} ${data.last_name || ""}`.trim() || "—")
+    : (`${data.first_name || ""} ${data.last_name || ""}`.trim() || data.name || data.full_name || data.customer_name || "—");
+  const contactEmail = data.email || data.contact_email || "";
+  const contactPhone = data.phone || data.phone_number || data.mobile || "";
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "—";

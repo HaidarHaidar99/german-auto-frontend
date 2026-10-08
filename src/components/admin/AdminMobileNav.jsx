@@ -10,12 +10,17 @@ import Icon from "../common/Icon";
 
 export function AdminMobileNav({ isOpen, onClose }) {
   const { t } = useTranslation(["admin", "common"]);
-  const { user, role, logout, isSuperAdmin } = useAdminAuth();
+  const { user, role, logout, isSuperAdmin, isAdmin } = useAdminAuth();
   const { settings } = useSettings?.() || {};
   const navigate = useNavigate();
 
   const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const logoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
+  const adminTheme = typeof window !== "undefined"
+    ? document.documentElement.getAttribute("data-admin-theme") || localStorage.getItem("admin_theme") || "light"
+    : "light";
+  const logoUrl = (adminTheme === "light" && settings?.branding?.logo_light_url)
+    ? settings.branding.logo_light_url
+    : (settings?.branding?.logo_url || DEFAULT_LOGO_URL);
 
   const handleLogout = async () => {
     onClose();
@@ -30,23 +35,23 @@ export function AdminMobileNav({ isOpen, onClose }) {
   const avatarInitial = (displayName || "A").charAt(0).toUpperCase();
 
   const navItems = [
-    { to: "/admincoresecure", end: true, label: "Dashboard", icon: "layout" },
-    { to: "/admincoresecure/cars", end: false, label: "Inventory", icon: "car" },
-    { to: "/admincoresecure/forms", end: false, label: "Forms", icon: "mail" },
-    { to: "/admincoresecure/reviews", end: false, label: "Reviews", icon: "star" },
-    { to: "/admincoresecure/notifications", end: false, label: "Notifications", icon: "bell" },
-    ...(isSuperAdmin
+    { to: "/admincoresecure", end: true, label: t("dashboard", { defaultValue: "Dashboard" }), icon: "layout" },
+    { to: "/admincoresecure/cars", end: false, label: t("inventory", { defaultValue: "Inventory" }), icon: "car" },
+    { to: "/admincoresecure/forms", end: false, label: t("forms", { defaultValue: "Forms" }), icon: "mail" },
+    { to: "/admincoresecure/reviews", end: false, label: t("reviews", { defaultValue: "Reviews" }), icon: "star" },
+    { to: "/admincoresecure/notifications", end: false, label: t("notifications", { defaultValue: "Notifications" }), icon: "bell" },
+    ...(isAdmin
       ? [
           {
             to: "/admincoresecure/users",
             end: false,
-            label: "User Management",
+            label: t("userManagement", { defaultValue: "User Management" }),
             icon: "users",
           },
         ]
       : []),
-    { to: "/admincoresecure/profile", end: false, label: "Profile", icon: "user" },
-    { to: "/admincoresecure/settings", end: false, label: "Settings", icon: "settings" },
+    { to: "/admincoresecure/profile", end: false, label: t("profile", { defaultValue: "Profile" }), icon: "user" },
+    { to: "/admincoresecure/settings", end: false, label: t("settings", { defaultValue: "Settings" }), icon: "settings" },
   ];
 
   return (
@@ -65,14 +70,14 @@ export function AdminMobileNav({ isOpen, onClose }) {
                 height: "28px",
                 objectFit: "contain",
                 borderRadius: "4px",
-                backgroundColor: "#000",
+                backgroundColor: adminTheme === "light" ? "#f8fafc" : "#000",
               }}
               onError={(e) => {
                 e.currentTarget.style.display = "none";
               }}
             />
           )}
-          <span style={{ fontSize: "14px", fontWeight: 800 }}>{brandName}</span>
+          <span style={{ fontSize: "14px", fontWeight: 800 }}>{t("adminTitle", { defaultValue: "Admin" })}</span>
         </div>
       }
       closeOnBackdropClick={true}

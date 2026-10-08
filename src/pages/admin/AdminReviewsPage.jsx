@@ -6,6 +6,7 @@ import ReviewSummaryCards from "../../components/admin/reviews/ReviewSummaryCard
 import ReviewFiltersBar from "../../components/admin/reviews/ReviewFiltersBar";
 import ReviewTable from "../../components/admin/reviews/ReviewTable";
 import ReviewDetailDrawer from "../../components/admin/reviews/ReviewDetailDrawer";
+import DeleteReviewModal from "../../components/admin/reviews/DeleteReviewModal";
 import AdminEmptyState from "../../components/admin/AdminEmptyState";
 import AdminLoadingState from "../../components/admin/AdminLoadingState";
 import ErrorState from "../../components/ui/ErrorState";
@@ -36,6 +37,10 @@ export function AdminReviewsPage() {
   // Selected review for detail drawer
   const [selectedReview, setSelectedReview] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  // Review delete confirmation modal state
+  const [reviewToDelete, setReviewToDelete] = useState(null);
+  const [deletingReview, setDeletingReview] = useState(false);
 
   // Moderation in-progress tracking
   const [updatingId, setUpdatingId] = useState(null);
@@ -152,39 +157,35 @@ export function AdminReviewsPage() {
     [t]
   );
 
-  // Delete a review permanently and remove immediately from view
-  const handleDelete = useCallback(
-    async (reviewItem) => {
-      if (!reviewItem) return;
-      const confirmed = window.confirm(
-        t("deleteReviewConfirmMessage", {
-          name: reviewItem.name || "this customer",
-          defaultValue: `Are you sure you want to delete this review from "${reviewItem.name || "Customer"}"? This action cannot be undone.`,
-        })
-      );
-      if (!confirmed) return;
+  // Trigger themed delete confirmation modal
+  const handleDelete = useCallback((reviewItem) => {
+    if (!reviewItem) return;
+    setReviewToDelete(reviewItem);
+  }, []);
 
-      try {
-        setUpdatingId(reviewItem.id);
-        await reviewsService.adminDeleteReview(reviewItem.id);
+  // Confirm permanent deletion from modal
+  const confirmDeleteReview = useCallback(async () => {
+    if (!reviewToDelete) return;
+    try {
+      setDeletingReview(true);
+      await reviewsService.adminDeleteReview(reviewToDelete.id);
 
-        // Immediately remove from state so it disappears
-        setReviews((prev) => prev.filter((item) => item.id !== reviewItem.id));
+      // Immediately remove from state so it disappears
+      setReviews((prev) => prev.filter((item) => item.id !== reviewToDelete.id));
 
-        if (selectedReview?.id === reviewItem.id) {
-          setIsDrawerOpen(false);
-          setSelectedReview(null);
-        }
-
-        showToast("success", t("reviewDeleted", { defaultValue: "Review deleted successfully." }));
-      } catch (err) {
-        showToast("error", err?.message || t("errorDeletingReview", { defaultValue: "Error deleting review." }));
-      } finally {
-        setUpdatingId(null);
+      if (selectedReview?.id === reviewToDelete.id) {
+        setIsDrawerOpen(false);
+        setSelectedReview(null);
       }
-    },
-    [t, selectedReview]
-  );
+
+      showToast("success", t("reviewDeleted", { defaultValue: "Review deleted successfully." }));
+      setReviewToDelete(null);
+    } catch (err) {
+      showToast("error", err?.message || t("errorDeletingReview", { defaultValue: "Error deleting review." }));
+    } finally {
+      setDeletingReview(false);
+    }
+  }, [reviewToDelete, selectedReview, t]);
 
   // Detail drawer triggers
   const handleOpenDetail = useCallback(async (reviewItem) => {
@@ -340,7 +341,7 @@ export function AdminReviewsPage() {
 
         {/* Content States */}
         {loading ? (
-          <AdminLoadingState message={t("loadingReviews", { defaultValue: "Loading reviews from database..." })} />
+          <AdminLoadingState message={t("loading", { defaultValue: "Loading..." })} />
         ) : error ? (
           <ErrorState
             title={t("errorLoading", { defaultValue: "Error loading" })}
@@ -407,6 +408,15 @@ export function AdminReviewsPage() {
         onHide={handleHide}
         onDelete={handleDelete}
         updatingId={updatingId}
+      />
+
+      {/* Delete Review Confirmation Modal */}
+      <DeleteReviewModal
+        isOpen={Boolean(reviewToDelete)}
+        review={reviewToDelete}
+        loading={deletingReview}
+        onConfirm={confirmDeleteReview}
+        onClose={() => setReviewToDelete(null)}
       />
     </div>
   );

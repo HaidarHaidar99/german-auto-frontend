@@ -23,7 +23,7 @@ const PAGE_SIZE = 10;
 
 export function AdminUsersPage() {
   const { t } = useTranslation(["admin", "common"]);
-  const { user: currentUser, isSuperAdmin } = useAdminAuth();
+  const { user: currentUser, isSuperAdmin, isAdmin } = useAdminAuth();
   const pageContainerRef = useRef(null);
 
   // ─── State ──────────────────────────────────────────────────────────────────
@@ -83,7 +83,7 @@ export function AdminUsersPage() {
 
   // ─── Fetch Stats ────────────────────────────────────────────────────────────
   const fetchStats = useCallback(async () => {
-    if (!isSuperAdmin) return;
+    if (!isAdmin) return;
     try {
       setStatsLoading(true);
       const [totalRes, custRes, admRes, superRes] = await Promise.allSettled([
@@ -104,12 +104,12 @@ export function AdminUsersPage() {
     } finally {
       setStatsLoading(false);
     }
-  }, [isSuperAdmin]);
+  }, [isAdmin]);
 
   // ─── Fetch Users ────────────────────────────────────────────────────────────
   const fetchUsers = useCallback(
     async (page = 1, currentFilters = null, isRefresh = false) => {
-      if (!isSuperAdmin) return;
+      if (!isAdmin) return;
       if (isRefresh) setRefreshing(true);
       else setLoading(true);
 
@@ -158,7 +158,7 @@ export function AdminUsersPage() {
         setRefreshing(false);
       }
     },
-    [isSuperAdmin, t]
+    [isAdmin, t]
   );
 
   // Search debounce ref
@@ -186,14 +186,14 @@ export function AdminUsersPage() {
 
   // Initial load
   useEffect(() => {
-    if (isSuperAdmin) {
+    if (isAdmin) {
       fetchUsers(1);
       fetchStats();
     }
     return () => {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
-  }, [fetchUsers, fetchStats, isSuperAdmin]);
+  }, [fetchUsers, fetchStats, isAdmin]);
 
   // Subtle GSAP entrance animation
   useGsapContext(pageContainerRef, () => {
@@ -270,12 +270,12 @@ export function AdminUsersPage() {
     fetchStats();
   };
 
-  // ─── Security Guard: Only SUPER_ADMIN ───────────────────────────────────────
-  if (!isSuperAdmin) {
+  // ─── Security Guard: Admins and Super Admins ─────────────────────────────────
+  if (!isAdmin) {
     return (
       <UnauthorizedState
-        message={t("superAdminOnlyNotice", {
-          defaultValue: "Access denied. This section requires Super Administrator privileges.",
+        message={t("adminOnlyNotice", {
+          defaultValue: "Access denied. This section requires Administrator privileges.",
         })}
       />
     );
@@ -362,7 +362,7 @@ export function AdminUsersPage() {
 
         {/* Loading State or Users Table */}
         {loading && !refreshing ? (
-          <AdminLoadingState message={t("loadingUserAccounts", { defaultValue: "Loading user accounts..." })} />
+          <AdminLoadingState message={t("loading", { defaultValue: "Loading..." })} />
         ) : (
           <UserTable
             users={users}

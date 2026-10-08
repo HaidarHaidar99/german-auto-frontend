@@ -13,11 +13,28 @@ export function AdminSidebar({ className = "", style = {} }) {
   const { user, role, logout } = useAdminAuth();
   const { settings } = useSettings?.() || {};
   const isSuperAdmin = role === "SUPER_ADMIN";
+  const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
   const navigate = useNavigate();
   const [unreadCount, setUnreadCount] = useState(0);
 
   const brandName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const logoUrl = settings?.branding?.logo_url || DEFAULT_LOGO_URL;
+
+  const [adminTheme, setAdminTheme] = useState(() => {
+    return typeof window !== "undefined" ? localStorage.getItem("admin_theme") || "light" : "light";
+  });
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const current = document.documentElement.getAttribute("data-admin-theme") || "light";
+      setAdminTheme(current);
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-admin-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const logoUrl = (adminTheme === "light" && settings?.branding?.logo_light_url)
+    ? settings.branding.logo_light_url
+    : (settings?.branding?.logo_url || DEFAULT_LOGO_URL);
 
   useEffect(() => {
     let isMounted = true;
@@ -68,7 +85,7 @@ export function AdminSidebar({ className = "", style = {} }) {
       icon: "bell",
       badgeCount: unreadCount,
     },
-    ...(isSuperAdmin
+    ...(isAdmin
       ? [
           {
             to: "/admincoresecure/users",
@@ -122,7 +139,7 @@ export function AdminSidebar({ className = "", style = {} }) {
                 height: "44px",
                 borderRadius: "8px",
                 objectFit: "contain",
-                backgroundColor: "#000000",
+                backgroundColor: adminTheme === "light" ? "#f8fafc" : "#000000",
                 padding: "2px",
                 border: "1px solid var(--color-admin-border)",
                 flexShrink: 0,
@@ -144,9 +161,9 @@ export function AdminSidebar({ className = "", style = {} }) {
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
-              title={brandName}
+              title={t("adminTitle", { defaultValue: "Admin" })}
             >
-              {brandName}
+              {t("adminTitle", { defaultValue: "Admin" })}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <span
