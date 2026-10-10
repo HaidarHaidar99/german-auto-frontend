@@ -53,20 +53,12 @@ export function GoogleReviewsSettingsEditor({
         />
       </SettingsField>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
+      <div style={{ marginTop: "var(--space-sm)" }}>
         <SettingsField label="Button-Beschriftung (DE)" locale="de" error={errors["google_reviews.display_label_de"]}>
           <Input
             value={data.display_label_de || ""}
             onChange={(e) => handleChange("display_label_de", e.target.value)}
             placeholder="Auf Google bewerten"
-          />
-        </SettingsField>
-
-        <SettingsField label="Button-Beschriftung (EN)" locale="en" error={errors["google_reviews.display_label_en"]}>
-          <Input
-            value={data.display_label_en || ""}
-            onChange={(e) => handleChange("display_label_en", e.target.value)}
-            placeholder="Review us on Google"
           />
         </SettingsField>
       </div>

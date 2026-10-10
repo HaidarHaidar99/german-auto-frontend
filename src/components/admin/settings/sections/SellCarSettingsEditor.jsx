@@ -42,25 +42,15 @@ export function SellCarSettingsEditor({
         />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-        <SettingsField label="Haupttitel (DE)" locale="de" error={errors["sell_car.title_de"]}>
-          <Input
-            value={data.title_de || ""}
-            onChange={(e) => handleChange("title_de", e.target.value)}
-            placeholder="Fahrzeug bewerten & verkaufen"
-          />
-        </SettingsField>
+      <SettingsField label="Haupttitel (DE)" locale="de" error={errors["sell_car.title_de"]}>
+        <Input
+          value={data.title_de || ""}
+          onChange={(e) => handleChange("title_de", e.target.value)}
+          placeholder="Fahrzeug bewerten & verkaufen"
+        />
+      </SettingsField>
 
-        <SettingsField label="Haupttitel (EN)" locale="en" error={errors["sell_car.title_en"]}>
-          <Input
-            value={data.title_en || ""}
-            onChange={(e) => handleChange("title_en", e.target.value)}
-            placeholder="Sell or Value Your Vehicle"
-          />
-        </SettingsField>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
+      <div style={{ marginTop: "var(--space-sm)" }}>
         <SettingsField label="Beschreibung (DE)" locale="de" error={errors["sell_car.description_de"]}>
           <Textarea
             value={data.description_de || ""}
@@ -69,31 +59,14 @@ export function SellCarSettingsEditor({
             rows={3}
           />
         </SettingsField>
-
-        <SettingsField label="Beschreibung (EN)" locale="en" error={errors["sell_car.description_en"]}>
-          <Textarea
-            value={data.description_en || ""}
-            onChange={(e) => handleChange("description_en", e.target.value)}
-            placeholder="Submit your vehicle details for a qualified and discreet valuation..."
-            rows={3}
-          />
-        </SettingsField>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
+      <div style={{ marginTop: "var(--space-sm)" }}>
         <SettingsField label="Button-Text (DE)" locale="de" error={errors["sell_car.cta_text_de"]}>
           <Input
             value={data.cta_text_de || ""}
             onChange={(e) => handleChange("cta_text_de", e.target.value)}
             placeholder="Jetzt bewerten"
-          />
-        </SettingsField>
-
-        <SettingsField label="Button-Text (EN)" locale="en" error={errors["sell_car.cta_text_en"]}>
-          <Input
-            value={data.cta_text_en || ""}
-            onChange={(e) => handleChange("cta_text_en", e.target.value)}
-            placeholder="Value Now"
           />
         </SettingsField>
       </div>

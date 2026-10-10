@@ -42,39 +42,20 @@ export function ContactFormSettingsEditor({
         />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-        <SettingsField label={`${t("formTitle", { defaultValue: "Form Title" })} (DE)`} locale="de" error={errors["contact_form.title_de"]}>
-          <Input
-            value={data.title_de || ""}
-            onChange={(e) => handleChange("title_de", e.target.value)}
-            placeholder="Kontakt & Beratung"
-          />
-        </SettingsField>
+      <SettingsField label={`${t("formTitle", { defaultValue: "Form Title" })} (DE)`} locale="de" error={errors["contact_form.title_de"]}>
+        <Input
+          value={data.title_de || ""}
+          onChange={(e) => handleChange("title_de", e.target.value)}
+          placeholder="Kontakt & Beratung"
+        />
+      </SettingsField>
 
-        <SettingsField label={`${t("formTitle", { defaultValue: "Form Title" })} (EN)`} locale="en" error={errors["contact_form.title_en"]}>
-          <Input
-            value={data.title_en || ""}
-            onChange={(e) => handleChange("title_en", e.target.value)}
-            placeholder="Contact & Consultation"
-          />
-        </SettingsField>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
+      <div style={{ marginTop: "var(--space-sm)" }}>
         <SettingsField label={`${t("introText", { defaultValue: "Introductory Text" })} (DE)`} locale="de" error={errors["contact_form.description_de"]}>
           <Textarea
             value={data.description_de || ""}
             onChange={(e) => handleChange("description_de", e.target.value)}
             placeholder="Wir stehen Ihnen für alle Fragen rund um unseren Fahrzeugbestand persönlich zur Verfügung..."
-            rows={3}
-          />
-        </SettingsField>
-
-        <SettingsField label={`${t("introText", { defaultValue: "Introductory Text" })} (EN)`} locale="en" error={errors["contact_form.description_en"]}>
-          <Textarea
-            value={data.description_en || ""}
-            onChange={(e) => handleChange("description_en", e.target.value)}
-            placeholder="We are at your disposal for any inquiries regarding our inventory and tailored requests..."
             rows={3}
           />
         </SettingsField>
@@ -95,20 +76,12 @@ export function ContactFormSettingsEditor({
         </SettingsField>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
+      <div style={{ marginTop: "var(--space-sm)" }}>
         <SettingsField label={`${t("successMessage", { defaultValue: "Success Message After Submission" })} (DE)`} locale="de" error={errors["contact_form.success_message_de"]}>
           <Input
             value={data.success_message_de || ""}
             onChange={(e) => handleChange("success_message_de", e.target.value)}
             placeholder="Vielen Dank! Ihre Anfrage ist sicher bei uns eingegangen."
-          />
-        </SettingsField>
-
-        <SettingsField label={`${t("successMessage", { defaultValue: "Success Message After Submission" })} (EN)`} locale="en" error={errors["contact_form.success_message_en"]}>
-          <Input
-            value={data.success_message_en || ""}
-            onChange={(e) => handleChange("success_message_en", e.target.value)}
-            placeholder="Thank you! Your message has been received successfully."
           />
         </SettingsField>
       </div>

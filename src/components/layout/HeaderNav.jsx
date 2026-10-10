@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSettings, DEFAULT_BRAND_NAME, DEFAULT_LOGO_URL } from "../../contexts/SettingsContext";
-import LanguageSwitcher from "../common/LanguageSwitcher";
 import ThemeToggle from "../common/ThemeToggle";
 import { useTheme } from "../../contexts/ThemeContext";
 import IconButton from "../ui/IconButton";
@@ -409,7 +408,7 @@ export function HeaderNav({
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-md)", zIndex: 10000 }}>
             
             <div className="hide-mobile" style={{ opacity: menuOpen ? 0 : 1, transition: "opacity 0.3s ease", pointerEvents: menuOpen ? 'none' : 'auto', display: "flex", alignItems: "center", gap: "var(--space-md)" }}>
-              <LanguageSwitcher />
+              <ThemeToggle size="desktop" />
 
               {/* Favorites Action Button (Desktop) */}
               <Link
@@ -513,8 +512,6 @@ export function HeaderNav({
                   >
                     <Icon name="user" size={18} />
                   </Link>
-                  {/* Theme Switcher replaces Logout button on desktop */}
-                  <ThemeToggle size="desktop" />
                 </div>
               ) : (
                 <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
@@ -555,15 +552,13 @@ export function HeaderNav({
                   >
                     {t("login")}
                   </Link>
-                  {/* Theme Switcher replaces Logout button spot on desktop */}
-                  <ThemeToggle size="desktop" />
                 </div>
               )}
             </div>
 
-            {/* Mobile Actions: Language only */}
+            {/* Mobile Actions: Theme Changer button instead of language switch */}
             <div className="hide-desktop" style={{ display: menuOpen ? "none" : "flex", alignItems: "center" }}>
-              <LanguageSwitcher />
+              <ThemeToggle size="mobile" style={{ width: "38px", height: "38px" }} />
             </div>
             <button
               onClick={menuOpen ? closeMenu : openMenu}

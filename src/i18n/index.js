@@ -45,20 +45,27 @@ const resources = {
   },
 };
 
+// Determine starting language: admin routes can optionally respect admin_lang, public site is strictly German (de)
+const isAdminRoute = typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+const initialLang = (isAdminRoute && localStorage.getItem("admin_lang")) || "de";
+
+// Clean any stale English setting from public website visitors
+if (typeof window !== "undefined" && !isAdminRoute) {
+  try {
+    localStorage.setItem("i18nextLng", "de");
+  } catch {}
+}
+
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
+    lng: initialLang,
     fallbackLng: "de",
     defaultNS: "common",
     ns: ["common", "navigation", "auth", "cars", "forms", "admin", "about", "account"],
     interpolation: {
       escapeValue: false, // React already escapes values
-    },
-    detection: {
-      order: ["localStorage", "navigator"],
-      caches: ["localStorage"],
     },
   });
 

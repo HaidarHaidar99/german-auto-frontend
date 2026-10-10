@@ -345,33 +345,15 @@ export function HeroSettingsEditor({
                 error={Boolean(getFieldError("title_de"))}
               />
             </SettingsField>
-
-            <SettingsField label="Haupttitel (EN)" locale="en" error={getFieldError("title_en")}>
-              <Input
-                value={draftSlide.title_en || ""}
-                onChange={(e) => setDraftSlide({ ...draftSlide, title_en: e.target.value })}
-                placeholder="Exclusive German Automobiles"
-                error={Boolean(getFieldError("title_en"))}
-              />
-            </SettingsField>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-sm)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-sm)" }}>
             <SettingsField label="Untertitel (DE)" locale="de" error={getFieldError("subtitle_de")}>
               <Input
                 value={draftSlide.subtitle_de || ""}
                 onChange={(e) => setDraftSlide({ ...draftSlide, subtitle_de: e.target.value })}
                 placeholder="Handverlesenes Portfolio für Kenner"
                 error={Boolean(getFieldError("subtitle_de"))}
-              />
-            </SettingsField>
-
-            <SettingsField label="Untertitel (EN)" locale="en" error={getFieldError("subtitle_en")}>
-              <Input
-                value={draftSlide.subtitle_en || ""}
-                onChange={(e) => setDraftSlide({ ...draftSlide, subtitle_en: e.target.value })}
-                placeholder="Curated high-performance inventory"
-                error={Boolean(getFieldError("subtitle_en"))}
               />
             </SettingsField>
           </div>
@@ -401,7 +383,7 @@ export function HeroSettingsEditor({
                 {t("heroPrimaryButton", { defaultValue: "Erster Button (Primär)" })}
               </span>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-xs)" }}>
                 <SettingsField label="Button-Text (DE)" locale="de" error={getFieldError("cta_text_de")}>
                   <Input
                     value={draftSlide.cta_text_de || ""}
@@ -410,33 +392,15 @@ export function HeroSettingsEditor({
                     error={Boolean(getFieldError("cta_text_de"))}
                   />
                 </SettingsField>
-
-                <SettingsField label="Button-Text (EN)" locale="en" error={getFieldError("cta_text_en")}>
-                  <Input
-                    value={draftSlide.cta_text_en || ""}
-                    onChange={(e) => setDraftSlide({ ...draftSlide, cta_text_en: e.target.value })}
-                    placeholder="Explore Inventory"
-                    error={Boolean(getFieldError("cta_text_en"))}
-                  />
-                </SettingsField>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-xs)" }}>
                 <SettingsField label="Zielroute / Link (DE)" locale="de" error={getFieldError("button_link_de") || getFieldError("button_link")}>
                   <Input
                     value={draftSlide.button_link_de ?? draftSlide.button_link ?? ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, button_link_de: e.target.value, button_link: e.target.value })}
                     placeholder="/cars"
                     error={Boolean(getFieldError("button_link_de") || getFieldError("button_link"))}
-                  />
-                </SettingsField>
-
-                <SettingsField label="Zielroute / Link (EN)" locale="en" error={getFieldError("button_link_en")}>
-                  <Input
-                    value={draftSlide.button_link_en ?? draftSlide.button_link ?? ""}
-                    onChange={(e) => setDraftSlide({ ...draftSlide, button_link_en: e.target.value })}
-                    placeholder="/cars"
-                    error={Boolean(getFieldError("button_link_en"))}
                   />
                 </SettingsField>
               </div>
@@ -458,7 +422,7 @@ export function HeroSettingsEditor({
                 {t("heroSecondaryButton", { defaultValue: "Zweiter Button (Sekundär)" })}
               </span>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-xs)" }}>
                 <SettingsField label="Button-Text (DE)" locale="de" error={getFieldError("secondary_cta_text_de")}>
                   <Input
                     value={draftSlide.secondary_cta_text_de || ""}
@@ -467,33 +431,15 @@ export function HeroSettingsEditor({
                     error={Boolean(getFieldError("secondary_cta_text_de"))}
                   />
                 </SettingsField>
-
-                <SettingsField label="Button-Text (EN)" locale="en" error={getFieldError("secondary_cta_text_en")}>
-                  <Input
-                    value={draftSlide.secondary_cta_text_en || ""}
-                    onChange={(e) => setDraftSlide({ ...draftSlide, secondary_cta_text_en: e.target.value })}
-                    placeholder="Inventory"
-                    error={Boolean(getFieldError("secondary_cta_text_en"))}
-                  />
-                </SettingsField>
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-xs)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-xs)" }}>
                 <SettingsField label="Zielroute / Link (DE)" locale="de" error={getFieldError("secondary_button_link_de") || getFieldError("secondary_button_link")}>
                   <Input
                     value={draftSlide.secondary_button_link_de ?? draftSlide.secondary_button_link ?? ""}
                     onChange={(e) => setDraftSlide({ ...draftSlide, secondary_button_link_de: e.target.value, secondary_button_link: e.target.value })}
                     placeholder="/cars"
                     error={Boolean(getFieldError("secondary_button_link_de") || getFieldError("secondary_button_link"))}
-                  />
-                </SettingsField>
-
-                <SettingsField label="Zielroute / Link (EN)" locale="en" error={getFieldError("secondary_button_link_en")}>
-                  <Input
-                    value={draftSlide.secondary_button_link_en ?? draftSlide.secondary_button_link ?? ""}
-                    onChange={(e) => setDraftSlide({ ...draftSlide, secondary_button_link_en: e.target.value })}
-                    placeholder="/cars"
-                    error={Boolean(getFieldError("secondary_button_link_en"))}
                   />
                 </SettingsField>
               </div>

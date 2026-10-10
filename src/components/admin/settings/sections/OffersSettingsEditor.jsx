@@ -150,14 +150,6 @@ export function OffersSettingsEditor({
             />
           </SettingsField>
 
-          <SettingsField label={`${t("promoText", { defaultValue: "Promo Text" })} (EN)`} locale="en">
-            <Input
-              value={draftOffer.text_en || ""}
-              onChange={(e) => setDraftOffer({ ...draftOffer, text_en: e.target.value })}
-              placeholder="e.g. Complimentary spring inspection on all newly arrived vehicles"
-            />
-          </SettingsField>
-
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "var(--space-sm)" }}>
             <SettingsField label={t("targetLink", { defaultValue: "Target Link" })}>
               <Input

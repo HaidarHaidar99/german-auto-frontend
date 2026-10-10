@@ -25,17 +25,13 @@ export function Footer() {
     ? (footerConfig.footer_logo_light_url || brandingConfig.logo_light_url)
     : (footerConfig.footer_logo_url || brandingConfig.logo_url || DEFAULT_LOGO_URL);
 
-  // Description
+  // Description (German)
   const description =
-    currentLang === "de"
-      ? footerConfig.description_de || siteConfig.description || "Ihr exklusiver Ansprechpartner für zertifizierte deutsche Premium- und Sportwagen."
-      : footerConfig.description_en || siteConfig.description || "Your premier destination for certified German luxury and high-performance vehicles.";
+    footerConfig.description_de || siteConfig.description || "König Automobile Rheinberg — Ihr exklusiver Partner für Automobile höchster Güteklasse.";
 
-  // Copyright text
+  // Copyright text (German)
   const copyright =
-    currentLang === "de"
-      ? footerConfig.copyright_de || `© ${new Date().getFullYear()} ${siteName}. Alle Rechte vorbehalten.`
-      : footerConfig.copyright_en || `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`;
+    footerConfig.copyright_de || `© ${new Date().getFullYear()} ${siteName}. Alle Rechte vorbehalten.`;
 
   // Visibility toggles
   const showContact = footerConfig.show_contact !== false;

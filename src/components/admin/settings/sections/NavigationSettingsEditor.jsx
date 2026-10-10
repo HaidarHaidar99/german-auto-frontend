@@ -181,14 +181,6 @@ export function NavigationSettingsEditor({
               />
             </SettingsField>
 
-            <SettingsField label={`${t("buttonLabel", { defaultValue: "Button Label" })} (EN)`} locale="en">
-              <Input
-                value={headerCta.label_en || ""}
-                onChange={(e) => handleCtaChange({ label_en: e.target.value })}
-                placeholder="Inquire Vehicle"
-              />
-            </SettingsField>
-
             <SettingsField label={t("targetRouteOrUrl", { defaultValue: "Target Route or URL" })}>
               <Input
                 value={headerCta.route || ""}
@@ -213,14 +205,6 @@ export function NavigationSettingsEditor({
               value={draftNav.label_de || ""}
               onChange={(e) => setDraftNav({ ...draftNav, label_de: e.target.value })}
               placeholder="z. B. Fahrzeuge"
-            />
-          </SettingsField>
-
-          <SettingsField label={`${t("label", { defaultValue: "Label" })} (EN)`} locale="en">
-            <Input
-              value={draftNav.label_en || ""}
-              onChange={(e) => setDraftNav({ ...draftNav, label_en: e.target.value })}
-              placeholder="e.g. Inventory"
             />
           </SettingsField>
 

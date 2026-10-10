@@ -59,7 +59,6 @@ export function FooterSettingsEditor({
           error={errors["footer.footer_logo_url"]}
         />
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
         <SettingsField label={`${t("copyrightNotice", { defaultValue: "Copyright Notice" })} (DE)`} locale="de" error={errors["footer.copyright_de"]}>
           <Input
             value={data.copyright_de || ""}
@@ -68,34 +67,16 @@ export function FooterSettingsEditor({
           />
         </SettingsField>
 
-        <SettingsField label={`${t("copyrightNotice", { defaultValue: "Copyright Notice" })} (EN)`} locale="en" error={errors["footer.copyright_en"]}>
-          <Input
-            value={data.copyright_en || ""}
-            onChange={(e) => handleChange("copyright_en", e.target.value)}
-            placeholder="© 2026 German Auto. All rights reserved."
-          />
-        </SettingsField>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)", marginTop: "var(--space-sm)" }}>
-        <SettingsField label={`${t("footerDescription", { defaultValue: "Footer Description" })} (DE)`} locale="de" error={errors["footer.description_de"]}>
-          <Textarea
-            value={data.description_de || ""}
-            onChange={(e) => handleChange("description_de", e.target.value)}
-            placeholder="Ihr vertrauensvoller Partner für Luxusautomobile..."
-            rows={3}
-          />
-        </SettingsField>
-
-        <SettingsField label={`${t("footerDescription", { defaultValue: "Footer Description" })} (EN)`} locale="en" error={errors["footer.description_en"]}>
-          <Textarea
-            value={data.description_en || ""}
-            onChange={(e) => handleChange("description_en", e.target.value)}
-            placeholder="Your premier destination for fine German automobiles..."
-            rows={3}
-          />
-        </SettingsField>
-      </div>
+        <div style={{ marginTop: "var(--space-sm)" }}>
+          <SettingsField label={`${t("footerDescription", { defaultValue: "Footer Description" })} (DE)`} locale="de" error={errors["footer.description_de"]}>
+            <Textarea
+              value={data.description_de || ""}
+              onChange={(e) => handleChange("description_de", e.target.value)}
+              placeholder="Ihr vertrauensvoller Partner für Luxusautomobile..."
+              rows={3}
+            />
+          </SettingsField>
+        </div>
 
       <div
         style={{

@@ -147,29 +147,17 @@ export function CarDetailDrawer({
           )}
         </div>
 
-        {/* Descriptions */}
+        {/* Description */}
         {(car.description_de || car.description_en) && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-sm)" }}>
-            {car.description_de && (
-              <div>
-                <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted)", textTransform: "uppercase" }}>
-                  {t("descriptionDe", { defaultValue: "Description (DE)" })}
-                </span>
-                <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
-                  {car.description_de}
-                </p>
-              </div>
-            )}
-            {car.description_en && (
-              <div style={{ marginTop: "var(--space-sm)" }}>
-                <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted)", textTransform: "uppercase" }}>
-                  {t("descriptionEn", { defaultValue: "Description (EN)" })}
-                </span>
-                <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
-                  {car.description_en}
-                </p>
-              </div>
-            )}
+            <div>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--color-admin-muted)", textTransform: "uppercase" }}>
+                {t("description", { defaultValue: "Fahrzeugbeschreibung" })}
+              </span>
+              <p style={{ margin: "4px 0 0", fontSize: "var(--font-size-sm)", color: "var(--color-admin-text, #0f172a)", lineHeight: 1.6, whiteSpace: "pre-line" }}>
+                {car.description_de || car.description_en}
+              </p>
+            </div>
           </div>
         )}
 

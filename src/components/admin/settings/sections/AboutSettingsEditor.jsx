@@ -44,64 +44,33 @@ export function AboutSettingsEditor({
       previewUrl="/about"
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-lg)" }}>
-        {/* Title DE & EN */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-          <SettingsField label={t("aboutTitleDe", { defaultValue: "Haupttitel (DE)" })} locale="de" error={errors["about.title_de"]}>
-            <Input
-              value={data.title_de || ""}
-              onChange={(e) => handleChange("title_de", e.target.value)}
-              placeholder="Über German Auto"
-            />
-          </SettingsField>
+        {/* Title (DE) */}
+        <SettingsField label={t("aboutTitleDe", { defaultValue: "Haupttitel (DE)" })} locale="de" error={errors["about.title_de"]}>
+          <Input
+            value={data.title_de || ""}
+            onChange={(e) => handleChange("title_de", e.target.value)}
+            placeholder="Über German Auto"
+          />
+        </SettingsField>
 
-          <SettingsField label={t("aboutTitleEn", { defaultValue: "Page Title (EN)" })} locale="en" error={errors["about.title_en"]}>
-            <Input
-              value={data.title_en || ""}
-              onChange={(e) => handleChange("title_en", e.target.value)}
-              placeholder="About German Auto"
-            />
-          </SettingsField>
-        </div>
+        {/* Subtitle (DE) */}
+        <SettingsField label={t("aboutSubtitleDe", { defaultValue: "Untertitel / Slogan (DE)" })} locale="de" error={errors["about.subtitle_de"]}>
+          <Input
+            value={data.subtitle_de || ""}
+            onChange={(e) => handleChange("subtitle_de", e.target.value)}
+            placeholder="Leidenschaft, Präzision & automobile Perfektion"
+          />
+        </SettingsField>
 
-        {/* Subtitle DE & EN */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-          <SettingsField label={t("aboutSubtitleDe", { defaultValue: "Untertitel / Slogan (DE)" })} locale="de" error={errors["about.subtitle_de"]}>
-            <Input
-              value={data.subtitle_de || ""}
-              onChange={(e) => handleChange("subtitle_de", e.target.value)}
-              placeholder="Leidenschaft, Präzision & automobile Perfektion"
-            />
-          </SettingsField>
-
-          <SettingsField label={t("aboutSubtitleEn", { defaultValue: "Subtitle / Tagline (EN)" })} locale="en" error={errors["about.subtitle_en"]}>
-            <Input
-              value={data.subtitle_en || ""}
-              onChange={(e) => handleChange("subtitle_en", e.target.value)}
-              placeholder="Passion, precision & automotive perfection"
-            />
-          </SettingsField>
-        </div>
-
-        {/* Story Description DE & EN */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-md)" }}>
-          <SettingsField label={t("aboutStoryDe", { defaultValue: "Unternehmensgeschichte / Story (DE)" })} locale="de" error={errors["about.story_de"]}>
-            <Textarea
-              value={data.story_de || ""}
-              onChange={(e) => handleChange("story_de", e.target.value)}
-              placeholder="German Auto steht seit vielen Jahren für erstklassige Luxusfahrzeuge..."
-              rows={4}
-            />
-          </SettingsField>
-
-          <SettingsField label={t("aboutStoryEn", { defaultValue: "Company Story & Mission (EN)" })} locale="en" error={errors["about.story_en"]}>
-            <Textarea
-              value={data.story_en || ""}
-              onChange={(e) => handleChange("story_en", e.target.value)}
-              placeholder="German Auto has represented first-class luxury vehicles for years..."
-              rows={4}
-            />
-          </SettingsField>
-        </div>
+        {/* Story Description (DE) */}
+        <SettingsField label={t("aboutStoryDe", { defaultValue: "Unternehmensgeschichte / Story (DE)" })} locale="de" error={errors["about.story_de"]}>
+          <Textarea
+            value={data.story_de || ""}
+            onChange={(e) => handleChange("story_de", e.target.value)}
+            placeholder="German Auto steht seit vielen Jahren für erstklassige Luxusfahrzeuge..."
+            rows={4}
+          />
+        </SettingsField>
 
         {/* Key Metrics / Highlights */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-md)" }}>

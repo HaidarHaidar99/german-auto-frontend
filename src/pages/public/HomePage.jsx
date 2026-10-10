@@ -168,7 +168,7 @@ export function HomePage() {
                   {settings?.site?.seo_title || t("common:experienceTitle")}
                 </Heading>
                 <Text variant="lead" style={{ margin: 0 }}>
-                  {currentLang === "en" ? (settings?.site?.description_en || settings?.site?.description) : settings?.site?.description}
+                  {settings?.site?.description || "König Automobile Rheinberg — Ihr exklusiver Partner für Automobile höchster Güteklasse."}
                 </Text>
               </div>
             </Container>

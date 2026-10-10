@@ -814,25 +814,14 @@ export function CarEditorModal({
         {/* ── Tab 2: Weitere Details & Beschreibung ──────────────────────── */}
         {activeTab === "specs" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-md)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("descriptionDe", { defaultValue: "Description (German)" })} locale="de" error={formErrors.description_de}>
-                <Textarea
-                  value={form.description_de}
-                  onChange={(e) => handleChange("description_de", e.target.value)}
-                  placeholder="Ausführliche Fahrzeugbeschreibung in deutscher Sprache..."
-                  rows={4}
-                />
-              </SettingsField>
-
-              <SettingsField label={t("descriptionEn", { defaultValue: "Description (English)" })} locale="en" error={formErrors.description_en}>
-                <Textarea
-                  value={form.description_en}
-                  onChange={(e) => handleChange("description_en", e.target.value)}
-                  placeholder="Comprehensive vehicle specification and history in English..."
-                  rows={4}
-                />
-              </SettingsField>
-            </div>
+            <SettingsField label={t("description", { defaultValue: "Fahrzeugbeschreibung" })} locale="de" error={formErrors.description_de}>
+              <Textarea
+                value={form.description_de}
+                onChange={(e) => handleChange("description_de", e.target.value)}
+                placeholder="Ausführliche Fahrzeugbeschreibung in deutscher Sprache..."
+                rows={4}
+              />
+            </SettingsField>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "var(--space-sm)" }}>
               <SettingsField label={t("displacementCc", { defaultValue: "Displacement (ccm)" })} error={formErrors.engine_displacement_cc}>
