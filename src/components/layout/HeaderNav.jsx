@@ -628,7 +628,7 @@ export function HeaderNav({
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingTop: "clamp(12px, 2.5vh, 22px)",
+          paddingTop: 0,
           paddingBottom: "clamp(14px, 3vh, 24px)",
           paddingLeft: "clamp(16px, 4vw, 24px)",
           paddingRight: "clamp(16px, 4vw, 24px)",
@@ -641,10 +641,11 @@ export function HeaderNav({
           transform: "translateY(-100%)", // Initial state for GSAP
         }}
       >
-        {/* Mobile Menu Top Bar: Close Button */}
+        {/* Mobile Menu Top Bar: Close Button aligned exactly with the header & 3 dashes */}
         <div
           style={{
             width: "100%",
+            height: "var(--header-height)",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
@@ -657,31 +658,42 @@ export function HeaderNav({
             onClick={closeMenu}
             aria-label="Close menu"
             style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              backgroundColor: "var(--color-accent-subtle)",
-              border: "1px solid var(--color-border)",
-              color: "var(--color-text)",
-              fontSize: "16px",
+              width: "40px",
+              height: "40px",
+              padding: "8px",
+              backgroundColor: "transparent",
+              border: "none",
+              color: isDark ? "#ffffff" : "#000000",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              transition: "all 0.2s ease",
+              transition: "transform 0.25s ease, opacity 0.2s ease",
+              outline: "none",
+              boxShadow: "none",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--color-surface)";
-              e.currentTarget.style.borderColor = "var(--color-secondary)";
-              e.currentTarget.style.color = "var(--color-secondary)";
+              e.currentTarget.style.transform = "rotate(90deg) scale(1.08)";
+              e.currentTarget.style.opacity = "0.75";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
-              e.currentTarget.style.borderColor = "var(--color-border)";
-              e.currentTarget.style.color = "var(--color-text)";
+              e.currentTarget.style.transform = "rotate(0deg) scale(1)";
+              e.currentTarget.style.opacity = "1";
             }}
           >
-            ✕
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
 

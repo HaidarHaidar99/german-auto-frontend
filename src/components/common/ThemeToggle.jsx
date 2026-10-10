@@ -31,6 +31,8 @@ export function ThemeToggle({
   };
 
   if (size === "mobile") {
+    const mobileThemeColor = isDark ? "#FFFFFF" : "#000000";
+
     return (
       <button
         type="button"
@@ -44,12 +46,12 @@ export function ThemeToggle({
           borderRadius: "0",
           border: "none",
           backgroundColor: "transparent",
-          color: "var(--color-text)",
+          color: mobileThemeColor,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          transition: "color 0.2s ease, transform 0.2s ease",
+          transition: "opacity 0.2s ease, transform 0.2s ease",
           flexShrink: 0,
           padding: 0,
           outline: "none",
@@ -57,18 +59,20 @@ export function ThemeToggle({
           ...style,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+          e.currentTarget.style.color = mobileThemeColor;
+          e.currentTarget.style.opacity = "0.75";
           e.currentTarget.style.transform = "scale(1.08)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.color = "var(--color-text)";
+          e.currentTarget.style.color = mobileThemeColor;
+          e.currentTarget.style.opacity = "1";
           e.currentTarget.style.transform = "scale(1)";
         }}
       >
         <Icon
           name={isDark ? "sun" : "moon"}
-          size={21}
-          color="currentColor"
+          size={22}
+          color={mobileThemeColor}
         />
       </button>
     );

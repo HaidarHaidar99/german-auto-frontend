@@ -316,7 +316,7 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
       <style>{`
         .contact-cta-channels-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1.15fr);
           gap: 12px;
           width: 100%;
           box-sizing: border-box;
@@ -333,6 +333,7 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
           min-width: 0;
           box-sizing: border-box;
           transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+          overflow: hidden;
         }
 
         .contact-channel-row:hover {
@@ -357,6 +358,7 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
         .contact-channel-info {
           min-width: 0;
           flex: 1;
+          overflow: hidden;
         }
 
         .contact-channel-label {
@@ -379,11 +381,13 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
         }
 
         .contact-channel-email {
-          font-size: clamp(10.5px, 3.1vw, 12.5px);
+          font-size: clamp(10px, 0.8vw, 12px);
           white-space: nowrap;
-          text-overflow: clip;
-          overflow: visible;
-          letter-spacing: -0.015em;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          letter-spacing: -0.02em;
+          max-width: 100%;
+          display: block;
         }
 
         .contact-social-card {
