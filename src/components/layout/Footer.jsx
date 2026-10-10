@@ -317,12 +317,21 @@ export function Footer() {
                         textDecoration: "none",
                         fontSize: "0.975rem",
                         transition: "color 0.15s ease",
+                        minWidth: 0,
                       }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = "var(--color-text)")}
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
                       <Icon name="mail" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
-                      <span style={{ fontSize: "clamp(11.5px, 3.1vw, 0.95rem)", letterSpacing: "-0.01em", wordBreak: "break-all" }}>{contactConfig.email || "konigautomobilerheinberg@gmail.com"}</span>
+                      <span
+                        style={{
+                          fontSize: "clamp(10.5px, 2.8vw, 0.92rem)",
+                          letterSpacing: "-0.02em",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {contactConfig.email || "konigautomobilerheinberg@gmail.com"}
+                      </span>
                     </a>
                   </li>
                 )}
