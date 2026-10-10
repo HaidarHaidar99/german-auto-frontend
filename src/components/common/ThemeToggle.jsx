@@ -39,36 +39,35 @@ export function ThemeToggle({
         title={labelText}
         className={`theme-toggle theme-toggle-mobile ${className}`.trim()}
         style={{
-          width: "48px",
-          height: "48px",
-          borderRadius: "50%",
-          border: "1.5px solid var(--color-text)",
+          width: "40px",
+          height: "40px",
+          borderRadius: "0",
+          border: "none",
           backgroundColor: "transparent",
           color: "var(--color-text)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
-          transition: "all 0.25s ease",
+          transition: "color 0.2s ease, transform 0.2s ease",
           flexShrink: 0,
           padding: 0,
           outline: "none",
+          boxShadow: "none",
           ...style,
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "var(--color-accent-subtle)";
-          e.currentTarget.style.borderColor = "var(--color-secondary)";
-          e.currentTarget.style.color = "var(--color-secondary)";
+          e.currentTarget.style.color = "var(--color-secondary, #D4AF37)";
+          e.currentTarget.style.transform = "scale(1.08)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "transparent";
-          e.currentTarget.style.borderColor = "var(--color-text)";
           e.currentTarget.style.color = "var(--color-text)";
+          e.currentTarget.style.transform = "scale(1)";
         }}
       >
         <Icon
           name={isDark ? "sun" : "moon"}
-          size={20}
+          size={21}
           color="currentColor"
         />
       </button>

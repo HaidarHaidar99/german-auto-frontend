@@ -322,7 +322,7 @@ export function Footer() {
                       onMouseLeave={(e) => (e.currentTarget.style.color = "var(--color-text-muted, #94a3b8)")}
                     >
                       <Icon name="mail" size={18} style={{ color: "#D4AF37", flexShrink: 0 }} />
-                      <span>{contactConfig.email || "konigautomobilerheinberg@gmail.com"}</span>
+                      <span style={{ fontSize: "clamp(11.5px, 3.1vw, 0.95rem)", letterSpacing: "-0.01em", wordBreak: "break-all" }}>{contactConfig.email || "konigautomobilerheinberg@gmail.com"}</span>
                     </a>
                   </li>
                 )}

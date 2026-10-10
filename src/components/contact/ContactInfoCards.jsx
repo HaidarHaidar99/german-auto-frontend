@@ -251,7 +251,15 @@ export function ContactInfoCards({ contact = {}, hours = {}, social = {}, classN
                   <div style={{ fontSize: "11px", color: "var(--color-text-subtle)", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
                     {t("emailLabel", { defaultValue: "E-Mail" })}
                   </div>
-                  <div style={{ fontWeight: "var(--font-weight-medium)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>
+                  <div
+                    style={{
+                      fontWeight: "var(--font-weight-medium)",
+                      fontSize: "clamp(11px, 3.1vw, 13.5px)",
+                      letterSpacing: "-0.015em",
+                      whiteSpace: "nowrap",
+                      overflow: "visible",
+                    }}
+                  >
                     {email}
                   </div>
                 </div>

@@ -558,7 +558,7 @@ export function HeaderNav({
 
             {/* Mobile Actions: Theme Changer button instead of language switch */}
             <div className="hide-desktop" style={{ display: menuOpen ? "none" : "flex", alignItems: "center" }}>
-              <ThemeToggle size="mobile" style={{ width: "38px", height: "38px" }} />
+              <ThemeToggle size="mobile" />
             </div>
             <button
               onClick={menuOpen ? closeMenu : openMenu}
@@ -853,9 +853,6 @@ export function HeaderNav({
             >
               <Icon name="user" size={19} color="currentColor" />
             </Link>
-
-            {/* 3. Theme Toggle Switch (replaces Logout in mobile menu and closes menu upon toggle) */}
-            <ThemeToggle size="mobile" onClick={closeMenu} />
           </div>
         </nav>
       </div>

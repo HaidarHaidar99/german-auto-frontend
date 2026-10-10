@@ -24,8 +24,8 @@ const PLATFORM_DETAILS = {
   youtube: { label: "YouTube", icon: "youtube", brandColor: "#FF0000" },
 };
 
-function formatOpeningHoursSummary(hours, lang = "de") {
-  if (!hours || typeof hours !== "object") return null;
+function formatOpeningHoursLines(hours, lang = "de") {
+  if (!hours || typeof hours !== "object") return [];
   const days = [
     { key: "monday", de: "Mo", en: "Mon" },
     { key: "tuesday", de: "Di", en: "Tue" },
@@ -39,7 +39,7 @@ function formatOpeningHoursSummary(hours, lang = "de") {
   const activeDays = days.filter(
     (d) => hours[d.key]?.enabled && hours[d.key]?.open && hours[d.key]?.close
   );
-  if (activeDays.length === 0) return null;
+  if (activeDays.length === 0) return [];
 
   const groups = [];
   let currentGroup = null;
@@ -48,7 +48,7 @@ function formatOpeningHoursSummary(hours, lang = "de") {
     const d = days[i];
     const h = hours[d.key];
     if (h?.enabled && h?.open && h?.close) {
-      const timeStr = `${h.open}–${h.close}`;
+      const timeStr = `${h.open} – ${h.close}`;
       if (currentGroup && currentGroup.timeStr === timeStr && currentGroup.lastIndex === i - 1) {
         currentGroup.days.push(d);
         currentGroup.lastIndex = i;
@@ -59,18 +59,16 @@ function formatOpeningHoursSummary(hours, lang = "de") {
     }
   }
 
-  const parts = groups.map((g) => {
+  const suffix = lang === "de" ? " Uhr" : "";
+  return groups.map((g) => {
     const startDay = lang === "de" ? g.days[0].de : g.days[0].en;
     const endDay = lang === "de" ? g.days[g.days.length - 1].de : g.days[g.days.length - 1].en;
     const daySpan =
       g.days.length > 2
         ? `${startDay}–${endDay}`
         : g.days.map((d) => (lang === "de" ? d.de : d.en)).join(", ");
-    return `${daySpan}: ${g.timeStr}`;
+    return `${daySpan}: ${g.timeStr}${suffix}`;
   });
-
-  const suffix = lang === "de" ? " Uhr" : "";
-  return parts.join(" | ") + suffix;
 }
 
 export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfig: propHoursConfig }) {
@@ -85,9 +83,10 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
   const hasPhone = Boolean(contactConfig?.phone);
   const hasEmail = Boolean(contactConfig?.email);
   const hasWhatsapp = Boolean(contactConfig?.whatsapp);
-  const formattedHours = formatOpeningHoursSummary(hoursConfig, i18n?.language || "de");
+  const formattedHourLines = formatOpeningHoursLines(hoursConfig, i18n?.language || "de");
+  const hasHours = formattedHourLines.length > 0;
 
-  const hasAnyContact = hasPhone || hasEmail || hasWhatsapp || Boolean(formattedHours);
+  const hasAnyContact = hasPhone || hasEmail || hasWhatsapp || hasHours;
 
   // Active Social Media accounts configured in CMS
   const activeSocialList = Object.entries(socialConfig)
@@ -249,25 +248,30 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
                   </a>
                 )}
 
-                {/* 4. Opening Hours (Dynamically generated from saved hours) */}
-                {formattedHours && (
-                  <div className="contact-channel-row">
+                {/* 4. Opening Hours (Multi-line: Mo–Fr on line 1, Sa on line 2) */}
+                {hasHours && (
+                  <div className="contact-channel-row" style={{ alignItems: "flex-start" }}>
                     <div
                       className="contact-channel-icon-circle"
                       style={{
                         backgroundColor: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(212, 175, 55, 0.12)",
                         border: isDark ? "1px solid rgba(255, 255, 255, 0.14)" : "1px solid rgba(212, 175, 55, 0.32)",
                         color: isDark ? "#D4AF37" : "#B8860B",
+                        marginTop: "2px",
                       }}
                     >
                       <Icon name="clock" size={17} />
                     </div>
-                    <div className="contact-channel-info">
+                    <div className="contact-channel-info" style={{ minWidth: 0 }}>
                       <span className="contact-channel-label">
                         {t("openingHours", { defaultValue: "Öffnungszeiten" })}
                       </span>
-                      <div className="contact-channel-value" style={{ whiteSpace: "normal", lineHeight: 1.35, fontSize: "12px" }}>
-                        {formattedHours}
+                      <div className="contact-channel-value" style={{ display: "flex", flexDirection: "column", gap: "3px", fontSize: "12px", lineHeight: 1.35 }}>
+                        {formattedHourLines.map((line, idx) => (
+                          <div key={idx} style={{ whiteSpace: "nowrap" }}>
+                            {line}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -375,12 +379,11 @@ export function ContactCtaSection({ contactConfig: propContactConfig, hoursConfi
         }
 
         .contact-channel-email {
-          word-break: break-all;
-          overflow-wrap: anywhere;
-          white-space: normal;
-          line-height: 1.25;
-          font-size: 12px;
+          font-size: clamp(10.5px, 3.1vw, 12.5px);
+          white-space: nowrap;
           text-overflow: clip;
+          overflow: visible;
+          letter-spacing: -0.015em;
         }
 
         .contact-social-card {
