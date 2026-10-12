@@ -16,6 +16,7 @@ import CarEditorModal from "../../components/admin/cars/CarEditorModal";
 import CarDeleteModal from "../../components/admin/cars/CarDeleteModal";
 import CarDetailDrawer from "../../components/admin/cars/CarDetailDrawer";
 import CarStatusModal from "../../components/admin/cars/CarStatusModal";
+import CarmucaImportModal from "../../components/admin/cars/CarmucaImportModal";
 
 const DEFAULT_FILTERS = {
   search: "",
@@ -80,6 +81,8 @@ export function AdminCarsPage() {
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [carForStatusModal, setCarForStatusModal] = useState(null);
   const [statusModalLoading, setStatusModalLoading] = useState(false);
+
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   // Toast feedback state
   const [toastNotification, setToastNotification] = useState(null);
@@ -453,15 +456,26 @@ export function AdminCarsPage() {
           </span>
         }
         actions={
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={handleOpenCreate}
-            style={{ fontSize: "var(--font-size-xs)" }}
-          >
-            <Icon name="plus" size={14} style={{ marginRight: "6px" }} />
-            {t("addVehicle", { defaultValue: "Add Vehicle" })}
-          </Button>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setImportModalOpen(true)}
+              style={{ fontSize: "var(--font-size-xs)" }}
+            >
+              <Icon name="download" size={14} style={{ marginRight: "6px" }} />
+              {t("importFromCarmuca", { defaultValue: "Import Carmuca" })}
+            </Button>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleOpenCreate}
+              style={{ fontSize: "var(--font-size-xs)" }}
+            >
+              <Icon name="plus" size={14} style={{ marginRight: "6px" }} />
+              {t("addVehicle", { defaultValue: "Add Vehicle" })}
+            </Button>
+          </div>
         }
       />
 
@@ -578,6 +592,23 @@ export function AdminCarsPage() {
         onEdit={(car) => {
           setPreviewDrawerOpen(false);
           handleOpenEdit(car);
+        }}
+      />
+
+      {/* Carmuca Import Modal */}
+      <CarmucaImportModal
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+        onImportSuccess={(newCar) => {
+          showToast(
+            "success",
+            `Vehicle "${newCar?.title || "Car"}" imported as draft.`
+          );
+          fetchCars(true);
+          fetchSummaryCounts();
+        }}
+        onOpenEditor={(importedCar) => {
+          handleOpenEdit(importedCar);
         }}
       />
     </div>

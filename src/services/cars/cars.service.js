@@ -26,6 +26,8 @@ export const carsService = {
   adminToggleFeatured: (id, is_featured) => apiClient.patch(`/cars/admin/${id}/featured`, { is_featured }),
   adminSetVisibility: (id, is_visible) => apiClient.patch(`/cars/admin/${id}/visibility`, { is_visible }),
   adminUploadMedia: (formData) => apiClient.upload("/cars/admin/upload-media", formData),
+  adminPreviewCarmucaImport: (vehicleId) => apiClient.post("/cars/admin/import/carmuca/preview", { vehicleId }),
+  adminExecuteCarmucaImport: (vehicleId) => apiClient.post("/cars/admin/import/carmuca/execute", { vehicleId }),
 };
 
 export default carsService;
