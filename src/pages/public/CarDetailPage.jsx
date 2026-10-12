@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSettings } from "../../contexts/SettingsContext";
 import carsService from "../../services/cars/cars.service";
 import carmucaService from "../../services/carmuca/carmuca.service.js";
+import publicInventoryService from "../../services/cars/publicInventory.service.js";
 import CarMediaGallery from "../../components/car-detail/CarMediaGallery";
 import CarTechnicalSpecs from "../../components/car-detail/CarTechnicalSpecs";
 import CarEquipment from "../../components/car-detail/CarEquipment";
@@ -36,7 +37,7 @@ export function CarDetailPage() {
   const pageContainerRef = useRef(null);
   const contentSectionRef = useRef(null);
 
-  // Fetch vehicle details: first Carmuca public API, then local DB fallback
+  // Fetch vehicle details: unified public inventory (prioritizes published local copy over Carmuca API)
   const fetchCar = useCallback(async () => {
     if (!identifier) return;
     if (abortControllerRef.current) {
@@ -49,37 +50,12 @@ export function CarDetailPage() {
       setLoading(true);
       setError(null);
 
-      // 1. Try Carmuca public API
-      try {
-        const carmucaCar = await carmucaService.getVehicle(identifier, {
-          signal: controller.signal,
-          lang: i18n.language,
-        });
-        if (carmucaCar) {
-          setCar(carmucaCar);
-          return;
-        }
-      } catch (carmucaErr) {
-        if (carmucaErr?.name === "AbortError") return;
-        // Continue to check local DB fallback
-      }
+      const vehicle = await publicInventoryService.getPublicVehicle(identifier, {
+        signal: controller.signal,
+        lang: i18n.language,
+      });
 
-      // 2. Fallback to existing local DB cars (preserves database cars & admin routes)
-      try {
-        const res = await carsService.getCar(identifier);
-        if (res?.data?.car) {
-          setCar(res.data.car);
-          return;
-        }
-      } catch (dbErr) {
-        if (dbErr?.statusCode === 404) {
-          setCar(null);
-          return;
-        }
-        throw dbErr;
-      }
-
-      setCar(null);
+      setCar(vehicle);
     } catch (err) {
       if (err?.name === "AbortError") return;
       setError(err?.message || "Fehler beim Laden der Fahrzeugdetails.");

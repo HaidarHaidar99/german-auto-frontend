@@ -22,15 +22,15 @@ export function CarsFilterBar({
 }) {
   const { t } = useTranslation(["cars", "common"]);
 
-  // Local state for debounced search
-  const [searchValue, setSearchValue] = useState(filters.search || filters.brand || "");
+  // Local state for debounced search (separate from brand filter)
+  const [searchValue, setSearchValue] = useState(filters.q || filters.search || "");
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [desktopFiltersOpen, setDesktopFiltersOpen] = useState(false);
 
   // Sync external filter changes to search input
   useEffect(() => {
-    setSearchValue(filters.search || filters.brand || "");
-  }, [filters.search, filters.brand]);
+    setSearchValue(filters.q || filters.search || "");
+  }, [filters.q, filters.search]);
 
   // Refresh AOS when desktop filter panel is toggled
   useEffect(() => {
@@ -40,20 +40,22 @@ export function CarsFilterBar({
     return () => clearTimeout(timer);
   }, [desktopFiltersOpen]);
 
-  // Debounce search update (350ms)
+  // Debounce free-text search update (350ms) using 'q'
   useEffect(() => {
     const handler = setTimeout(() => {
-      if (searchValue !== (filters.search || filters.brand || "")) {
-        onFilterChange({ brand: searchValue || undefined, page: 1 });
+      const currentQ = (filters.q || filters.search || "").trim();
+      if (searchValue.trim() !== currentQ) {
+        onFilterChange({ q: searchValue.trim() || undefined, page: 1 });
       }
     }, 350);
 
     return () => clearTimeout(handler);
-  }, [searchValue, filters.search, filters.brand, onFilterChange]);
+  }, [searchValue, filters.q, filters.search, onFilterChange]);
 
   // Count active filters (excluding default sort and page)
   const activeFilterCount = [
     Boolean(searchValue),
+    Boolean(filters.brand),
     Boolean(filters.fuel_type),
     Boolean(filters.transmission),
     Boolean(filters.condition),
@@ -137,10 +139,10 @@ export function CarsFilterBar({
           gap: "var(--space-md)",
         }}
       >
-        {/* Search Field */}
+        {/* Free-text Search Field (q) */}
         <div style={{ flex: "1 1 280px", maxWidth: "440px", position: "relative" }}>
           <Input
-            placeholder={t("searchPlaceholder", "Nach Marke oder Modell suchen...")}
+            placeholder={t("searchPlaceholder", "Fahrzeugname, Marke oder Modell suchen...")}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             startIcon="search"
@@ -242,17 +244,41 @@ export function CarsFilterBar({
       {/* Desktop Collapsible Extended Filter Panel */}
       {desktopFiltersOpen && (
         <div
-          className="surface-card hide-mobile"
+          className="surface-card hide-mobile cars-filter-desktop-panel"
           style={{
             padding: "var(--space-lg)",
             borderRadius: "var(--radius-lg)",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))",
             gap: "var(--space-md)",
             border: "1px solid var(--color-border)",
             animation: "fadeInFilters 0.25s var(--ease-smooth)",
+            alignItems: "end",
           }}
         >
+          <style>{`
+            .cars-filter-desktop-panel .form-field {
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-end;
+              margin: 0;
+              height: 100%;
+            }
+            .cars-filter-desktop-panel .form-label {
+              min-height: 28px;
+              display: flex;
+              align-items: flex-end;
+              margin-bottom: var(--space-xs);
+              line-height: 1.25;
+              white-space: nowrap;
+              font-size: var(--font-size-xs);
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.04em;
+              color: var(--color-text-subtle);
+            }
+          `}</style>
+
           {/* Fuel Filter */}
           <Select
             label={t("filterFuel", "Kraftstoffart")}
@@ -307,7 +333,7 @@ export function CarsFilterBar({
             onChange={(e) => handleFieldChange("max_price", e.target.value)}
           />
 
-          {/* Max Mileage */}
+          {/* Max Mileage — aligned on identical horizontal baseline */}
           <Input
             label={t("maxMileage", "Max. Kilometer (km)")}
             type="number"
@@ -393,12 +419,51 @@ export function CarsFilterBar({
               </Badge>
             )}
 
+            {filters.brand && (
+              <Badge variant="secondary" size="md">
+                {t("brand", "Marke")}: {filters.brand}
+                <button
+                  type="button"
+                  onClick={() => handleFieldChange("brand", undefined)}
+                  style={{ background: "none", border: "none", cursor: "pointer", marginLeft: "4px", color: "inherit" }}
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+
+            {filters.min_price && (
+              <Badge variant="secondary" size="md">
+                ≥ {Number(filters.min_price).toLocaleString()} €
+                <button
+                  type="button"
+                  onClick={() => handleFieldChange("min_price", undefined)}
+                  style={{ background: "none", border: "none", cursor: "pointer", marginLeft: "4px", color: "inherit" }}
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+
             {filters.max_price && (
               <Badge variant="secondary" size="md">
-                ≤ {filters.max_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} €
+                ≤ {Number(filters.max_price).toLocaleString()} €
                 <button
                   type="button"
                   onClick={() => handleFieldChange("max_price", undefined)}
+                  style={{ background: "none", border: "none", cursor: "pointer", marginLeft: "4px", color: "inherit" }}
+                >
+                  ×
+                </button>
+              </Badge>
+            )}
+
+            {filters.max_mileage && (
+              <Badge variant="secondary" size="md">
+                ≤ {Number(filters.max_mileage).toLocaleString()} km
+                <button
+                  type="button"
+                  onClick={() => handleFieldChange("max_mileage", undefined)}
                   style={{ background: "none", border: "none", cursor: "pointer", marginLeft: "4px", color: "inherit" }}
                 >
                   ×

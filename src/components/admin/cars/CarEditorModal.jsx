@@ -83,7 +83,7 @@ const INITIAL_FORM = {
   vehicle_condition: "",
   air_conditioning: true,
   camera: true,
-  interior_design: "LEATHER",
+  interior_design: "",
   interior_color: "",
   equipment: [],
   custom_fields: {},
@@ -148,7 +148,7 @@ export function CarEditorModal({
         custom_fields: typeof car.custom_fields === "object" && car.custom_fields !== null ? { ...car.custom_fields } : {},
         media: {
           thumbnail: initialThumbnail,
-          gallery: initialGallery.slice(0, 20),
+          gallery: initialGallery,
         },
       });
     } else {
@@ -194,30 +194,31 @@ export function CarEditorModal({
       return;
     }
 
-    const currentGallery = form.media.gallery || [];
-    const availableSlots = 20 - currentGallery.length;
-
-    if (availableSlots <= 0) {
-      setMediaError(t("maxGalleryImagesError", { defaultValue: "Maximum 20 gallery images allowed." }));
-      return;
-    }
-
-    const filesToUpload = validFiles.slice(0, availableSlots);
+    const filesToUpload = validFiles;
     setIsUploading(true);
     setMediaError(null);
 
     try {
-      // 1. Try uploading to backend / Supabase storage
-      const formData = new FormData();
-      filesToUpload.forEach((file) => {
-        formData.append("images", file);
-      });
+      // 1. Upload in bounded batches of 10 to respect payload ceilings
+      const BATCH_SIZE = 10;
+      const allUploadedUrls = [];
 
-      const res = await carsService.adminUploadMedia(formData);
-      const uploadedUrls = res?.data?.urls || res?.urls || res?.data?.data?.urls || (Array.isArray(res) ? res : []);
+      for (let i = 0; i < filesToUpload.length; i += BATCH_SIZE) {
+        const chunk = filesToUpload.slice(i, i + BATCH_SIZE);
+        const formData = new FormData();
+        chunk.forEach((file) => {
+          formData.append("images", file);
+        });
 
-      if (uploadedUrls.length > 0) {
-        const nextGallery = [...currentGallery, ...uploadedUrls].slice(0, 20);
+        const res = await carsService.adminUploadMedia(formData);
+        const urls = res?.data?.urls || res?.urls || res?.data?.data?.urls || (Array.isArray(res) ? res : []);
+        if (urls.length > 0) {
+          allUploadedUrls.push(...urls);
+        }
+      }
+
+      if (allUploadedUrls.length > 0) {
+        const nextGallery = [...currentGallery, ...allUploadedUrls];
         const nextThumbnail = form.media.thumbnail || nextGallery[0] || "";
 
         setForm((prev) => ({
@@ -253,7 +254,7 @@ export function CarEditorModal({
           )
         );
 
-        const nextGallery = [...currentGallery, ...dataUrls].slice(0, 20);
+        const nextGallery = [...currentGallery, ...dataUrls];
         const nextThumbnail = form.media.thumbnail || nextGallery[0] || "";
 
         setForm((prev) => ({
@@ -506,13 +507,13 @@ export function CarEditorModal({
       vehicle_condition: form.vehicle_condition?.trim() || null,
       air_conditioning: Boolean(form.air_conditioning),
       camera: Boolean(form.camera),
-      interior_design: form.interior_design,
+      interior_design: form.interior_design?.trim() || null,
       interior_color: form.interior_color?.trim() || null,
       equipment: form.equipment,
       custom_fields: form.custom_fields,
       media: {
         thumbnail: currentThumbnail,
-        gallery: currentGallery.slice(0, 20),
+        gallery: currentGallery,
       },
       is_featured: Boolean(form.is_featured),
       is_visible: Boolean(form.is_visible),
@@ -856,11 +857,11 @@ export function CarEditorModal({
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
-              <SettingsField label={t("interiorDesign", { defaultValue: "Interior Material" })} error={formErrors.interior_design}>
-                <Select
-                  value={form.interior_design}
+              <SettingsField label={t("interiorDesign", { defaultValue: "Interior Upholstery / Material" })} error={formErrors.interior_design}>
+                <Input
+                  value={form.interior_design || ""}
                   onChange={(e) => handleChange("interior_design", e.target.value)}
-                  options={interiorOptions}
+                  placeholder="e.g. Leather, Fabric, Alcantara, Partial Leather..."
                 />
               </SettingsField>
 
@@ -1054,7 +1055,7 @@ export function CarEditorModal({
                   {t("vehicleMediaTitle", { count: galleryImages.length, defaultValue: `Vehicle Images (${galleryImages.length} of max. 20)` })}
                 </h4>
                 <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--color-admin-muted)" }}>
-                  {t("vehicleMediaDesc", { defaultValue: "Upload up to 20 images directly from your device. The first image is automatically used as the cover, but you can set any image as the cover." })}
+                  {t("vehicleMediaDesc", { defaultValue: "Upload images directly from your device. The first image is automatically used as the cover, but you can set any image as the cover." })}
                 </p>
               </div>
 

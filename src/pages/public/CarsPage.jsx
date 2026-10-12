@@ -15,12 +15,13 @@ import Button from "../../components/ui/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSettings } from "../../contexts/SettingsContext";
 import carmucaService from "../../services/carmuca/carmuca.service.js";
+import publicInventoryService from "../../services/cars/publicInventory.service.js";
 import AOS from "aos";
 
 /**
  * German Auto — Production Cars / Inventory Page
- * Connects exclusively to Carmuca's public JSON API.
- * Features server-side search, multi-attribute filtering, sorting, and pagination.
+ * Unifies Carmuca public inventory and published local database cars.
+ * Features free-text search (q), multi-attribute filtering, sorting, and pagination.
  */
 
 const ITEMS_PER_PAGE = 12;
@@ -40,9 +41,9 @@ export function CarsPage() {
   const [filters, setFilters] = useState(() => ({
     page: parseInt(searchParams.get("page"), 10) || 1,
     limit: ITEMS_PER_PAGE,
+    q: searchParams.get("q") || searchParams.get("search") || undefined,
     brand: searchParams.get("brand") || undefined,
     model: searchParams.get("model") || undefined,
-    search: searchParams.get("search") || searchParams.get("q") || undefined,
     fuel_type: searchParams.get("fuel_type") || searchParams.get("fuel") || undefined,
     transmission: searchParams.get("transmission") || undefined,
     condition: searchParams.get("condition") || undefined,
@@ -54,7 +55,7 @@ export function CarsPage() {
   }));
 
   const [cars, setCars] = useState([]);
-  const [pagination, setPagination] = useState({ limit: ITEMS_PER_PAGE, offset: 0, hasMore: false });
+  const [pagination, setPagination] = useState({ limit: ITEMS_PER_PAGE, offset: 0, total: 0, hasMore: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -65,13 +66,64 @@ export function CarsPage() {
       if (val !== undefined && val !== null && val !== "" && val !== "newest") {
         if (key === "page" && val === 1) continue; // Keep clean URLs on page 1
         if (key === "limit") continue;
+        if (key === "search") continue; // Canonical param is q
         params.set(key, String(val));
       }
     }
     setSearchParams(params, { replace: true });
   }, [setSearchParams]);
 
-  // Fetch cars from Carmuca public JSON API
+  // Sync URL search params back into state when user navigates back/forward
+  useEffect(() => {
+    const q = searchParams.get("q") || searchParams.get("search") || undefined;
+    const brand = searchParams.get("brand") || undefined;
+    const model = searchParams.get("model") || undefined;
+    const page = parseInt(searchParams.get("page"), 10) || 1;
+    const fuel_type = searchParams.get("fuel_type") || searchParams.get("fuel") || undefined;
+    const transmission = searchParams.get("transmission") || undefined;
+    const condition = searchParams.get("condition") || undefined;
+    const category = searchParams.get("category") || searchParams.get("body") || undefined;
+    const min_price = searchParams.get("min_price") ? Number(searchParams.get("min_price")) : undefined;
+    const max_price = searchParams.get("max_price") ? Number(searchParams.get("max_price")) : undefined;
+    const max_mileage = searchParams.get("max_mileage") ? Number(searchParams.get("max_mileage")) : undefined;
+    const sort = searchParams.get("sort") || "newest";
+
+    setFilters((prev) => {
+      if (
+        prev.q === q &&
+        prev.brand === brand &&
+        prev.model === model &&
+        prev.page === page &&
+        prev.fuel_type === fuel_type &&
+        prev.transmission === transmission &&
+        prev.condition === condition &&
+        prev.category === category &&
+        prev.min_price === min_price &&
+        prev.max_price === max_price &&
+        prev.max_mileage === max_mileage &&
+        prev.sort === sort
+      ) {
+        return prev;
+      }
+      return {
+        ...prev,
+        q,
+        brand,
+        model,
+        page,
+        fuel_type,
+        transmission,
+        condition,
+        category,
+        min_price,
+        max_price,
+        max_mileage,
+        sort,
+      };
+    });
+  }, [searchParams]);
+
+  // Fetch cars from unified public inventory
   const fetchCars = useCallback(async (currentFilters) => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -83,33 +135,13 @@ export function CarsPage() {
       setLoading(true);
       setError(null);
 
-      const page = Math.max(1, currentFilters.page || 1);
-      const offset = (page - 1) * ITEMS_PER_PAGE;
-
-      const query = {
-        limit: ITEMS_PER_PAGE,
-        offset,
-        sort: currentFilters.sort || "newest",
-      };
-
-      if (currentFilters.search) query.q = currentFilters.search;
-      if (currentFilters.brand) query.make = currentFilters.brand;
-      if (currentFilters.model) query.model = currentFilters.model;
-      if (currentFilters.fuel_type) query.fuel = currentFilters.fuel_type;
-      if (currentFilters.transmission) query.transmission = currentFilters.transmission;
-      if (currentFilters.condition) query.condition = currentFilters.condition;
-      if (currentFilters.category) query.body = currentFilters.category;
-      if (currentFilters.min_price) query.minPrice = currentFilters.min_price;
-      if (currentFilters.max_price) query.maxPrice = currentFilters.max_price;
-      if (currentFilters.max_mileage) query.maxMileage = currentFilters.max_mileage;
-
-      const res = await carmucaService.getVehicles(query, {
+      const res = await publicInventoryService.getUnifiedCatalog(currentFilters, {
         signal: controller.signal,
         lang: currentLang,
       });
 
       setCars(res.vehicles || []);
-      setPagination(res.pagination || { limit: ITEMS_PER_PAGE, offset, hasMore: false });
+      setPagination(res.pagination || { limit: ITEMS_PER_PAGE, offset: 0, total: 0, hasMore: false });
     } catch (err) {
       if (err.name === "AbortError") {
         return; // Request cancelled, ignore
@@ -157,6 +189,7 @@ export function CarsPage() {
     setFilters({
       page: 1,
       limit: ITEMS_PER_PAGE,
+      q: undefined,
       brand: undefined,
       model: undefined,
       search: undefined,

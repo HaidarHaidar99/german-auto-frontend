@@ -11,13 +11,12 @@ import EmptyState from "../ui/EmptyState";
 import CarCardBase from "../automotive/CarCardBase";
 import ScrollReveal from "../motion/ScrollReveal";
 import { useAuth } from "../../contexts/AuthContext";
-import { useTheme } from "../../contexts/ThemeContext";
-import carmucaService from "../../services/carmuca/carmuca.service.js";
+import publicInventoryService from "../../services/cars/publicInventory.service.js";
 import AOS from "aos";
 
 /**
  * German Auto — Featured Inventory Section
- * Connects to Carmuca public API highlights=true&limit=6.
+ * Connects to publicInventoryService (reflects published local highlights and Carmuca highlights).
  */
 
 export function FeaturedInventorySection() {
@@ -43,11 +42,12 @@ export function FeaturedInventorySection() {
     try {
       setLoading(true);
       setError(null);
-      const res = await carmucaService.getVehicles(
-        { highlights: true, limit: 6 },
-        { signal: controller.signal, lang: currentLang }
-      );
-      setCars(res?.vehicles || []);
+      const featuredList = await publicInventoryService.getFeaturedVehicles({
+        limit: 6,
+        lang: currentLang,
+        signal: controller.signal,
+      });
+      setCars(featuredList || []);
     } catch (err) {
       if (err.name === "AbortError") return;
       setError(err?.message || "Fehler beim Laden des Fahrzeugbestands.");

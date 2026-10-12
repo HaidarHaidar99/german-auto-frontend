@@ -34,27 +34,30 @@ export function CarMediaManager({ media = {}, onChange }) {
       return;
     }
 
-    const availableSlots = 20 - gallery.length;
-    if (availableSlots <= 0) {
-      setMediaError("Maximal 20 Galeriebilder erlaubt.");
-      return;
-    }
-
-    const filesToUpload = validFiles.slice(0, availableSlots);
+    const filesToUpload = validFiles;
     setIsUploading(true);
     setMediaError(null);
 
     try {
-      const formData = new FormData();
-      filesToUpload.forEach((file) => {
-        formData.append("images", file);
-      });
+      const BATCH_SIZE = 10;
+      const allUploadedUrls = [];
 
-      const res = await carsService.adminUploadMedia(formData);
-      const uploadedUrls = res?.data?.urls || res?.urls || res?.data?.data?.urls || (Array.isArray(res) ? res : []);
+      for (let i = 0; i < filesToUpload.length; i += BATCH_SIZE) {
+        const chunk = filesToUpload.slice(i, i + BATCH_SIZE);
+        const formData = new FormData();
+        chunk.forEach((file) => {
+          formData.append("images", file);
+        });
 
-      if (uploadedUrls.length > 0) {
-        const nextGallery = [...gallery, ...uploadedUrls].slice(0, 20);
+        const res = await carsService.adminUploadMedia(formData);
+        const uploadedUrls = res?.data?.urls || res?.urls || res?.data?.data?.urls || (Array.isArray(res) ? res : []);
+        if (uploadedUrls.length > 0) {
+          allUploadedUrls.push(...uploadedUrls);
+        }
+      }
+
+      if (allUploadedUrls.length > 0) {
+        const nextGallery = [...gallery, ...allUploadedUrls];
         const nextThumbnail = thumbnail || nextGallery[0] || "";
         onChange?.({
           ...media,
@@ -78,7 +81,7 @@ export function CarMediaManager({ media = {}, onChange }) {
               })
           )
         );
-        const nextGallery = [...gallery, ...dataUrls].slice(0, 20);
+        const nextGallery = [...gallery, ...dataUrls];
         const nextThumbnail = thumbnail || nextGallery[0] || "";
         onChange?.({
           ...media,
