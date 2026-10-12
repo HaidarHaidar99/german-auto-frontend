@@ -9,8 +9,8 @@ import Skeleton from "../ui/Skeleton";
 import ErrorState from "../ui/ErrorState";
 import EmptyState from "../ui/EmptyState";
 import CarCardBase from "../automotive/CarCardBase";
-import ScrollReveal from "../motion/ScrollReveal";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import publicInventoryService from "../../services/cars/publicInventory.service.js";
 import AOS from "aos";
 
