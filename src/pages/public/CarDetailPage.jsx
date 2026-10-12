@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../contexts/SettingsContext";
 import carsService from "../../services/cars/cars.service";
+import carmucaService from "../../services/carmuca/carmuca.service.js";
 import CarMediaGallery from "../../components/car-detail/CarMediaGallery";
 import CarTechnicalSpecs from "../../components/car-detail/CarTechnicalSpecs";
 import CarEquipment from "../../components/car-detail/CarEquipment";
@@ -16,8 +17,8 @@ import { gsap, isReducedMotion } from "../../utils/animation";
 
 /**
  * German Auto — Production Car Detail Page
- * Dynamic route: /cars/:identifier (UUID or Slug)
- * Loaded exclusively from real backend API and CMS settings.
+ * Dynamic route: /cars/:identifier (Carmuca UUID or local DB identifier)
+ * Fetches vehicle details from Carmuca API while preserving existing local DB car fallbacks.
  */
 export function CarDetailPage() {
   const { identifier } = useParams();
@@ -30,32 +31,81 @@ export function CarDetailPage() {
   const [error, setError] = useState(null);
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimeoutRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
   const pageContainerRef = useRef(null);
   const contentSectionRef = useRef(null);
 
-  // Fetch real vehicle from backend API
+  // Fetch vehicle details: first Carmuca public API, then local DB fallback
   const fetchCar = useCallback(async () => {
     if (!identifier) return;
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       setLoading(true);
       setError(null);
-      const res = await carsService.getCar(identifier);
-      if (res?.data?.car) {
-        setCar(res.data.car);
-      } else {
-        setCar(null);
+
+      // 1. Try Carmuca public API
+      try {
+        const carmucaCar = await carmucaService.getVehicle(identifier, {
+          signal: controller.signal,
+          lang: i18n.language,
+        });
+        if (carmucaCar) {
+          setCar(carmucaCar);
+          return;
+        }
+      } catch (carmucaErr) {
+        if (carmucaErr?.name === "AbortError") return;
+        // Continue to check local DB fallback
       }
+
+      // 2. Fallback to existing local DB cars (preserves database cars & admin routes)
+      try {
+        const res = await carsService.getCar(identifier);
+        if (res?.data?.car) {
+          setCar(res.data.car);
+          return;
+        }
+      } catch (dbErr) {
+        if (dbErr?.statusCode === 404) {
+          setCar(null);
+          return;
+        }
+        throw dbErr;
+      }
+
+      setCar(null);
     } catch (err) {
-      if (err?.statusCode === 404) {
-        setCar(null);
-      } else {
-        setError(err?.message || "Fehler beim Laden der Fahrzeugdetails.");
-      }
+      if (err?.name === "AbortError") return;
+      setError(err?.message || "Fehler beim Laden der Fahrzeugdetails.");
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
-  }, [identifier]);
+  }, [identifier, i18n.language]);
+
+  // Refresh expired signed image URLs without resetting user view
+  const handleRefreshImages = useCallback(async () => {
+    if (!identifier || !car?.is_external) return null;
+    try {
+      const refreshed = await carmucaService.refreshVehicleImages(identifier, {
+        lang: i18n.language,
+      });
+      if (refreshed) {
+        setCar(refreshed);
+        return refreshed.images || [];
+      }
+    } catch {
+      // Ignore refresh failure
+    }
+    return null;
+  }, [identifier, car?.is_external, i18n.language]);
 
   useEffect(() => {
     fetchCar();
@@ -63,6 +113,7 @@ export function CarDetailPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
     return () => {
       if (shareTimeoutRef.current) clearTimeout(shareTimeoutRef.current);
+      if (abortControllerRef.current) abortControllerRef.current.abort();
     };
   }, [fetchCar]);
 
@@ -391,7 +442,7 @@ export function CarDetailPage() {
         <div style={{ display: "flex", flexDirection: "column", minWidth: 0, width: "100%", boxSizing: "border-box" }}>
           {/* Cinematic Media Area */}
           <div className="car-media-animate" style={{ marginBottom: "var(--space-2xl)" }}>
-            <CarMediaGallery car={car} />
+            <CarMediaGallery car={car} onRefreshImages={handleRefreshImages} />
           </div>
 
           {/* Key Specifications & Technical Table */}

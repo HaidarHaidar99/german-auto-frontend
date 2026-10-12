@@ -48,20 +48,37 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
   }
 
   // 2. Performance/power in kW and/or PS, with accurate units
+  const hasKw = car.power_kw !== undefined && car.power_kw !== null && car.power_kw !== "";
+  const hasPs = car.power_ps !== undefined && car.power_ps !== null && car.power_ps !== "";
   const rawPower = car.performance_hp !== undefined && car.performance_hp !== null ? car.performance_hp : car.power;
-  if (rawPower !== undefined && rawPower !== null && rawPower !== "") {
-    if (typeof rawPower === "number" || !isNaN(Number(rawPower))) {
-      const hp = Number(rawPower);
-      if (hp > 0) {
-        const kw = Math.round(hp * 0.735499);
-        sixSpecs.push({
-          id: "performance",
-          icon: "zap",
-          label: t("performance", { defaultValue: "Leistung" }),
-          value: `${numFmt.format(hp)} PS (${numFmt.format(kw)} kW)`,
-        });
-      }
-    } else {
+
+  if (hasKw && hasPs) {
+    sixSpecs.push({
+      id: "performance",
+      icon: "zap",
+      label: t("performance", { defaultValue: "Leistung" }),
+      value: `${numFmt.format(Number(car.power_ps))} PS (${numFmt.format(Number(car.power_kw))} kW)`,
+    });
+  } else if (hasKw) {
+    const kw = Number(car.power_kw);
+    const hp = Math.round(kw * 1.35962);
+    sixSpecs.push({
+      id: "performance",
+      icon: "zap",
+      label: t("performance", { defaultValue: "Leistung" }),
+      value: `${numFmt.format(hp)} PS (${numFmt.format(kw)} kW)`,
+    });
+  } else if (hasPs || (rawPower !== undefined && rawPower !== null && rawPower !== "")) {
+    const hpVal = hasPs ? Number(car.power_ps) : Number(rawPower);
+    if (!isNaN(hpVal) && hpVal > 0) {
+      const kw = Math.round(hpVal * 0.735499);
+      sixSpecs.push({
+        id: "performance",
+        icon: "zap",
+        label: t("performance", { defaultValue: "Leistung" }),
+        value: `${numFmt.format(hpVal)} PS (${numFmt.format(kw)} kW)`,
+      });
+    } else if (rawPower) {
       sixSpecs.push({
         id: "performance",
         icon: "zap",
@@ -118,64 +135,139 @@ export function CarTechnicalSpecs({ car, className = "", style = {} }) {
 
   if (car.engine_displacement_cc) {
     detailRows.push({
-      label: t("engineDisplacement"),
+      label: t("engineDisplacement", { defaultValue: "Hubraum" }),
       value: `${numFmt.format(car.engine_displacement_cc)} cm³`,
     });
   }
 
   if (car.category) {
     detailRows.push({
-      label: t("filterCategory"),
+      label: t("filterCategory", { defaultValue: "Kategorie" }),
       value: t(`cat_${car.category}`, { defaultValue: car.category }),
     });
   }
 
   if (car.vehicle_condition) {
     detailRows.push({
-      label: t("vehicleConditionLabel"),
+      label: t("vehicleConditionLabel", { defaultValue: "Zustandsdetail" }),
       value: String(car.vehicle_condition),
     });
   }
 
   if (car.vehicle_owners !== undefined && car.vehicle_owners !== null) {
     detailRows.push({
-      label: t("vehicleOwnersCount"),
+      label: t("vehicleOwnersCount", { defaultValue: "Fahrzeughalter" }),
       value: String(car.vehicle_owners),
     });
   }
 
   if (car.seats !== undefined && car.seats !== null) {
     detailRows.push({
-      label: t("seatsCount"),
+      label: t("seatsCount", { defaultValue: "Sitzplätze" }),
       value: String(car.seats),
+    });
+  }
+
+  if (car.number_of_doors !== undefined && car.number_of_doors !== null) {
+    detailRows.push({
+      label: t("doorsCount", { defaultValue: "Anzahl Türen" }),
+      value: String(car.number_of_doors),
+    });
+  }
+
+  if (car.drive_type) {
+    const driveLabels = {
+      front: "Vorderradantrieb",
+      rear: "Hinterradantrieb",
+      all: "Allradantrieb (4x4)",
+    };
+    detailRows.push({
+      label: t("driveType", { defaultValue: "Antriebsart" }),
+      value: driveLabels[car.drive_type] || String(car.drive_type),
     });
   }
 
   if (car.air_conditioning) {
     detailRows.push({
-      label: t("airConditioning"),
+      label: t("airConditioning", { defaultValue: "Klimatisierung" }),
       value: String(car.air_conditioning),
     });
   }
 
   if (car.camera) {
     detailRows.push({
-      label: t("cameraLabel"),
+      label: t("cameraLabel", { defaultValue: "Kamera & Einparkhilfe" }),
       value: String(car.camera),
     });
   }
 
   if (car.interior_design) {
     detailRows.push({
-      label: t("interiorDesign"),
+      label: t("interiorDesign", { defaultValue: "Innenausstattung" }),
       value: t(`interior_${car.interior_design}`, { defaultValue: car.interior_design }),
     });
   }
 
   if (car.interior_color) {
     detailRows.push({
-      label: t("interiorColor"),
+      label: t("interiorColor", { defaultValue: "Innenfarbe" }),
       value: String(car.interior_color),
+    });
+  }
+
+  if (car.manufacturer_color_name || car.color) {
+    detailRows.push({
+      label: t("exteriorColor", { defaultValue: "Außenfarbe" }),
+      value: car.manufacturer_color_name || car.color,
+    });
+  }
+
+  if (car.co2_emission) {
+    detailRows.push({
+      label: t("co2Emission", { defaultValue: "CO₂-Emissionen" }),
+      value: `${numFmt.format(Number(car.co2_emission))} g/km`,
+    });
+  }
+
+  if (car.emission_class) {
+    detailRows.push({
+      label: t("emissionClass", { defaultValue: "Schadstoffklasse" }),
+      value: String(car.emission_class).toUpperCase(),
+    });
+  }
+
+  if (car.hsn || car.tsn) {
+    detailRows.push({
+      label: "HSN / TSN",
+      value: `${car.hsn || "—"} / ${car.tsn || "—"}`,
+    });
+  }
+
+  if (car.weight) {
+    detailRows.push({
+      label: t("curbWeight", { defaultValue: "Leergewicht" }),
+      value: `${numFmt.format(Number(car.weight))} kg`,
+    });
+  }
+
+  if (car.trailer_load_braked) {
+    detailRows.push({
+      label: t("trailerLoadBraked", { defaultValue: "Anhängelast gebremst" }),
+      value: `${numFmt.format(Number(car.trailer_load_braked))} kg`,
+    });
+  }
+
+  if (car.full_service_history !== null && car.full_service_history !== undefined) {
+    detailRows.push({
+      label: t("fullServiceHistory", { defaultValue: "Scheckheftgepflegt" }),
+      value: car.full_service_history ? "Ja" : "Nein",
+    });
+  }
+
+  if (car.warranty !== null && car.warranty !== undefined) {
+    detailRows.push({
+      label: t("warranty", { defaultValue: "Garantie" }),
+      value: car.warranty ? "Ja" : "Nein",
     });
   }
 

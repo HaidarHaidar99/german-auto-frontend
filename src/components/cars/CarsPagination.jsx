@@ -8,26 +8,34 @@ import Button from "../ui/Button";
 
 export function CarsPagination({
   currentPage = 1,
-  totalPages = 1,
+  totalPages,
+  hasMore = false,
   onPageChange,
   className = "",
   style = {},
 }) {
   const { t } = useTranslation(["cars"]);
 
-  if (totalPages <= 1) {
+  // If there's only 1 page and no more items, omit pagination
+  const canGoNext = hasMore || (typeof totalPages === "number" && currentPage < totalPages);
+  const canGoPrev = currentPage > 1;
+
+  if (!canGoNext && !canGoPrev) {
     return null;
   }
 
-  // Generate sensible page window
+  // Generate page numbers without inventing a total count
   const getPageNumbers = () => {
     const pages = [];
-    const maxVisible = 5;
-    let start = Math.max(1, currentPage - 2);
-    let end = Math.min(totalPages, start + maxVisible - 1);
+    const maxPage = typeof totalPages === "number" && totalPages > 0
+      ? totalPages
+      : (hasMore ? currentPage + 1 : currentPage);
 
-    if (end - start < maxVisible - 1) {
-      start = Math.max(1, end - maxVisible + 1);
+    let start = Math.max(1, currentPage - 2);
+    let end = Math.min(maxPage, start + 4);
+
+    if (end - start < 4) {
+      start = Math.max(1, end - 4);
     }
 
     for (let i = start; i <= end; i++) {
@@ -101,7 +109,7 @@ export function CarsPagination({
         variant="outline"
         size="md"
         iconRight="chevron-right"
-        disabled={currentPage >= totalPages}
+        disabled={!canGoNext}
         onClick={() => onPageChange(currentPage + 1)}
       >
         <span className="hide-mobile">{t("nextPage", "Nächste")}</span>

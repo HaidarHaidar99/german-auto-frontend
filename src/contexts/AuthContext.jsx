@@ -282,11 +282,11 @@ export function AuthProvider({ children }) {
     return favorites.includes(carId);
   };
 
-  const toggleFavorite = async (carId) => {
+  const toggleFavorite = async (carId, options = {}) => {
     const isFav = isCarFavorite(carId);
 
-    // Guest mode: allow favoriting without login, storing in localStorage
-    if (status !== "authenticated") {
+    // Guest mode or external Carmuca vehicle: store locally without hitting backend database endpoints
+    if (status !== "authenticated" || options.isExternal) {
       let nextFavs;
       if (isFav) {
         nextFavs = favorites.filter((id) => id !== carId);

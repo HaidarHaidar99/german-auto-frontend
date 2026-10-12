@@ -13,6 +13,7 @@ import ContactCtaSection from "../../components/home/ContactCtaSection";
 import { Container, Section } from "../../components/ui/Layout";
 import { Eyebrow, Heading, Text } from "../../components/ui/Typography";
 import carsService from "../../services/cars/cars.service";
+import carmucaService from "../../services/carmuca/carmuca.service.js";
 import { ScrollTrigger } from "../../utils/animation";
 
 /**
@@ -31,29 +32,38 @@ export function HomePage() {
   // Fetch top featured car for the cinematic showcase section
   useEffect(() => {
     let isMounted = true;
-    carsService
-      .getCars({ is_featured: true, limit: 1 })
+    carmucaService
+      .getVehicles({ highlights: true, limit: 1 }, { lang: currentLang })
       .then((res) => {
         if (!isMounted) return;
-        const car = res?.data?.cars?.[0];
+        const car = res?.vehicles?.[0];
         if (car) {
           setTopCar(car);
         } else {
-          // If no featured car, try fetching any available car with an image
+          // If no Carmuca highlights, check local DB
           carsService
-            .getCars({ limit: 1 })
-            .then((anyRes) => {
-              if (isMounted) setTopCar(anyRes?.data?.cars?.[0] || null);
+            .getCars({ is_featured: true, limit: 1 })
+            .then((dbRes) => {
+              if (isMounted) setTopCar(dbRes?.data?.cars?.[0] || null);
             })
             .catch(() => {});
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (isMounted) {
+          carsService
+            .getCars({ limit: 1 })
+            .then((dbRes) => {
+              if (isMounted) setTopCar(dbRes?.data?.cars?.[0] || null);
+            })
+            .catch(() => {});
+        }
+      });
 
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [currentLang]);
 
   // Set document title dynamically from CMS
   useEffect(() => {

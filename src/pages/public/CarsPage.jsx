@@ -14,25 +14,27 @@ import Icon from "../../components/common/Icon";
 import Button from "../../components/ui/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSettings } from "../../contexts/SettingsContext";
-import carsService from "../../services/cars/cars.service";
+import carmucaService from "../../services/carmuca/carmuca.service.js";
 import AOS from "aos";
 
 /**
  * German Auto — Production Cars / Inventory Page
- * Connects exclusively to real inventory via GET /api/cars.
+ * Connects exclusively to Carmuca's public JSON API.
  * Features server-side search, multi-attribute filtering, sorting, and pagination.
  */
 
 const ITEMS_PER_PAGE = 12;
 
 export function CarsPage() {
-  const { t } = useTranslation(["cars", "common"]);
+  const { t, i18n } = useTranslation(["cars", "common"]);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { isAuthenticated, isCarFavorite, toggleFavorite } = useAuth();
   const { settings } = useSettings();
+  const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const inventoryTopRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
   // Parse filters from URL search parameters
   const [filters, setFilters] = useState(() => ({
@@ -40,10 +42,11 @@ export function CarsPage() {
     limit: ITEMS_PER_PAGE,
     brand: searchParams.get("brand") || undefined,
     model: searchParams.get("model") || undefined,
-    fuel_type: searchParams.get("fuel_type") || undefined,
+    search: searchParams.get("search") || searchParams.get("q") || undefined,
+    fuel_type: searchParams.get("fuel_type") || searchParams.get("fuel") || undefined,
     transmission: searchParams.get("transmission") || undefined,
     condition: searchParams.get("condition") || undefined,
-    category: searchParams.get("category") || undefined,
+    category: searchParams.get("category") || searchParams.get("body") || undefined,
     min_price: searchParams.get("min_price") ? Number(searchParams.get("min_price")) : undefined,
     max_price: searchParams.get("max_price") ? Number(searchParams.get("max_price")) : undefined,
     max_mileage: searchParams.get("max_mileage") ? Number(searchParams.get("max_mileage")) : undefined,
@@ -51,7 +54,7 @@ export function CarsPage() {
   }));
 
   const [cars, setCars] = useState([]);
-  const [meta, setMeta] = useState({ total: 0, page: 1, limit: ITEMS_PER_PAGE, pages: 1 });
+  const [pagination, setPagination] = useState({ limit: ITEMS_PER_PAGE, offset: 0, hasMore: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -68,48 +71,74 @@ export function CarsPage() {
     setSearchParams(params, { replace: true });
   }, [setSearchParams]);
 
-  // Fetch cars from real backend API
+  // Fetch cars from Carmuca public JSON API
   const fetchCars = useCallback(async (currentFilters) => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       setLoading(true);
       setError(null);
 
+      const page = Math.max(1, currentFilters.page || 1);
+      const offset = (page - 1) * ITEMS_PER_PAGE;
+
       const query = {
-        page: currentFilters.page || 1,
         limit: ITEMS_PER_PAGE,
+        offset,
         sort: currentFilters.sort || "newest",
       };
 
-      if (currentFilters.brand) query.brand = currentFilters.brand;
+      if (currentFilters.search) query.q = currentFilters.search;
+      if (currentFilters.brand) query.make = currentFilters.brand;
       if (currentFilters.model) query.model = currentFilters.model;
-      if (currentFilters.fuel_type) query.fuel_type = currentFilters.fuel_type;
+      if (currentFilters.fuel_type) query.fuel = currentFilters.fuel_type;
       if (currentFilters.transmission) query.transmission = currentFilters.transmission;
       if (currentFilters.condition) query.condition = currentFilters.condition;
-      if (currentFilters.category) query.category = currentFilters.category;
-      if (currentFilters.min_price) query.min_price = currentFilters.min_price;
-      if (currentFilters.max_price) query.max_price = currentFilters.max_price;
-      if (currentFilters.max_mileage) query.max_mileage = currentFilters.max_mileage;
+      if (currentFilters.category) query.body = currentFilters.category;
+      if (currentFilters.min_price) query.minPrice = currentFilters.min_price;
+      if (currentFilters.max_price) query.maxPrice = currentFilters.max_price;
+      if (currentFilters.max_mileage) query.maxMileage = currentFilters.max_mileage;
 
-      const res = await carsService.getCars(query);
+      const res = await carmucaService.getVehicles(query, {
+        signal: controller.signal,
+        lang: currentLang,
+      });
 
-      setCars(res?.data?.cars || []);
-      setMeta(res?.meta || { total: res?.data?.cars?.length || 0, page: 1, limit: ITEMS_PER_PAGE, pages: 1 });
+      setCars(res.vehicles || []);
+      setPagination(res.pagination || { limit: ITEMS_PER_PAGE, offset, hasMore: false });
     } catch (err) {
+      if (err.name === "AbortError") {
+        return; // Request cancelled, ignore
+      }
       setError(err?.message || "Fehler beim Laden des Fahrzeugbestands.");
       setCars([]);
     } finally {
-      setLoading(false);
-      setTimeout(() => {
-        try { AOS.refresh(); } catch {}
-      }, 100);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+        setTimeout(() => {
+          try { AOS.refresh(); } catch {}
+        }, 100);
+      }
     }
-  }, []);
+  }, [currentLang]);
 
   // Fetch whenever filters change
   useEffect(() => {
     fetchCars(filters);
     updateUrlParams(filters);
   }, [filters, fetchCars, updateUrlParams]);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   // Set document title dynamically
   useEffect(() => {
@@ -130,6 +159,7 @@ export function CarsPage() {
       limit: ITEMS_PER_PAGE,
       brand: undefined,
       model: undefined,
+      search: undefined,
       fuel_type: undefined,
       transmission: undefined,
       condition: undefined,
@@ -156,14 +186,15 @@ export function CarsPage() {
     return () => clearTimeout(timer);
   }, [cars.length, loading, error]);
 
-  const handleFavoriteClick = async (carId) => {
-    await toggleFavorite(carId);
+  const handleFavoriteClick = async (car) => {
+    if (!car) return;
+    await toggleFavorite(car.id, { isExternal: Boolean(car.is_external) });
   };
 
   return (
     <div className="cars-page" style={{ width: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
       {/* 1. Page Intro / Cinematic Header */}
-      <CarsHeader totalCars={meta.total} />
+      <CarsHeader />
 
       <div ref={inventoryTopRef} />
 
@@ -176,7 +207,7 @@ export function CarsPage() {
               filters={filters}
               onFilterChange={handleFilterChange}
               onResetFilters={handleResetFilters}
-              totalResults={meta.total}
+              totalResults={cars.length}
             />
           </div>
 
@@ -315,6 +346,7 @@ export function CarsPage() {
                         thumbnail={car.media?.thumbnail || car.thumbnail || car.cover_image}
                         price={car.price}
                         oldPrice={car.old_price}
+                        vatEligible={car.vat_eligible}
                         status={car.status}
                         mileage={car.mileage_km ?? car.mileage}
                         power={car.performance_hp ?? car.power}
@@ -324,7 +356,7 @@ export function CarsPage() {
                         condition={car.condition}
                         image={primaryImage}
                         isFavorite={isFav}
-                        onFavoriteToggle={() => handleFavoriteClick(car.id)}
+                        onFavoriteToggle={() => handleFavoriteClick(car)}
                         onSelect={() => navigate(`/cars/${identifier}`)}
                         ctaLabel={t("viewDetails", "Details anzeigen")}
                       />
@@ -336,10 +368,10 @@ export function CarsPage() {
           )}
 
           {/* 8. Pagination Mechanism */}
-          {!loading && !error && meta.pages > 1 && (
+          {!loading && !error && (pagination.hasMore || filters.page > 1) && (
             <CarsPagination
-              currentPage={meta.page}
-              totalPages={meta.pages}
+              currentPage={filters.page}
+              hasMore={pagination.hasMore}
               onPageChange={handlePageChange}
             />
           )}

@@ -12,13 +12,12 @@ import CarCardBase from "../automotive/CarCardBase";
 import ScrollReveal from "../motion/ScrollReveal";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
-import carsService from "../../services/cars/cars.service";
+import carmucaService from "../../services/carmuca/carmuca.service.js";
 import AOS from "aos";
 
 /**
  * German Auto — Featured Inventory Section
- * Connects exclusively to real inventory via GET /api/cars?is_featured=true.
- * No fake cars or synthetic inventory placeholders.
+ * Connects to Carmuca public API highlights=true&limit=6.
  */
 
 export function FeaturedInventorySection() {
@@ -32,23 +31,40 @@ export function FeaturedInventorySection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const trackRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
   const loadFeaturedCars = useCallback(async () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     try {
       setLoading(true);
       setError(null);
-      const res = await carsService.getCars({ is_featured: true, limit: 12 });
-      const carList = res?.data?.cars || [];
-      setCars(carList);
+      const res = await carmucaService.getVehicles(
+        { highlights: true, limit: 6 },
+        { signal: controller.signal, lang: currentLang }
+      );
+      setCars(res?.vehicles || []);
     } catch (err) {
+      if (err.name === "AbortError") return;
       setError(err?.message || "Fehler beim Laden des Fahrzeugbestands.");
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) {
+        setLoading(false);
+      }
     }
-  }, []);
+  }, [currentLang]);
 
   useEffect(() => {
     loadFeaturedCars();
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
   }, [loadFeaturedCars]);
 
   // Responsive cards per view: 3 on desktop (>=1024px), 2 on tablet (>=700px), 1 on mobile (<700px)
@@ -128,8 +144,9 @@ export function FeaturedInventorySection() {
     touchDeltaX.current = 0;
   };
 
-  const handleFavoriteClick = async (carId) => {
-    await toggleFavorite(carId);
+  const handleFavoriteClick = async (car) => {
+    if (!car) return;
+    await toggleFavorite(car.id, { isExternal: Boolean(car.is_external) });
   };
 
   return (
@@ -338,6 +355,7 @@ export function FeaturedInventorySection() {
                           name={title || car.name || car.model || car.title}
                           price={car.price}
                           oldPrice={car.old_price}
+                          vatEligible={car.vat_eligible}
                           status={car.status}
                           mileage={car.mileage_km ?? car.mileage}
                           power={car.performance_hp ?? car.power}
@@ -348,7 +366,7 @@ export function FeaturedInventorySection() {
                           image={mainImage}
                           thumbnail={mainImage}
                           isFavorite={isFav}
-                          onFavoriteToggle={() => handleFavoriteClick(car.id)}
+                          onFavoriteToggle={() => handleFavoriteClick(car)}
                           onSelect={() => navigate(`/cars/${identifier}`)}
                           ctaLabel={t("viewDetails", "Details anzeigen")}
                         />

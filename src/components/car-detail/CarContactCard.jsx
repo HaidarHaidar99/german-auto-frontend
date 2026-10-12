@@ -45,7 +45,33 @@ export function CarContactCard({ car, className = "", style = {} }) {
   const inquiryLink = `/contact?car=${encodeURIComponent(carTitle || "Fahrzeuganfrage")}`;
 
   const handleToggleFavorite = async () => {
-    await toggleFavorite(car?.id);
+    await toggleFavorite(car?.id, { isExternal: Boolean(car?.is_external) });
+  };
+
+  // VAT presentation based on real vehicle vatEligible and netPrice data
+  const renderVatInfo = () => {
+    const isDe = !i18n.language?.startsWith("en");
+    if (car?.vat_eligible === true) {
+      const netStr = car?.net_price ? formatCommaCurrency(car.net_price) : null;
+      return (
+        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)", marginTop: "var(--space-3xs)" }}>
+          {isDe ? "MwSt. ausweisbar" : "VAT deductible"}
+          {netStr ? ` • ${isDe ? "Netto:" : "Net:"} ${netStr}` : ""}
+        </div>
+      );
+    }
+    if (car?.vat_eligible === false) {
+      return (
+        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)", marginTop: "var(--space-3xs)" }}>
+          {isDe ? "Keine MwSt. ausweisbar (Differenzbesteuert)" : "VAT not deductible"}
+        </div>
+      );
+    }
+    return (
+      <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)", marginTop: "var(--space-3xs)" }}>
+        {isDe ? "inkl. MwSt. / Endpreis" : "incl. VAT"}
+      </div>
+    );
   };
 
   // WhatsApp clean link builder
@@ -164,9 +190,7 @@ export function CarContactCard({ car, className = "", style = {} }) {
         >
           {formatCommaCurrency(priceNum)}
         </div>
-        <div style={{ fontSize: "var(--font-size-xs)", color: "var(--color-text-subtle)", marginTop: "var(--space-3xs)" }}>
-          inkl. MwSt. / Bruttopreis
-        </div>
+        {renderVatInfo()}
       </div>
 
       {/* Primary Action Button */}

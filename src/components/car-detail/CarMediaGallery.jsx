@@ -10,9 +10,25 @@ import { useTheme } from "../../contexts/ThemeContext";
  * Cinematic primary media stage, thumbnail navigation, video, 360° interactive viewer,
  * 3D model container, and fullscreen lightbox modal with keyboard and touch support.
  */
-export function CarMediaGallery({ car, className = "", style = {} }) {
+export function CarMediaGallery({ car, onRefreshImages, className = "", style = {} }) {
   const { t } = useTranslation(["cars", "common"]);
   const { isDark } = useTheme?.() || { isDark: true };
+
+  // Bounded retry counter for expired signed URLs
+  const retryCountRef = useRef(0);
+  const handleImageError = useCallback(async (idx) => {
+    if (retryCountRef.current < 2 && onRefreshImages) {
+      retryCountRef.current += 1;
+      try {
+        await onRefreshImages();
+      } catch {}
+    }
+  }, [onRefreshImages]);
+
+  // Reset retry counter whenever car images update
+  useEffect(() => {
+    retryCountRef.current = 0;
+  }, [car?.images]);
 
   // Extract all media safely
   const media = car?.media || {};
@@ -505,6 +521,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                 alt={`${vehicleAlt} — Ansicht ${activePhotoIdx + 1}`}
                 loading={activePhotoIdx === 0 ? "eager" : "lazy"}
                 draggable={false}
+                onError={() => handleImageError(activePhotoIdx)}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -731,6 +748,7 @@ export function CarMediaGallery({ car, className = "", style = {} }) {
                   src={photo}
                   alt={`Thumbnail ${idx + 1}`}
                   loading="lazy"
+                  onError={() => handleImageError(idx)}
                   style={{
                     width: "100%",
                     height: "100%",

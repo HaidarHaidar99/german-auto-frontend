@@ -2,19 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import carsService from "../../services/cars/cars.service";
+import carmucaService from "../../services/carmuca/carmuca.service.js";
 import { useAuth } from "../../contexts/AuthContext";
 import CarCardBase from "../automotive/CarCardBase";
 import { Grid } from "../ui/Layout";
 
 /**
  * German Auto — CarRelatedSection Component
- * Displays real vehicles from the backend API excluding the currently viewed car.
+ * Displays real vehicles excluding the currently viewed car.
  * If no other cars exist in the inventory, the section is gracefully hidden.
  */
 export function CarRelatedSection({ currentCarId, currentBrand, className = "", style = {} }) {
-  const { t } = useTranslation(["cars", "common"]);
+  const { t, i18n } = useTranslation(["cars", "common"]);
   const navigate = useNavigate();
   const { isCarFavorite, toggleFavorite, isAuthenticated } = useAuth();
+  const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
   const [relatedCars, setRelatedCars] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,27 @@ export function CarRelatedSection({ currentCarId, currentBrand, className = "", 
     async function loadRelated() {
       try {
         setLoading(true);
-        // Attempt to fetch cars matching brand first, or fallback to general inventory
+
+        // Try Carmuca first
+        try {
+          const query = { limit: 6 };
+          if (currentBrand) query.make = currentBrand;
+          const carmucaRes = await carmucaService.getVehicles(query, { lang: currentLang });
+          let list = carmucaRes?.vehicles || [];
+          let filtered = list.filter((c) => c.id !== currentCarId && c.slug !== currentCarId);
+
+          if (filtered.length === 0 && currentBrand) {
+            const generalRes = await carmucaService.getVehicles({ limit: 6 }, { lang: currentLang });
+            filtered = (generalRes?.vehicles || []).filter((c) => c.id !== currentCarId && c.slug !== currentCarId);
+          }
+
+          if (filtered.length > 0) {
+            if (isMounted) setRelatedCars(filtered.slice(0, 3));
+            return;
+          }
+        } catch {}
+
+        // Fallback to local DB cars
         const params = { limit: 4 };
         if (currentBrand) {
           params.brand = currentBrand;
@@ -33,11 +55,8 @@ export function CarRelatedSection({ currentCarId, currentBrand, className = "", 
 
         let res = await carsService.getCars(params);
         let list = res?.data?.cars || [];
-
-        // Exclude current vehicle
         let filtered = list.filter((c) => c.id !== currentCarId && c.slug !== currentCarId);
 
-        // If brand filter was too narrow and yielded no cars, fetch general pool
         if (filtered.length === 0 && currentBrand) {
           const generalRes = await carsService.getCars({ limit: 4 });
           const generalList = generalRes?.data?.cars || [];
@@ -129,10 +148,10 @@ export function CarRelatedSection({ currentCarId, currentBrand, className = "", 
               fuel={car.fuel_type || car.fuel}
               transmission={car.transmission}
               registration={car.first_registration || car.registration_year}
-              condition={car.condition}
+              vatEligible={car.vat_eligible}
               image={primaryImage}
               isFavorite={isFav}
-              onFavoriteToggle={() => handleFavoriteClick(car.id)}
+              onFavoriteToggle={() => toggleFavorite(car.id, { isExternal: Boolean(car.is_external) })}
               onSelect={() => navigate(`/cars/${identifier}`)}
               ctaLabel={t("viewDetails", { defaultValue: "Details anzeigen" })}
             />

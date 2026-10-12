@@ -22,6 +22,8 @@ export function CarCardBase({
   price = 0,
   oldPrice,
   currency = "€",
+  vat_eligible,
+  vatEligible,
   image,
   thumbnail,
   coverImage,
@@ -244,7 +246,7 @@ export function CarCardBase({
         </div>
 
         {/* Pricing */}
-        <div style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
+        <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "6px" }}>
           <div
             className="car-card-price"
             style={{
@@ -266,6 +268,19 @@ export function CarCardBase({
             >
               {currency} {typeof oldPrice === "number" ? oldPrice.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : String(oldPrice || "").replace(/\./g, ",")}
             </div>
+          )}
+          {(vatEligible ?? vat_eligible) === true && (
+            <span
+              style={{
+                fontSize: "10px",
+                fontWeight: 600,
+                color: "var(--color-text-subtle)",
+                letterSpacing: "0.02em",
+              }}
+              title="Mehrwertsteuer ausweisbar"
+            >
+              (MwSt.)
+            </span>
           )}
         </div>
 
