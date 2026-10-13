@@ -64,6 +64,20 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [driveDirection, setDriveDirection] = useState("right");
 
+  // 360 interactive viewer state
+  const [frame360Idx, setFrame360Idx] = useState(0);
+  const isDragging360 = useRef(false);
+  const startX360 = useRef(0);
+
+  // Fullscreen Zoom / Lightbox modal state across entire collection
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [zoomScale, setZoomScale] = useState(1);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const isPanningRef = useRef(false);
+  const panStartRef = useRef({ x: 0, y: 0 });
+  const lightboxThumbStripRef = useRef(null);
+  const lightboxThumbRefs = useRef([]);
+
   // Gallery container ref to isolate scrolling and keep page completely still
   const galleryRef = useRef(null);
 
@@ -269,10 +283,148 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
     updateScrub(e.touches[0].clientX);
   };
 
-  // Keyboard navigation for active anytime anywhere
+  // Efficient lazy loading: Preload only nearby full-size images (active ± 1, active + 2)
+  useEffect(() => {
+    if (activeTab !== "photos" || uniquePhotos.length === 0) return;
+    const nearbyIndices = [activePhotoIdx + 1, activePhotoIdx - 1, activePhotoIdx + 2].filter(
+      (idx) => idx >= 0 && idx < uniquePhotos.length
+    );
+    nearbyIndices.forEach((idx) => {
+      const src = uniquePhotos[idx];
+      if (src) {
+        const img = new Image();
+        img.src = src;
+      }
+    });
+  }, [activePhotoIdx, uniquePhotos, activeTab]);
+
+  // Lock background page scroll when lightbox modal is open
+  useEffect(() => {
+    if (isZoomOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isZoomOpen]);
+
+  // Auto-scroll lightbox thumbnail strip smoothly
+  useEffect(() => {
+    if (!isZoomOpen) return;
+    const strip = lightboxThumbStripRef.current;
+    const thumb = lightboxThumbRefs.current[activePhotoIdx];
+    if (strip && thumb) {
+      const thumbLeft = thumb.offsetLeft;
+      const thumbWidth = thumb.offsetWidth;
+      const stripWidth = strip.clientWidth;
+      const targetScroll = thumbLeft - stripWidth / 2 + thumbWidth / 2;
+      strip.scrollTo({
+        left: Math.max(0, targetScroll),
+        behavior: "smooth",
+      });
+    }
+  }, [activePhotoIdx, isZoomOpen]);
+
+  // Zoom and Lightbox handlers
+  const handleOpenZoom = useCallback((idx = activePhotoIdx) => {
+    setActivePhotoIdx(idx);
+    setZoomScale(1);
+    setPanOffset({ x: 0, y: 0 });
+    setIsZoomOpen(true);
+  }, [activePhotoIdx]);
+
+  const handleCloseZoom = useCallback(() => {
+    setIsZoomOpen(false);
+    setZoomScale(1);
+    setPanOffset({ x: 0, y: 0 });
+  }, []);
+
+  const handleZoomIn = useCallback(() => {
+    setZoomScale((prev) => Math.min(3, +(prev + 0.5).toFixed(1)));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomScale((prev) => {
+      const next = Math.max(1, +(prev - 0.5).toFixed(1));
+      if (next === 1) setPanOffset({ x: 0, y: 0 });
+      return next;
+    });
+  }, []);
+
+  const handleToggleZoom = useCallback((e) => {
+    e?.stopPropagation?.();
+    setZoomScale((prev) => {
+      if (prev > 1) {
+        setPanOffset({ x: 0, y: 0 });
+        return 1;
+      }
+      return 2;
+    });
+  }, []);
+
+  const handlePanStart = (clientX, clientY) => {
+    if (zoomScale <= 1) return;
+    isPanningRef.current = true;
+    panStartRef.current = {
+      x: clientX - panOffset.x,
+      y: clientY - panOffset.y,
+    };
+  };
+
+  const handlePanMove = (clientX, clientY) => {
+    if (!isPanningRef.current || zoomScale <= 1) return;
+    setPanOffset({
+      x: clientX - panStartRef.current.x,
+      y: clientY - panStartRef.current.y,
+    });
+  };
+
+  const handlePanEnd = () => {
+    isPanningRef.current = false;
+  };
+
+  const handleSelectPhotoInZoom = (idx) => {
+    handleSelectPhoto(idx);
+    setZoomScale(1);
+    setPanOffset({ x: 0, y: 0 });
+  };
+
+  // Keyboard navigation for active anytime anywhere and in lightbox
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target && ["INPUT", "TEXTAREA"].includes(e.target.tagName)) return;
+      if (isZoomOpen) {
+        if (e.key === "Escape") {
+          handleCloseZoom();
+          return;
+        }
+        if (e.key === "ArrowLeft") {
+          handlePrevPhoto();
+          setZoomScale(1);
+          setPanOffset({ x: 0, y: 0 });
+          return;
+        }
+        if (e.key === "ArrowRight") {
+          handleNextPhoto();
+          setZoomScale(1);
+          setPanOffset({ x: 0, y: 0 });
+          return;
+        }
+        if (e.key === "+" || e.key === "=") {
+          handleZoomIn();
+          return;
+        }
+        if (e.key === "-") {
+          handleZoomOut();
+          return;
+        }
+        if (e.key === "0") {
+          setZoomScale(1);
+          setPanOffset({ x: 0, y: 0 });
+          return;
+        }
+      }
       if (activeTab !== "photos") return;
       if (e.key === "ArrowLeft") {
         handlePrevPhoto();
@@ -282,7 +434,7 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [activeTab, handlePrevPhoto, handleNextPhoto]);
+  }, [activeTab, handlePrevPhoto, handleNextPhoto, isZoomOpen, handleCloseZoom, handleZoomIn, handleZoomOut]);
 
 
 
@@ -506,6 +658,7 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
               onTouchCancel={handleTouchCancel}
+              onClick={() => handleOpenZoom(activePhotoIdx)}
               style={{
                 width: "100%",
                 height: "100%",
@@ -513,6 +666,7 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
                 touchAction: "pan-y",
                 overscrollBehaviorX: "none",
                 overflow: "hidden",
+                cursor: "zoom-in",
               }}
             >
               <img
@@ -527,11 +681,51 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
                   height: "100%",
                   objectFit: "cover",
                   display: "block",
-                  cursor: "default",
+                  cursor: "zoom-in",
                   userSelect: "none",
                   transition: isReducedMotion() ? "none" : "opacity var(--duration-fast) var(--ease-smooth)",
                 }}
               />
+
+              {/* Zoom Trigger Button in Top-Right Corner */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenZoom(activePhotoIdx);
+                }}
+                aria-label={t("zoomIn", "Vollbild & Zoom")}
+                title={t("zoomIn", "Vollbild & Zoom")}
+                style={{
+                  position: "absolute",
+                  top: "12px",
+                  right: "12px",
+                  zIndex: 6,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "38px",
+                  height: "38px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(12, 14, 18, 0.75)",
+                  backdropFilter: "blur(10px)",
+                  border: isDark ? "1px solid rgba(212, 175, 55, 0.4)" : "1px solid rgba(0, 0, 0, 0.2)",
+                  color: isDark ? "#D4AF37" : "#ffffff",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = isDark ? "rgba(212, 175, 55, 0.25)" : "rgba(0, 0, 0, 0.9)";
+                  e.currentTarget.style.transform = "scale(1.08)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(12, 14, 18, 0.75)";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                <Icon name="maximize-2" size={17} />
+              </button>
 
               {/* Subtle Floor Ambient Gradient */}
               <div
@@ -901,6 +1095,401 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
                   <circle cx="1.5" cy="8" r="0.8" fill="#FF5252"/>
                 </svg>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── 3. Fullscreen Zoom & Lightbox Modal across entire collection ─── */}
+      {isZoomOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Vollbild-Galerie"
+          onClick={handleCloseZoom}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 99999,
+            backgroundColor: "rgba(5, 6, 8, 0.96)",
+            backdropFilter: "blur(20px)",
+            display: "flex",
+            flexDirection: "column",
+            userSelect: "none",
+          }}
+        >
+          {/* Top Bar */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "14px 20px",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgba(10, 12, 16, 0.8)",
+              backdropFilter: "blur(12px)",
+              flexShrink: 0,
+            }}
+          >
+            {/* Vehicle Title & Count */}
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+              <span style={{ color: "#D4AF37", fontWeight: 700, fontSize: "15px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {car.brand} {car.model || car.title}
+              </span>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "4px 10px",
+                  borderRadius: "999px",
+                  backgroundColor: "rgba(212, 175, 55, 0.15)",
+                  border: "1px solid rgba(212, 175, 55, 0.35)",
+                  color: "#D4AF37",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  fontVariantNumeric: "tabular-nums",
+                  flexShrink: 0,
+                }}
+              >
+                <Icon name="image" size={13} />
+                <span>
+                  {activePhotoIdx + 1} / {uniquePhotos.length}
+                </span>
+              </span>
+            </div>
+
+            {/* Zoom Controls & Close */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+              <button
+                type="button"
+                onClick={handleZoomOut}
+                disabled={zoomScale <= 1}
+                aria-label="Zoom Out"
+                title="Verkleinern (-)"
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "8px",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  color: zoomScale <= 1 ? "rgba(255, 255, 255, 0.3)" : "#ffffff",
+                  cursor: zoomScale <= 1 ? "default" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                }}
+              >
+                -
+              </button>
+
+              <button
+                type="button"
+                onClick={handleToggleZoom}
+                title="Zoom umschalten (Doppelklick)"
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: "8px",
+                  backgroundColor: zoomScale > 1 ? "rgba(212, 175, 55, 0.25)" : "rgba(255, 255, 255, 0.08)",
+                  border: zoomScale > 1 ? "1px solid #D4AF37" : "1px solid rgba(255, 255, 255, 0.15)",
+                  color: zoomScale > 1 ? "#D4AF37" : "#ffffff",
+                  cursor: "pointer",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {Math.round(zoomScale * 100)}%
+              </button>
+
+              <button
+                type="button"
+                onClick={handleZoomIn}
+                disabled={zoomScale >= 3}
+                aria-label="Zoom In"
+                title="Vergrößern (+)"
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "8px",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  color: zoomScale >= 3 ? "rgba(255, 255, 255, 0.3)" : "#ffffff",
+                  cursor: zoomScale >= 3 ? "default" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                }}
+              >
+                +
+              </button>
+
+              <button
+                type="button"
+                onClick={handleCloseZoom}
+                aria-label={t("lightboxClose", "Schließen")}
+                title={t("lightboxClose", "Schließen (Esc)")}
+                style={{
+                  marginLeft: "8px",
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "8px",
+                  backgroundColor: "rgba(220, 38, 38, 0.2)",
+                  border: "1px solid rgba(220, 38, 38, 0.4)",
+                  color: "#f87171",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.35)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(220, 38, 38, 0.2)";
+                }}
+              >
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+          </div>
+
+          {/* Lightbox Main Stage */}
+          <div
+            style={{
+              position: "relative",
+              flex: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              cursor: zoomScale > 1 ? (isPanningRef.current ? "grabbing" : "grab") : "zoom-in",
+            }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) handleCloseZoom();
+            }}
+            onWheel={(e) => {
+              e.preventDefault();
+              if (e.deltaY < 0) handleZoomIn();
+              else handleZoomOut();
+            }}
+            onPointerDown={(e) => {
+              if (zoomScale > 1) {
+                handlePanStart(e.clientX, e.clientY);
+                try {
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                } catch {}
+              }
+            }}
+            onPointerMove={(e) => {
+              if (zoomScale > 1) {
+                handlePanMove(e.clientX, e.clientY);
+              }
+            }}
+            onPointerUp={(e) => {
+              handlePanEnd();
+              try {
+                e.currentTarget.releasePointerCapture(e.pointerId);
+              } catch {}
+            }}
+            onTouchStart={(e) => {
+              if (zoomScale > 1 && e.touches.length === 1) {
+                handlePanStart(e.touches[0].clientX, e.touches[0].clientY);
+              } else {
+                handleTouchStart(e);
+              }
+            }}
+            onTouchMove={(e) => {
+              if (zoomScale > 1 && e.touches.length === 1) {
+                handlePanMove(e.touches[0].clientX, e.touches[0].clientY);
+              } else {
+                handleTouchMove(e);
+              }
+            }}
+            onTouchEnd={() => {
+              if (zoomScale > 1) {
+                handlePanEnd();
+              } else {
+                handleTouchEnd();
+              }
+            }}
+          >
+            {/* Full-size Image */}
+            <img
+              key={`lb-img-${currentPhotoSrc}`}
+              src={currentPhotoSrc}
+              alt={`${vehicleAlt} — Großansicht ${activePhotoIdx + 1}`}
+              draggable={false}
+              onDoubleClick={handleToggleZoom}
+              onError={() => handleImageError(activePhotoIdx)}
+              style={{
+                maxWidth: "92vw",
+                maxHeight: "72vh",
+                objectFit: "contain",
+                transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomScale})`,
+                transformOrigin: "center center",
+                transition: isPanningRef.current ? "none" : "transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)",
+                boxShadow: "0 8px 32px rgba(0, 0, 0, 0.8)",
+                borderRadius: "8px",
+                pointerEvents: "auto",
+              }}
+            />
+
+            {/* Left Nav Arrow */}
+            {activePhotoIdx > 0 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevPhoto();
+                  setZoomScale(1);
+                  setPanOffset({ x: 0, y: 0 });
+                }}
+                aria-label={t("lightboxPrev", "Vorheriges Bild")}
+                style={{
+                  position: "absolute",
+                  left: "20px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(18, 20, 26, 0.85)",
+                  border: "1px solid rgba(212, 175, 55, 0.4)",
+                  color: "#D4AF37",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  backdropFilter: "blur(12px)",
+                  zIndex: 20,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
+                  e.currentTarget.style.transform = "translateY(-50%) scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(18, 20, 26, 0.85)";
+                  e.currentTarget.style.transform = "translateY(-50%) scale(1)";
+                }}
+              >
+                <Icon name="chevron-left" size={24} />
+              </button>
+            )}
+
+            {/* Right Nav Arrow */}
+            {activePhotoIdx < uniquePhotos.length - 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNextPhoto();
+                  setZoomScale(1);
+                  setPanOffset({ x: 0, y: 0 });
+                }}
+                aria-label={t("lightboxNext", "Nächstes Bild")}
+                style={{
+                  position: "absolute",
+                  right: "20px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  width: "48px",
+                  height: "48px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(18, 20, 26, 0.85)",
+                  border: "1px solid rgba(212, 175, 55, 0.4)",
+                  color: "#D4AF37",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  backdropFilter: "blur(12px)",
+                  zIndex: 20,
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.25)";
+                  e.currentTarget.style.transform = "translateY(-50%) scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = "rgba(18, 20, 26, 0.85)";
+                  e.currentTarget.style.transform = "translateY(-50%) scale(1)";
+                }}
+              >
+                <Icon name="chevron-right" size={24} />
+              </button>
+            )}
+          </div>
+
+          {/* Bottom Thumbnails Strip across full collection */}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              padding: "12px 20px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgba(10, 12, 16, 0.9)",
+              backdropFilter: "blur(12px)",
+              flexShrink: 0,
+            }}
+          >
+            <div
+              ref={lightboxThumbStripRef}
+              style={{
+                display: "grid",
+                gridAutoFlow: "column",
+                gridAutoColumns: "minmax(70px, 86px)",
+                gap: "8px",
+                overflowX: "auto",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                padding: "4px 0",
+              }}
+            >
+              {uniquePhotos.map((photo, idx) => {
+                const isActive = idx === activePhotoIdx;
+                return (
+                  <button
+                    key={`lb-thumb-${photo}-${idx}`}
+                    ref={(el) => (lightboxThumbRefs.current[idx] = el)}
+                    type="button"
+                    onClick={() => handleSelectPhotoInZoom(idx)}
+                    style={{
+                      position: "relative",
+                      aspectRatio: "16 / 10",
+                      padding: 0,
+                      borderRadius: "6px",
+                      border: isActive ? "2px solid #D4AF37" : "1px solid rgba(255, 255, 255, 0.15)",
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      backgroundColor: "#000",
+                      opacity: isActive ? 1 : 0.55,
+                      transform: isActive ? "scale(1.05)" : "scale(1)",
+                      transition: "all 0.15s ease",
+                      boxShadow: isActive ? "0 0 10px rgba(212, 175, 55, 0.5)" : "none",
+                    }}
+                  >
+                    <img
+                      src={photo}
+                      alt={`Miniatur ${idx + 1}`}
+                      loading="lazy"
+                      onError={() => handleImageError(idx)}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        display: "block",
+                      }}
+                    />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -168,25 +168,23 @@ export function CarMediaManager({ media = {}, onChange }) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
         <div>
           <label style={{ fontSize: "var(--font-size-sm)", fontWeight: 700, color: "var(--color-admin-text)" }}>
-            Fahrzeugbilder ({gallery.length} von max. 20)
+            Fahrzeugbilder ({gallery.length})
           </label>
           <span style={{ fontSize: "var(--font-size-xs)", color: "var(--color-admin-muted)", marginLeft: "8px" }}>
             Mindestens 1 Bild erforderlich
           </span>
         </div>
 
-        {gallery.length < 20 && (
-          <Button
-            type="button"
-            variant="primary"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading}
-          >
-            <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-            Bilder vom Gerät hochladen
-          </Button>
-        )}
+        <Button
+          type="button"
+          variant="primary"
+          size="sm"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
+        >
+          <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
+          Bilder vom Gerät hochladen
+        </Button>
       </div>
 
       <input
@@ -202,47 +200,45 @@ export function CarMediaManager({ media = {}, onChange }) {
       />
 
       {/* Drag & Drop Area */}
-      {gallery.length < 20 && (
-        <div
-          onDragOver={(e) => {
-            e.preventDefault();
-            setIsDragOver(true);
-          }}
-          onDragLeave={() => setIsDragOver(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            setIsDragOver(false);
-            if (e.dataTransfer.files?.length) {
-              processFiles(e.dataTransfer.files);
-            }
-          }}
-          onClick={() => fileInputRef.current?.click()}
-          style={{
-            border: isDragOver ? "2px dashed var(--color-admin-accent, #0284c7)" : "2px dashed var(--color-admin-border, #e2e8f0)",
-            borderRadius: "var(--radius-lg, 12px)",
-            padding: "24px 16px",
-            textAlign: "center",
-            backgroundColor: isDragOver ? "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.08))" : "var(--color-admin-border-subtle, #f8fafc)",
-            cursor: "pointer",
-            transition: "all 0.2s ease",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "8px",
-          }}
-        >
-          <Icon name="upload" size={24} style={{ color: "var(--color-admin-accent, #0284c7)" }} />
-          <div>
-            <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
-              {t("dragImagesOrBrowse", { defaultValue: "Bilder hierher ziehen oder durchsuchen" })}
-            </span>
-            <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted, #64748b)", marginTop: "2px" }}>
-              {t("uploadFormatsHelp", { defaultValue: "JPG, PNG, WEBP oder AVIF direkt von Ihrem Gerät hochladen (max. 20 Bilder)" })}
-            </span>
-          </div>
+      <div
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragOver(false);
+          if (e.dataTransfer.files?.length) {
+            processFiles(e.dataTransfer.files);
+          }
+        }}
+        onClick={() => fileInputRef.current?.click()}
+        style={{
+          border: isDragOver ? "2px dashed var(--color-admin-accent, #0284c7)" : "2px dashed var(--color-admin-border, #e2e8f0)",
+          borderRadius: "var(--radius-lg, 12px)",
+          padding: "24px 16px",
+          textAlign: "center",
+          backgroundColor: isDragOver ? "var(--color-admin-accent-subtle, rgba(2, 132, 199, 0.08))" : "var(--color-admin-border-subtle, #f8fafc)",
+          cursor: "pointer",
+          transition: "all 0.2s ease",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "8px",
+        }}
+      >
+        <Icon name="upload" size={24} style={{ color: "var(--color-admin-accent, #0284c7)" }} />
+        <div>
+          <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
+            {t("dragImagesOrBrowse", { defaultValue: "Bilder hierher ziehen oder durchsuchen" })}
+          </span>
+          <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted, #64748b)", marginTop: "2px" }}>
+            {t("uploadFormatsHelp", { defaultValue: "JPG, PNG, WEBP oder AVIF direkt von Ihrem Gerät hochladen (max. 15 MB pro Bild)" })}
+          </span>
         </div>
-      )}
+      </div>
 
       {/* Progress & Error indicators */}
       {isUploading && (

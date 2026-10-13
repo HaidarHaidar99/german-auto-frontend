@@ -583,7 +583,7 @@ export function CarEditorModal({
     { key: "core", label: t("coreDataTab", { defaultValue: "Core Data & Required Fields *" }), icon: "car" },
     { key: "specs", label: t("specsTab", { defaultValue: "Specifications & Details" }), icon: "sliders" },
     { key: "equipment", label: `${t("equipmentTab", { defaultValue: "Equipment & Features" })} (${form.equipment.length})`, icon: "layers" },
-    { key: "media", label: `${t("mediaTab", { defaultValue: "Images" })} (${galleryImages.length}/20) *`, icon: "image" },
+    { key: "media", label: `${t("mediaTab", { defaultValue: "Images" })} (${galleryImages.length}) *`, icon: "image" },
   ];
 
   return (
@@ -1052,25 +1052,23 @@ export function CarEditorModal({
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
               <div>
                 <h4 style={{ margin: 0, fontSize: "14px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
-                  {t("vehicleMediaTitle", { count: galleryImages.length, defaultValue: `Vehicle Images (${galleryImages.length} of max. 20)` })}
+                  {t("vehicleMediaTitle", { count: galleryImages.length, defaultValue: `Vehicle Images (${galleryImages.length})` })}
                 </h4>
                 <p style={{ margin: "2px 0 0", fontSize: "12px", color: "var(--color-admin-muted)" }}>
                   {t("vehicleMediaDesc", { defaultValue: "Upload images directly from your device. The first image is automatically used as the cover, but you can set any image as the cover." })}
                 </p>
               </div>
 
-              {galleryImages.length < 20 && (
-                <Button
-                  type="button"
-                  variant="primary"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                >
-                  <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
-                  {t("uploadFromDevice", { defaultValue: "Upload Images from Device" })}
-                </Button>
-              )}
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                <Icon name="upload" size={14} style={{ marginRight: "6px" }} />
+                {t("uploadFromDevice", { defaultValue: "Upload Images from Device" })}
+              </Button>
             </div>
 
             {/* Hidden file input */}
@@ -1084,51 +1082,49 @@ export function CarEditorModal({
             />
 
             {/* Upload Area / Drag & Drop Dropzone */}
-            {galleryImages.length < 20 && (
+            <div
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                border: isDragOver ? "2px dashed #D4AF37" : "2px dashed var(--color-admin-border, #cbd5e1)",
+                borderRadius: "var(--radius-lg, 12px)",
+                padding: "24px 16px",
+                textAlign: "center",
+                backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.02))",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+              }}
+            >
               <div
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
                 style={{
-                  border: isDragOver ? "2px dashed #D4AF37" : "2px dashed var(--color-admin-border, #cbd5e1)",
-                  borderRadius: "var(--radius-lg, 12px)",
-                  padding: "24px 16px",
-                  textAlign: "center",
-                  backgroundColor: isDragOver ? "rgba(212, 175, 55, 0.08)" : "var(--color-admin-border-subtle, rgba(0, 0, 0, 0.02))",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "50%",
+                  backgroundColor: "var(--color-admin-pill-bg, rgba(212, 175, 55, 0.12))",
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
                   justifyContent: "center",
-                  gap: "8px",
+                  color: "#D4AF37",
                 }}
               >
-                <div
-                  style={{
-                    width: "44px",
-                    height: "44px",
-                    borderRadius: "50%",
-                    backgroundColor: "var(--color-admin-pill-bg, rgba(212, 175, 55, 0.12))",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#D4AF37",
-                  }}
-                >
-                  <Icon name="upload" size={22} />
-                </div>
-                <div>
-                  <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
-                    {t("dragImagesOrBrowse", { defaultValue: "Drag images here or browse" })}
-                  </span>
-                  <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
-                    {t("imageFormatsAllowed", { defaultValue: "JPG, PNG, WEBP or AVIF (max. 15 MB per image)" })}
-                  </span>
-                </div>
+                <Icon name="upload" size={22} />
               </div>
-            )}
+              <div>
+                <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-admin-text, #0f172a)" }}>
+                  {t("dragImagesOrBrowse", { defaultValue: "Drag images here or browse" })}
+                </span>
+                <span style={{ display: "block", fontSize: "11px", color: "var(--color-admin-muted)", marginTop: "2px" }}>
+                  {t("imageFormatsAllowed", { defaultValue: "JPG, PNG, WEBP or AVIF (max. 15 MB per image)" })}
+                </span>
+              </div>
+            </div>
 
             {/* Uploading progress indicator */}
             {isUploading && (
