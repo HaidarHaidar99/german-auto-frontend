@@ -102,6 +102,13 @@ export const publicInventoryService = {
   },
 
   /**
+   * Alias for getUnifiedCatalog for backward compatibility and clean API
+   */
+  async getPublicVehicles(filters = {}, options = {}) {
+    return this.getUnifiedCatalog(filters, options);
+  },
+
+  /**
    * Fetch unified catalog combining Carmuca and published local cars
    */
   async getUnifiedCatalog(filters = {}, options = {}) {

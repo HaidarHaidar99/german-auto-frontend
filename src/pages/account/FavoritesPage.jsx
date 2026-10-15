@@ -49,7 +49,8 @@ export function FavoritesPage() {
         }
 
         // Fetch unified inventory containing both Carmuca API vehicles and published local cars
-        const inventory = await publicInventoryService.getPublicVehicles({ limit: 150 });
+        const fetchFn = publicInventoryService.getUnifiedCatalog || publicInventoryService.getPublicVehicles;
+        const inventory = fetchFn ? await fetchFn.call(publicInventoryService, { limit: 150 }) : { vehicles: [] };
         const allVehicles = inventory?.vehicles || [];
         const matched = allVehicles.filter(
           (c) => guestIds.includes(c.id) || guestIds.includes(c.external_id) || guestIds.includes(c.slug)
