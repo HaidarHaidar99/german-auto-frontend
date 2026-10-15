@@ -105,15 +105,9 @@ export function AboutPage() {
         boxSizing: "border-box",
       }}
     >
-      {/* 1. Main About Story Card (Starts at top of page with 0 space) */}
+      {/* 1. Main About Story with text on authentic dealership imagery */}
       <div data-aos="fade-up" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", marginTop: 0 }}>
-        <AboutStory
-          title={pageTitle}
-          subtitle={pageSubtitle}
-          description={storyDescription}
-          siteName={siteConfig.name}
-          style={{ marginTop: 0 }}
-        />
+        <AboutStory style={{ marginTop: 0 }} />
       </div>
 
       {/* 2. Visual Storytelling (omits cleanly if no CMS media) */}

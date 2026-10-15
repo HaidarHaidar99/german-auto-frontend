@@ -287,9 +287,8 @@ export function HeaderNav({
   };
 
   const siteName = settings?.site?.name || DEFAULT_BRAND_NAME;
-  const activeLogoUrl = (!isDark && settings?.branding?.logo_light_url)
-    ? settings.branding.logo_light_url
-    : (settings?.branding?.logo_url || settings?.branding?.logo_dark_url || DEFAULT_LOGO_URL);
+  const darkLogoUrl = settings?.branding?.logo_url || settings?.branding?.logo_dark_url || DEFAULT_LOGO_URL;
+  const lightLogoUrl = settings?.branding?.logo_light_url || darkLogoUrl;
 
   const isTransparent = transparent && !isScrolled && !menuOpen;
 
@@ -324,7 +323,7 @@ export function HeaderNav({
             width: "100%",
           }}
         >
-          {/* Logo / Brand Name - completely stable with no shadow or action on nav click */}
+          {/* Logo / Brand Name - pre-rendered dark & light variants for instant zero-lag theme transition */}
           <Link
             to="/"
             onClick={handleHomeClick}
@@ -336,11 +335,15 @@ export function HeaderNav({
               boxShadow: "none",
               border: "none",
               outline: "none",
+              position: "relative",
             }}
           >
+            {/* Dark Mode Logo */}
             <img
-              src={activeLogoUrl}
+              src={darkLogoUrl}
               alt={siteName}
+              loading="eager"
+              fetchPriority="high"
               style={{
                 height: "96px",
                 maxHeight: "100px",
@@ -348,12 +351,33 @@ export function HeaderNav({
                 maxWidth: "380px",
                 objectFit: "contain",
                 borderRadius: "4px",
-                display: "block",
+                display: isDark ? "block" : "none",
                 border: "none",
                 boxShadow: "none",
                 filter: "none",
               }}
             />
+            {/* Light Mode Logo */}
+            {lightLogoUrl !== darkLogoUrl && (
+              <img
+                src={lightLogoUrl}
+                alt={siteName}
+                loading="eager"
+                fetchPriority="high"
+                style={{
+                  height: "96px",
+                  maxHeight: "100px",
+                  width: "auto",
+                  maxWidth: "380px",
+                  objectFit: "contain",
+                  borderRadius: "4px",
+                  display: !isDark ? "block" : "none",
+                  border: "none",
+                  boxShadow: "none",
+                  filter: "none",
+                }}
+              />
+            )}
           </Link>
 
           {/* Desktop Navigation Links */}

@@ -94,6 +94,22 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
     setStagePanOffset({ x: 0, y: 0 });
   }, [activePhotoIdx]);
 
+  // Preload adjacent images (next 2 and previous 1) so navigation is instant
+  useEffect(() => {
+    if (!uniquePhotos.length) return;
+    const toPreload = [
+      uniquePhotos[activePhotoIdx + 1],
+      uniquePhotos[activePhotoIdx + 2],
+      uniquePhotos[activePhotoIdx - 1],
+    ].filter(Boolean);
+
+    toPreload.forEach((src) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
+    });
+  }, [activePhotoIdx, uniquePhotos]);
+
   // Gallery container ref to isolate scrolling and keep page completely still
   const galleryRef = useRef(null);
 
@@ -833,6 +849,8 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
                 src={currentPhotoSrc}
                 alt={`${vehicleAlt} — Ansicht ${activePhotoIdx + 1}`}
                 loading={activePhotoIdx === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={activePhotoIdx === 0 ? "high" : "auto"}
                 draggable={false}
                 onError={() => handleImageError(activePhotoIdx)}
                 style={{
@@ -1065,6 +1083,7 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
                   src={photo}
                   alt={`Thumbnail ${idx + 1}`}
                   loading="lazy"
+                  decoding="async"
                   onError={() => handleImageError(idx)}
                   style={{
                     width: "100%",
@@ -1381,6 +1400,7 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
               src={currentPhotoSrc}
               alt={`${vehicleAlt} — Großansicht ${activePhotoIdx + 1}`}
               draggable={false}
+              decoding="async"
               onDoubleClick={handleToggleZoom}
               onError={() => handleImageError(activePhotoIdx)}
               style={{

@@ -55,8 +55,13 @@ export function AboutLocations({ locations = [], className = "", style = {} }) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gridTemplateColumns: validLocations.length === 1 ? "minmax(280px, 580px)" : "repeat(auto-fit, minmax(300px, 1fr))",
+          justifyContent: "center",
           gap: "var(--space-lg)",
+          maxWidth: validLocations.length === 1 ? "580px" : "100%",
+          margin: "0 auto",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {validLocations.map((loc, idx) => {

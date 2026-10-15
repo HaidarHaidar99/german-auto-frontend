@@ -12,6 +12,8 @@ export function CinematicImage({
   aspectRatio,
   zoomOnHover = true,
   loading = "lazy",
+  fetchPriority,
+  decoding = "async",
   objectFit = "cover",
   className = "",
   style = {},
@@ -19,6 +21,7 @@ export function CinematicImage({
 }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const priority = fetchPriority || (loading === "eager" ? "high" : "auto");
 
   if (!src || hasError) {
     return (
@@ -66,14 +69,21 @@ export function CinematicImage({
         src={src}
         alt={alt}
         loading={loading}
+        decoding={decoding}
+        fetchPriority={priority}
+        ref={(el) => {
+          if (el && el.complete && el.naturalWidth > 0 && !isLoaded) {
+            setIsLoaded(true);
+          }
+        }}
         onLoad={() => setIsLoaded(true)}
         onError={() => setHasError(true)}
         style={{
           width: "100%",
           height: "100%",
           objectFit,
-          opacity: isLoaded ? 1 : 0,
-          transition: `opacity var(--duration-smooth) var(--ease-smooth), transform var(--duration-smooth) var(--ease-cinematic)`,
+          opacity: isLoaded ? 1 : (loading === "eager" ? 0.7 : 0),
+          transition: "opacity 0.25s ease-out, transform var(--duration-smooth) var(--ease-cinematic)",
           transform: zoomOnHover ? "scale(1)" : "none",
         }}
       />

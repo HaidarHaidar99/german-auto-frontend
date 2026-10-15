@@ -14,6 +14,8 @@ import { Grid } from "../../components/ui/Layout";
 import { useGsapContext } from "../../hooks/useAnimation";
 import { gsap, isReducedMotion } from "../../utils/animation";
 
+import publicInventoryService from "../../services/cars/publicInventory.service.js";
+
 let cachedFavoritesCars = null;
 
 export function FavoritesPage() {
@@ -45,11 +47,42 @@ export function FavoritesPage() {
           setLoading(false);
           return;
         }
-        const res = await carsService.getCars({ limit: 100 });
-        const allCars = res?.data?.cars || [];
-        const filtered = allCars.filter((c) => guestIds.includes(c.id));
-        setCars(filtered);
-        cachedFavoritesCars = filtered;
+
+        // Fetch unified inventory containing both Carmuca API vehicles and published local cars
+        const inventory = await publicInventoryService.getPublicVehicles({ limit: 150 });
+        const allVehicles = inventory?.vehicles || [];
+        const matched = allVehicles.filter(
+          (c) => guestIds.includes(c.id) || guestIds.includes(c.external_id) || guestIds.includes(c.slug)
+        );
+
+        // Fetch individually for any ID not found in the initial page
+        const missingIds = guestIds.filter(
+          (gid) => !matched.some((c) => c.id === gid || c.external_id === gid || c.slug === gid)
+        );
+
+        if (missingIds.length > 0) {
+          const singleResults = await Promise.allSettled(
+            missingIds.map((id) => publicInventoryService.getPublicVehicle(id))
+          );
+          singleResults.forEach((res) => {
+            if (res.status === "fulfilled" && res.value) {
+              matched.push(res.value);
+            }
+          });
+        }
+
+        // Clean up stale IDs that truly no longer exist anywhere
+        const staleIds = guestIds.filter(
+          (gid) => !matched.some((c) => c.id === gid || c.external_id === gid || c.slug === gid)
+        );
+        if (staleIds.length > 0 && typeof window !== "undefined") {
+          const cleaned = guestIds.filter((gid) => !staleIds.includes(gid));
+          localStorage.setItem("german_auto_guest_favorites", JSON.stringify(cleaned));
+          window.dispatchEvent(new Event("storage"));
+        }
+
+        setCars(matched);
+        cachedFavoritesCars = matched;
       } else {
         if (favorites.length === 0) {
           setCars([]);

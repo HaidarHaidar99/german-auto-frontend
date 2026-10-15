@@ -18,8 +18,8 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
   const hasEmail = true;
   const hasWhatsapp = Boolean(contact?.whatsapp);
 
-  // Format hours dynamically if configured in CMS
-  const formatHours = (h) => {
+  // Format hours dynamically into lines (Mo-Fr on line 1, Sa on line 2)
+  const getHoursLines = (h) => {
     if (!h) return null;
     const days = [
       { key: "monday", de: "Mo", en: "Mon" },
@@ -47,15 +47,14 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
       }
     }
     if (groups.length === 0) return null;
-    const parts = groups.map((g) => {
+    return groups.map((g) => {
       const start = g.days[0].de;
       const end = g.days[g.days.length - 1].de;
       const span = g.days.length > 2 ? `${start}–${end}` : g.days.map((d) => d.de).join(", ");
-      return `${span}: ${g.timeStr}`;
+      return `${span}: ${g.timeStr} Uhr`;
     });
-    return parts.join(" | ") + " Uhr";
   };
-  const formattedHours = formatHours(hours);
+  const hoursLines = getHoursLines(hours);
 
   return (
     <section
@@ -165,7 +164,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
           </div>
 
           {/* Real Contact Channels & Hours Grid */}
-          {(hasPhone || hasEmail || hasWhatsapp || Boolean(formattedHours)) && (
+          {(hasPhone || hasEmail || hasWhatsapp || Boolean(hoursLines)) && (
             <div
               style={{
                 display: "grid",
@@ -231,6 +230,8 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                     border: "1px solid var(--color-border-subtle)",
                     textDecoration: "none",
                     color: "inherit",
+                    minWidth: 0,
+                    overflow: "hidden",
                     transition: "transform var(--transition-fast), border-color var(--transition-fast)",
                   }}
                   className="surface-card-hover"
@@ -250,11 +251,22 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                   >
                     <Icon name="mail" size={18} />
                   </div>
-                  <div>
+                  <div style={{ minWidth: 0, flex: 1, overflow: "hidden" }}>
                     <div style={{ fontSize: "var(--font-size-2xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wide)", color: "var(--color-text-subtle)", fontWeight: 600 }}>
                       {t("emailLabel")}
                     </div>
-                    <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)", marginTop: "2px" }}>
+                    <div
+                      title={contactEmail}
+                      style={{
+                        fontWeight: 600,
+                        fontSize: "var(--font-size-sm)",
+                        color: "var(--color-text)",
+                        marginTop: "2px",
+                        overflowWrap: "anywhere",
+                        wordBreak: "break-word",
+                        lineHeight: 1.35,
+                      }}
+                    >
                       {contactEmail}
                     </div>
                   </div>
@@ -306,7 +318,7 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                 </a>
               )}
 
-              {formattedHours && (
+              {hoursLines && (
                 <div
                   style={{
                     display: "flex",
@@ -333,12 +345,14 @@ export function AboutContactCta({ contact = {}, hours = {}, className = "", styl
                   >
                     <Icon name="clock" size={18} />
                   </div>
-                  <div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
                     <div style={{ fontSize: "var(--font-size-2xs)", textTransform: "uppercase", letterSpacing: "var(--tracking-wide)", color: "var(--color-text-subtle)", fontWeight: 600 }}>
                       {t("hoursLabel")}
                     </div>
-                    <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)", marginTop: "2px" }}>
-                      {formattedHours}
+                    <div style={{ fontWeight: 600, fontSize: "var(--font-size-sm)", color: "var(--color-text)", marginTop: "2px", lineHeight: 1.4 }}>
+                      {hoursLines.map((line, idx) => (
+                        <div key={idx}>{line}</div>
+                      ))}
                     </div>
                   </div>
                 </div>
