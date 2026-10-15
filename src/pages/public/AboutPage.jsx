@@ -1,9 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useSettings } from "../../contexts/SettingsContext";
-import AboutHero from "../../components/about/AboutHero";
 import AboutStory from "../../components/about/AboutStory";
-import AboutVisualSection from "../../components/about/AboutVisualSection";
 import AboutLocations from "../../components/about/AboutLocations";
 import AboutContactCta from "../../components/about/AboutContactCta";
 import { useGsapContext } from "../../hooks/useAnimation";
@@ -78,7 +76,6 @@ export function AboutPage() {
 
     const animatedSections = [
       ".about-story-section",
-      ".about-visual-section",
       ".about-locations-section",
       ".about-contact-cta",
     ];
@@ -101,26 +98,21 @@ export function AboutPage() {
         width: "100%",
         maxWidth: "1320px",
         margin: "0 auto",
-        padding: "0 clamp(16px, 4vw, 32px) clamp(2.5rem, 5vw, 4rem)",
+        padding: "clamp(24px, 4vw, 48px) clamp(16px, 4vw, 32px) clamp(2.5rem, 5vw, 4rem)",
         boxSizing: "border-box",
       }}
     >
-      {/* 1. Main About Story with text on authentic dealership imagery */}
-      <div data-aos="fade-up" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box", marginTop: 0 }}>
-        <AboutStory style={{ marginTop: 0 }} />
+      {/* 1. Main About Story with text on authentic dealership image (3.jpeg) */}
+      <div data-aos="fade-up" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
+        <AboutStory />
       </div>
 
-      {/* 2. Visual Storytelling (omits cleanly if no CMS media) */}
-      <div data-aos="zoom-in" data-aos-delay="100" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
-        <AboutVisualSection mediaItems={visualMediaItems} />
-      </div>
-
-      {/* 3. Configured Dealership Locations (omits cleanly if no locations in CMS) */}
+      {/* 2. Configured Dealership Locations (omits cleanly if no locations in CMS) */}
       <div data-aos="fade-up" data-aos-delay="150" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <AboutLocations locations={locationsConfig} />
       </div>
 
-      {/* 4. Contact CTA (uses real contact channels & opening hours) */}
+      {/* 3. Contact CTA (uses real contact channels & opening hours) */}
       <div data-aos="fade-up" data-aos-delay="200" style={{ width: "100%", maxWidth: "100%", boxSizing: "border-box" }}>
         <AboutContactCta
           contact={contactConfig}
@@ -133,7 +125,7 @@ export function AboutPage() {
           .about-page {
             padding-left: 16px !important;
             padding-right: 16px !important;
-            padding-top: 0 !important;
+            padding-top: 24px !important;
           }
         }
       `}</style>

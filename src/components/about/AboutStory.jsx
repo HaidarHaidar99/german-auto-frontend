@@ -1,25 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../../contexts/ThemeContext";
 import Badge from "../ui/Badge";
-import Icon from "../common/Icon";
-import img1 from "../../assets/4images/1.jpeg";
-import img2 from "../../assets/4images/2.jpeg";
 import img3 from "../../assets/4images/3.jpeg";
-import img4 from "../../assets/4images/4.jpeg";
-import img5 from "../../assets/4images/5.jpeg";
-
-const ABOUT_IMAGES = [img1, img2, img3, img4, img5];
 
 /**
  * German Auto — AboutStory Component
- * Luxury editorial showcase displaying the official dealership story directly on top
- * of authentic dealership photography, with interactive image controls and glassmorphism.
+ * Displays the dealership story directly over the authentic dealership image (3.jpeg).
+ * High-definition presentation with zero blurring or pixelation, and comfortable spacing.
  */
 export function AboutStory({ className = "", style = {} }) {
-  const { t, i18n } = useTranslation(["about", "common"]);
+  const { i18n } = useTranslation(["about", "common"]);
   const { isDark } = useTheme?.() || { isDark: true };
-  const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "de";
 
@@ -41,14 +33,12 @@ export function AboutStory({ className = "", style = {} }) {
         "Besuchen Sie uns an der Neuweide 26 in 47495 Rheinberg. Wir freuen uns darauf, Sie bei der Suche nach Ihrem nächsten Fahrzeug zu unterstützen.",
       ];
 
-  const currentImage = ABOUT_IMAGES[activeImageIdx] || img1;
-
   return (
     <section
       className={`about-story-section ${className}`.trim()}
       aria-labelledby="story-heading"
       style={{
-        marginTop: 0,
+        marginTop: "clamp(28px, 4.5vw, 52px)",
         marginBottom: "clamp(2.5rem, 5vw, 4rem)",
         width: "100%",
         maxWidth: "100%",
@@ -64,17 +54,16 @@ export function AboutStory({ className = "", style = {} }) {
           overflow: "hidden",
           border: isDark ? "1px solid rgba(212, 175, 55, 0.4)" : "1px solid rgba(212, 175, 55, 0.5)",
           boxShadow: isDark
-            ? "0 12px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(212, 175, 55, 0.15)"
-            : "0 12px 36px rgba(0, 0, 0, 0.1)",
-          minHeight: "560px",
+            ? "0 16px 48px rgba(0, 0, 0, 0.7), 0 0 24px rgba(212, 175, 55, 0.15)"
+            : "0 12px 36px rgba(0, 0, 0, 0.12)",
+          minHeight: "540px",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
+          alignItems: "center",
           width: "100%",
           boxSizing: "border-box",
         }}
       >
-        {/* Background Dealership Image with Smooth Fade */}
+        {/* Background Dealership Image - 3.jpeg (Clear, sharp, not blurred) */}
         <div
           style={{
             position: "absolute",
@@ -84,41 +73,40 @@ export function AboutStory({ className = "", style = {} }) {
           }}
         >
           <img
-            key={currentImage}
-            src={currentImage}
-            alt="König Automobile Rheinberg"
+            src={img3}
+            alt="König Automobile Rheinberg Standort"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             style={{
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              objectPosition: "center 40%",
+              objectPosition: "center 35%",
               display: "block",
-              transform: "scale(1.02)",
-              transition: "opacity 0.5s ease, transform 6s ease-out",
             }}
           />
 
-          {/* Luxury Gradient Overlay for Guaranteed Text Readability */}
+          {/* High-Contrast Luxury Gradient: leaves image sharp while ensuring 100% text legibility */}
           <div
             style={{
               position: "absolute",
               inset: 0,
               background: isDark
-                ? "linear-gradient(135deg, rgba(5, 6, 8, 0.94) 0%, rgba(9, 11, 15, 0.82) 55%, rgba(9, 11, 15, 0.6) 100%)"
-                : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.86) 55%, rgba(255, 255, 255, 0.65) 100%)",
-              backdropFilter: "blur(2px)",
+                ? "linear-gradient(105deg, rgba(6, 8, 11, 0.94) 0%, rgba(9, 11, 15, 0.88) 50%, rgba(9, 11, 15, 0.55) 100%)"
+                : "linear-gradient(105deg, rgba(255, 255, 255, 0.96) 0%, rgba(255, 255, 255, 0.90) 50%, rgba(255, 255, 255, 0.6) 100%)",
               pointerEvents: "none",
             }}
           />
         </div>
 
-        {/* Content Container positioned cleanly on the image */}
+        {/* Content Container positioned cleanly over the image */}
         <div
           style={{
             position: "relative",
             zIndex: 2,
-            padding: "clamp(24px, 5vw, 48px)",
-            maxWidth: "840px",
+            padding: "clamp(28px, 5vw, 56px)",
+            maxWidth: "860px",
             boxSizing: "border-box",
           }}
         >
@@ -133,10 +121,10 @@ export function AboutStory({ className = "", style = {} }) {
           <h1
             id="story-heading"
             style={{
-              fontSize: "clamp(1.85rem, 3.8vw, 2.9rem)",
+              fontSize: "clamp(1.85rem, 3.8vw, 2.85rem)",
               fontWeight: 800,
               letterSpacing: "var(--tracking-tight)",
-              lineHeight: 1.15,
+              lineHeight: 1.16,
               color: isDark ? "#ffffff" : "#0f172a",
               margin: "0 0 10px 0",
               textShadow: isDark ? "0 2px 10px rgba(0, 0, 0, 0.7)" : "none",
@@ -159,7 +147,7 @@ export function AboutStory({ className = "", style = {} }) {
             {subtitleText}
           </p>
 
-          {/* Paragraphs with Luxury Spacing */}
+          {/* Paragraphs */}
           <div
             style={{
               display: "flex",
@@ -167,7 +155,7 @@ export function AboutStory({ className = "", style = {} }) {
               gap: "14px",
               fontSize: "clamp(0.95rem, 1.5vw, 1.08rem)",
               lineHeight: 1.68,
-              color: isDark ? "rgba(243, 244, 246, 0.92)" : "#334155",
+              color: isDark ? "rgba(243, 244, 246, 0.94)" : "#334155",
             }}
           >
             {paragraphs.map((para, pIdx) => (
@@ -175,99 +163,12 @@ export function AboutStory({ className = "", style = {} }) {
                 key={pIdx}
                 style={{
                   margin: 0,
-                  textShadow: isDark ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
+                  textShadow: isDark ? "0 1px 4px rgba(0,0,0,0.5)" : "none",
                 }}
               >
                 {para}
               </p>
             ))}
-          </div>
-        </div>
-
-        {/* Bottom Interactive Thumbnail Strip & Counter to view all images */}
-        <div
-          style={{
-            position: "relative",
-            zIndex: 3,
-            padding: "clamp(16px, 3vw, 24px) clamp(24px, 5vw, 48px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "14px",
-            borderTop: isDark ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(0, 0, 0, 0.08)",
-            backgroundColor: isDark ? "rgba(7, 8, 10, 0.65)" : "rgba(255, 255, 255, 0.65)",
-            backdropFilter: "blur(12px)",
-          }}
-        >
-          {/* Active Image Indicator */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              color: isDark ? "#D4AF37" : "#B8860B",
-              fontSize: "13px",
-              fontWeight: 700,
-            }}
-          >
-            <Icon name="image" size={16} color={isDark ? "#D4AF37" : "#B8860B"} />
-            <span>
-              {currentLang === "en" ? "Impression" : "Ansicht"} {activeImageIdx + 1} / {ABOUT_IMAGES.length}
-            </span>
-          </div>
-
-          {/* Thumbnails to switch between all 5 images */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              overflowX: "auto",
-              padding: "2px 0",
-            }}
-          >
-            {ABOUT_IMAGES.map((img, idx) => {
-              const isActive = idx === activeImageIdx;
-              return (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => setActiveImageIdx(idx)}
-                  aria-label={`Bild ${idx + 1} anzeigen`}
-                  style={{
-                    width: "56px",
-                    height: "38px",
-                    borderRadius: "8px",
-                    padding: 0,
-                    overflow: "hidden",
-                    border: isActive
-                      ? "2px solid #D4AF37"
-                      : isDark
-                      ? "1px solid rgba(255, 255, 255, 0.2)"
-                      : "1px solid rgba(0, 0, 0, 0.15)",
-                    cursor: "pointer",
-                    opacity: isActive ? 1 : 0.65,
-                    transform: isActive ? "scale(1.06)" : "scale(1)",
-                    transition: "all 0.2s ease",
-                    boxShadow: isActive && isDark ? "0 0 10px rgba(212, 175, 55, 0.5)" : "none",
-                    backgroundColor: "transparent",
-                    flexShrink: 0,
-                  }}
-                >
-                  <img
-                    src={img}
-                    alt={`Thumbnail ${idx + 1}`}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      display: "block",
-                    }}
-                  />
-                </button>
-              );
-            })}
           </div>
         </div>
       </div>
