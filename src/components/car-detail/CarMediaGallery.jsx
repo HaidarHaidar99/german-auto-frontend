@@ -78,6 +78,22 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
   const lightboxThumbStripRef = useRef(null);
   const lightboxThumbRefs = useRef([]);
 
+  // Stage Pinch-to-Zoom (Touch min and max) & Panning State
+  const [stageZoomScale, setStageZoomScale] = useState(1);
+  const [stagePanOffset, setStagePanOffset] = useState({ x: 0, y: 0 });
+  const isPinchingStage = useRef(false);
+  const pinchStartDist = useRef(0);
+  const pinchStartScale = useRef(1);
+  const isPanningStage = useRef(false);
+  const stagePanStart = useRef({ x: 0, y: 0 });
+  const lastStageTapTime = useRef(0);
+
+  // Reset stage zoom on photo navigation
+  useEffect(() => {
+    setStageZoomScale(1);
+    setStagePanOffset({ x: 0, y: 0 });
+  }, [activePhotoIdx]);
+
   // Gallery container ref to isolate scrolling and keep page completely still
   const galleryRef = useRef(null);
 
@@ -192,6 +208,145 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
     touchDeltaY.current = 0;
     isHorizontalSwipe.current = false;
     isVerticalScroll.current = false;
+  };
+
+  // ── Stage Touch Gestures: Pinch to Zoom (Min / Max) & Pan ──
+  const handleStageTouchStart = (e) => {
+    if (!e.touches) return;
+
+    if (e.touches.length === 2) {
+      isPinchingStage.current = true;
+      isPanningStage.current = false;
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      pinchStartDist.current = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      pinchStartScale.current = stageZoomScale;
+      return;
+    }
+
+    if (e.touches.length === 1) {
+      if (stageZoomScale > 1.05) {
+        isPanningStage.current = true;
+        isPinchingStage.current = false;
+        stagePanStart.current = {
+          x: e.touches[0].clientX - stagePanOffset.x,
+          y: e.touches[0].clientY - stagePanOffset.y,
+        };
+      } else {
+        handleTouchStart(e);
+      }
+    }
+  };
+
+  const handleStageTouchMove = (e) => {
+    if (!e.touches) return;
+
+    if (e.touches.length === 2 && isPinchingStage.current) {
+      if (e.cancelable) e.preventDefault();
+      const t1 = e.touches[0];
+      const t2 = e.touches[1];
+      const currentDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      const ratio = currentDist / (pinchStartDist.current || 1);
+      const newScale = Math.min(3.5, Math.max(1, +(pinchStartScale.current * ratio).toFixed(2)));
+      setStageZoomScale(newScale);
+      if (newScale <= 1.02) {
+        setStagePanOffset({ x: 0, y: 0 });
+      }
+      return;
+    }
+
+    if (e.touches.length === 1 && isPanningStage.current && stageZoomScale > 1.05) {
+      if (e.cancelable) e.preventDefault();
+      const maxPanX = (stageZoomScale - 1) * 220;
+      const maxPanY = (stageZoomScale - 1) * 140;
+      const newX = e.touches[0].clientX - stagePanStart.current.x;
+      const newY = e.touches[0].clientY - stagePanStart.current.y;
+      setStagePanOffset({
+        x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
+        y: Math.max(-maxPanY, Math.min(maxPanY, newY)),
+      });
+      return;
+    }
+
+    if (stageZoomScale <= 1.05) {
+      handleTouchMove(e);
+    }
+  };
+
+  const handleStageTouchEnd = () => {
+    if (isPinchingStage.current) {
+      isPinchingStage.current = false;
+      if (stageZoomScale <= 1.05) {
+        setStageZoomScale(1);
+        setStagePanOffset({ x: 0, y: 0 });
+      }
+      return;
+    }
+
+    if (isPanningStage.current) {
+      isPanningStage.current = false;
+    }
+
+    const now = Date.now();
+    const timeSinceLastTap = now - lastStageTapTime.current;
+
+    if (timeSinceLastTap < 300) {
+      lastStageTapTime.current = 0;
+      if (stageZoomScale > 1.05) {
+        setStageZoomScale(1);
+        setStagePanOffset({ x: 0, y: 0 });
+      } else {
+        setStageZoomScale(2.2);
+      }
+      return;
+    }
+
+    lastStageTapTime.current = now;
+
+    if (stageZoomScale <= 1.05) {
+      handleTouchEnd();
+    }
+  };
+
+  const handleStageTouchCancel = () => {
+    isPinchingStage.current = false;
+    isPanningStage.current = false;
+    handleTouchCancel();
+  };
+
+  const handleStageMouseDown = (e) => {
+    if (stageZoomScale > 1.05) {
+      isPanningStage.current = true;
+      stagePanStart.current = {
+        x: e.clientX - stagePanOffset.x,
+        y: e.clientY - stagePanOffset.y,
+      };
+    }
+  };
+
+  const handleStageMouseMove = (e) => {
+    if (!isPanningStage.current || stageZoomScale <= 1.05) return;
+    const maxPanX = (stageZoomScale - 1) * 220;
+    const maxPanY = (stageZoomScale - 1) * 140;
+    const newX = e.clientX - stagePanStart.current.x;
+    const newY = e.clientY - stagePanStart.current.y;
+    setStagePanOffset({
+      x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, newY)),
+    });
+  };
+
+  const handleStageMouseUp = () => {
+    isPanningStage.current = false;
+  };
+
+  const handleStageDoubleClick = () => {
+    if (stageZoomScale > 1.05) {
+      setStageZoomScale(1);
+      setStagePanOffset({ x: 0, y: 0 });
+    } else {
+      setStageZoomScale(2.2);
+    }
   };
 
   const handleSelectPhoto = useCallback((idx) => {
@@ -639,14 +794,14 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
             position: "relative",
             width: "100%",
             aspectRatio: "16 / 9",
-            backgroundColor: "#07080a",
+            backgroundColor: isDark ? "#07080a" : "var(--color-surface, #ffffff)",
             borderRadius: "16px",
-            border: isDark ? "2px solid rgba(212, 175, 55, 0.8)" : "2px solid rgba(212, 175, 55, 0.85)",
+            border: isDark ? "2px solid rgba(212, 175, 55, 0.8)" : "1px solid rgba(212, 175, 55, 0.5)",
             boxShadow: isDark
               ? "0 4px 20px rgba(0, 0, 0, 0.6), 0 0 16px rgba(212, 175, 55, 0.25)"
               : "none",
             overflow: "hidden",
-            touchAction: "pan-y",
+            touchAction: stageZoomScale > 1 ? "none" : "pan-y",
             overscrollBehaviorX: "none",
             userSelect: "none",
           }}
@@ -654,19 +809,23 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
           {/* TAB: PHOTOS */}
           {activeTab === "photos" && hasPhotos && (
             <div
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onTouchCancel={handleTouchCancel}
-              onClick={() => handleOpenZoom(activePhotoIdx)}
+              onTouchStart={handleStageTouchStart}
+              onTouchMove={handleStageTouchMove}
+              onTouchEnd={handleStageTouchEnd}
+              onTouchCancel={handleStageTouchCancel}
+              onMouseDown={handleStageMouseDown}
+              onMouseMove={handleStageMouseMove}
+              onMouseUp={handleStageMouseUp}
+              onMouseLeave={handleStageMouseUp}
+              onDoubleClick={handleStageDoubleClick}
               style={{
                 width: "100%",
                 height: "100%",
                 position: "relative",
-                touchAction: "pan-y",
+                touchAction: stageZoomScale > 1 ? "none" : "pan-y",
                 overscrollBehaviorX: "none",
                 overflow: "hidden",
-                cursor: "zoom-in",
+                cursor: stageZoomScale > 1 ? (isPanningStage.current ? "grabbing" : "grab") : "default",
               }}
             >
               <img
@@ -681,61 +840,25 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
                   height: "100%",
                   objectFit: "cover",
                   display: "block",
-                  cursor: "zoom-in",
                   userSelect: "none",
-                  transition: isReducedMotion() ? "none" : "opacity var(--duration-fast) var(--ease-smooth)",
+                  transform: `translate(${stagePanOffset.x}px, ${stagePanOffset.y}px) scale(${stageZoomScale})`,
+                  transformOrigin: "center center",
+                  transition: isPinchingStage.current || isPanningStage.current ? "none" : "transform 0.24s cubic-bezier(0.2, 0, 0.2, 1)",
+                  willChange: "transform",
                 }}
               />
 
-              {/* Zoom Trigger Button in Top-Right Corner */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenZoom(activePhotoIdx);
-                }}
-                aria-label={t("zoomIn", "Vollbild & Zoom")}
-                title={t("zoomIn", "Vollbild & Zoom")}
-                style={{
-                  position: "absolute",
-                  top: "12px",
-                  right: "12px",
-                  zIndex: 6,
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "38px",
-                  height: "38px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(12, 14, 18, 0.75)",
-                  backdropFilter: "blur(10px)",
-                  border: isDark ? "1px solid rgba(212, 175, 55, 0.4)" : "1px solid rgba(0, 0, 0, 0.2)",
-                  color: isDark ? "#D4AF37" : "#ffffff",
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = isDark ? "rgba(212, 175, 55, 0.25)" : "rgba(0, 0, 0, 0.9)";
-                  e.currentTarget.style.transform = "scale(1.08)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "rgba(12, 14, 18, 0.75)";
-                  e.currentTarget.style.transform = "scale(1)";
-                }}
-              >
-                <Icon name="maximize-2" size={17} />
-              </button>
-
-              {/* Subtle Floor Ambient Gradient */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(to top, rgba(9, 10, 12, 0.6) 0%, transparent 40%)",
-                  pointerEvents: "none",
-                }}
-              />
+              {/* Floor Ambient Gradient: ONLY in dark mode, completely erased in light mode */}
+              {isDark && (
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "linear-gradient(to top, rgba(9, 10, 12, 0.5) 0%, transparent 35%)",
+                    pointerEvents: "none",
+                  }}
+                />
+              )}
             </div>
           )}
 
@@ -1160,82 +1283,14 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
               </span>
             </div>
 
-            {/* Zoom Controls & Close */}
+            {/* Close Button Only — Zero Zoom Icons */}
             <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
-              <button
-                type="button"
-                onClick={handleZoomOut}
-                disabled={zoomScale <= 1}
-                aria-label="Zoom Out"
-                title="Verkleinern (-)"
-                style={{
-                  width: "34px",
-                  height: "34px",
-                  borderRadius: "8px",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  color: zoomScale <= 1 ? "rgba(255, 255, 255, 0.3)" : "#ffffff",
-                  cursor: zoomScale <= 1 ? "default" : "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                }}
-              >
-                -
-              </button>
-
-              <button
-                type="button"
-                onClick={handleToggleZoom}
-                title="Zoom umschalten (Doppelklick)"
-                style={{
-                  padding: "6px 12px",
-                  borderRadius: "8px",
-                  backgroundColor: zoomScale > 1 ? "rgba(212, 175, 55, 0.25)" : "rgba(255, 255, 255, 0.08)",
-                  border: zoomScale > 1 ? "1px solid #D4AF37" : "1px solid rgba(255, 255, 255, 0.15)",
-                  color: zoomScale > 1 ? "#D4AF37" : "#ffffff",
-                  cursor: "pointer",
-                  fontSize: "12px",
-                  fontWeight: 700,
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {Math.round(zoomScale * 100)}%
-              </button>
-
-              <button
-                type="button"
-                onClick={handleZoomIn}
-                disabled={zoomScale >= 3}
-                aria-label="Zoom In"
-                title="Vergrößern (+)"
-                style={{
-                  width: "34px",
-                  height: "34px",
-                  borderRadius: "8px",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  color: zoomScale >= 3 ? "rgba(255, 255, 255, 0.3)" : "#ffffff",
-                  cursor: zoomScale >= 3 ? "default" : "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                }}
-              >
-                +
-              </button>
-
               <button
                 type="button"
                 onClick={handleCloseZoom}
                 aria-label={t("lightboxClose", "Schließen")}
                 title={t("lightboxClose", "Schließen (Esc)")}
                 style={{
-                  marginLeft: "8px",
                   width: "36px",
                   height: "36px",
                   borderRadius: "8px",
@@ -1269,7 +1324,7 @@ export function CarMediaGallery({ car, onRefreshImages, className = "", style = 
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
-              cursor: zoomScale > 1 ? (isPanningRef.current ? "grabbing" : "grab") : "zoom-in",
+              cursor: zoomScale > 1 ? (isPanningRef.current ? "grabbing" : "grab") : "default",
             }}
             onClick={(e) => {
               if (e.target === e.currentTarget) handleCloseZoom();

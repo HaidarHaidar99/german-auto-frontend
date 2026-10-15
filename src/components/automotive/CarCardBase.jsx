@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../../contexts/ThemeContext";
 import CarMediaFrame from "../media/CarMediaFrame";
 import CinematicImage from "../media/CinematicImage";
 import FavoriteButton from "./FavoriteButton";
@@ -47,6 +48,7 @@ export function CarCardBase({
   style = {},
 }) {
   const { t } = useTranslation(["cars"]);
+  const { isDark } = useTheme?.() || { isDark: true };
   const cardRef = useRef(null);
 
   const displayName = name || title || model || "";
@@ -59,27 +61,36 @@ export function CarCardBase({
     media?.gallery?.[0] ||
     null;
 
-  // Status mapping
+  // Status mapping - bright and luminous in dark mode
   const statusBadge = {
     AVAILABLE: (
       <span
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
-          padding: "4px 10px",
+          gap: "6px",
+          padding: "5px 12px",
           borderRadius: "var(--radius-full, 9999px)",
-          backgroundColor: "rgba(16, 185, 129, 0.18)",
-          color: "#34d399",
-          border: "1px solid rgba(16, 185, 129, 0.35)",
+          backgroundColor: isDark ? "rgba(4, 47, 23, 0.94)" : "#ecfdf5",
+          color: isDark ? "#4ade80" : "#047857",
+          border: isDark ? "1.5px solid #22c55e" : "1.5px solid #10b981",
           fontSize: "11px",
-          fontWeight: 600,
-          backdropFilter: "blur(8px)",
-          letterSpacing: "0.04em",
+          fontWeight: 700,
+          backdropFilter: "blur(12px)",
+          letterSpacing: "0.05em",
           textTransform: "uppercase",
+          boxShadow: isDark ? "0 0 16px rgba(34, 197, 94, 0.6), 0 2px 8px rgba(0, 0, 0, 0.7)" : "0 2px 6px rgba(0, 0, 0, 0.08)",
         }}
       >
-        <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#34d399" }} />
+        <span
+          style={{
+            width: "7px",
+            height: "7px",
+            borderRadius: "50%",
+            backgroundColor: isDark ? "#4ade80" : "#10b981",
+            boxShadow: isDark ? "0 0 8px #4ade80" : "none",
+          }}
+        />
         {t("statusAvailable", "Verfügbar")}
       </span>
     ),
@@ -88,20 +99,29 @@ export function CarCardBase({
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
-          padding: "4px 10px",
+          gap: "6px",
+          padding: "5px 12px",
           borderRadius: "var(--radius-full, 9999px)",
-          backgroundColor: "rgba(245, 158, 11, 0.18)",
-          color: "#fbbf24",
-          border: "1px solid rgba(245, 158, 11, 0.35)",
+          backgroundColor: isDark ? "rgba(69, 26, 3, 0.94)" : "#fffbeb",
+          color: isDark ? "#fbbf24" : "#b45309",
+          border: isDark ? "1.5px solid #f59e0b" : "1.5px solid #f59e0b",
           fontSize: "11px",
-          fontWeight: 600,
-          backdropFilter: "blur(8px)",
-          letterSpacing: "0.04em",
+          fontWeight: 700,
+          backdropFilter: "blur(12px)",
+          letterSpacing: "0.05em",
           textTransform: "uppercase",
+          boxShadow: isDark ? "0 0 16px rgba(245, 158, 11, 0.6), 0 2px 8px rgba(0, 0, 0, 0.7)" : "0 2px 6px rgba(0, 0, 0, 0.08)",
         }}
       >
-        <span style={{ width: "6px", height: "6px", borderRadius: "50%", backgroundColor: "#fbbf24" }} />
+        <span
+          style={{
+            width: "7px",
+            height: "7px",
+            borderRadius: "50%",
+            backgroundColor: isDark ? "#fbbf24" : "#d97706",
+            boxShadow: isDark ? "0 0 8px #fbbf24" : "none",
+          }}
+        />
         {t("statusReserved", "Reserviert")}
       </span>
     ),
@@ -110,17 +130,18 @@ export function CarCardBase({
         style={{
           display: "inline-flex",
           alignItems: "center",
-          gap: "5px",
-          padding: "4px 10px",
+          gap: "6px",
+          padding: "5px 12px",
           borderRadius: "var(--radius-full, 9999px)",
-          backgroundColor: "rgba(255, 255, 255, 0.12)",
-          color: "#94a3b8",
-          border: "1px solid rgba(255, 255, 255, 0.2)",
+          backgroundColor: isDark ? "rgba(30, 41, 59, 0.94)" : "#f1f5f9",
+          color: isDark ? "#f8fafc" : "#475569",
+          border: isDark ? "1.5px solid #94a3b8" : "1.5px solid #cbd5e1",
           fontSize: "11px",
-          fontWeight: 600,
-          backdropFilter: "blur(8px)",
-          letterSpacing: "0.04em",
+          fontWeight: 700,
+          backdropFilter: "blur(12px)",
+          letterSpacing: "0.05em",
           textTransform: "uppercase",
+          boxShadow: isDark ? "0 2px 8px rgba(0, 0, 0, 0.7)" : "none",
         }}
       >
         {t("statusSold", "Verkauft")}
@@ -131,14 +152,14 @@ export function CarCardBase({
         style={{
           display: "inline-flex",
           alignItems: "center",
-          padding: "4px 10px",
+          padding: "5px 12px",
           borderRadius: "var(--radius-full, 9999px)",
-          backgroundColor: "rgba(255, 255, 255, 0.08)",
-          color: "#64748b",
-          border: "1px solid rgba(255, 255, 255, 0.15)",
+          backgroundColor: isDark ? "rgba(15, 23, 42, 0.94)" : "#f8fafc",
+          color: isDark ? "#94a3b8" : "#64748b",
+          border: isDark ? "1.5px solid #475569" : "1.5px solid #e2e8f0",
           fontSize: "11px",
-          fontWeight: 600,
-          backdropFilter: "blur(8px)",
+          fontWeight: 700,
+          backdropFilter: "blur(12px)",
         }}
       >
         {t("statusHidden", "Nicht öffentlich")}
@@ -185,7 +206,7 @@ export function CarCardBase({
           badge={statusBadge}
           action={
             <FavoriteButton
-              size={38}
+              size={34}
               isFavorite={isFavorite}
               onToggle={onFavoriteToggle}
               ariaLabel={`${brand} ${displayName}`.trim() + " zu Favoriten hinzufügen"}

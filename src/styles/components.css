@@ -57,6 +57,8 @@
   filter: none !important;
   text-shadow: none !important;
   border-radius: 50% !important;
+  aspect-ratio: 1 / 1 !important;
+  flex-shrink: 0 !important;
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
 }

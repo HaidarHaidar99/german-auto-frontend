@@ -509,8 +509,8 @@ export function ReviewsSection({ googleReviewsConfig }) {
               ))}
             </div>
 
-            <h3 style={{ margin: "0 0 var(--space-xs)", fontSize: "1.35rem", color: "#ffffff", fontWeight: 700 }}>
-              {currentLang === "en" ? "Be the First to Share Your Experience" : "Teilen Sie Ihre Erfahrung mit German Auto"}
+            <h3 style={{ margin: "0 0 var(--space-xs)", fontSize: "1.35rem", color: "var(--color-text, #ffffff)", fontWeight: 700 }}>
+              {currentLang === "en" ? "Share your experience with König Automobile Rheinberg" : "Teilen Sie Ihre Erfahrung mit König Automobile Rheinberg"}
             </h3>
 
             <p style={{ margin: "0 auto", color: "var(--color-text-muted)", fontSize: "0.95rem", lineHeight: 1.6, maxWidth: "520px" }}>

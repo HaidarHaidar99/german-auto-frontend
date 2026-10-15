@@ -13,7 +13,7 @@ export function FavoriteButton({
   onToggle,
   ariaLabel = "Zu Favoriten hinzufügen",
   className = "",
-  size = 38,
+  size = 34,
   style = {},
 }) {
   const { isDark } = useTheme?.() || { isDark: true };
